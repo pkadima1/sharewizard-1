@@ -1,0 +1,382 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+    --sidebar-background: 223 100% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
+  }
+  
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 217.2 32.6% 10.5%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    --sidebar-background: 222.2 47.4% 11.2%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 224.3 76.3% 48%;
+  }
+
+  /* Improve mobile touch targets */
+  button, 
+  a, 
+  [role="button"],
+  input, 
+  select, 
+  textarea {
+    @apply min-h-10 touch-manipulation;
+  }
+
+  /* Improve focus states for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+}
+
+@layer components {
+  /* Base card styles */
+  .base-card {
+    @apply border rounded-xl transition-all relative overflow-hidden;
+    @apply bg-card text-card-foreground shadow-subtle hover:shadow-elevated;
+    @apply border-border;
+  }
+
+  /* Glass card effect - updated for better dark mode */
+  .glass-card {
+    @apply rounded-xl border border-white/10 bg-white/5 backdrop-blur-md;
+    @apply shadow-[0_8px_32px_rgba(0,0,0,0.1)];
+    @apply transition-all duration-300;
+  }
+
+  /* Dark mode specific glass card */
+  .dark .glass-card {
+    @apply bg-gray-900/40 border-white/10;
+    @apply shadow-[0_8px_32px_rgba(0,0,0,0.3)];
+    @apply backdrop-blur-xl;
+  }
+
+  /* Pricing card styles */
+  .pricing-card {
+    @apply rounded-xl border p-5 sm:p-6 flex flex-col h-full;
+    @apply bg-card text-card-foreground;
+    @apply transition-all duration-300;
+    @apply border-border/50;
+    @apply shadow-[0_4px_16px_rgba(0,0,0,0.08)];
+  }
+  
+  .dark .pricing-card {
+    @apply bg-gray-900/60 backdrop-blur-md border-white/10;
+    @apply shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+  }
+  
+  /* Popular pricing card with highlight */
+  .pricing-card-popular {
+    @apply pricing-card border-primary/70;
+    @apply relative;
+    @apply shadow-[0_10px_30px_rgba(59,130,246,0.15)];
+  }
+
+  .dark .pricing-card-popular {
+    @apply border-primary/70;
+    @apply shadow-[0_10px_30px_rgba(59,130,246,0.15)];
+  }
+
+  /* Popular badge for pricing card */
+  .popular-badge {
+    @apply absolute top-0 right-0 bg-primary text-primary-foreground;
+    @apply px-4 py-1 rounded-bl-lg rounded-tr-xl text-xs font-semibold;
+  }
+
+  /* Caption card component with mobile-first design */
+  .caption-card {
+    @apply base-card p-3 sm:p-4 cursor-pointer w-full;
+  }
+  
+  /* Active state for caption card */
+  .caption-card:active {
+    @apply bg-primary/10;
+  }
+  
+  /* Show copy button on tap for mobile, hover for desktop */
+  .caption-card:active .copy-button,
+  .caption-card:hover .copy-button {
+    @apply opacity-100;
+  }
+  
+  /* Selected caption card state */
+  .caption-card.selected {
+    @apply border-primary bg-primary/5;
+  }
+
+  /* Improved visibility on mobile */
+  .copy-button {
+    @apply opacity-0 transition-opacity absolute top-2 right-2 p-2 rounded-full;
+    @apply bg-background text-foreground;
+  }
+
+  /* Responsive container */
+  .preview-container {
+    @apply bg-card text-card-foreground rounded-lg overflow-hidden shadow-subtle w-full;
+  }
+
+  /* Improved mobile caption overlay */
+  .caption-overlay {
+    @apply absolute bottom-0 left-0 right-0 bg-black/70 p-3 sm:p-4 text-white;
+    @apply max-h-[70%] overflow-y-auto;
+  }
+
+  /* More spacing on mobile */
+  .caption-section {
+    @apply space-y-2 sm:space-y-3;
+  }
+
+  /* Better touch targets for hashtags */
+  .hashtag {
+    @apply bg-muted px-2 py-1 rounded text-xs text-primary inline-block mb-1 mr-1;
+  }
+
+  .hashtag-overlay {
+    @apply text-primary-foreground/90 text-xs inline-block mr-2 mb-1;
+  }
+
+  /* Improved transition for shared content */
+  #sharable-content {
+    @apply transition-all duration-300 w-full max-w-full overflow-hidden;
+  }
+
+  /* Mobile navigation improvements */
+  .mobile-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-background border-t border-border;
+    @apply flex justify-around p-2 z-50 md:hidden;
+  }
+
+  /* Responsive padding for content areas */
+  .content-container {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  /* Safe area insets for modern mobile browsers */
+  .safe-area-bottom {
+    @apply pb-[env(safe-area-inset-bottom)];
+  }
+
+  .safe-area-top {
+    @apply pt-[env(safe-area-inset-top)];
+  }
+
+  /* Improved scroll areas for mobile */
+  .scroll-area {
+    @apply overflow-y-auto overscroll-contain -webkit-overflow-scrolling-touch;
+  }
+
+  /* Status badge with mode enhancements */
+  .status-badge {
+    @apply px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* Premium gradient background for profile headers */
+  .profile-header-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-blue-800 text-white;
+  }
+
+  .dark .profile-header-gradient {
+    @apply bg-gradient-to-r from-blue-800 to-indigo-900 text-white;
+  }
+
+  /* Profile card with premium appearance */
+  .profile-card {
+    @apply base-card;
+  }
+
+  /* Wizard component enhancements */
+  .wizard-card {
+    @apply rounded-xl border border-border/50 overflow-hidden;
+    @apply bg-white/80 dark:bg-gray-900/60;
+    @apply backdrop-blur-md;
+    @apply shadow-[0_4px_16px_rgba(0,0,0,0.08)];
+  }
+  
+  .dark .wizard-card {
+    @apply border-white/10;
+    @apply shadow-[0_8px_32px_rgba(0,0,0,0.2)];
+  }
+  
+  /* Wizard step styles */
+  .wizard-step {
+    @apply flex items-center;
+  }
+  
+  /* Active wizard step */
+  .wizard-step.active {
+    @apply text-primary;
+  }
+  
+  /* Completed wizard step */
+  .wizard-step.completed {
+    @apply text-green-500 dark:text-green-400;
+  }
+
+  /* Niche selector and other wizard inputs for better contrast */
+  .niche-item {
+    @apply bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700/80;
+    @apply border border-gray-200 dark:border-gray-700 rounded-lg p-4;
+    @apply transition-all cursor-pointer select-none;
+  }
+  
+  /* Selected niche item */
+  .niche-item.selected {
+    @apply bg-primary/10 dark:bg-primary/20 border-primary;
+  }
+  
+  /* Stats card improvements */
+  .stats-card {
+    @apply base-card p-4;
+  }
+
+  /* Fix low contrast text */
+  .dark-text-fix {
+    @apply text-foreground;
+  }
+
+  /* Pricing features list */
+  .pricing-features {
+    @apply space-y-2 my-4 flex-grow;
+  }
+
+  /* Pricing feature item */
+  .pricing-feature {
+    @apply flex items-start space-x-2 text-sm;
+  }
+
+  /* Pricing feature icon */
+  .pricing-feature-icon {
+    @apply text-green-500 flex-shrink-0 mt-0.5;
+  }
+
+  /* Pricing card header */
+  .pricing-card-header {
+    @apply mb-4;
+  }
+
+  /* Pricing card title */
+  .pricing-card-title {
+    @apply text-xl font-bold;
+  }
+
+  /* Pricing card description */
+  .pricing-card-description {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Pricing amount */
+  .pricing-amount {
+    @apply text-3xl font-bold my-4 flex items-end;
+  }
+
+  /* Pricing period */
+  .pricing-period {
+    @apply text-sm text-muted-foreground ml-1 mb-1;
+  }
+
+  /* Pricing save tag */
+  .pricing-save {
+    @apply text-sm text-green-600 dark:text-green-400 mt-1;
+  }
+
+  /* Pricing CTA button */
+  .pricing-cta {
+    @apply w-full mt-4;
+  }
+
+  /* Caption generator container */
+  .caption-generator-container {
+    @apply min-h-screen bg-gray-50 dark:bg-gray-900;
+  }
+
+  /* Caption generator header */
+  .caption-generator-header {
+    @apply py-6 px-4 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-800 dark:to-indigo-900;
+  }
+
+  /* Wizard step circles */
+  .step-circle {
+    @apply flex items-center justify-center w-10 h-10 rounded-full;
+    @apply bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300;
+    @apply border-2 border-transparent;
+    @apply font-medium text-sm;
+  }
+
+  .step-circle.active {
+    @apply bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300;
+    @apply border-blue-500;
+  }
+
+  .step-circle.completed {
+    @apply bg-green-500 dark:bg-green-600 text-white;
+  }
+}
+
+/* Media query for touch devices with larger touch targets */
+@media (pointer: coarse) {
+  .touch-target {
+    @apply min-h-12 min-w-12;
+  }
+}
+
+/* Add support for reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

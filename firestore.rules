@@ -1,0 +1,108 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =============================
+    // 🔒 HELPER FUNCTIONS
+    // =============================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the user has purchased Flex (one-time purchase)
+    function hasFlexyAccess() {
+      return request.auth.token.stripeRole == "flexy";
+    }
+
+    // Check if the user has a Basic subscription
+    function hasBasicSubs() {
+      return request.auth.token.stripeRole == "basic";
+    }
+
+    // Check if the user has a Premium (Pro) subscription
+    function hasPremiumSubs() {
+      return request.auth.token.stripeRole == "premium";
+    }
+
+    // =============================
+    // 👤 USER PROFILES
+    // =============================
+    
+    // Allow users to read and write only their own profile
+    match /users/{userId} {
+      allow read, create: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId 
+                     && (!request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['plan_type', 'subscription_id', 'trial_end_date']));
+      allow delete: if false;  // Users cannot delete their profiles directly
+    }
+
+    // =============================
+    // 🔐 CUSTOMER DATA SECURITY
+    // =============================
+
+    // Allow each user to read ONLY their own customer-related data
+    match /customers/{uid} {
+      allow read: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+      }
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+    }
+
+    // =============================
+    // 📦 PRODUCT & PRICING SECURITY
+    // =============================
+
+    // Allow ONLY authenticated users to read product and pricing information
+    match /products/{id} {
+      allow read: if true;//isAuthenticated();
+
+      match /prices/{id} {
+        allow read: if true;//isAuthenticated();
+      }
+
+      match /tax_rates/{id} {
+        allow read: if true;//isAuthenticated();
+      }
+    }
+
+    // =============================
+    // 🎟 ROLE-BASED CONTENT ACCESS
+    // =============================
+
+    // Basic users can access basic content
+    match /content-basic/{doc} {
+      allow read: if hasBasicSubs() || hasPremiumSubs() || hasFlexyAccess();
+    }
+
+    // Premium users (Pro) and Flex users can access premium content
+    match /content-premium/{doc} {
+      allow read: if hasPremiumSubs() || hasFlexyAccess();
+    }
+
+    // Flexy users should have access to everything (like Premium)
+    match /content-flexy/{doc} {
+      allow read: if hasFlexyAccess() || hasPremiumSubs();
+    }
+
+    // =============================
+    // 🔓 TEMPORARY OPEN ACCESS (Optional)
+    // =============================
+    // If you want to allow unrestricted read-only access to all data
+    // for testing until a specific date (March 20, 2025)
+    match /{document=**} {
+      allow read: if request.time < timestamp.date(2025, 3, 20);
+    }
+  }
+}
