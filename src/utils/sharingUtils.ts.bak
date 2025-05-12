@@ -2,7 +2,6 @@ import html2canvas from 'html2canvas';
 import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MediaType, Caption, CaptionStyle, DownloadOptions } from '@/types/mediaTypes';
-import { stripMarkdownFormatting } from './textFormatters';
 
 // Helper function to create video with caption overlay
 export const createCaptionedVideo = async (
@@ -11,12 +10,13 @@ export const createCaptionedVideo = async (
   captionStyle: CaptionStyle = 'standard'
 ): Promise<Blob> => {
   return new Promise((resolve, reject) => {
-    try {      // Validate caption object to prevent errors and strip markdown
+    try {
+      // Validate caption object to prevent errors
       const validatedCaption: Caption = {
-        title: stripMarkdownFormatting(caption?.title) || 'Untitled',
-        caption: stripMarkdownFormatting(caption?.caption) || '',
-        cta: stripMarkdownFormatting(caption?.cta) || '',
-        hashtags: Array.isArray(caption?.hashtags) ? caption.hashtags.map(stripMarkdownFormatting) : []
+        title: caption?.title || 'Untitled',
+        caption: caption?.caption || '',
+        cta: caption?.cta || '',
+        hashtags: Array.isArray(caption?.hashtags) ? caption.hashtags : []
       };
 
       // Create a canvas with space for video and caption
@@ -63,9 +63,8 @@ export const createCaptionedVideo = async (
 
         // Use higher quality encoding settings
         const recorderOptions = {
-          mimeType: 'video/webm;codecs=vp9,opus', // Upgrade from VP8 to VP9 for better quality
-          videoBitsPerSecond: 8000000, // Increase bitrate from 5 Mbps to 8 Mbps
-          audioBitsPerSecond: 128000 // Explicitly set audio bitrate
+          mimeType: 'video/webm;codecs=vp9,opus', // Use VP9 for better quality
+          videoBitsPerSecond: 8000000 // Increase bitrate for better quality (8 Mbps)
         };
 
         let mediaRecorder: MediaRecorder;
@@ -76,7 +75,7 @@ export const createCaptionedVideo = async (
           try {
             mediaRecorder = new MediaRecorder(combinedStream, {
               mimeType: 'video/webm;codecs=vp8,opus',
-              videoBitsPerSecond: 4000000 // 6 Mbps fallback
+              videoBitsPerSecond: 6000000 // 6 Mbps fallback
             });
           } catch (e2) {
             console.warn('Falling back to default codec:', e2);
@@ -115,8 +114,6 @@ export const createCaptionedVideo = async (
             // Draw caption based on style
             if (captionStyle === 'handwritten') {
               drawHandwrittenOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
-            } else if (captionStyle === 'modern') {
-              drawModernVideoOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
             } else {
               drawStandardCaption(ctx, validatedCaption, videoElement, captionHeight);
             }
@@ -184,13 +181,14 @@ function drawHandwrittenOverlay(
   ctx.shadowBlur = 6;
   ctx.shadowOffsetX = 2;
   ctx.shadowOffsetY = 2;
-    // Draw title at the top
-  const title = stripMarkdownFormatting(caption.title) || 'Untitled';
+  
+  // Draw title at the top
+  const title = caption.title || 'Untitled';
   ctx.fillText(truncateText(title, ctx, width * 0.9), width / 2, height * 0.2);
   
   // Main caption with different handwritten font
   ctx.font = '32px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
+  const captionText = caption.caption || '';
   
   // Word wrap for caption text
   wrapHandwrittenText(ctx, captionText, width / 2, height / 2, width * 0.8, 40);
@@ -199,7 +197,7 @@ function drawHandwrittenOverlay(
   if (caption.cta) {
     ctx.font = '28px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
     ctx.fillStyle = '#e2e8f0'; // Light color for CTA
-    ctx.fillText(truncateText(stripMarkdownFormatting(caption.cta), ctx, width * 0.9), width / 2, height * 0.75);
+    ctx.fillText(truncateText(caption.cta, ctx, width * 0.9), width / 2, height * 0.75);
   }
   
   // Hashtags at the very bottom
@@ -208,7 +206,7 @@ function drawHandwrittenOverlay(
     ctx.fillStyle = '#3b82f6'; // Blue for hashtags
     
     // Handle multiple hashtags with wrapping if needed
-    const hashtagText = caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ');
+    const hashtagText = caption.hashtags.map(tag => `#${tag}`).join(' ');
     
     // Multiple lines for longer hashtag lists
     if (ctx.measureText(hashtagText).width > width * 0.9) {
@@ -242,63 +240,6 @@ function drawHandwrittenOverlay(
   }
 }
 
-// Function to draw modern overlay caption style for videos
-function drawModernVideoOverlay(
-  ctx: CanvasRenderingContext2D,
-  caption: Caption,
-  width: number,
-  height: number
-): void {
-  // Apply semi-transparent overlay to improve text readability - more subtle than handwritten
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
-  ctx.fillRect(0, height - height * 0.35, width, height * 0.35);
-  
-  // Set modern font styling with left alignment
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  
-  // Add shadow for better contrast
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-  ctx.shadowBlur = 4;
-  ctx.shadowOffsetX = 1;
-  ctx.shadowOffsetY = 1;
-  
-  let y = height - height * 0.35 + 20; // Start at top of overlay with padding
-    // Title - Bold, clean font
-  ctx.font = 'bold 32px Inter, system-ui, -apple-system, sans-serif';
-  const title = stripMarkdownFormatting(caption.title) || 'Untitled';
-  ctx.fillText(truncateText(title, ctx, width * 0.9), 20, y);
-  y += 40;
-  
-  // Main caption text
-  ctx.font = '20px Inter, system-ui, -apple-system, sans-serif';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
-  
-  // Word wrap for caption text - left aligned
-  y = wrapStandardText(ctx, captionText, 20, y, width - 40, 26);
-  y += 15;
-  
-  // CTA with clean styling
-  if (caption.cta && caption.cta.trim()) {
-    ctx.font = 'italic 18px Inter, system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = '#e2e8f0';
-    y = wrapStandardText(ctx, stripMarkdownFormatting(caption.cta), 20, y, width - 40, 24);
-    y += 15;
-  }
-  
-  // Hashtags at the bottom
-  if (caption.hashtags && caption.hashtags.length > 0) {
-    ctx.font = 'bold 18px Inter, system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = '#3b82f6';
-    
-    let hashtagLine = caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ');
-    
-    // Handle multi-line hashtags
-    y = wrapStandardText(ctx, hashtagLine, 20, y, width - 40, 24);
-  }
-}
-
 // Function to draw the standard caption style
 function drawStandardCaption(
   ctx: CanvasRenderingContext2D,
@@ -321,17 +262,18 @@ function drawStandardCaption(
   ctx.shadowOffsetY = 1.5;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
+
   // Title - Bold, title case for emphasis
   ctx.font = 'bold 38px Inter, system-ui, sans-serif';
   const title = caption.title 
-    ? toTitleCase(stripMarkdownFormatting(caption.title)) 
+    ? toTitleCase(caption.title) 
     : 'Untitled';
   ctx.fillText(title, 25, y);
   y += 45;
 
   // Main caption text with improved readability
   ctx.font = '26px Inter, system-ui, sans-serif';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
+  const captionText = caption.caption || '';
 
   // Apply the wrapping with specified constraints
   const maxWidth = ctx.canvas.width - 50; // Leave margins on both sides
@@ -345,7 +287,7 @@ function drawStandardCaption(
     ctx.font = 'italic 24px Inter, system-ui, sans-serif';
     
     // Handle multi-line CTA if needed
-    y = wrapStandardText(ctx, stripMarkdownFormatting(caption.cta), 25, y, maxWidth, 30);
+    y = wrapStandardText(ctx, caption.cta, 25, y, maxWidth, 30);
     y += 20; // Add space after CTA
   }
 
@@ -360,9 +302,10 @@ function drawStandardCaption(
     let hashtagsText = '';
     const hashtagLines = [];
     let currentLine = '';
-      // Process hashtags to ensure they all fit
+    
+    // Process hashtags to ensure they all fit
     for (const tag of hashtags) {
-      const hashtagWithSymbol = `#${stripMarkdownFormatting(tag)} `;
+      const hashtagWithSymbol = `#${tag} `;
       const testLine = currentLine + hashtagWithSymbol;
       
       if (ctx.measureText(testLine).width > maxWidth) {
@@ -505,12 +448,14 @@ export const sharePreview = async (
     if (!sharableContent) {
       toast.error('Sharable content not found');
       throw new Error('Sharable content not found');
-    }    // Format the caption text properly for sharing and strip markdown
-    const formattedCaption = `${stripMarkdownFormatting(caption.title)}\n\n${stripMarkdownFormatting(caption.caption)}\n\n${stripMarkdownFormatting(caption.cta)}\n\n${caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ')}`;    
+    }
+
+    // Format the caption text properly for sharing
+    const formattedCaption = `${caption.title}\n\n${caption.caption}\n\n${caption.cta}\n\n${caption.hashtags.map(tag => `#${tag}`).join(' ')}`;    
     
     // Create basic share data
     const shareData: ShareData = {
-      title: stripMarkdownFormatting(caption.title),
+      title: caption.title,
       text: formattedCaption
     };
 
@@ -521,37 +466,38 @@ export const sharePreview = async (
       
       try {
         let mediaFile: File | undefined;
-          if (mediaType === 'image') {          // For images, capture the entire preview with HTML2Canvas
+        
+        if (mediaType === 'image') {
+          // For images, capture the entire preview with HTML2Canvas
           const canvas = await html2canvas(sharableContent as HTMLElement, {
             useCORS: true,
             allowTaint: true,
-            scale: 4,  // Higher scale for even better quality
+            scale: 2,
             logging: false,
             backgroundColor: '#1e1e1e',
             ignoreElements: (element) => {
               // Ignore elements that shouldn't be captured
-              return element.classList.contains('social-share-buttons') ||
-                    element.classList.contains('preview-controls');
-            }
-          });
+                return element.classList.contains('social-share-buttons') ||
+                      element.classList.contains('preview-controls');
+              }
+            });
             
-          const blob = await new Promise<Blob>((resolve, reject) => {
-            canvas.toBlob(
-              (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
-              'image/png', 
-              0.95
-            );
-          });
+            const blob = await new Promise<Blob>((resolve, reject) => {
+              canvas.toBlob(
+                (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
+                'image/png', 
+                0.95
+              );
+            });
             
-          mediaFile = new File([blob], `image-${Date.now()}.png`, { 
-            type: 'image/png' 
-          });
-        }
+            mediaFile = new File([blob], `image-${Date.now()}.png`, { 
+              type: 'image/png' 
+            });
+          }
           
-        // Dismiss loading indicator
-        toast.dismiss(loadingToastId);
-        
-        // Try to share with the media file
+          // Dismiss loading indicator
+          toast.dismiss(loadingToastId);
+              // Try to share with the media file
         if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
           await navigator.share({
             ...shareData,
@@ -570,18 +516,18 @@ export const sharePreview = async (
             message: 'Caption shared successfully!' 
           };
         }
-      } catch (fileError) {
-        console.warn('File sharing failed, falling back to text-only share:', fileError);
-        // Continue to text-only sharing if file sharing fails
+        } catch (fileError) {
+          console.warn('File sharing failed, falling back to text-only share:', fileError);
+          // Continue to text-only sharing if file sharing fails
+        }
+        
+        // Text-only sharing as fallback
+        await navigator.share(shareData);
+        return { status: 'shared', message: 'Caption shared successfully!' };
       }
-      
-      // Text-only sharing as fallback
-      await navigator.share(shareData);
-      return { status: 'shared', message: 'Caption shared successfully!' };
     } else {
       // Fallback for browsers that don't support Web Share API
-      try {
-        await navigator.clipboard.writeText(formattedCaption);
+      try {        await navigator.clipboard.writeText(formattedCaption);
         return { 
           status: 'fallback', 
           message: 'Caption copied to clipboard! You can paste it into your social media app.' 
@@ -606,7 +552,7 @@ export const downloadPreview = async (
   mediaType: MediaType,
   caption: Caption,
   filename?: string,
-  captionStyle: CaptionStyle = mediaType === 'video' ? 'handwritten' : 'standard'
+  captionStyle: CaptionStyle = 'standard'
 ): Promise<void> => {
   if (!previewRef.current) {
     toast.error('Preview element not found');
@@ -665,8 +611,9 @@ export const downloadPreview = async (
       toast.loading('Processing video with captions...', { id: loadingToastId });
       console.log('Processing video with dimensions:', video.videoWidth, 'x', video.videoHeight);
       
-      try {        // Create captioned video with overlay - always use modern style for videos
-        const captionedVideoBlob = await createCaptionedVideo(video, caption, 'modern');
+      try {
+        // Create captioned video with overlay
+        const captionedVideoBlob = await createCaptionedVideo(video, caption, captionStyle);
         console.log('Captioned video blob created:', captionedVideoBlob.size, 'bytes');
         
         // Download the processed video
@@ -683,11 +630,13 @@ export const downloadPreview = async (
     } else {
       // For image or text, create a screenshot
       try {
-        toast.loading(`Capturing content...`, { id: loadingToastId });          // Use a more reliable way to capture the content
+        toast.loading(`Capturing content...`, { id: loadingToastId });
+        
+        // Use a more reliable way to capture the content
         html2canvas(sharableContent as HTMLElement, {
           useCORS: true,
           allowTaint: true,
-          scale: 4, // Higher scale for better quality
+          scale: 2,
           logging: false,
           backgroundColor: '#1e1e1e',
           onclone: (clonedDoc) => {
@@ -696,23 +645,6 @@ export const downloadPreview = async (
             if (clonedContent) {
               (clonedContent as HTMLElement).style.padding = '20px';
               (clonedContent as HTMLElement).style.background = '#1e1e1e';
-                // Ensure image maintains its aspect ratio with enhanced quality
-              const imgElement = clonedContent.querySelector('img');
-              if (imgElement) {
-                imgElement.style.objectFit = 'contain';
-                imgElement.style.maxWidth = '100%';
-                imgElement.style.maxHeight = '600px';
-                imgElement.style.height = 'auto';
-                imgElement.style.width = 'auto';
-                imgElement.style.margin = '0 auto';
-                imgElement.style.display = 'block';
-                // Add image quality enhancements via CSS
-                imgElement.style.imageRendering = 'high-quality'; // For browsers that support it
-                imgElement.style.imageRendering = '-webkit-optimize-contrast'; // For webkit browsers
-                imgElement.style.backfaceVisibility = 'hidden'; // Helps with rendering quality
-                // Force a repaint for better quality (small opacity change isn't visible)
-                imgElement.style.opacity = '0.99';
-              }
             }
           }
         }).then(canvas => {
@@ -861,4 +793,3 @@ function toTitleCase(text: string): string {
     .join(' ');
 }
 
-// All necessary functions have already been exported above

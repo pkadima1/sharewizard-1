@@ -6,6 +6,7 @@ import useMediaType from '@/hooks/useMediaType';
 import CaptionsList from './captions/CaptionsList';
 import CaptionEditor from './captions/CaptionEditor';
 import CaptionSharingActions from './captions/CaptionSharingActions';
+import CaptionPreview from './captions/CaptionPreview';
 import ErrorDisplay from './captions/ErrorDisplay';
 import GenerationLoading from './captions/GenerationLoading';
 import EmptyState from './captions/EmptyState';
@@ -93,7 +94,6 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   if (captions.length === 0 && !isGenerating) {
     return <EmptyState onGenerateClick={handleRegenerateClick} />;
   }
-
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
@@ -125,7 +125,23 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
         
         <div className="lg:w-3/5">
           <div className="sticky top-6 space-y-4">
-            <CaptionEditor
+            {/* Add CaptionPreview before CaptionEditor */}
+            {captions.length > 0 && selectedCaption >= 0 && (
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-medium dark:text-white">Preview</h3>
+                </div>
+                <CaptionPreview 
+                  ref={previewRef}
+                  selectedMedia={selectedMedia}
+                  previewUrl={previewUrl}
+                  caption={captions[selectedCaption]}
+                  captionOverlayMode={captionOverlayMode}
+                  mediaType={mediaType}
+                />
+              </div>
+            )}
+              <CaptionEditor
               selectedMedia={selectedMedia}
               previewUrl={previewUrl}
               captions={captions}
@@ -150,6 +166,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
               }}
               isSharing={isSharing}
               isDownloading={isDownloading}
+              mediaType={mediaType}
             />
             
             <CaptionSharingActions
