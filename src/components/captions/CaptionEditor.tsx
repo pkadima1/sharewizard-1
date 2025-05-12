@@ -6,6 +6,8 @@ import { Edit, Share, Download } from 'lucide-react';
 import { toast } from "sonner";
 import { GeneratedCaption } from '@/services/openaiService';
 import CaptionEditForm from './CaptionEditForm';
+import { MediaType } from '@/types/mediaTypes';
+import { stripMarkdownFormatting } from '@/utils/textFormatters';
 
 interface CaptionEditorProps {
   selectedMedia: File | null;
@@ -20,6 +22,7 @@ interface CaptionEditorProps {
   onDownloadClick: () => void;
   isSharing: boolean;
   isDownloading: boolean;
+  mediaType?: MediaType;
 }
 
 const CaptionEditor: React.FC<CaptionEditorProps> = ({
@@ -34,8 +37,9 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
   onShareClick,
   onDownloadClick,
   isSharing,
-  isDownloading
-}) => {
+  isDownloading,
+  mediaType
+})=> {
   const [isEditing, setIsEditing] = useState(false);
   const [editingCaption, setEditingCaption] = useState<GeneratedCaption | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -113,9 +117,7 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
                 )}
               </Button>
             </div>
-          </div>
-          
-          {!isTextOnly && (
+          </div>            {!isTextOnly && mediaType !== 'video' && (
             <div className="mt-4 flex items-center justify-end">
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">Caption below</span>
@@ -130,14 +132,13 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
           
           <div className="mt-4">
             <h3 className="font-semibold mb-2">Caption Text</h3>
-            <div className="p-3 bg-white dark:bg-gray-900 rounded-md">
-              <h4 className="font-medium">{captions[selectedCaption]?.title}</h4>
-              <p className="mt-2 text-sm whitespace-pre-line">{captions[selectedCaption]?.caption}</p>
-              <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400">{captions[selectedCaption]?.cta}</p>
+            <div className="p-3 bg-white dark:bg-gray-900 rounded-md">              <h4 className="font-medium">{stripMarkdownFormatting(captions[selectedCaption]?.title)}</h4>
+              <p className="mt-2 text-sm whitespace-pre-line">{stripMarkdownFormatting(captions[selectedCaption]?.caption)}</p>
+              <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400">{stripMarkdownFormatting(captions[selectedCaption]?.cta)}</p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {captions[selectedCaption]?.hashtags.map((hashtag, idx) => (
                   <span key={idx} className="text-blue-500 text-xs">
-                    #{hashtag}
+                    #{stripMarkdownFormatting(hashtag)}
                   </span>
                 ))}
               </div>

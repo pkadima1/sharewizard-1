@@ -9,7 +9,7 @@ export interface Caption {
   hashtags: string[];
 }
 
-export type CaptionStyle = 'standard' | 'handwritten';
+export type CaptionStyle = 'standard' | 'handwritten' | 'modern';
 
 // Enhanced download options for better video quality
 export interface DownloadOptions {

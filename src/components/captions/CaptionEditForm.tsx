@@ -1,10 +1,10 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, X } from 'lucide-react';
 import { GeneratedCaption } from '@/services/openaiService';
+import { stripMarkdownFormatting } from '@/utils/textFormatters';
 
 interface CaptionEditFormProps {
   editingCaption: GeneratedCaption;
@@ -19,6 +19,25 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
   onSave,
   onCancel
 }) => {
+  // Clean any markdown formatting when the form first loads
+  useEffect(() => {
+    if (editingCaption) {
+      // Create a clean version without markdown symbols
+      const cleanedCaption = {
+        ...editingCaption,
+        title: stripMarkdownFormatting(editingCaption.title),
+        caption: stripMarkdownFormatting(editingCaption.caption),
+        cta: stripMarkdownFormatting(editingCaption.cta),
+        hashtags: editingCaption.hashtags.map(stripMarkdownFormatting)
+      };
+      
+      // Only update if something changed
+      if (JSON.stringify(cleanedCaption) !== JSON.stringify(editingCaption)) {
+        setEditingCaption(cleanedCaption);
+      }
+    }
+  }, []);
+
   return (
     <div className="p-6 space-y-4">
       <div>

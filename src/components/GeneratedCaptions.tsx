@@ -141,8 +141,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                 />
               </div>
             )}
-            
-            <CaptionEditor
+              <CaptionEditor
               selectedMedia={selectedMedia}
               previewUrl={previewUrl}
               captions={captions}
@@ -167,6 +166,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
               }}
               isSharing={isSharing}
               isDownloading={isDownloading}
+              mediaType={mediaType}
             />
             
             <CaptionSharingActions

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Copy } from 'lucide-react';
 import { GeneratedCaption } from '@/services/openaiService';
 import { toast } from "sonner";
+import { stripMarkdownFormatting } from '@/utils/textFormatters';
 
 interface CaptionsListProps {
   captions: GeneratedCaption[];
@@ -17,11 +18,10 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
   setSelectedCaption,
 }) => {
   const [hoveredCaption, setHoveredCaption] = React.useState<number | null>(null);
-
   const handleCopyCaption = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     if (captions[index]) {
-      const text = `${captions[index].caption}\n\n${captions[index].cta}\n\n${captions[index].hashtags.map(h => `#${h}`).join(' ')}`;
+      const text = `${stripMarkdownFormatting(captions[index].caption)}\n\n${stripMarkdownFormatting(captions[index].cta)}\n\n${captions[index].hashtags.map(h => `#${stripMarkdownFormatting(h)}`).join(' ')}`;
       navigator.clipboard.writeText(text);
       toast.success("Caption copied to clipboard!");
     }
@@ -42,14 +42,13 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
           onClick={() => setSelectedCaption(index)}
           onMouseEnter={() => setHoveredCaption(index)}
           onMouseLeave={() => setHoveredCaption(null)}
-        >
-          <h3 className="font-medium mb-2 text-gray-900 dark:text-gray-100">{caption.title}</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{caption.caption}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">{caption.cta}</p>
+        >          <h3 className="font-medium mb-2 text-gray-900 dark:text-gray-100">{stripMarkdownFormatting(caption.title)}</h3>
+          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{stripMarkdownFormatting(caption.caption)}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">{stripMarkdownFormatting(caption.cta)}</p>
           <div className="flex flex-wrap gap-1 mb-2">
             {caption.hashtags.map((hashtag, idx) => (
               <span key={idx} className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs text-blue-600 dark:text-blue-400">
-                #{hashtag}
+                #{stripMarkdownFormatting(hashtag)}
               </span>
             ))}
           </div>

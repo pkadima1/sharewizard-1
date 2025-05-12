@@ -6,6 +6,7 @@ import { Edit, Share, Download } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { GeneratedCaption } from '@/services/openaiService';
 import { MediaType, CaptionStyle } from '@/types/mediaTypes';
+import { stripMarkdownFormatting } from '@/utils/textFormatters';
 
 interface MediaPreviewProps {
   previewUrl: string | null;
@@ -108,39 +109,41 @@ const MediaPreview = forwardRef<HTMLDivElement, MediaPreviewProps>(({
                         crossOrigin="anonymous"
                         style={{ objectFit: 'contain' }}
                       />
-                    </div>
-                    {captionOverlayMode === 'overlay' && currentCaption && (
+                    </div>                    {captionOverlayMode === 'overlay' && currentCaption && (
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-4 backdrop-blur-sm">
-                        <p className="text-white text-lg font-semibold mb-2">{currentCaption.title}</p>
-                        <p className="text-white text-sm mb-2">{currentCaption.caption}</p>
-                        <p className="text-white text-sm italic mb-2">{currentCaption.cta}</p>
+                        <p className="text-white text-xl font-bold mb-2">{stripMarkdownFormatting(currentCaption.title)}</p>
+                        <p className="text-white text-base mb-2">{stripMarkdownFormatting(currentCaption.caption)}</p>
+                        {currentCaption.cta && (
+                          <p className="text-gray-200 text-sm italic mb-2">{stripMarkdownFormatting(currentCaption.cta)}</p>
+                        )}
                         <div className="flex flex-wrap gap-1 mt-1">
                           {currentCaption.hashtags.map((hashtag, idx) => (
-                            <span key={idx} className="text-blue-300 text-xs">
-                              #{hashtag}
+                            <span key={idx} className="text-blue-400 text-sm font-medium">
+                              #{stripMarkdownFormatting(hashtag)}
                             </span>
                           ))}
                         </div>
                       </div>
                     )}
-                  </div>
-                ) : selectedMedia && selectedMedia.type.startsWith('video') ? (
+                  </div>                ) : selectedMedia && selectedMedia.type.startsWith('video') ? (
                   <div className="aspect-video w-full relative">
                     <video 
                       ref={videoRef}
                       src={previewUrl} 
                       className="w-full h-full object-cover" 
                       controls
-                    />
-                    {captionOverlayMode === 'overlay' && currentCaption && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-4 backdrop-blur-sm">
-                        <p className="text-white text-lg font-semibold mb-2">{currentCaption.title}</p>
-                        <p className="text-white text-sm mb-2">{currentCaption.caption}</p>
-                        <p className="text-white text-sm italic mb-2">{currentCaption.cta}</p>
+                    />                    {/* For videos, always show modern caption overlay with left-aligned text */}
+                    {currentCaption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-65 p-4 backdrop-blur-sm">
+                        <p className="text-white text-xl font-bold mb-2">{stripMarkdownFormatting(currentCaption.title)}</p>
+                        <p className="text-white text-base mb-2">{stripMarkdownFormatting(currentCaption.caption)}</p>
+                        {currentCaption.cta && (
+                          <p className="text-gray-200 text-sm italic mb-2">{stripMarkdownFormatting(currentCaption.cta)}</p>
+                        )}
                         <div className="flex flex-wrap gap-1 mt-1">
                           {currentCaption.hashtags.map((hashtag, idx) => (
-                            <span key={idx} className="text-blue-300 text-xs">
-                              #{hashtag}
+                            <span key={idx} className="text-blue-400 text-sm font-medium">
+                              #{stripMarkdownFormatting(hashtag)}
                             </span>
                           ))}
                         </div>
@@ -156,14 +159,13 @@ const MediaPreview = forwardRef<HTMLDivElement, MediaPreviewProps>(({
             )}
           
             {currentCaption && (captionOverlayMode === 'below' || isTextOnly) && (
-              <div className={`space-y-3 p-6 ${!isTextOnly && captionOverlayMode === 'below' ? 'bg-blue-950 text-white' : ''}`}>
-                <h3 className="font-semibold text-xl">{currentCaption.title}</h3>
-                <p className="whitespace-pre-line">{currentCaption.caption}</p>
-                <p className="italic text-gray-300 mt-3">{currentCaption.cta}</p>
+              <div className={`space-y-3 p-6 ${!isTextOnly && captionOverlayMode === 'below' ? 'bg-blue-950 text-white' : ''}`}>                <h3 className="font-semibold text-xl">{stripMarkdownFormatting(currentCaption.title)}</h3>
+                <p className="whitespace-pre-line">{stripMarkdownFormatting(currentCaption.caption)}</p>
+                <p className="italic text-gray-300 mt-3">{stripMarkdownFormatting(currentCaption.cta)}</p>
                 <div className="flex flex-wrap gap-1 pt-2">
                   {currentCaption.hashtags.map((hashtag, idx) => (
                     <Badge key={idx} variant="secondary" className="text-blue-400">
-                      #{hashtag}
+                      #{stripMarkdownFormatting(hashtag)}
                     </Badge>
                   ))}
                 </div>
@@ -174,8 +176,7 @@ const MediaPreview = forwardRef<HTMLDivElement, MediaPreviewProps>(({
             )}
           </div>
         </div>
-        
-        {!isEditing && (
+          {!isEditing && !selectedMedia?.type.startsWith('video') && (
           <div className="mt-4 flex items-center justify-end">
             <div className="flex items-center space-x-2">
               <span className="text-xs text-gray-500 dark:text-gray-400">Caption below</span>

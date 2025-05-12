@@ -53,7 +53,6 @@ const CaptionGenerator: React.FC = () => {
     description: "View and edit your captions",
     isCompleted: false
   }];
-
   const handleMediaSelect = (file: File | null) => {
     if (!file) {
       setSelectedMedia(null);
@@ -69,6 +68,11 @@ const CaptionGenerator: React.FC = () => {
 
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
+    
+    // For videos, always set the caption mode to overlay
+    if (file.type.startsWith('video')) {
+      setCaptionOverlayMode('overlay');
+    }
   };
 
   const handleTextOnlySelect = () => {
@@ -100,9 +104,11 @@ const CaptionGenerator: React.FC = () => {
     setIsGenerating(true);
     setCurrentStep(prev => prev + 1);
   };
-
   const handleCaptionOverlayModeChange = (mode: 'overlay' | 'below') => {
-    setCaptionOverlayMode(mode);
+    // Only change the mode if we're not dealing with a video
+    if (!(selectedMedia && selectedMedia.type.startsWith('video'))) {
+      setCaptionOverlayMode(mode);
+    }
   };
 
   const handleNext = () => {
