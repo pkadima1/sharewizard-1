@@ -98,14 +98,17 @@ const MediaPreview = forwardRef<HTMLDivElement, MediaPreviewProps>(({
         >
           <div id="sharable-content" className={isTextOnly ? 'p-6' : ''}>
             {!isTextOnly && previewUrl && (
-              <div className="relative">
-                {selectedMedia && selectedMedia.type.startsWith('image') ? (
-                  <div className="aspect-square w-full relative">
-                    <img 
-                      src={previewUrl} 
-                      alt="Preview" 
-                      className="w-full h-full object-cover" 
-                    />
+              <div className="relative">                {selectedMedia && selectedMedia.type.startsWith('image') ? (
+                  <div className="w-full relative">
+                    <div className="image-container max-h-[600px] overflow-hidden flex justify-center">
+                      <img 
+                        src={previewUrl} 
+                        alt="Preview" 
+                        className="max-w-full max-h-[600px] w-auto h-auto object-contain" 
+                        crossOrigin="anonymous"
+                        style={{ objectFit: 'contain' }}
+                      />
+                    </div>
                     {captionOverlayMode === 'overlay' && currentCaption && (
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-4 backdrop-blur-sm">
                         <p className="text-white text-lg font-semibold mb-2">{currentCaption.title}</p>

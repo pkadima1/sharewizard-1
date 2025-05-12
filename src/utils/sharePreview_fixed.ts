@@ -466,37 +466,38 @@ export const sharePreview = async (
       
       try {
         let mediaFile: File | undefined;
-          if (mediaType === 'image') {          // For images, capture the entire preview with HTML2Canvas
+        
+        if (mediaType === 'image') {
+          // For images, capture the entire preview with HTML2Canvas
           const canvas = await html2canvas(sharableContent as HTMLElement, {
             useCORS: true,
             allowTaint: true,
-            scale: 4,  // Higher scale for even better quality
+            scale: 2,
             logging: false,
             backgroundColor: '#1e1e1e',
             ignoreElements: (element) => {
               // Ignore elements that shouldn't be captured
-              return element.classList.contains('social-share-buttons') ||
-                    element.classList.contains('preview-controls');
-            }
-          });
+                return element.classList.contains('social-share-buttons') ||
+                      element.classList.contains('preview-controls');
+              }
+            });
             
-          const blob = await new Promise<Blob>((resolve, reject) => {
-            canvas.toBlob(
-              (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
-              'image/png', 
-              0.95
-            );
-          });
+            const blob = await new Promise<Blob>((resolve, reject) => {
+              canvas.toBlob(
+                (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
+                'image/png', 
+                0.95
+              );
+            });
             
-          mediaFile = new File([blob], `image-${Date.now()}.png`, { 
-            type: 'image/png' 
-          });
-        }
+            mediaFile = new File([blob], `image-${Date.now()}.png`, { 
+              type: 'image/png' 
+            });
+          }
           
-        // Dismiss loading indicator
-        toast.dismiss(loadingToastId);
-        
-        // Try to share with the media file
+          // Dismiss loading indicator
+          toast.dismiss(loadingToastId);
+              // Try to share with the media file
         if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
           await navigator.share({
             ...shareData,
@@ -515,18 +516,18 @@ export const sharePreview = async (
             message: 'Caption shared successfully!' 
           };
         }
-      } catch (fileError) {
-        console.warn('File sharing failed, falling back to text-only share:', fileError);
-        // Continue to text-only sharing if file sharing fails
+        } catch (fileError) {
+          console.warn('File sharing failed, falling back to text-only share:', fileError);
+          // Continue to text-only sharing if file sharing fails
+        }
+        
+        // Text-only sharing as fallback
+        await navigator.share(shareData);
+        return { status: 'shared', message: 'Caption shared successfully!' };
       }
-      
-      // Text-only sharing as fallback
-      await navigator.share(shareData);
-      return { status: 'shared', message: 'Caption shared successfully!' };
     } else {
       // Fallback for browsers that don't support Web Share API
-      try {
-        await navigator.clipboard.writeText(formattedCaption);
+      try {        await navigator.clipboard.writeText(formattedCaption);
         return { 
           status: 'fallback', 
           message: 'Caption copied to clipboard! You can paste it into your social media app.' 
@@ -629,11 +630,13 @@ export const downloadPreview = async (
     } else {
       // For image or text, create a screenshot
       try {
-        toast.loading(`Capturing content...`, { id: loadingToastId });          // Use a more reliable way to capture the content
+        toast.loading(`Capturing content...`, { id: loadingToastId });
+        
+        // Use a more reliable way to capture the content
         html2canvas(sharableContent as HTMLElement, {
           useCORS: true,
           allowTaint: true,
-          scale: 4, // Higher scale for better quality
+          scale: 2,
           logging: false,
           backgroundColor: '#1e1e1e',
           onclone: (clonedDoc) => {
@@ -642,23 +645,6 @@ export const downloadPreview = async (
             if (clonedContent) {
               (clonedContent as HTMLElement).style.padding = '20px';
               (clonedContent as HTMLElement).style.background = '#1e1e1e';
-                // Ensure image maintains its aspect ratio with enhanced quality
-              const imgElement = clonedContent.querySelector('img');
-              if (imgElement) {
-                imgElement.style.objectFit = 'contain';
-                imgElement.style.maxWidth = '100%';
-                imgElement.style.maxHeight = '600px';
-                imgElement.style.height = 'auto';
-                imgElement.style.width = 'auto';
-                imgElement.style.margin = '0 auto';
-                imgElement.style.display = 'block';
-                // Add image quality enhancements via CSS
-                imgElement.style.imageRendering = 'high-quality'; // For browsers that support it
-                imgElement.style.imageRendering = '-webkit-optimize-contrast'; // For webkit browsers
-                imgElement.style.backfaceVisibility = 'hidden'; // Helps with rendering quality
-                // Force a repaint for better quality (small opacity change isn't visible)
-                imgElement.style.opacity = '0.99';
-              }
             }
           }
         }).then(canvas => {
@@ -807,4 +793,3 @@ function toTitleCase(text: string): string {
     .join(' ');
 }
 
-// All necessary functions have already been exported above

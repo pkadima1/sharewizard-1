@@ -1,10 +1,11 @@
 
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Edit, Share, Download } from 'lucide-react';
 import { toast } from "sonner";
 import { GeneratedCaption } from '@/services/openaiService';
 import CaptionEditForm from './CaptionEditForm';
-import MediaPreview from './MediaPreview';
 
 interface CaptionEditorProps {
   selectedMedia: File | null;
@@ -60,7 +61,6 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
     setIsEditing(false);
     setEditingCaption(null);
   };
-
   return (
     <div className="space-y-4">
       {isEditing ? (
@@ -71,24 +71,80 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
           onCancel={handleCancelEdit}
         />
       ) : (
-        <MediaPreview 
-          ref={previewRef}
-          previewUrl={previewUrl}
-          selectedMedia={selectedMedia}
-          captionOverlayMode={captionOverlayMode}
-          onCaptionOverlayModeChange={onCaptionOverlayModeChange || (() => {})}
-          currentCaption={captions[selectedCaption]}
-          isTextOnly={isTextOnly}
-          onEditClick={handleEditCaption}
-          onShareClick={onShareClick}
-          onDownloadClick={onDownloadClick}
-          isSharing={isSharing}
-          isDownloading={isDownloading}
-          isEditing={isEditing}
-        />
+        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-medium dark:text-white">Edit Caption</h3>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                title="Edit"
+                onClick={handleEditCaption}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                title="Share"
+                onClick={onShareClick}
+                disabled={isSharing}
+              >
+                {isSharing ? (
+                  <div className="h-4 w-4 border-t-2 border-r-2 border-blue-500 rounded-full animate-spin"></div>
+                ) : (
+                  <Share className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                title="Download"
+                onClick={onDownloadClick}
+                disabled={isDownloading}
+              >
+                {isDownloading ? (
+                  <div className="h-4 w-4 border-t-2 border-r-2 border-blue-500 rounded-full animate-spin"></div>
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+          
+          {!isTextOnly && (
+            <div className="mt-4 flex items-center justify-end">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-gray-500 dark:text-gray-400">Caption below</span>
+                <Switch 
+                  checked={captionOverlayMode === 'overlay'} 
+                  onCheckedChange={() => onCaptionOverlayModeChange(captionOverlayMode === 'overlay' ? 'below' : 'overlay')} 
+                />
+                <span className="text-xs text-gray-500 dark:text-gray-400">Caption overlay</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="mt-4">
+            <h3 className="font-semibold mb-2">Caption Text</h3>
+            <div className="p-3 bg-white dark:bg-gray-900 rounded-md">
+              <h4 className="font-medium">{captions[selectedCaption]?.title}</h4>
+              <p className="mt-2 text-sm whitespace-pre-line">{captions[selectedCaption]?.caption}</p>
+              <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400">{captions[selectedCaption]?.cta}</p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {captions[selectedCaption]?.hashtags.map((hashtag, idx) => (
+                  <span key={idx} className="text-blue-500 text-xs">
+                    #{hashtag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-
-      {/* Remove the problematic code that's trying to render a DOM element directly */}
     </div>
   );
 };
