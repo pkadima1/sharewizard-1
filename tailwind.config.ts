@@ -16,8 +16,16 @@ export default {
       screens: {
         '2xl': '1400px'
       }
-    },
-    extend: {
+    },    extend: {
+      transitionProperty: {
+        'theme': 'background-color, border-color, color, fill, stroke, opacity, box-shadow',
+      },
+      transitionTimingFunction: {
+        'theme': 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      transitionDuration: {
+        'theme': '300ms',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

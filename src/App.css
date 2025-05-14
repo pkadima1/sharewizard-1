@@ -52,15 +52,30 @@
 
 .caption-bg-gradient {
   background: linear-gradient(to bottom, #1A1F2C 0%, #221F26 100%);
-}
-
-/* Dark mode card and glassmorphism effects */
-.glass-card {
-  background-color: rgba(var(--card)/0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(var(--border)/0.2);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
+}  /* Dark mode card and glassmorphism effects */
+  .glass-card {
+    background-color: rgba(var(--card)/0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(var(--border)/0.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Improved theme transition */
+  .theme-transition {
+    transition: background-color 0.3s ease, 
+                border-color 0.3s ease, 
+                color 0.3s ease, 
+                fill 0.3s ease, 
+                outline-color 0.3s ease;
+  }
+  
+  .theme-transition * {
+    transition: background-color 0.3s ease, 
+                border-color 0.3s ease, 
+                color 0.3s ease, 
+                fill 0.3s ease, 
+                box-shadow 0.3s ease;
+  }
 
 .dark .glass-card {
   background-color: rgba(31, 41, 55, 0.5);

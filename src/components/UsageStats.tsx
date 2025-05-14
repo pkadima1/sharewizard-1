@@ -48,10 +48,9 @@ interface UsageStatsProps {
 const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
   const { userProfile, subscription, currentUser, activateFreeTrial } = useAuth();
   const { toast } = useToast();
-  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
-  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isActivatingTrial, setIsActivatingTrial] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium'>('basic');
+  const [selectedPlan, setSelectedPlan] = useState<'basic'>('basic');
   
   // Calculate usage percentages
   const aiUsagePercentage = Math.min(
@@ -59,7 +58,8 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
     100
   );
   
-  const planLimits = PLAN_LIMITS[subscriptionTier];
+  // Handle case when subscriptionTier doesn't match any key in PLAN_LIMITS
+const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
   
   // Get actual subscription data from Auth context if available
   const planType = userProfile?.plan_type || 'free';
@@ -130,9 +130,8 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
       setIsActivatingTrial(false);
     }
   };
-
   // Handle plan upgrade
-  const handleUpgrade = async (plan: 'basic' | 'premium' = 'basic') => {
+  const handleUpgrade = async (plan: 'basic' = 'basic') => {
     if (!currentUser) {
       toast({
         title: "Error",
@@ -220,22 +219,21 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
   return (
     <div className="space-y-6 animate-fade-in">
       <h2 className="text-2xl font-semibold">Usage Statistics</h2>
-      
-      <div className="space-y-6">
+        <div className="space-y-6">
         {/* Plan Information */}
-        <div className="bg-card text-card-foreground rounded-lg p-6 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <CircleDollarSign className="w-5 h-5 text-primary mr-2" />
+              <CircleDollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" />
               <h3 className="font-medium">Current Plan: {formatPlanName(planType)}</h3>
             </div>
             {endDate && (
               <div className="flex items-center text-sm">
-                <Calendar className="w-4 h-4 text-muted-foreground mr-1" />
-                <span className="text-muted-foreground">
+                <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-1" />
+                <span className="text-gray-600 dark:text-gray-300">
                   {planType === 'trial' ? (
                     <span className="flex items-center">
-                      <Timer className="w-4 h-4 text-primary mr-1" />
+                      <Timer className="w-4 h-4 text-blue-600 dark:text-blue-400 mr-1" />
                       Trial ends in {daysRemaining} day{daysRemaining !== 1 ? 's' : ''}
                     </span>
                   ) : (
@@ -245,28 +243,27 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
               </div>
             )}
           </div>
-          
-          {/* Requests Progress */}
+            {/* Requests Progress */}
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Request Usage</span>
-            <span className="text-sm font-medium">
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">Request Usage</span>
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
               {requestsUsed}/{requestsLimit}
             </span>
           </div>
           
-          <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+          <div className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div 
               className={`absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out ${
-                usagePercentage > 90 ? 'bg-destructive' : usagePercentage > 75 ? 'bg-orange-500 dark:bg-orange-600' : 'bg-gradient-to-r from-blue-400 to-blue-600 dark:from-blue-500 dark:to-blue-700'
+                usagePercentage > 90 ? 'bg-red-500 dark:bg-red-600' : usagePercentage > 75 ? 'bg-orange-500 dark:bg-orange-500' : 'bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-500 dark:to-blue-600'
               }`}
               style={{ width: `${usagePercentage}%` }}
             ></div>
           </div>
           
-          <div className="mt-2 text-sm text-muted-foreground flex justify-between">
-            <div>{requestsLimit - requestsUsed} requests remaining</div>
+          <div className="mt-2 text-sm flex justify-between">
+            <div className="text-gray-600 dark:text-gray-300 font-medium">{requestsLimit - requestsUsed} requests remaining</div>
             {isRunningLow && (
-              <div className={isOutOfRequests ? 'text-destructive font-medium flex items-center' : 'text-orange-500 dark:text-orange-400 flex items-center'}>
+              <div className={isOutOfRequests ? 'text-red-600 dark:text-red-400 font-medium flex items-center' : 'text-orange-600 dark:text-orange-400 font-medium flex items-center'}>
                 {isOutOfRequests ? (
                   <>
                     <AlertTriangle className="w-4 h-4 mr-1" />
@@ -281,16 +278,15 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
               </div>
             )}
           </div>
-          
-          {/* Upgrade Prompt */}
-          <div className={`mt-4 p-4 rounded-lg border ${
+            {/* Upgrade Prompt */}
+          <div className={`mt-6 p-4 rounded-lg border ${
             isOutOfRequests 
-              ? 'bg-destructive/10 border-destructive/20 dark:bg-destructive/20 dark:border-destructive/30' 
+              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30' 
               : isRunningLow 
-                ? 'bg-orange-50 border-orange-100 dark:bg-orange-950/20 dark:border-orange-900/30' 
-                : 'bg-muted/50 border-border'
+                ? 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/30' 
+                : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30'
           }`}>
-            <p className="text-sm text-card-foreground mb-3">{upgradeMessage}</p>
+            <p className="text-sm text-gray-900 dark:text-gray-100 mb-3 font-medium">{upgradeMessage}</p>
             <div className="flex flex-col sm:flex-row gap-3">
               {/* Show different buttons based on plan type */}
               {planType === 'free' && (
@@ -335,7 +331,7 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
                     className="w-full sm:w-auto"
                     asChild
                   >
-                    <Link to="/pricing">Upgrade to Premium</Link>
+                    <Link to="/pricing">Manage Plan</Link>
                   </Button>
                   <Button 
                     variant="outline" 
@@ -348,8 +344,7 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
                   </Button>
                 </>
               )}
-              
-              {(planType === 'premium' || planType === 'flexy') && (
+                {planType === 'flexy' && (
                 <Button 
                   variant="default" 
                   size="sm" 
@@ -362,7 +357,7 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
               )}
               
               {/* Only show manage subscription button for paid users */}
-              {(planType === 'basic' || planType === 'premium' || planType === 'trial') && (
+              {(planType === 'basic' || planType === 'trial') && (
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -383,11 +378,10 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
           <div className="bg-card text-card-foreground rounded-lg p-4 shadow-sm flex items-start">
             <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
               <MessageSquareText className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-            </div>
-            <div className="ml-3">
+            </div>            <div className="ml-3">
               <div className="text-sm text-muted-foreground">Posts Generated</div>
               <div className="text-xl font-semibold">{stats.postsGenerated}</div>
-              <div className="text-xs text-muted-foreground">Limit: {planLimits.postsPerMonth}/month</div>
+              <div className="text-xs text-muted-foreground">Limit: {planLimits?.postsPerMonth || 0}/month</div>
             </div>
           </div>
           
@@ -399,7 +393,7 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
             <div className="ml-3">
               <div className="text-sm text-muted-foreground">Drafts Saved</div>
               <div className="text-xl font-semibold">{stats.postsDrafted}</div>
-              <div className="text-xs text-muted-foreground">Limit: {planLimits.drafts}</div>
+              <div className="text-xs text-muted-foreground">Limit: {planLimits?.drafts || 0}</div>
             </div>
           </div>
           
@@ -528,15 +522,14 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
                   : 'border-border bg-card'
               }`}
               onClick={() => setSelectedPlan('basic')}
-            >
-              <div className="flex justify-between items-center mb-2">
+            >              <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium">Basic Plan</h3>
-                <div className="text-sm font-semibold">£9.99/month</div>
+                <div className="text-sm font-semibold">£5.99/month</div>
               </div>
               <ul className="text-sm space-y-1">
                 <li className="flex items-start">
                   <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>75 requests/month</span>
+                  <span>70 requests/month</span>
                 </li>
                 <li className="flex items-start">
                   <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
@@ -548,34 +541,7 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
                 </li>
               </ul>
             </div>
-            
-            <div 
-              className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                selectedPlan === 'premium' 
-                  ? 'border-primary bg-primary/10 dark:bg-primary/20' 
-                  : 'border-border bg-card'
-              }`}
-              onClick={() => setSelectedPlan('premium')}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium">Premium Plan</h3>
-                <div className="text-sm font-semibold">£59.99/month</div>
-              </div>
-              <ul className="text-sm space-y-1">
-                <li className="flex items-start">
-                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>250 requests/month</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>Multi-platform support</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>Advanced analytics and features</span>
-                </li>
-              </ul>
-            </div>
+  
             
             <div className="bg-muted p-3 rounded-lg text-xs text-muted-foreground">
               By starting a trial, you agree to provide payment details. Your selected plan will automatically begin after the 5-day trial period ends unless canceled.

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
 import { db } from '@/lib/firebase';
 import { UserProfile, SubscriptionTier } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,7 +17,7 @@ const defaultUserProfile: UserProfile = {
   fullName: '',
   email: '',
   profilePictureUrl: '/placeholder.svg',
-  subscriptionTier: 'Free',
+  subscriptionTier: 'free', // Changed from 'Free' to lowercase 'free' to match the SubscriptionTier type
   dateJoined: new Date(),
   planExpiryDate: null,
   stats: {
@@ -41,7 +42,7 @@ const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, refreshUserProfile } = useAuth();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,15 +53,12 @@ const Profile: React.FC = () => {
       
       try {
         const userDoc = doc(db, 'users', currentUser.uid);
-        const userSnapshot = await getDoc(userDoc);
-        if (userSnapshot.exists()) {
+        const userSnapshot = await getDoc(userDoc);        if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
-          
-          // Map Firebase plan_type to SubscriptionTier type
-          let subscriptionTier: SubscriptionTier = 'Free';
-          if (userData.plan_type === 'basic') subscriptionTier = 'Lite';
-          else if (userData.plan_type === 'premium') subscriptionTier = 'Pro';
-          else if (userData.plan_type === 'flexy') subscriptionTier = 'Flex';
+            // Map Firebase plan_type to SubscriptionTier type
+          let subscriptionTier: SubscriptionTier = 'free'; // Changed from 'Free' to lowercase 'free'
+          if (userData.plan_type === 'basic' || userData.plan_type === 'basicMonth' || userData.plan_type === 'basicYear') subscriptionTier = 'basicMonth'; // Changed from 'Lite' to 'basicMonth' as per the type
+          else if (userData.plan_type === 'flexy') subscriptionTier = 'flexy'; // Changed from 'Flex' to 'flexy'
           
           // Create a properly formatted UserProfile object
           const profileData: UserProfile = {
@@ -132,9 +130,7 @@ const Profile: React.FC = () => {
     };
     
     fetchUserData();
-  }, [currentUser]);
-
-  const handleSaveProfile = async (updates: Partial<UserProfile>) => {
+  }, [currentUser]);  const handleSaveProfile = async (updates: Partial<UserProfile>) => {
     if (!user || !currentUser) return;
     
     try {
@@ -144,6 +140,11 @@ const Profile: React.FC = () => {
       
       if (updates.fullName) {
         updateData.displayName = updates.fullName;
+        
+        // Also update the Auth user's displayName
+        await updateProfile(currentUser, {
+          displayName: updates.fullName
+        });
       }
       
       if (updates.profilePictureUrl) {
@@ -151,12 +152,14 @@ const Profile: React.FC = () => {
       }
       
       await updateDoc(userRef, updateData);
-      
-      // Update local state
+        // Update local state
       setUser({
         ...user,
         ...updates
       });
+      
+      // Refresh the user profile in the auth context to ensure consistency
+      await refreshUserProfile();
       
       // Show success toast
       toast({

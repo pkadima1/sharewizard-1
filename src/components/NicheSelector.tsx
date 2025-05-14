@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,7 +43,7 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
   return (
     <div className="p-6 space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="niche-input" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <Label htmlFor="niche-input" className="text-sm font-medium text-gray-900 dark:text-gray-300">
           Enter your content niche
         </Label>
         <Input
@@ -54,13 +53,10 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
           value={customNiche}
           onChange={handleCustomNicheChange}
         />
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+      </div>      <div className="space-y-2">
+        <p className="text-sm text-gray-700 dark:text-gray-300">
           Or quickly select from common niches
         </p>
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {PREDEFINED_NICHES.map((niche) => (
             <Button

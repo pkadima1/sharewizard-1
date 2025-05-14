@@ -1,0 +1,253 @@
+/* Additional theme adaptability CSS */
+
+/* Global background and text colors for better theme adaptability */
+body {
+  background-color: white;
+  color: #1f2937;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+/* Apply consistent backgrounds to main containers */
+#root, 
+main, 
+.container,
+section {
+  background-color: inherit;
+  color: inherit;
+}
+
+/* Better text selection */
+::selection {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #1e3a8a;
+}
+
+.dark ::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+/* Improved link states */
+a:not([class]) {
+  color: #2563eb;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.dark a:not([class]) {
+  color: #60a5fa;
+}
+
+a:not([class]):hover {
+  text-decoration: underline;
+}
+
+/* Better focus styles for dark mode */
+.dark :focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.6);
+}
+
+/* Smooth theme transitions */
+:root {
+  --theme-transition-duration: 0.3s;
+}
+
+/* Apply transitions to html directly for smoother theme switching */
+html {
+  transition: background-color var(--theme-transition-duration) ease;
+}
+
+/* Enhanced transition for all elements */
+.theme-transition,
+.theme-transition * {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-duration: var(--theme-transition-duration);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Improve contrast for disabled elements */
+.dark [disabled] {
+  opacity: 0.5;
+}
+
+/* Better scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.6);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.6);
+  border-radius: 5px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+/* Helper text color class with better contrast in both themes */
+.text-adaptive-primary {
+  color: #111827;
+}
+
+.dark .text-adaptive-primary {
+  color: #f9fafb;
+}
+
+.text-adaptive-secondary {
+  color: #374151;
+}
+
+.dark .text-adaptive-secondary {
+  color: #e5e7eb;
+}
+
+.text-adaptive-tertiary {
+  color: #6b7280;
+}
+
+.dark .text-adaptive-tertiary {
+  color: #9ca3af;
+}
+
+/* Additional badge contrast helpers */
+.badge-adaptive-blue {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+}
+
+.dark .badge-adaptive-blue {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.badge-adaptive-green {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #047857;
+}
+
+.dark .badge-adaptive-green {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.badge-adaptive-red {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.dark .badge-adaptive-red {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+/* Card styles with improved adaptation between modes */
+.card-light-mode, .card-adaptive {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card-light-mode, .dark .card-adaptive {
+  background-color: #1f2937;
+  border-color: #374151;
+  color: #f3f4f6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Content areas with improved background/foreground contrast */
+.content-area-light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.dark .content-area-light {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+/* Input fields with proper contrast */
+input.input-adaptive,
+select.input-adaptive,
+textarea.input-adaptive {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+
+.dark input.input-adaptive,
+.dark select.input-adaptive,
+.dark textarea.input-adaptive {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+/* Button styles with consistent contrast */
+.btn-adaptive {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #111827;
+}
+
+.dark .btn-adaptive {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+/* Consistent box shadows */
+.shadow-adaptive {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.dark .shadow-adaptive {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Table styles with consistent contrast */
+.table-adaptive {
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.dark .table-adaptive {
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.table-adaptive tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.dark .table-adaptive tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+/* Modal backdrop adaptive styles */
+.backdrop-adaptive {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dark .backdrop-adaptive {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.bg-adaptive-primary {
+  background-color: #fff;
+}
+
+.dark .bg-adaptive-primary {
+  background-color: #111827;
+}

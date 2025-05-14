@@ -3,20 +3,20 @@ import { UserProfile } from "@/types";
 
 // Default request limits for each plan
 export const DEFAULT_REQUEST_LIMIT = {
-  free: 1,          // Free users get 1 request
+  free: 3,          // Free users get 3 requests
   trial: 5,         // Trial users get 5 requests
-  basic: 75,        // Basic plan: 75 requests/month
-  premium: 250,     // Premium plan: 250 requests/month
-  flexy: 250        // Flexy (one-time purchase) same as premium level
+  basic: 70,        // Basic plan users get 70 requests
+  basicMonth: 70,   // Basic month users get 70 requests
+  basicYear: 900,   // Basic year users get 900 requests (75 per month)
+  flexy: 20         // Flexy one-time purchase gives 20 requests
 };
 
 // Mock user data for development
-export const MOCK_USER_PROFILE: UserProfile = {
-  id: "user123",
+export const MOCK_USER_PROFILE: UserProfile = {  id: "user123",
   fullName: "Alex Morgan",
   email: "alex.morgan@example.com",
   profilePictureUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80",
-  subscriptionTier: "Pro",
+  subscriptionTier: "basicMonth",
   planExpiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
   dateJoined: new Date(2023, 2, 15), // March 15, 2023
   stats: {
@@ -77,25 +77,30 @@ export const MOCK_USER_PROFILE: UserProfile = {
 
 // Subscription plan limits
 export const PLAN_LIMITS = {
-  Free: {
-    aiRequests: 20,
-    postsPerMonth: 15,
+  free: {
+    aiRequests: 3,
+    postsPerMonth: 3,
+    drafts: 3
+  },
+  trial: {
+    aiRequests: 5,
+    postsPerMonth: 5,
     drafts: 5
   },
-  Lite: {
-    aiRequests: 50,
-    postsPerMonth: 50,
-    drafts: 20
+  basicMonth: {
+    aiRequests: 70,
+    postsPerMonth: 70,
+    drafts: 30
   },
-  Pro: {
-    aiRequests: 100,
-    postsPerMonth: 150,
-    drafts: 50
+  basicYear: {
+    aiRequests: 900,
+    postsPerMonth: 75,  // 900/12 = 75 per month
+    drafts: 30
   },
-  Flex: {
-    aiRequests: 200,
-    postsPerMonth: 300,
-    drafts: 100
+  flexy: {
+    aiRequests: 20,
+    postsPerMonth: 20,
+    drafts: 10
   }
 };
 
@@ -120,10 +125,11 @@ export const getDaysRemaining = (expiryDate?: Date): number | null => {
 // Get subscription badge color class
 export const getSubscriptionBadgeClass = (tier: string): string => {
   switch (tier) {
-    case 'Free': return 'status-badge-free';
-    case 'Lite': return 'status-badge-lite';
-    case 'Pro': return 'status-badge-pro';
-    case 'Flex': return 'status-badge-flex';
+    case 'free': return 'status-badge-free';
+    case 'trial': return 'status-badge-trial';
+    case 'basicMonth': 
+    case 'basicYear': return 'status-badge-basic';
+    case 'flexy': return 'status-badge-flex';
     default: return 'status-badge-free';
   }
 };

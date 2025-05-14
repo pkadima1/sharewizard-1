@@ -1,7 +1,9 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Import the consolidated theme utilities layer here after the tailwind utilities */
+@import './styles/theme-consolidated.css';
 
 @layer base {
   :root {
@@ -74,10 +76,19 @@
   textarea {
     @apply min-h-10 touch-manipulation;
   }
-
   /* Improve focus states for accessibility */
   :focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2;
+    @apply outline-none ring-2 ring-primary ring-offset-2 dark:ring-offset-gray-900;
+  }
+  
+  /* Improved link styles with better contrast */
+  a:not([class]) {
+    @apply text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline;
+  }
+  
+  /* Better text selection colors */
+  ::selection {
+    @apply bg-blue-100 dark:bg-blue-800 text-blue-900 dark:text-blue-100;
   }
 }
 
@@ -234,12 +245,10 @@
   /* Profile card with premium appearance */
   .profile-card {
     @apply base-card;
-  }
-
-  /* Wizard component enhancements */
+  }  /* Wizard component enhancements */
   .wizard-card {
     @apply rounded-xl border border-border/50 overflow-hidden;
-    @apply bg-white/80 dark:bg-gray-900/60;
+    @apply bg-white dark:bg-[#1A1F2C];
     @apply backdrop-blur-md;
     @apply shadow-[0_4px_16px_rgba(0,0,0,0.08)];
   }

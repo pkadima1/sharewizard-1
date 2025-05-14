@@ -19,11 +19,10 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
   selectedTone,
   selectedNiche
 }) => {
-  return (
-    <div className="w-full max-w-6xl mx-auto p-6">
+  return (    <div className="w-full max-w-6xl mx-auto p-6">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/2 lg:w-3/5">
-          <h2 className="text-xl font-semibold mb-4">Generating Captions...</h2>
+          <h2 className="text-xl font-semibold text-adaptive-primary mb-4">Generating Captions...</h2>
           <div className="space-y-6">
             <div className="space-y-3">
               <Skeleton className="h-4 w-3/4" />

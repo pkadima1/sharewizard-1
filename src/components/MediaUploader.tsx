@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   previewUrl,
   onTextOnlySelect
 }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -333,10 +332,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     transition: 'transform 0.3s ease',
   };
 
-  return (
-    <div className="w-full p-6">
+  return (    <div className="w-full p-6">
       <h2 className="text-2xl font-semibold mb-1 text-gray-800 dark:text-white">
-        Welcome, {currentUser?.displayName || 'User'}
+        Welcome, {userProfile?.displayName || currentUser?.displayName || 'User'}
       </h2>
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         Upload your media or capture directly to get human-like AI-powered captions.
@@ -373,10 +371,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               <div className="h-16 w-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-4">
                 <Upload className="h-8 w-8 text-blue-500" />
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <p className="text-sm text-gray-700 dark:text-gray-400 mb-2">
                 Drag & drop your media here, or click to select
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-600 dark:text-gray-500">
                 Supports images and videos up to 50MB
               </p>
             </div>
@@ -400,8 +398,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             </Button>
           </div>
 
-          <div className="text-center mt-4">
-            <span className="text-gray-500 dark:text-gray-400 text-sm">or</span>
+          <div className="text-center mt-4">            <span className="text-gray-700 dark:text-gray-300 text-sm">or</span>
             <button 
               className="block mx-auto text-primary text-sm hover:underline mt-1"
               onClick={handleTextOnlyClick}

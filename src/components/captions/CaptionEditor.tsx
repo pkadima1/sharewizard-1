@@ -74,10 +74,9 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
           onSave={handleSaveEdit}
           onCancel={handleCancelEdit}
         />
-      ) : (
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+      ) : (        <div className="bg-gray-50 dark:bg-gray-800/90 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-medium dark:text-white">Edit Caption</h3>
+            <h3 className="font-medium text-gray-900 dark:text-white">Edit Caption</h3>
             <div className="flex gap-2">
               <Button
                 variant="ghost"
@@ -119,25 +118,25 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
             </div>
           </div>            {!isTextOnly && mediaType !== 'video' && (
             <div className="mt-4 flex items-center justify-end">
-              <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Caption below</span>
+              <div className="flex items-center space-x-2">                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Caption below</span>
                 <Switch 
-                  checked={captionOverlayMode === 'overlay'} 
-                  onCheckedChange={() => onCaptionOverlayModeChange(captionOverlayMode === 'overlay' ? 'below' : 'overlay')} 
+                  checked={captionOverlayMode === 'overlay'}
+                  onCheckedChange={() => onCaptionOverlayModeChange(captionOverlayMode === 'overlay' ? 'below' : 'overlay')}
+                  className="data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-500"
                 />
-                <span className="text-xs text-gray-500 dark:text-gray-400">Caption overlay</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Caption overlay</span>
               </div>
             </div>
           )}
-          
-          <div className="mt-4">
-            <h3 className="font-semibold mb-2">Caption Text</h3>
-            <div className="p-3 bg-white dark:bg-gray-900 rounded-md">              <h4 className="font-medium">{stripMarkdownFormatting(captions[selectedCaption]?.title)}</h4>
-              <p className="mt-2 text-sm whitespace-pre-line">{stripMarkdownFormatting(captions[selectedCaption]?.caption)}</p>
+            <div className="mt-4">
+            <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-50">Caption Text</h3>
+            <div className="p-3 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm">
+              <h4 className="font-medium text-gray-900 dark:text-white">{stripMarkdownFormatting(captions[selectedCaption]?.title)}</h4>
+              <p className="mt-2 text-sm whitespace-pre-line text-gray-800 dark:text-gray-200">{stripMarkdownFormatting(captions[selectedCaption]?.caption)}</p>
               <p className="mt-2 text-sm italic text-gray-600 dark:text-gray-400">{stripMarkdownFormatting(captions[selectedCaption]?.cta)}</p>
               <div className="flex flex-wrap gap-1 mt-2">
                 {captions[selectedCaption]?.hashtags.map((hashtag, idx) => (
-                  <span key={idx} className="text-blue-500 text-xs">
+                  <span key={idx} className="text-blue-600 dark:text-blue-400 text-xs bg-blue-50 dark:bg-blue-900/20 px-1.5 py-0.5 rounded">
                     #{stripMarkdownFormatting(hashtag)}
                   </span>
                 ))}

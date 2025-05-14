@@ -43,7 +43,6 @@ const Login: React.FC = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -70,25 +69,46 @@ const Login: React.FC = () => {
       navigate('/dashboard');
     } catch (error: any) {
       let errorMessage = "Failed to sign in.";
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = "Incorrect email or password.";
+      let shouldRedirectToSignup = false;
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = "Account not found. Please sign up first.";
+        shouldRedirectToSignup = true;
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = "Incorrect password.";
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = "Too many failed login attempts. Please try again later.";
+      } else if (error.message && error.message.includes("Please sign up first")) {
+        errorMessage = "Account not found. Please sign up first.";
+        shouldRedirectToSignup = true;
       }
+      
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
       });
+      
+      if (shouldRedirectToSignup) {
+        // Redirect to signup page after a short delay
+        setTimeout(() => {
+          navigate('/signup', { state: { email } });
+        }, 1500);
+      }
     } finally {
       setLoading(false);
     }
   };
-
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
       await loginWithGoogle();
+      
+      // Check if userProfile was successfully loaded
+      if (!currentUser?.uid) {
+        throw new Error("Failed to authenticate with Google");
+      }
+      
       toast({
         title: "Login successful!",
         description: "Welcome to EngagePerfect AI",
@@ -96,11 +116,25 @@ const Login: React.FC = () => {
       });
       navigate('/dashboard');
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to sign in with Google.",
-        variant: "destructive",
-      });
+      // If the error suggests user doesn't exist, suggest signup
+      if (error.message && error.message.includes("has no profile")) {
+        toast({
+          title: "Account not found",
+          description: "Please sign up with Google first.",
+          variant: "destructive",
+        });
+        
+        // Redirect to signup
+        setTimeout(() => {
+          navigate('/signup');
+        }, 1500);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to sign in with Google.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
