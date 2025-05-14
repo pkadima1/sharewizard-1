@@ -42,13 +42,14 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<UserCredential>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  refreshUserProfile: () => Promise<boolean>;
   incrementRequestUsage: () => Promise<boolean>;
   checkRequestAvailability: () => Promise<{
     canMakeRequest: boolean;
     message: string;
     usagePercentage: number;
   }>;
-  activateFreeTrial: (selectedPlan: 'basic' | 'premium') => Promise<boolean>;
+  activateFreeTrial: (selectedPlan: 'basic') => Promise<boolean>;
   subscription: any | null;
 }
 
@@ -188,7 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const activateFreeTrial = async (selectedPlan: 'basic' | 'premium'): Promise<boolean> => {
+  const activateFreeTrial = async (selectedPlan: 'basic'): Promise<boolean> => {
     if (!currentUser) {
       toast({
         title: "Error",
@@ -285,16 +286,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     }
   };
-
-  const login = (email: string, password: string) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const login = async (email: string, password: string) => {
+    try {
+      return await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      // Handle user not found error appropriately
+      if (error.code === 'auth/user-not-found') {
+        throw new Error("Account not found. Please sign up first.");
+      }
+      throw error;
+    }
   };
-
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      await createUserProfile(result.user);
+      
+      // Check if user profile exists before creating one
+      const userRef = doc(db, 'users', result.user.uid);
+      const userDoc = await getDoc(userRef);
+      
+      // Only create a profile if the user doesn't exist yet
+      if (!userDoc.exists()) {
+        await createUserProfile(result.user);
+      }
+      
       return result;
     } catch (error) {
       console.error("Error signing in with Google:", error);
@@ -309,6 +325,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = (email: string) => {
     return sendPasswordResetEmail(auth, email);
+  };
+
+  // Add a function to refresh user profile data from Firestore
+  const refreshUserProfile = async (): Promise<boolean> => {
+    if (!currentUser) {
+      return false;
+    }
+
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserProfile({ id: userDoc.id, ...userData });
+        return true;
+      } else {
+        console.warn("User profile not found in Firestore during refresh");
+        return false;
+      }
+    } catch (error: any) {
+      console.error("Error refreshing user profile:", error);
+      toast({
+        title: "Error",
+        description: `Failed to refresh profile: ${error.message || 'Check your connection'}`,
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -351,14 +396,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 title: "Trial Activated",
                 description: "Your 5-day free trial has been activated.",
               });
-            } else {
-              const planType = subscriptionData.status === 'trialing' ? 'trial' : 
-                            (subscriptionData.role === 'premium' ? 'premium' : 
-                            (subscriptionData.role === 'basic' ? 'basic' : 'free'));
+            } else {              const planType = subscriptionData.status === 'trialing' ? 'trial' : 
+                            (subscriptionData.role === 'basicMonth' || subscriptionData.role === 'basicYear' ? 'basic' : 
+                             'free');
               
               const requestsLimit = subscriptionData.status === 'trialing' ? DEFAULT_REQUEST_LIMIT.trial :
-                                (subscriptionData.role === 'premium' ? DEFAULT_REQUEST_LIMIT.premium : 
-                                (subscriptionData.role === 'basic' ? DEFAULT_REQUEST_LIMIT.basic : 
+                                (subscriptionData.role === 'basicMonth' ? DEFAULT_REQUEST_LIMIT.basicMonth :
+                                (subscriptionData.role === 'basicYear' ? DEFAULT_REQUEST_LIMIT.basicYear :
                                 DEFAULT_REQUEST_LIMIT.free));
               
               const resetDate = new Date(subscriptionData.current_period_end.seconds * 1000);
@@ -392,7 +436,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
   }, [currentUser]);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
@@ -405,7 +448,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (userDoc.exists()) {
             setUserProfile({ id: userDoc.id, ...userDoc.data() });
           } else {
-            await createUserProfile(user);
+            // Don't automatically create a profile, instead log a warning
+            console.warn("User exists in Firebase Auth but has no profile in Firestore");
+            // This will prevent non-registered users from accessing protected routes
           }
         } catch (error: any) {
           console.error("Error fetching user profile:", error);
@@ -422,7 +467,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return unsubscribe;
   }, []);
-
   const value = {
     currentUser,
     userProfile,
@@ -432,6 +476,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loginWithGoogle,
     logout,
     resetPassword,
+    refreshUserProfile,
     incrementRequestUsage,
     checkRequestAvailability,
     activateFreeTrial,

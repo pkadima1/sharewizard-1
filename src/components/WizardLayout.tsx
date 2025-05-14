@@ -1,4 +1,3 @@
-
 import React, { ReactNode } from 'react';
 import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
 
@@ -28,11 +27,10 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
   isNextDisabled = false,
   isGenerating = false,
   hideNextButton = false
-}: WizardLayoutProps) => {
-  return (
-    <div className="flex flex-col h-full wizard-card">
+}: WizardLayoutProps) => {  return (
+    <div className="flex flex-col h-full wizard-card text-adaptive-primary bg-adaptive-primary">
       {/* Progress Steps */}
-      <div className="px-4 sm:px-6 md:px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="px-4 sm:px-6 md:px-8 py-6 border-b border-adaptive">
         <div className="hidden md:flex items-center justify-between mb-2">
           {steps.map((step, index) => (
             <div
@@ -110,59 +108,46 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
             {steps[currentStep].description}
           </div>
         </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-4 sm:p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      </div>      {/* Content */}
+      <div className="flex-1 overflow-auto p-4 sm:p-6 text-adaptive-primary">
         {children}
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="px-4 sm:px-6 md:px-8 py-5 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+      </div>{/* Footer with Navigation Buttons */}
+      <div className="px-4 sm:px-6 md:px-8 py-4 mt-auto border-t border-adaptive flex items-center justify-between">
         <button
           onClick={onPrev}
-          disabled={currentStep === 0 || isGenerating}
-          className={`
-            px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-            flex items-center gap-2
-            ${
-              currentStep === 0 || isGenerating
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800 dark:text-gray-600'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-            }`}
+          disabled={currentStep === 0}
+          className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            currentStep === 0
+              ? 'text-adaptive-muted cursor-not-allowed'
+              : 'text-adaptive-primary hover:bg-adaptive-secondary'
+          }`}
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 mr-2" />
           Previous
         </button>
         
         {!hideNextButton && (
           <button
             onClick={onNext}
-            disabled={isNextDisabled || isGenerating}
-            className={`
-              relative px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-              flex items-center gap-2 overflow-hidden
-              ${
-                isNextDisabled || isGenerating
-                  ? 'bg-primary/60 dark:bg-primary/40 cursor-not-allowed'
-                  : 'bg-primary hover:bg-primary/90 dark:bg-primary/80 dark:hover:bg-primary/70 shadow-sm hover:shadow-md'
-              }`}
+            disabled={isNextDisabled}
+            className={`flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              isNextDisabled
+                ? 'bg-gray-200 dark:bg-gray-800 text-adaptive-muted cursor-not-allowed'
+                : 'bg-primary text-white hover:bg-primary/90'
+            }`}
           >
             {isGenerating ? (
               <>
-                <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
-                <span className="text-white">Generating...</span>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating...
               </>
             ) : (
               <>
-                <span className="text-white">
-                  {currentStep === steps.length - 1 
-                    ? 'Download' 
-                    : currentStep === steps.length - 2 
-                    ? 'Generate' 
-                    : 'Next'}
-                </span>
-                {currentStep !== steps.length - 1 && <ArrowRight className="w-4 h-4 text-white" />}
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
               </>
             )}
           </button>

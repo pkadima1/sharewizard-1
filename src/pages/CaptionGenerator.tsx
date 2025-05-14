@@ -142,20 +142,17 @@ const CaptionGenerator: React.FC = () => {
       setCurrentStep(prev => prev - 1);
     }
   };
-
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 via-[#1A1F2C] to-[#221F26] dark:from-gray-900 dark:via-[#1A1F2C] dark:to-[#221F26]">
+    <div className="min-h-screen flex flex-col bg-adaptive-primary">
       <div className="px-4 py-[100px]">
-        <h1 className="text-2xl md:text-3xl font-bold text-white text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-adaptive-primary text-center">
           Caption Generator
         </h1>
-        <p className="mt-2 text-gray-300 text-center max-w-2xl mx-auto">
+        <p className="mt-2 text-adaptive-secondary text-center max-w-2xl mx-auto">
           Create engaging captions for your social media posts with AI assistance
         </p>
-      </div>
-      
-      <div className="container mx-auto flex-1 p-4 md:p-6 max-w-7xl">
-        <div className="bg-gray-800/60 backdrop-blur-md border border-gray-700/50 rounded-xl shadow-md overflow-hidden">
+      </div>        <div className="container mx-auto flex-1 p-4 md:p-6 max-w-7xl">
+        <div className="card-adaptive backdrop-blur-md shadow-md overflow-hidden">
           <WizardLayout 
             currentStep={currentStep} 
             steps={steps} 

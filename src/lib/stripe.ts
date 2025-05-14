@@ -15,6 +15,14 @@ export const createSubscriptionCheckout = async (userId: string, priceId: string
         price: priceId,
         success_url: window.location.origin,
         cancel_url: window.location.origin,
+        subscription_data: {
+          trial_period_days: 5, // Add 5-day trial
+        },
+        allow_promotion_codes: true, // Enable promo code field
+        billing_address_collection: 'auto', // Collect billing address
+        client_reference_id: userId, // For tracking purposes
+        payment_method_types: ['card'], // Payment method types
+        mode: 'subscription', // Subscription mode
       }
     );
 
@@ -55,6 +63,10 @@ export const createFlexCheckout = async (userId: string, priceId: string, quanti
         quantity: quantity,
         success_url: window.location.origin,
         cancel_url: window.location.origin,
+        allow_promotion_codes: true, // Enable promo code field
+        billing_address_collection: 'auto', // Collect billing address
+        client_reference_id: userId, // For tracking purposes
+        payment_method_types: ['card'], // Payment method types
       }
     );
 
@@ -115,7 +127,7 @@ export const getUserRole = async (): Promise<string | null> => {
 /**
  * Checks if user has access to specified tier
  */
-export const checkUserAccess = async (requiredTier: 'basic' | 'premium' | 'flexy'): Promise<boolean> => {
+export const checkUserAccess = async (requiredTier: 'basic' | 'flexy'): Promise<boolean> => {
   try {
     const role = await getUserRole();
     
@@ -123,11 +135,8 @@ export const checkUserAccess = async (requiredTier: 'basic' | 'premium' | 'flexy
     
     switch (requiredTier) {
       case 'basic':
-        // Basic, Premium, and Flexy users can access basic features
-        return role === 'basic' || role === 'premium' || role === 'flexy';
-      case 'premium':
-        // Only Premium and Flexy users can access premium features
-        return role === 'premium' || role === 'flexy';
+        // Basic and Flexy users can access basic features
+        return role === 'basic' || role === 'basicMonth' || role === 'basicYear' || role === 'flexy';
       case 'flexy':
         // Only Flexy users can access flexy features
         return role === 'flexy';

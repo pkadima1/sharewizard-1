@@ -52,12 +52,11 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => {
     return location.pathname === path;
   };
-
   return (
     <header 
       className={`w-full border-b border-gray-200 dark:border-gray-800 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm' 
+          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm' 
           : 'bg-white dark:bg-gray-900'
       }`}
     >
@@ -75,15 +74,14 @@ const Navbar: React.FC = () => {
               </span>
             </Link>
           </div>
-          
-          {/* Desktop Navigation */}
+            {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             <Link 
               to="/" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                  ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
+                  : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
               Home
@@ -223,17 +221,16 @@ const Navbar: React.FC = () => {
             </button>
           </div>
         </div>
-        
-        {/* Mobile Menu */}
+          {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-2 border-t border-gray-200 dark:border-gray-800 animate-fade-in">
+          <div className="md:hidden py-2 border-t border-gray-200 dark:border-gray-800 animate-fade-in bg-white dark:bg-gray-900">
             <nav className="flex flex-col space-y-1 px-2 pb-3 pt-2">
               <Link 
                 to="/" 
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                className={`px-3 py-2.5 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
+                    : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >

@@ -21,11 +21,10 @@ const App = () => <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
-          <Sonner />
-          <BrowserRouter>
+          <Sonner />          <BrowserRouter>
             <div className="flex flex-col min-h-screen">
               <Navbar />
-              <main className="flex-grow main-container bg-slate-900">
+              <main className="flex-grow main-container">
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/profile" element={<Profile />} />

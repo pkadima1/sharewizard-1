@@ -1,21 +1,52 @@
-
 import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Upload, Camera, PenTool, Sparkles } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { clearTrialPending } from '@/lib/subscriptionUtils';
 
 const Dashboard: React.FC = () => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const { toast } = useToast();
   // Protect route - redirect to login if not authenticated
   useEffect(() => {
     if (!currentUser) {
       navigate('/login');
+    } else {
+      // Refresh user profile data when the dashboard loads
+      refreshUserProfile().then(() => {
+        console.log("User profile refreshed");
+      }).catch(error => {
+        console.error("Error refreshing user profile:", error);
+      });
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, navigate, refreshUserProfile]);
+  // Check URL parameters for checkout status
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const checkoutCanceled = queryParams.get('checkout_canceled') === 'true';
+    
+    if (checkoutCanceled && currentUser) {
+      // Clear any trial pending status if checkout was canceled
+      clearTrialPending(currentUser.uid).then(() => {
+        // If checkout was canceled, show a notification to the user
+        toast({
+          title: "Checkout canceled",
+          description: "Your subscription process was canceled. No changes were made to your account.",
+          variant: "default",
+        });
+        
+        // Clean up the URL by removing the parameter
+        navigate('/dashboard', { replace: true });
+      }).catch(error => {
+        console.error("Error clearing trial pending status:", error);
+      });
+    }
+  }, [location, currentUser, navigate, toast]);
 
   if (!currentUser || !userProfile) {
     return <div>Loading...</div>;

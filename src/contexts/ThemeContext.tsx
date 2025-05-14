@@ -106,26 +106,39 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     // Modern API with addEventListener
     mediaQuery.addEventListener('change', handleMediaChange);
     return () => mediaQuery.removeEventListener('change', handleMediaChange);
-  }, []);
-
-  // Apply theme classes to document
+  }, []);  // Apply theme classes to document with improved transitions
   useEffect(() => {
     const root = window.document.documentElement;
+    const body = window.document.body;
+    
+    // Add transition class first for smooth theme change
+    root.classList.add('theme-transition');
     
     // Remove existing themes
     root.classList.remove('light', 'dark');
+    body.classList.remove('light', 'dark');
     
-    // Add the resolved theme
+    // Add the resolved theme to both html and body
     root.classList.add(resolvedTheme);
+    body.classList.add(resolvedTheme);
     
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
       metaThemeColor.setAttribute(
         'content',
-        resolvedTheme === 'dark' ? '#020817' : '#ffffff'
+        resolvedTheme === 'dark' ? '#111827' : '#ffffff'
       );
     }
+    
+    // Let transitions finish before removing transition class
+    const transitionTimeout = setTimeout(() => {
+      root.classList.remove('theme-transition');
+    }, 300);
+    
+    return () => {
+      clearTimeout(transitionTimeout);
+    };
   }, [resolvedTheme]);
 
   // Apply color theme attributes

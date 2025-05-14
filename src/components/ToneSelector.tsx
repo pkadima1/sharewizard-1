@@ -106,8 +106,7 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
           </button>
         ))}
       </div>
-      
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4 mb-6">
+        <div className="text-center text-sm text-gray-700 dark:text-gray-300 mt-4 mb-6">
         Select the tone that best fits your content
       </div>
 

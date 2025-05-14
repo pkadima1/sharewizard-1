@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Instagram, Twitter, Linkedin, Facebook, Youtube, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -86,8 +85,7 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
           </button>
         ))}
       </div>
-      
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+        <div className="text-center text-sm text-gray-700 dark:text-gray-300 mt-6">
         Select the platform where you'll be posting your content
       </div>
     </div>

@@ -1,0 +1,82 @@
+/* Theme utilities for improving text readability and contrast */
+
+/* Text colors with improved contrast in both modes */
+.text-adaptive-primary {
+  @apply text-gray-900 dark:text-gray-50;
+}
+
+.text-adaptive-secondary {
+  @apply text-gray-700 dark:text-gray-200;
+}
+
+.text-adaptive-tertiary {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+.text-adaptive-muted {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+/* Background colors with improved contrast */
+.bg-adaptive-primary {
+  @apply bg-white dark:bg-gray-900;
+}
+
+.bg-adaptive-secondary {
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.bg-adaptive-tertiary {
+  @apply bg-gray-100 dark:bg-gray-700;
+}
+
+.bg-adaptive-hover {
+  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+/* Border colors */
+.border-adaptive {
+  @apply border-gray-200 dark:border-gray-700;
+}
+
+.border-adaptive-focus {
+  @apply focus:border-primary dark:focus:border-primary;
+}
+
+/* Card with improved contrast */
+.card-adaptive {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+}
+
+/* Transitions for theme changes */
+.theme-transition {
+  @apply transition-colors duration-200;
+}
+
+/* Badge styles with better contrast */
+.badge-adaptive-primary {
+  @apply bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-foreground;
+}
+
+.badge-adaptive-secondary {
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100;
+}
+
+/* Ensure proper contrast for links */
+.link-adaptive {
+  @apply text-primary hover:text-primary/80 dark:text-primary-foreground dark:hover:text-primary-foreground/80;
+}
+
+/* Improved focus rings that work well in both themes */
+.focus-adaptive {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:ring-offset-gray-900;
+}
+
+/* Create consistent shadowing across themes */
+.shadow-adaptive {
+  @apply shadow-sm dark:shadow-none;
+}
+
+.shadow-adaptive-md {
+  @apply shadow-md dark:shadow-gray-900/30;
+}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Check, 
@@ -18,7 +17,6 @@ interface PricingFeature {
   name: string;
   free: boolean;
   basic: boolean;
-  premium: boolean;
   flex: boolean;
 }
 
@@ -27,42 +25,35 @@ const features: PricingFeature[] = [
     name: "Social media post generation", 
     free: true, 
     basic: true, 
-    premium: true, 
     flex: true 
   },
   { 
     name: "Basic content templates", 
     free: true, 
     basic: true, 
-    premium: true, 
     flex: true 
   },
   { 
     name: "Save draft posts", 
     free: false, 
     basic: true, 
-    premium: true, 
     flex: true 
   },
   { 
     name: "Premium templates", 
     free: false, 
-    basic: false, 
-    premium: true, 
+    basic: true,
     flex: true 
-  },
-  { 
+  },  { 
     name: "Advanced AI customization", 
     free: false, 
-    basic: false, 
-    premium: true, 
+    basic: true, 
     flex: true 
   },
   { 
     name: "Priority support", 
     free: false, 
-    basic: false, 
-    premium: true, 
+    basic: true, 
     flex: true
   },
 ];
@@ -73,7 +64,7 @@ const PricingTable: React.FC = () => {
   
   const currentPlan = userProfile?.plan_type || 'free';
   
-  const handleSubscribe = async (plan: 'basic' | 'premium') => {
+  const handleSubscribe = async (plan: 'basic') => {
     if (!currentUser) {
       toast({
         title: "Login Required",
@@ -84,7 +75,7 @@ const PricingTable: React.FC = () => {
     }
     
     try {
-      const priceId = plan === 'basic' ? 'price_basic_monthly' : 'price_premium_monthly';
+      const priceId = 'price_basic_monthly';
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
     } catch (error: any) {
@@ -132,29 +123,27 @@ const PricingTable: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Choose Your Plan</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold mb-4 text-adaptive-primary">Choose Your Plan</h2>
+        <p className="text-adaptive-secondary max-w-2xl mx-auto">
           Select the plan that best fits your needs. All plans include our core AI post generation features.
         </p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Free Plan */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full mb-4">
-              <CircleDollarSign className="w-6 h-6 text-gray-500" />
+        <div className="card-adaptive overflow-hidden transition-all hover:shadow-md">
+          <div className="p-6 border-b border-adaptive">
+            <div className="flex items-center justify-center w-12 h-12 bg-adaptive-secondary rounded-full mb-4">
+              <CircleDollarSign className="w-6 h-6 text-adaptive-tertiary" />
             </div>
-            <h3 className="text-xl font-semibold">Free</h3>
-            <div className="mt-4 text-3xl font-bold">$0</div>
-            <div className="text-sm text-gray-500">Forever free</div>
-            
+            <h3 className="text-xl font-semibold text-adaptive-primary">Free</h3>
+            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$0</div>
+            <div className="text-sm text-adaptive-tertiary">Forever free</div>
             <div className="mt-6">
-              <div className="text-sm font-medium mb-1">Includes:</div>
-              <div className="text-sm">1 request</div>
+              <div className="text-sm font-medium mb-1 text-adaptive-secondary">Includes:</div>
+              <div className="text-sm text-adaptive-secondary">1 request</div>
             </div>
           </div>
-          
           <div className="p-6">
             <Button 
               className="w-full mb-4" 
@@ -163,12 +152,11 @@ const PricingTable: React.FC = () => {
             >
               {currentPlan === 'free' ? 'Current Plan' : 'Start Free'}
             </Button>
-            
             <ul className="space-y-3">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center">
                   <span className="mr-2">{renderFeatureStatus(feature.free)}</span>
-                  <span className="text-sm">{feature.name}</span>
+                  <span className="text-sm text-adaptive-secondary">{feature.name}</span>
                 </li>
               ))}
             </ul>
@@ -176,19 +164,19 @@ const PricingTable: React.FC = () => {
         </div>
         
         {/* Basic Plan */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
-              <CreditCard className="w-6 h-6 text-blue-500" />
+        <div className="card-adaptive overflow-hidden transition-all hover:shadow-md">
+          <div className="p-6 border-b border-adaptive">
+            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
+              <CreditCard className="w-6 h-6 text-blue-500 dark:text-blue-300" />
             </div>
-            <h3 className="text-xl font-semibold">Basic</h3>
-            <div className="mt-4 text-3xl font-bold">$9.99</div>
-            <div className="text-sm text-gray-500">per month</div>
+            <h3 className="text-xl font-semibold text-adaptive-primary">Basic</h3>
+            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$5.99</div>
+            <div className="text-sm text-adaptive-tertiary">per month</div>
             
             <div className="mt-6">
-              <div className="text-sm font-medium mb-1">Includes:</div>
-              <div className="text-sm">75 requests/month</div>
-              <div className="mt-2 text-xs text-blue-600">Start with 5-day free trial</div>
+              <div className="text-sm font-medium mb-1 text-adaptive-secondary">Includes:</div>
+              <div className="text-sm text-adaptive-secondary">70 requests/month</div>
+              <div className="mt-2 text-xs text-blue-600 dark:text-blue-300">Start with 5-day free trial</div>
             </div>
           </div>
           
@@ -206,49 +194,7 @@ const PricingTable: React.FC = () => {
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center">
                   <span className="mr-2">{renderFeatureStatus(feature.basic)}</span>
-                  <span className="text-sm">{feature.name}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        
-        {/* Premium Plan */}
-        <div className="bg-white rounded-xl shadow-md border-2 border-blue-500 overflow-hidden relative transition-all hover:shadow-lg">
-          <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold py-1 px-3 rounded-bl-lg">
-            POPULAR
-          </div>
-          
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
-              <Zap className="w-6 h-6 text-blue-500" />
-            </div>
-            <h3 className="text-xl font-semibold">Premium</h3>
-            <div className="mt-4 text-3xl font-bold">$24.99</div>
-            <div className="text-sm text-gray-500">per month</div>
-            
-            <div className="mt-6">
-              <div className="text-sm font-medium mb-1">Includes:</div>
-              <div className="text-sm">250 requests/month</div>
-              <div className="mt-2 text-xs text-blue-600">Start with 5-day free trial</div>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            <Button 
-              className="w-full mb-4 bg-blue-500 hover:bg-blue-600" 
-              variant={currentPlan === 'premium' ? "outline" : "default"}
-              disabled={currentPlan === 'premium'}
-              onClick={() => handleSubscribe('premium')}
-            >
-              {currentPlan === 'premium' ? 'Current Plan' : 'Start Trial'}
-            </Button>
-            
-            <ul className="space-y-3">
-              {features.map((feature, index) => (
-                <li key={index} className="flex items-center">
-                  <span className="mr-2">{renderFeatureStatus(feature.premium)}</span>
-                  <span className="text-sm">{feature.name}</span>
+                  <span className="text-sm text-adaptive-secondary">{feature.name}</span>
                 </li>
               ))}
             </ul>
@@ -256,36 +202,34 @@ const PricingTable: React.FC = () => {
         </div>
         
         {/* Flex Plan */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md">
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4">
-              <ShoppingCart className="w-6 h-6 text-green-500" />
+        <div className="card-adaptive overflow-hidden transition-all hover:shadow-md">
+          <div className="p-6 border-b border-adaptive">
+            <div className="flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full mb-4">
+              <Zap className="w-6 h-6 text-green-500 dark:text-green-300" />
             </div>
-            <h3 className="text-xl font-semibold">Flex</h3>
-            <div className="mt-4 text-3xl font-bold">$9.99</div>
-            <div className="text-sm text-gray-500">one-time purchase</div>
+            <h3 className="text-xl font-semibold text-adaptive-primary">Flex</h3>
+            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$1.99</div>
+            <div className="text-sm text-adaptive-tertiary">per pack</div>
             
             <div className="mt-6">
-              <div className="text-sm font-medium mb-1">Includes:</div>
-              <div className="text-sm">50 requests (never expire)</div>
-              <div className="mt-2 text-xs text-green-600">Buy as many as you need</div>
+              <div className="text-sm font-medium mb-1 text-adaptive-secondary">Includes:</div>
+              <div className="text-sm text-adaptive-secondary">20 extra requests</div>
             </div>
           </div>
           
           <div className="p-6">
             <Button 
-              className="w-full mb-4 bg-green-600 hover:bg-green-700" 
-              variant="default"
+              className="w-full mb-4" 
               onClick={handleBuyFlex}
             >
-              Buy Now
+              Buy Flex Pack
             </Button>
             
             <ul className="space-y-3">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center">
                   <span className="mr-2">{renderFeatureStatus(feature.flex)}</span>
-                  <span className="text-sm">{feature.name}</span>
+                  <span className="text-sm text-adaptive-secondary">{feature.name}</span>
                 </li>
               ))}
             </ul>

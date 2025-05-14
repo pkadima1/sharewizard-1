@@ -15,6 +15,8 @@
 
 // Export generateCaptions function
 export { generateCaptionsV3 } from "./services/openai.js";
+export { syncSubscriptionToUserProfile } from "./syncSubscription.js";
+
 
 // Add any additional function exports below
 

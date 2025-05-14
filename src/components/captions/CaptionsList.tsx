@@ -29,25 +29,24 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
 
   return (
     <div className="space-y-4">
-      {captions.map((caption, index) => (
-        <div 
+      {captions.map((caption, index) => (        <div 
           key={index}
           className={`
-            p-4 border rounded-lg cursor-pointer transition-all 
-            hover:border-blue-300 hover:bg-blue-50 dark:hover:border-blue-500 dark:hover:bg-blue-900/20
+            p-4 border rounded-lg cursor-pointer transition-all shadow-sm
+            hover:border-blue-300 hover:bg-blue-50/70 dark:hover:border-blue-500 dark:hover:bg-blue-900/30
             ${selectedCaption === index 
-              ? 'border-blue-500 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/20' 
-              : 'border-gray-200 dark:border-gray-700'}
+              ? 'border-blue-500 bg-blue-50/80 dark:border-blue-500 dark:bg-blue-900/30 ring-1 ring-blue-200 dark:ring-blue-800' 
+              : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'}
           `}
           onClick={() => setSelectedCaption(index)}
           onMouseEnter={() => setHoveredCaption(index)}
           onMouseLeave={() => setHoveredCaption(null)}
-        >          <h3 className="font-medium mb-2 text-gray-900 dark:text-gray-100">{stripMarkdownFormatting(caption.title)}</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{stripMarkdownFormatting(caption.caption)}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">{stripMarkdownFormatting(caption.cta)}</p>
-          <div className="flex flex-wrap gap-1 mb-2">
+        >          <h3 className="font-medium mb-2 text-gray-900 dark:text-white">{stripMarkdownFormatting(caption.title)}</h3>
+          <p className="text-sm text-gray-800 dark:text-gray-200 mb-3 leading-relaxed">{stripMarkdownFormatting(caption.caption)}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-400 italic mb-2">{stripMarkdownFormatting(caption.cta)}</p>
+          <div className="flex flex-wrap gap-1.5 mb-2">
             {caption.hashtags.map((hashtag, idx) => (
-              <span key={idx} className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-xs text-blue-600 dark:text-blue-400">
+              <span key={idx} className="bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded text-xs font-medium text-blue-600 dark:text-blue-400">
                 #{stripMarkdownFormatting(hashtag)}
               </span>
             ))}

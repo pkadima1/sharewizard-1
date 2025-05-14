@@ -94,10 +94,9 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   if (captions.length === 0 && !isGenerating) {
     return <EmptyState onGenerateClick={handleRegenerateClick} />;
   }
-  return (
-    <div className="w-full max-w-7xl mx-auto p-4">
+  return (    <div className="w-full max-w-7xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold dark:text-white">Choose Your Caption</h2>
+        <h2 className="text-xl font-semibold text-adaptive-primary">Choose Your Caption</h2>
         <div className="flex items-center gap-4">
           {requestsRemaining !== null && (
             <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -125,11 +124,10 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
         
         <div className="lg:w-3/5">
           <div className="sticky top-6 space-y-4">
-            {/* Add CaptionPreview before CaptionEditor */}
-            {captions.length > 0 && selectedCaption >= 0 && (
-              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+            {/* Add CaptionPreview before CaptionEditor */}            {captions.length > 0 && selectedCaption >= 0 && (
+              <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-medium dark:text-white">Preview</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-white">Preview</h3>
                 </div>
                 <CaptionPreview 
                   ref={previewRef}

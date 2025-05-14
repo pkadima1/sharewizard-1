@@ -102,8 +102,7 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
           </button>
         ))}
       </div>
-      
-      <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+        <div className="text-center text-sm text-gray-700 dark:text-gray-300 mt-6">
         Select the primary goal for your content
       </div>
     </div>
