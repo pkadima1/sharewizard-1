@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { UserStats, SubscriptionTier } from '@/types';
 import { PLAN_LIMITS, DEFAULT_REQUEST_LIMIT } from '@/lib/constants';
@@ -50,7 +49,8 @@ const UsageStats: React.FC<UsageStatsProps> = ({ stats, subscriptionTier }) => {
   const { toast } = useToast();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [isActivatingTrial, setIsActivatingTrial] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'basic'>('basic');
+  const [selectedPlan, setSelectedPlan] = useState<'basicMonth' | 'basicYear'>('basicMonth');
+  const [selectedCycle, setSelectedCycle] = useState<'monthly' | 'yearly'>('monthly');
   
   // Calculate usage percentages
   const aiUsagePercentage = Math.min(
@@ -93,7 +93,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
       setIsActivatingTrial(true);
       
       // First mark user as trial in the database
-      const success = await activateFreeTrial(selectedPlan);
+      const success = await activateFreeTrial(selectedPlan, selectedCycle);
       
       if (!success) {
         toast({
@@ -105,7 +105,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
       }
       
       // Then redirect to Stripe checkout for the selected plan with trial period
-      const priceId = getStripePriceId(selectedPlan, 'monthly');
+      const priceId = getStripePriceId(selectedPlan, selectedCycle);
       
       if (!priceId) {
         toast({
@@ -131,7 +131,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
     }
   };
   // Handle plan upgrade
-  const handleUpgrade = async (plan: 'basic' = 'basic') => {
+  const handleUpgrade = async (plan: 'basicMonth' | 'basicYear' = 'basicMonth') => {
     if (!currentUser) {
       toast({
         title: "Error",
@@ -143,7 +143,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
 
     try {
       // Get the correct Stripe price ID
-      const priceId = getStripePriceId(plan, 'monthly');
+      const priceId = getStripePriceId(plan, plan === 'basicMonth' ? 'monthly' : 'yearly');
       
       if (!priceId) {
         toast({
@@ -323,7 +323,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
                 </>
               )}
               
-              {planType === 'basic' && (
+              {planType === 'basicMonth' && (
                 <>
                   <Button 
                     variant="default" 
@@ -357,7 +357,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
               )}
               
               {/* Only show manage subscription button for paid users */}
-              {(planType === 'basic' || planType === 'trial') && (
+              {(planType === 'basicMonth' || planType === 'trial') && (
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -517,32 +517,73 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
           <div className="py-4 space-y-4">
             <div 
               className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                selectedPlan === 'basic' 
-                  ? 'border-primary bg-primary/10 dark:bg-primary/20' 
+                selectedPlan === 'basicMonth' && selectedCycle === 'monthly'
+                  ? 'border-primary bg-primary/10 dark:bg-primary/20'
                   : 'border-border bg-card'
               }`}
-              onClick={() => setSelectedPlan('basic')}
-            >              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium">Basic Plan</h3>
+              onClick={() => { setSelectedPlan('basicMonth'); setSelectedCycle('monthly'); }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                
+                <h3 className="font-medium">Basic Plan (Monthly)</h3>
+                
                 <div className="text-sm font-semibold">£5.99/month</div>
               </div>
               <ul className="text-sm space-y-1">
                 <li className="flex items-start">
                   <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>70 requests/month</span>
+                  <span>70 requests/month </span>
+                </li>
+                  <li className="flex items-start">
+                  <div className="text-blue-500 dark:text-blue-400 mr-2">★</div>
+                  <span><h5>🎉 Launch Offer: First Month for £2.99 Only!</h5></span>
+                </li>
+                <li className="flex items-start">
+                  <div className="text-blue-500 dark:text-blue-400 mr-2">★</div>
+                  
+                  <span><p>Limited to the first 100 subscribers</p></span>
                 </li>
                 <li className="flex items-start">
                   <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>Single platform support</span>
+                  <span>Mobile-friendly ready to post preview & download</span>
                 </li>
                 <li className="flex items-start">
                   <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
-                  <span>Basic analytics</span>
+                  <span>Download/sharing on social media platforms</span>
                 </li>
               </ul>
             </div>
-  
-            
+            <div 
+              className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                selectedPlan === 'basicYear' && selectedCycle === 'yearly'
+                  ? 'border-primary bg-primary/10 dark:bg-primary/20'
+                  : 'border-border bg-card'
+              }`}
+              onClick={() => { setSelectedPlan('basicYear'); setSelectedCycle('yearly'); }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-medium">Basic Plan (Yearly)</h3>
+                <div className="text-sm font-semibold">£29.99/year</div>
+              </div>
+              <ul className="text-sm space-y-1">
+                <li className="flex items-start">
+                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
+                  <span>900 requests/year</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
+                  <span>Mobile-friendly ready to post preview & download</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="text-green-500 dark:text-green-400 mr-2">✓</div>
+                  <span>Download/sharing on social media platforms</span>
+                </li>
+                <li className="flex items-start">
+                  <div className="text-blue-500 dark:text-blue-400 mr-2">★</div>
+                  <span>Save 58% compared to monthly</span>
+                </li>
+              </ul>
+            </div>
             <div className="bg-muted p-3 rounded-lg text-xs text-muted-foreground">
               By starting a trial, you agree to provide payment details. Your selected plan will automatically begin after the 5-day trial period ends unless canceled.
             </div>

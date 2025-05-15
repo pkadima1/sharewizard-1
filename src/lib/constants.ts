@@ -5,7 +5,6 @@ import { UserProfile } from "@/types";
 export const DEFAULT_REQUEST_LIMIT = {
   free: 3,          // Free users get 3 requests
   trial: 5,         // Trial users get 5 requests
-  basic: 70,        // Basic plan users get 70 requests
   basicMonth: 70,   // Basic month users get 70 requests
   basicYear: 900,   // Basic year users get 900 requests (75 per month)
   flexy: 20         // Flexy one-time purchase gives 20 requests
@@ -127,8 +126,8 @@ export const getSubscriptionBadgeClass = (tier: string): string => {
   switch (tier) {
     case 'free': return 'status-badge-free';
     case 'trial': return 'status-badge-trial';
-    case 'basicMonth': 
-    case 'basicYear': return 'status-badge-basic';
+    case 'basicMonth': return 'status-badge-basicMonth';
+    case 'basicYear': return 'status-badge-basicYear';
     case 'flexy': return 'status-badge-flex';
     default: return 'status-badge-free';
   }

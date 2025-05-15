@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -129,9 +128,6 @@ const Navbar: React.FC = () => {
           </nav>
           
           <div className="flex items-center space-x-4">
-            {/* Theme Switcher */}
-            <ThemeSwitcher />
-            
             {/* Auth Actions */}
             {currentUser ? (
               <div className="flex items-center space-x-3">

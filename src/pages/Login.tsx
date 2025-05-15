@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -102,13 +101,9 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      await loginWithGoogle();
+      const result = await loginWithGoogle();
       
-      // Check if userProfile was successfully loaded
-      if (!currentUser?.uid) {
-        throw new Error("Failed to authenticate with Google");
-      }
-      
+      // If loginWithGoogle completes successfully, show success toast
       toast({
         title: "Login successful!",
         description: "Welcome to EngagePerfect AI",
@@ -116,7 +111,7 @@ const Login: React.FC = () => {
       });
       navigate('/dashboard');
     } catch (error: any) {
-      // If the error suggests user doesn't exist, suggest signup
+      // Handle errors as before
       if (error.message && error.message.includes("has no profile")) {
         toast({
           title: "Account not found",
@@ -124,7 +119,6 @@ const Login: React.FC = () => {
           variant: "destructive",
         });
         
-        // Redirect to signup
         setTimeout(() => {
           navigate('/signup');
         }, 1500);

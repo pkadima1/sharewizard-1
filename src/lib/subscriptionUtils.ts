@@ -1,3 +1,4 @@
+// subscriptionUtils.ts - UPDATED VERSION
 import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from './firebase';
 import { DEFAULT_REQUEST_LIMIT } from './constants';
@@ -60,7 +61,9 @@ export const checkUserPlan = async (userId: string): Promise<{
         message: 'User profile not found. Please contact support.',
         usagePercentage: 100
       };
-    }    const userData = userDoc.data();
+    }    
+    
+    const userData = userDoc.data();
     const requestsUsed = userData.requests_used || 0;
     const requestsLimit = userData.requests_limit || 
       (userData.plan_type && DEFAULT_REQUEST_LIMIT[userData.plan_type]) || 
@@ -68,7 +71,9 @@ export const checkUserPlan = async (userId: string): Promise<{
     const planType = userData.plan_type || 'free';
     const usagePercentage = calculateUsagePercentage(requestsUsed, requestsLimit);
     
-    if (requestsUsed >= requestsLimit) {      if (planType === 'free') {
+    if (requestsUsed >= requestsLimit) {
+      // Updated to handle only basicMonth and basicYear plan types
+      if (planType === 'free') {
         return {
           status: 'UPGRADE',
           message: 'You have used all your free requests. Choose a plan and start a trial to continue.',
@@ -80,10 +85,11 @@ export const checkUserPlan = async (userId: string): Promise<{
           message: 'Your trial requests are used up. Upgrade to a paid plan to continue.',
           usagePercentage
         };
-      } else if (planType === 'basic') {
+      } else if (planType === 'basicMonth' || planType === 'basicYear') {
+        // Handle both basic plan variations
         return {
           status: 'LIMIT_REACHED',
-          message: 'You have reached your monthly request limit. Add Flex packs for additional requests.',
+          message: 'You have reached your request limit. Add Flex packs for additional requests.',
           usagePercentage
         };
       } else if (planType === 'flexy') {
@@ -124,13 +130,12 @@ export const calculateUsagePercentage = (used: number, limit: number): number =>
 };
 
 export const formatPlanName = (planType: string): string => {
+  // Removed 'basic' case entirely
   switch (planType) {
     case 'free':
       return 'Free Plan';
     case 'trial':
       return 'Trial Plan';
-    case 'basic':
-      return 'Basic Plan';
     case 'basicMonth':
       return 'Basic Monthly Plan';
     case 'basicYear':
@@ -157,13 +162,12 @@ export const getDaysRemainingInPlan = (endDate: any): number => {
 };
 
 export const getSuggestedUpgrade = (currentPlan: string): string => {
+  // Removed 'basic' case entirely
   switch (currentPlan) {
     case 'free':
       return 'Choose a plan and start your 5-day free trial with our Basic plan.';
     case 'trial':
-      return 'Your trial will end soon. Upgrade to Basic to continue.';
-    case 'basic':
-      return 'Need more requests? Add Flex packs for additional requests.';
+      return 'Your trial will end soon. Upgrade to continue.';
     case 'basicMonth':
       return 'Save money by switching to yearly billing, or add Flex packs as needed.';
     case 'basicYear':
@@ -277,7 +281,11 @@ export const safeDownloadContent = (content: string, filename: string): boolean 
   }
 };
 
-export const markUserForTrial = async (userId: string, planSelected: 'basic' = 'basic'): Promise<boolean> => {
+export const markUserForTrial = async (
+  userId: string, 
+  planSelected: 'basicMonth' | 'basicYear' = 'basicMonth', 
+  selectedCycle: 'monthly' | 'yearly' = 'monthly'
+): Promise<boolean> => {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
@@ -296,9 +304,11 @@ export const markUserForTrial = async (userId: string, planSelected: 'basic' = '
     
     console.log("Marking user for trial:", userId);
     console.log("Selected plan for trial:", planSelected);
+    console.log("Selected cycle for trial:", selectedCycle);
     
     await updateDoc(userRef, {
       selected_plan: planSelected,
+      selected_cycle: selectedCycle,
       trial_pending: true
     });
     
@@ -370,28 +380,38 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
     '5 free requests during trial',
   ];
   
+  // Removed 'basic' case entirely, only using basicMonth and basicYear
   switch (planType) {
     case 'free':
       return [
         '3 free requests',
         'Manual share support',
-        'Post ideas and captions (image only support)'
+        'Post ideas and captions'
       ];
-    case 'basic':
     case 'basicMonth':
-    case 'basicYear':
       return [
         ...baseFeatures,
-        cycle === 'monthly' ? '70 requests/month' : '900 requests/year',
+        '70 requests/month',
         'Single platform support',
-        'Post ideas and captions (image only support)',
+        'Post ideas and captions',
         'Mobile-friendly ready to post preview & download',
         'Manual sharing on social media platforms',
         'Friendly customer support'
-      ];    case 'flexy':
+      ];
+    case 'basicYear':
+      return [
+        ...baseFeatures,
+        '900 requests/year',
+        'Single platform support',
+        'Post ideas and captions',
+        'Mobile-friendly ready to post preview & download',
+        'Manual sharing on social media platforms',
+        'Friendly customer support'
+      ];
+    case 'flexy':
       return [
         'No monthly commitment',
-        'Works with Basic plan',
+        'Works with Basic plans',
         '20 additional requests per pack',
         'Use with any plan'
       ];
@@ -400,12 +420,13 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
   }
 };
 
-export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly'): { price: string, saving?: string, promo?: string } => {
+export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): { price: string, saving?: string, promo?: string } => {
+  // Removed 'basic' case entirely
   switch (planType) {
-    case 'basic':
-      return cycle === 'monthly' 
-        ? { price: '£5.99/month', promo: '£2.99 for 1st month (-49.9%)' }
-        : { price: '£29.99/year', saving: 'Save 58%' };
+    case 'basicMonth':
+      return { price: '£5.99/month', promo: '£2.99 for 1st month (-49.9%)' };
+    case 'basicYear':
+      return { price: '£29.99/year', saving: 'Save 58%' };
     case 'flexy':
       return { price: '£1.99 per pack' };
     default:
@@ -413,12 +434,13 @@ export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly'): {
   }
 };
 
-export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly'): string => {
+export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
+  // Removed 'basic' case entirely
   switch (planType) {
-    case 'basic':
-      return cycle === 'monthly' 
-        ? 'price_1RNzACGCd9fidigrkEymjrh7' // Basic Plan Monthly
-        : 'price_1RNz3nGCd9fidigrluCD0x6l'; // Basic Plan Yearly
+    case 'basicMonth':
+      return 'price_1RNzACGCd9fidigrkEymjrh7'; // Basic Plan Monthly
+    case 'basicYear':
+      return 'price_1RNz3nGCd9fidigrluCD0x6l'; // Basic Plan Yearly
     case 'flexy':
       return 'price_1QzLOMGCd9fidigrt9Bk0C67';
     default:
@@ -427,11 +449,12 @@ export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly'):
 };
 
 export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
+  // Removed 'basic' case entirely
   switch (planType) {
-    case 'basic':
-      return cycle === 'monthly' 
-        ? 'prod_SIaK9lSsPk6Vw3' // Basic Plan Monthly
-        : 'prod_SIaE8lkPP3Dbkp'; // Basic Plan Yearly
+    case 'basicMonth':
+      return 'prod_SIaK9lSsPk6Vw3'; // Basic Plan Monthly
+    case 'basicYear':
+      return 'prod_SIaE8lkPP3Dbkp'; // Basic Plan Yearly
     case 'flexy':
       return 'prod_Rt7dTWahmAAQ98';
     default:
@@ -439,12 +462,13 @@ export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly'
   }
 };
 
-export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearly'): string => {
+export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
+  // Removed 'basic' case entirely
   switch (planType) {
-    case 'basic':
-      return cycle === 'monthly' 
-        ? 'https://buy.stripe.com/test_5kQcN561vgGL2u6cBveAg0e' // Basic Plan Monthly
-        : 'https://buy.stripe.com/test_eVq8wP89DeyD8SufNHeAg0d'; // Basic Plan Yearly
+    case 'basicMonth':
+      return 'https://buy.stripe.com/test_5kQcN561vgGL2u6cBveAg0e';
+    case 'basicYear':
+      return 'https://buy.stripe.com/test_eVq8wP89DeyD8SufNHeAg0d';
     case 'flexy':
       return 'https://buy.stripe.com/test_3csg35cXzdy7d4AfZ8';
     default:
