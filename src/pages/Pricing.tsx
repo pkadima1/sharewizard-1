@@ -269,10 +269,13 @@ const Pricing: React.FC = () => {
               
               <Button 
                 className="w-full bg-violet-600 hover:bg-violet-700 text-white py-6 text-base shadow-lg border border-adaptive" 
-                onClick={() => handlePurchase('basic', getStripePriceId('basic', billingCycle))} 
-                disabled={isLoading['basic']}
+                onClick={() => handlePurchase(
+                  billingCycle === 'monthly' ? 'basicMonth' : 'basicYear',
+                  getStripePriceId(billingCycle === 'monthly' ? 'basicMonth' : 'basicYear', billingCycle)
+                )} 
+                disabled={isLoading[billingCycle === 'monthly' ? 'basicMonth' : 'basicYear']}
               >
-                {isLoading['basic'] ? 'Processing...' : 'Start Free Trial with Basic'}
+                {isLoading[billingCycle === 'monthly' ? 'basicMonth' : 'basicYear'] ? 'Processing...' : 'Start Free Trial with Basic'}
               </Button>
               <p className="text-xs text-center text-adaptive-tertiary mt-3">
                 <span className="text-gray-500 dark:text-gray-400">Subscription begins after 5-day trial. Cancel anytime during trial.</span>
