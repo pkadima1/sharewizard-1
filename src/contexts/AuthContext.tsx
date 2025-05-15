@@ -49,7 +49,7 @@ interface AuthContextType {
     message: string;
     usagePercentage: number;
   }>;
-  activateFreeTrial: (selectedPlan: 'basic') => Promise<boolean>;
+  activateFreeTrial: (selectedPlan: 'basicMonth' | 'basicYear', selectedCycle: 'monthly' | 'yearly') => Promise<boolean>;
   subscription: any | null;
 }
 
@@ -189,7 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const activateFreeTrial = async (selectedPlan: 'basic'): Promise<boolean> => {
+  const activateFreeTrial = async (selectedPlan: 'basicMonth' | 'basicYear', selectedCycle: 'monthly' | 'yearly'): Promise<boolean> => {
     if (!currentUser) {
       toast({
         title: "Error",
@@ -200,10 +200,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     
     try {
-      const success = await markUserForTrial(currentUser.uid, selectedPlan);
+      const success = await markUserForTrial(currentUser.uid, selectedPlan, selectedCycle);
       
       if (success) {
-        const priceId = getStripePriceId(selectedPlan, 'yearly');
+        const priceId = getStripePriceId(selectedPlan, selectedCycle);
         
         if (!priceId) {
           toast({
@@ -396,23 +396,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 title: "Trial Activated",
                 description: "Your 5-day free trial has been activated.",
               });
-            } else {              const planType = subscriptionData.status === 'trialing' ? 'trial' : 
-                            (subscriptionData.role === 'basicMonth' || subscriptionData.role === 'basicYear' ? 'basic' : 
-                             'free');
-              
-              const requestsLimit = subscriptionData.status === 'trialing' ? DEFAULT_REQUEST_LIMIT.trial :
-                                (subscriptionData.role === 'basicMonth' ? DEFAULT_REQUEST_LIMIT.basicMonth :
-                                (subscriptionData.role === 'basicYear' ? DEFAULT_REQUEST_LIMIT.basicYear :
-                                DEFAULT_REQUEST_LIMIT.free));
-              
+            } else {
+              let planType = 'free';
+              if (subscriptionData.status === 'trialing') {
+                planType = 'trial';
+              } else if (subscriptionData.role === 'basicMonth' || subscriptionData.role === 'basicYear') {
+                planType = subscriptionData.role; // Use the actual role
+              } else if (subscriptionData.role === 'flexy') {
+                planType = 'flexy';
+              }
+
+              let requestsLimit = DEFAULT_REQUEST_LIMIT.free;
+              if (subscriptionData.status === 'trialing') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.trial;
+              } else if (subscriptionData.role === 'basicMonth') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.basicMonth;
+              } else if (subscriptionData.role === 'basicYear') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.basicYear;
+              } else if (subscriptionData.role === 'flexy') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.flexy;
+              }
+
               const resetDate = new Date(subscriptionData.current_period_end.seconds * 1000);
-              
+
               await updateDoc(userRef, {
                 plan_type: planType,
                 requests_limit: requestsLimit,
                 reset_date: resetDate,
-                trial_end_date: subscriptionData.status === 'trialing' ? 
-                              new Date(subscriptionData.trial_end.seconds * 1000) : null
+                trial_end_date: subscriptionData.status === 'trialing' ?
+                  new Date(subscriptionData.trial_end.seconds * 1000) : null
               });
             }
             

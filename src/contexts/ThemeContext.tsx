@@ -35,21 +35,14 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  defaultTheme = 'system',
+  defaultTheme = 'dark',
   defaultColor = 'default',
   storageKey = 'theme',
   colorStorageKey = 'theme-color',
 }) => {
-  // Get the initial theme from localStorage or default
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    const savedTheme = localStorage.getItem(storageKey) as ThemeMode;
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-      return savedTheme;
-    }
-    return defaultTheme;
-  });
-
-  // Get the initial theme color from localStorage or default
+  // Always use dark theme
+  const theme = 'dark';
+  const resolvedTheme: BaseTheme = 'dark';
   const [themeColor, setThemeColor] = useState<ThemeColor>(() => {
     const savedColor = localStorage.getItem(colorStorageKey) as ThemeColor;
     if (savedColor && ['blue', 'green', 'purple', 'orange', 'default'].includes(savedColor)) {
@@ -57,133 +50,37 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     }
     return defaultColor;
   });
-  
-  // Track system preference separately
-  const [isSystemPreferenceDark, setIsSystemPreferenceDark] = useState<boolean>(() => {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
 
-  // Determine the resolved theme based on system preference
-  const resolvedTheme = useMemo<BaseTheme>(() => {
-    if (theme === 'system') {
-      return isSystemPreferenceDark ? 'dark' : 'light';
-    }
-    return theme as BaseTheme;
-  }, [theme, isSystemPreferenceDark]);
-
-  // Function to set the theme and save to localStorage
-  const handleSetTheme = (newTheme: ThemeMode) => {
-    setTheme(newTheme);
-    localStorage.setItem(storageKey, newTheme);
-  };
-
-  // Function to set the theme color and save to localStorage
+  // Only allow setting theme color
   const handleSetThemeColor = (newColor: ThemeColor) => {
     setThemeColor(newColor);
     localStorage.setItem(colorStorageKey, newColor);
   };
 
-  // Convenience method to toggle between light/dark
-  const toggleTheme = () => {
-    if (theme === 'system') {
-      handleSetTheme(isSystemPreferenceDark ? 'light' : 'dark');
-    } else {
-      handleSetTheme(theme === 'dark' ? 'light' : 'dark');
-    }
-  };
-
-  // Set up a listener for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleMediaChange = (e: MediaQueryListEvent) => {
-      setIsSystemPreferenceDark(e.matches);
-    };
-    
-    // Initial setup
-    setIsSystemPreferenceDark(mediaQuery.matches);
-    
-    // Modern API with addEventListener
-    mediaQuery.addEventListener('change', handleMediaChange);
-    return () => mediaQuery.removeEventListener('change', handleMediaChange);
-  }, []);  // Apply theme classes to document with improved transitions
+  // Always add 'dark' class to html and body
   useEffect(() => {
     const root = window.document.documentElement;
     const body = window.document.body;
-    
-    // Add transition class first for smooth theme change
-    root.classList.add('theme-transition');
-    
-    // Remove existing themes
-    root.classList.remove('light', 'dark');
-    body.classList.remove('light', 'dark');
-    
-    // Add the resolved theme to both html and body
-    root.classList.add(resolvedTheme);
-    body.classList.add(resolvedTheme);
-    
+    root.classList.add('dark');
+    body.classList.add('dark');
+    root.classList.remove('light');
+    body.classList.remove('light');
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute(
-        'content',
-        resolvedTheme === 'dark' ? '#111827' : '#ffffff'
-      );
+      metaThemeColor.setAttribute('content', '#111827');
     }
-    
-    // Let transitions finish before removing transition class
-    const transitionTimeout = setTimeout(() => {
-      root.classList.remove('theme-transition');
-    }, 300);
-    
-    return () => {
-      clearTimeout(transitionTimeout);
-    };
-  }, [resolvedTheme]);
-
-  // Apply color theme attributes
-  useEffect(() => {
-    const root = window.document.documentElement;
-    
-    // Remove existing color themes
-    root.classList.remove('theme-blue', 'theme-green', 'theme-purple', 'theme-orange');
-    
-    // Only add class if not default
-    if (themeColor !== 'default') {
-      root.classList.add(`theme-${themeColor}`);
-    }
-    
-    // Set data attribute for CSS selectors
-    root.setAttribute('data-theme-color', themeColor);
-  }, [themeColor]);
-
-  // Provide prefetch for smooth transitions
-  useEffect(() => {
-    const oppositeTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
-    
-    // Prefetch and cache the other theme to make transitions instant
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.as = 'style';
-    link.href = `/themes/${oppositeTheme}.css`; // Adjust path as needed
-    document.head.appendChild(link);
-    
-    return () => {
-      if (document.head.contains(link)) {
-        document.head.removeChild(link);
-      }
-    };
-  }, [resolvedTheme]);
+  }, []);
 
   const contextValue = useMemo(() => ({
     theme,
-    setTheme: handleSetTheme,
+    setTheme: () => {}, // no-op
     themeColor,
     setThemeColor: handleSetThemeColor,
     resolvedTheme,
-    isSystemPreferenceDark,
-    toggleTheme,
-  }), [theme, themeColor, resolvedTheme, isSystemPreferenceDark]);
+    isSystemPreferenceDark: true,
+    toggleTheme: () => {}, // no-op
+  }), [themeColor]);
 
   return (
     <ThemeContext.Provider value={contextValue}>

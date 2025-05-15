@@ -1,9 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { toast } from "sonner";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import UpgradeBanner from '../UpgradeBanner';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ErrorDisplayProps {
   error: string;
@@ -22,13 +23,24 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   // Check if the error is CORS related
   const isCorsError = error.toLowerCase().includes('cors') || error.toLowerCase().includes('connection');
 
+  // Show UpgradeBanner if the error is about free requests limit
+  const isFreeLimitError = error && error.toLowerCase().includes('used all your free requests');
+  // TODO: Replace the following with a real check for paid plan if available
+  const { userProfile } = useAuth();
+  const hasPaidPlan = userProfile && ['basicMonth', 'basicYear', 'flexy', 'trial'].includes(userProfile.plan_type);
+
+  if (isFreeLimitError && !hasPaidPlan) {
+    return <UpgradeBanner />;
+  }
+
+  // Fallback to the old error display for other errors
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
       <div className="bg-red-50 dark:bg-red-900/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
         <AlertCircle className="h-8 w-8 text-red-500 dark:text-red-400" />
-      </div>      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">Generation Failed</h3>
+      </div>
+      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">Generation Failed</h3>
       <p className="text-adaptive-secondary mb-4 max-w-md">{error}</p>
-      
       {isCorsError && (
         <Alert variant="destructive" className="mb-4 max-w-md">
           <AlertCircle className="h-4 w-4" />
@@ -38,7 +50,6 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           </AlertDescription>
         </Alert>
       )}
-      
       <div className="flex gap-3">
         <Button
           variant="outline"
