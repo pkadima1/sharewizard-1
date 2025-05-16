@@ -113,7 +113,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Features
+          {/*  Features*/}
             </Link>
             <Link 
               to="/blog" 
@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Blog
+             {/* Blog*/}
             </Link>
           </nav>
           
@@ -131,7 +131,8 @@ const Navbar: React.FC = () => {
             {/* Auth Actions */}
             {currentUser ? (
               <div className="flex items-center space-x-3">
-                <Link 
+                {/* Dashboard link hidden for now */}
+                {/* <Link 
                   to="/dashboard" 
                   className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                     isActive('/dashboard') 
@@ -140,8 +141,7 @@ const Navbar: React.FC = () => {
                   }`}
                 >
                   Dashboard
-                </Link>
-                
+                </Link> */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="group relative flex items-center">
@@ -175,12 +175,13 @@ const Navbar: React.FC = () => {
                         <span>Profile</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    {/* Dashboard menu item hidden for now */}
+                    {/* <DropdownMenuItem asChild>
                       <Link to="/dashboard" className="cursor-pointer flex items-center">
                         <Bell className="mr-2 h-4 w-4" />
                         <span>Dashboard</span>
                       </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-700 focus:text-red-700">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -278,7 +279,8 @@ const Navbar: React.FC = () => {
               </Link>
               {currentUser && (
                 <>
-                  <Link 
+                  {/* Dashboard mobile link hidden for now */}
+                  {/* <Link 
                     to="/dashboard" 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                       isActive('/dashboard') 
@@ -288,7 +290,7 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
-                  </Link>
+                  </Link> */}
                   <Link 
                     to="/profile" 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,7 +25,7 @@ const SignUp: React.FC = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (currentUser) {
-      navigate('/dashboard');
+      navigate('/caption-generator');
     }
   }, [currentUser, navigate]);
 
@@ -76,7 +75,7 @@ const SignUp: React.FC = () => {
         description: "Welcome to EngagePerfect AI",
         variant: "default",
       });
-      navigate('/dashboard');
+      navigate('/caption-generator');
     } catch (error: any) {
       let errorMessage = "Failed to create an account.";
       if (error.code === 'auth/email-already-in-use') {
@@ -101,7 +100,7 @@ const SignUp: React.FC = () => {
         description: "Welcome to EngagePerfect AI",
         variant: "default",
       });
-      navigate('/dashboard');
+      navigate('/caption-generator');
     } catch (error: any) {
       toast({
         title: "Error",
