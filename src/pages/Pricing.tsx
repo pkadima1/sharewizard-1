@@ -80,7 +80,7 @@ const Pricing: React.FC = () => {
     }
 
     // In a real implementation, we would call an API to activate the trial
-    navigate('/dashboard');
+    navigate('/caption-generator');
   };
 
   return (

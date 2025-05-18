@@ -24,7 +24,7 @@ const Login: React.FC = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (currentUser) {
-      navigate('/dashboard');
+      navigate('/caption-generator');
     }
   }, [currentUser, navigate]);
 
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
         description: "Welcome back to EngagePerfect AI",
         variant: "default",
       });
-      navigate('/dashboard');
+      navigate('/caption-generator');
     } catch (error: any) {
       let errorMessage = "Failed to sign in.";
       let shouldRedirectToSignup = false;
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
         description: "Welcome to EngagePerfect AI",
         variant: "default",
       });
-      navigate('/dashboard');
+      navigate('/caption-generator');
     } catch (error: any) {
       // Handle errors as before
       if (error.message && error.message.includes("has no profile")) {
