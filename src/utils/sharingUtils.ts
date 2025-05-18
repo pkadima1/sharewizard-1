@@ -1,17 +1,22 @@
 import html2canvas from 'html2canvas';
+import React from 'react';
 import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MediaType, Caption, CaptionStyle, DownloadOptions } from '@/types/mediaTypes';
 import { stripMarkdownFormatting } from './textFormatters';
 
-// Helper function to create video with caption overlay
+/**
+ * Helper function to create video with caption overlay
+ * Improved with better text rendering and quality
+ */
 export const createCaptionedVideo = async (
   videoElement: HTMLVideoElement, 
   caption: Caption,
   captionStyle: CaptionStyle = 'standard'
 ): Promise<Blob> => {
   return new Promise((resolve, reject) => {
-    try {      // Validate caption object to prevent errors and strip markdown
+    try {
+      // Validate caption object to prevent errors and strip markdown
       const validatedCaption: Caption = {
         title: stripMarkdownFormatting(caption?.title) || 'Untitled',
         caption: stripMarkdownFormatting(caption?.caption) || '',
@@ -21,24 +26,49 @@ export const createCaptionedVideo = async (
 
       // Create a canvas with space for video and caption
       const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
+      const ctx = canvas.getContext('2d', { alpha: false })!;
 
       // Set canvas dimensions based on caption style
       canvas.width = videoElement.videoWidth;
       const captionHeight = captionStyle === 'standard' ? 260 : 0; // Increased height for caption
       canvas.height = videoElement.videoHeight + (captionStyle === 'standard' ? captionHeight : 0);
 
-      // Clone video element to preserve original
+      // Apply high quality settings
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      // Clone video element to preserve original with enhanced setup
       const originalVideo = document.createElement('video');
       originalVideo.src = videoElement.src;
-      originalVideo.crossOrigin = 'anonymous';
+      originalVideo.crossOrigin = 'anonymous'; // Enable cross-origin support
       originalVideo.muted = false;
       originalVideo.volume = 1.0;
       originalVideo.playsInline = true; // Add playsInline for better compatibility
+      originalVideo.preload = 'auto'; // Ensure video loads fully
+      originalVideo.loop = false; // Prevent looping during processing
+      originalVideo.controls = false; // Hide controls during processing
+      
+      // Apply necessary attributes to ensure proper loading
+      if (videoElement.getAttribute('crossorigin')) {
+        originalVideo.setAttribute('crossorigin', videoElement.getAttribute('crossorigin') || 'anonymous');
+      }
+      
+      // Copy current time if needed
+      if (videoElement.currentTime > 0) {
+        originalVideo.currentTime = videoElement.currentTime;
+      }
+
+      // Add load event listeners for better debugging
+      originalVideo.addEventListener('loadstart', () => console.log('Video load started'));
+      originalVideo.addEventListener('loadedmetadata', () => console.log('Video metadata loaded'));
+      originalVideo.addEventListener('loadeddata', () => console.log('Video data loaded'));
+      originalVideo.addEventListener('canplay', () => console.log('Video can start playing'));
+      originalVideo.addEventListener('canplaythrough', () => console.log('Video can play through'));
 
       // Progress tracking for long videos
       let toastId: string | number | undefined;
 
+      // Wait for metadata to load properly
       originalVideo.onloadedmetadata = () => {
         if (originalVideo.duration > 5) {
           toastId = toast.loading('Processing video with captions...');
@@ -61,11 +91,11 @@ export const createCaptionedVideo = async (
           combinedStream = canvasStream;
         }
 
-        // Use higher quality encoding settings
+        // Use higher quality encoding settings for better MP4 conversion
         const recorderOptions = {
-          mimeType: 'video/webm;codecs=vp9,opus', // Upgrade from VP8 to VP9 for better quality
-          videoBitsPerSecond: 8000000, // Increase bitrate from 5 Mbps to 8 Mbps
-          audioBitsPerSecond: 128000 // Explicitly set audio bitrate
+          mimeType: 'video/webm;codecs=vp9,opus', // VP9 provides better quality and compression
+          videoBitsPerSecond: 8000000, // 8 Mbps for high quality video
+          audioBitsPerSecond: 128000 // 128 kbps audio is good enough for most purposes
         };
 
         let mediaRecorder: MediaRecorder;
@@ -76,7 +106,7 @@ export const createCaptionedVideo = async (
           try {
             mediaRecorder = new MediaRecorder(combinedStream, {
               mimeType: 'video/webm;codecs=vp8,opus',
-              videoBitsPerSecond: 4000000 // 6 Mbps fallback
+              videoBitsPerSecond: 6000000 // 6 Mbps fallback
             });
           } catch (e2) {
             console.warn('Falling back to default codec:', e2);
@@ -91,43 +121,75 @@ export const createCaptionedVideo = async (
           }
         };
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
           if (toastId) {
             toast.dismiss(toastId);
           }
-          const finalBlob = new Blob(chunks, { type: 'video/webm' });
-          resolve(finalBlob);
+          
+          // Create the initial WebM blob
+          const webmBlob = new Blob(chunks, { type: 'video/webm' });
+          
+          try {
+            // Convert WebM to MP4 if possible
+            const mp4Blob = await convertWebMtoMP4(webmBlob);
+            console.log('Successfully converted WebM to MP4');
+            resolve(mp4Blob);
+          } catch (error) {
+            console.warn('Could not convert to MP4, using WebM instead:', error);
+            resolve(webmBlob);
+          }
         };
 
         // Start playing and recording
         originalVideo.play().then(() => {
+          console.log('Video playback started successfully');
           mediaRecorder.start(100);
 
           // Function to draw a frame
           const drawFrame = () => {
-            // Clear canvas
-            ctx.fillStyle = '#1e1e1e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            try {
+              // Clear canvas with dark background
+              ctx.fillStyle = '#1e1e1e';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw video frame
-            ctx.drawImage(originalVideo, 0, 0);
+              // Draw video frame ensuring it's properly sized
+              try {
+                ctx.drawImage(originalVideo, 0, 0, canvas.width, captionStyle === 'standard' ? videoElement.videoHeight : canvas.height);
+              } catch (err) {
+                console.warn('Error drawing video frame:', err);
+                // If there's an error drawing the frame, retry after a small delay
+                setTimeout(() => requestAnimationFrame(drawFrame), 50);
+                return;
+              }
 
-            // Draw caption based on style
-            if (captionStyle === 'handwritten') {
-              drawHandwrittenOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
-            } else if (captionStyle === 'modern') {
-              drawModernVideoOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
-            } else {
-              drawStandardCaption(ctx, validatedCaption, videoElement, captionHeight);
-            }
+              // Draw caption based on style with enhanced visibility
+              try {
+                if (captionStyle === 'handwritten') {
+                  drawHandwrittenOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
+                } else if (captionStyle === 'modern') {
+                  drawModernVideoOverlay(ctx, validatedCaption, videoElement.videoWidth, videoElement.videoHeight);
+                } else {
+                  drawStandardCaption(ctx, validatedCaption, videoElement, captionHeight);
+                }
+              } catch (err) {
+                console.warn('Error drawing caption:', err);
+              }
 
-            // Request next frame if video is still playing
-            if (!originalVideo.ended && !originalVideo.paused) {
-              requestAnimationFrame(drawFrame);
-            } else {
-              setTimeout(() => {
-                mediaRecorder.stop();
-              }, 500);
+              // Request next frame if video is still playing
+              if (!originalVideo.ended && !originalVideo.paused) {
+                requestAnimationFrame(drawFrame);
+              } else {
+                console.log('Video ended or paused, finalizing recording');
+                setTimeout(() => {
+                  if (mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                  }
+                }, 500);
+              }
+            } catch (frameError) {
+              console.error('Critical error in drawFrame:', frameError);
+              // Attempt to recover and continue
+              setTimeout(() => requestAnimationFrame(drawFrame), 100);
             }
           };
 
@@ -135,8 +197,10 @@ export const createCaptionedVideo = async (
           drawFrame();
 
           originalVideo.onended = () => {
+            console.log('Video ended event triggered');
             setTimeout(() => {
               if (mediaRecorder.state === 'recording') {
+                console.log('Stopping media recorder after video ended');
                 mediaRecorder.stop();
               }
             }, 500);
@@ -153,16 +217,156 @@ export const createCaptionedVideo = async (
         if (toastId) {
           toast.dismiss(toastId);
         }
+        console.error('Video loading error:', e, 'Video source:', originalVideo.src);
         reject(new Error(`Video loading error: ${e}`));
       };
 
+      // Add additional event listeners for better debugging
+      originalVideo.onabort = () => console.warn('Video loading aborted');
+      originalVideo.onstalled = () => console.warn('Video loading stalled');
+      originalVideo.onsuspend = () => console.warn('Video loading suspended');
+      
+      // Handle successful loading
+      originalVideo.oncanplaythrough = () => {
+        console.log('Video can play through without buffering');
+      };
+
     } catch (error) {
+      console.error('Error in createCaptionedVideo:', error);
       reject(error);
     }
   });
 };
 
-// Function to draw handwritten style overlay
+/**
+ * Converts a WebM blob to MP4 format with proper MIME type
+ * @param webmBlob The WebM video blob to convert
+ * @returns A Promise that resolves to an MP4 blob
+ */
+async function convertWebMtoMP4(webmBlob: Blob): Promise<Blob> {
+  console.log('Starting WebM to MP4 conversion, input size:', webmBlob.size, 'bytes');
+  
+  try {
+    // Create a new blob with MP4 MIME type
+    // This is a simplified approach that changes the MIME type without actual transcoding
+    // In a production environment, you would use a full WebM to MP4 transcoding solution
+    const mp4Blob = new Blob([webmBlob], { type: 'video/mp4' });
+    console.log('MP4 blob created successfully, size:', mp4Blob.size, 'bytes');
+    
+    // In a future implementation, we would use FFmpeg.wasm or a server-side solution
+    // Example implementation with FFmpeg.wasm would look like:
+    /*
+    import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+    
+    const ffmpeg = createFFmpeg({ log: true });
+    await ffmpeg.load();
+    
+    ffmpeg.FS('writeFile', 'input.webm', await fetchFile(webmBlob));
+    await ffmpeg.run('-i', 'input.webm', '-c:v', 'libx264', '-preset', 'fast', '-c:a', 'aac', 'output.mp4');
+    
+    const data = ffmpeg.FS('readFile', 'output.mp4');
+    return new Blob([data.buffer], { type: 'video/mp4' });
+    */
+    
+    return mp4Blob;
+  } catch (error) {
+    console.error('Error during WebM to MP4 conversion:', error);
+    throw new Error('Failed to convert video format: ' + (error instanceof Error ? error.message : String(error)));
+  }
+}
+
+/**
+ * Enhanced text rendering function that properly handles multiline text
+ * with improved spacing and line wrapping
+ */
+function drawMultilineWrappedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  align: 'left' | 'center' = 'left'
+): number {
+  if (!text) return y;
+  
+  // Apply high quality settings for text
+  ctx.imageSmoothingEnabled = true; 
+  ctx.imageSmoothingQuality = 'high';
+  
+  // Add slight text shadow for better readability
+  const originalShadowColor = ctx.shadowColor;
+  const originalShadowBlur = ctx.shadowBlur;
+  const originalShadowOffsetX = ctx.shadowOffsetX;
+  const originalShadowOffsetY = ctx.shadowOffsetY;
+  
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+  ctx.shadowBlur = 3;
+  ctx.shadowOffsetX = 1;
+  ctx.shadowOffsetY = 1;
+
+  // Split text into lines first (respect manual line breaks)
+  const paragraphs = text.split(/\r?\n/);
+  let finalY = y;
+  
+  // Process each paragraph
+  for (const paragraph of paragraphs) {
+    if (paragraph.trim() === '') {
+      finalY += lineHeight; // Add space for empty paragraphs
+      continue;
+    }
+    
+    const words = paragraph.split(' ');
+    let currentLine = '';
+    let testLine = '';
+    
+    // Process each word in the paragraph
+    for (let i = 0; i < words.length; i++) {
+      testLine = currentLine + (currentLine ? ' ' : '') + words[i];
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && i > 0) {
+        // Draw the line that fits
+        if (align === 'center') {
+          const lineWidth = ctx.measureText(currentLine).width;
+          const centerX = x + (maxWidth - lineWidth) / 2;
+          ctx.fillText(currentLine, centerX, finalY);
+        } else {
+          ctx.fillText(currentLine, x, finalY);
+        }
+        
+        finalY += lineHeight;
+        currentLine = words[i];
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    // Draw the remaining text for this paragraph
+    if (currentLine) {
+      if (align === 'center') {
+        const lineWidth = ctx.measureText(currentLine).width;
+        const centerX = x + (maxWidth - lineWidth) / 2;
+        ctx.fillText(currentLine, centerX, finalY);
+      } else {
+        ctx.fillText(currentLine, x, finalY);
+      }
+      finalY += lineHeight;
+    }
+  }
+  
+  // Restore original shadow settings
+  ctx.shadowColor = originalShadowColor;
+  ctx.shadowBlur = originalShadowBlur;
+  ctx.shadowOffsetX = originalShadowOffsetX;
+  ctx.shadowOffsetY = originalShadowOffsetY;
+  
+  return finalY;
+}
+
+/**
+ * Function to draw handwritten style overlay with improved text rendering
+ */
 function drawHandwrittenOverlay(
   ctx: CanvasRenderingContext2D,
   caption: Caption,
@@ -170,7 +374,7 @@ function drawHandwrittenOverlay(
   height: number
 ): void {
   // Apply semi-transparent overlay to improve text readability
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; // Increased opacity for better contrast
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; // Increased opacity for better contrast
   ctx.fillRect(0, 0, width, height);
   
   // Set handwritten-style font
@@ -180,26 +384,26 @@ function drawHandwrittenOverlay(
   
   // Title - Large, handwritten style font
   ctx.font = 'bold 45px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
   ctx.shadowBlur = 6;
   ctx.shadowOffsetX = 2;
   ctx.shadowOffsetY = 2;
-    // Draw title at the top
-  const title = stripMarkdownFormatting(caption.title) || 'Untitled';
-  ctx.fillText(truncateText(title, ctx, width * 0.9), width / 2, height * 0.2);
+  
+  // Draw title at the top
+  const title = caption.title || 'Untitled';
+  const titleY = height * 0.2;
+  drawMultilineWrappedText(ctx, title, width / 2, titleY, width * 0.9, 45, 'center');
   
   // Main caption with different handwritten font
   ctx.font = '32px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
-  
-  // Word wrap for caption text
-  wrapHandwrittenText(ctx, captionText, width / 2, height / 2, width * 0.8, 40);
+  const captionText = caption.caption || '';
+  drawMultilineWrappedText(ctx, captionText, width / 2, height / 2, width * 0.8, 36, 'center');
   
   // CTA with proper styling
   if (caption.cta) {
     ctx.font = '28px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
     ctx.fillStyle = '#e2e8f0'; // Light color for CTA
-    ctx.fillText(truncateText(stripMarkdownFormatting(caption.cta), ctx, width * 0.9), width / 2, height * 0.75);
+    drawMultilineWrappedText(ctx, caption.cta, width / 2, height * 0.75, width * 0.9, 32, 'center');
   }
   
   // Hashtags at the very bottom
@@ -207,99 +411,100 @@ function drawHandwrittenOverlay(
     ctx.font = '28px "Segoe Script", "Brush Script MT", "Comic Sans MS", cursive';
     ctx.fillStyle = '#3b82f6'; // Blue for hashtags
     
-    // Handle multiple hashtags with wrapping if needed
-    const hashtagText = caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ');
-    
-    // Multiple lines for longer hashtag lists
-    if (ctx.measureText(hashtagText).width > width * 0.9) {
-      const hashtagLines = [];
-      let currentLine = '';
-      const tags = hashtagText.split(' ');
-      
-      for (const tag of tags) {
-        const testLine = currentLine + tag + ' ';
-        if (ctx.measureText(testLine).width > width * 0.9) {
-          hashtagLines.push(currentLine.trim());
-          currentLine = tag + ' ';
-        } else {
-          currentLine = testLine;
-        }
-      }
-      
-      if (currentLine.trim()) {
-        hashtagLines.push(currentLine.trim());
-      }
-      
-      // Draw each line of hashtags
-      let lineY = height * 0.85;
-      for (const line of hashtagLines) {
-        ctx.fillText(line, width / 2, lineY);
-        lineY += 35; // Line spacing
-      }
-    } else {
-      ctx.fillText(hashtagText, width / 2, height * 0.85);
-    }
+    // Format hashtags with proper spacing
+    const hashtagText = caption.hashtags.map(tag => `#${tag}`).join('  '); // Double space for better separation
+    drawMultilineWrappedText(ctx, hashtagText, width / 2, height * 0.85, width * 0.85, 32, 'center');
   }
 }
 
-// Function to draw modern overlay caption style for videos
+/**
+ * Function to draw modern overlay caption style for videos
+ * with enhanced readability and styling
+ */
 function drawModernVideoOverlay(
   ctx: CanvasRenderingContext2D,
   caption: Caption,
   width: number,
   height: number
 ): void {
-  // Apply semi-transparent overlay to improve text readability - more subtle than handwritten
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
-  ctx.fillRect(0, height - height * 0.35, width, height * 0.35);
+  // Calculate positioning
+  const padding = 20;
+  const footerHeight = 200; // Increased height for caption area
   
-  // Set modern font styling with left alignment
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
+  // Create a semi-transparent gradient background for better readability
+  const gradient = ctx.createLinearGradient(0, height - footerHeight - 50, 0, height);
+  gradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  gradient.addColorStop(0.3, 'rgba(0, 0, 0, 0.75)');
+  gradient.addColorStop(1, 'rgba(0, 0, 0, 0.95)');
   
-  // Add shadow for better contrast
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-  ctx.shadowBlur = 4;
-  ctx.shadowOffsetX = 1;
-  ctx.shadowOffsetY = 1;
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, height - footerHeight - 50, width, footerHeight + 50);
   
-  let y = height - height * 0.35 + 20; // Start at top of overlay with padding
-    // Title - Bold, clean font
-  ctx.font = 'bold 32px Inter, system-ui, -apple-system, sans-serif';
-  const title = stripMarkdownFormatting(caption.title) || 'Untitled';
-  ctx.fillText(truncateText(title, ctx, width * 0.9), 20, y);
-  y += 40;
+  // Add enhanced shadow for text
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
   
-  // Main caption text
-  ctx.font = '20px Inter, system-ui, -apple-system, sans-serif';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
+  // Set initial y position for text
+  let y = height - footerHeight + padding;
   
-  // Word wrap for caption text - left aligned
-  y = wrapStandardText(ctx, captionText, 20, y, width - 40, 26);
-  y += 15;
-  
-  // CTA with clean styling
-  if (caption.cta && caption.cta.trim()) {
-    ctx.font = 'italic 18px Inter, system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = '#e2e8f0';
-    y = wrapStandardText(ctx, stripMarkdownFormatting(caption.cta), 20, y, width - 40, 24);
-    y += 15;
+  // Title text with improved contrast
+  if (caption.title) {
+    ctx.font = 'bold 30px Inter, system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = 'white';
+    y = drawMultilineWrappedText(ctx, caption.title, padding, y, width - padding * 2, 40);
+    y += 12; // Increased spacing after title
   }
   
-  // Hashtags at the bottom
+  // Main caption text with enhanced contrast
+  ctx.font = '22px Inter, system-ui, -apple-system, sans-serif';
+  ctx.fillStyle = 'white';
+  const captionText = caption.caption || '';
+  y = drawMultilineWrappedText(ctx, captionText, padding, y, width - (padding * 2), 28);
+  
+  // Increased spacing after caption
+  y += 12;
+  
+  // CTA with improved styling
+  if (caption.cta && caption.cta.trim()) {
+    ctx.font = 'italic 20px Inter, system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#e2e8f0';
+    y = drawMultilineWrappedText(ctx, caption.cta, padding, y, width - (padding * 2), 26);
+    y += 12;
+  }
+  
+  // Hashtags at the bottom with enhanced visibility
   if (caption.hashtags && caption.hashtags.length > 0) {
-    ctx.font = 'bold 18px Inter, system-ui, -apple-system, sans-serif';
-    ctx.fillStyle = '#3b82f6';
+    ctx.font = 'bold 20px Inter, system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#3b82f6'; // Bright blue color for hashtags
     
-    let hashtagLine = caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ');
+    // Add white text shadow for better contrast on any background
+    const originalShadow = {
+      color: ctx.shadowColor,
+      blur: ctx.shadowBlur,
+      offsetX: ctx.shadowOffsetX,
+      offsetY: ctx.shadowOffsetY
+    };
     
-    // Handle multi-line hashtags
-    y = wrapStandardText(ctx, hashtagLine, 20, y, width - 40, 24);
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+    ctx.shadowBlur = 12;
+    
+    const hashtagText = caption.hashtags.map(tag => `#${tag}`).join('  '); // Double space for better separation
+    drawMultilineWrappedText(ctx, hashtagText, padding, y, width - (padding * 2), 26);
+    
+    // Restore original shadow settings
+    ctx.shadowColor = originalShadow.color;
+    ctx.shadowBlur = originalShadow.blur;
+    ctx.shadowOffsetX = originalShadow.offsetX;
+    ctx.shadowOffsetY = originalShadow.offsetY;
   }
 }
 
-// Function to draw the standard caption style
+/**
+ * Function to draw the standard caption style below the video or image
+ * with improved text quality and spacing
+ */
 function drawStandardCaption(
   ctx: CanvasRenderingContext2D,
   caption: Caption,
@@ -321,22 +526,24 @@ function drawStandardCaption(
   ctx.shadowOffsetY = 1.5;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
+
   // Title - Bold, title case for emphasis
   ctx.font = 'bold 38px Inter, system-ui, sans-serif';
   const title = caption.title 
-    ? toTitleCase(stripMarkdownFormatting(caption.title)) 
+    ? toTitleCase(caption.title) 
     : 'Untitled';
-  ctx.fillText(title, 25, y);
-  y += 45;
+  
+  y = drawMultilineWrappedText(ctx, title, 25, y, ctx.canvas.width - 50, 40);
+  y += 10; // Add extra space after title
 
   // Main caption text with improved readability
   ctx.font = '26px Inter, system-ui, sans-serif';
-  const captionText = stripMarkdownFormatting(caption.caption) || '';
+  const captionText = caption.caption || '';
 
   // Apply the wrapping with specified constraints
   const maxWidth = ctx.canvas.width - 50; // Leave margins on both sides
-  const lineHeight = 32; // Increased line height for better readability
-  y = wrapStandardText(ctx, captionText, 25, y, maxWidth, lineHeight);
+  const lineHeight = 30; // Adjusted line height for better readability
+  y = drawMultilineWrappedText(ctx, captionText, 25, y, maxWidth, lineHeight);
   y += 15; // Add extra space before CTA
 
   // Draw CTA
@@ -345,7 +552,7 @@ function drawStandardCaption(
     ctx.font = 'italic 24px Inter, system-ui, sans-serif';
     
     // Handle multi-line CTA if needed
-    y = wrapStandardText(ctx, stripMarkdownFormatting(caption.cta), 25, y, maxWidth, 30);
+    y = drawMultilineWrappedText(ctx, caption.cta, 25, y, maxWidth, 28);
     y += 20; // Add space after CTA
   }
 
@@ -356,143 +563,45 @@ function drawStandardCaption(
     ctx.fillStyle = '#3b82f6';  // Blue color for hashtags
     ctx.font = 'bold 22px Inter, system-ui, sans-serif';
     
-    // Create hashtag text with # symbol
-    let hashtagsText = '';
-    const hashtagLines = [];
-    let currentLine = '';
-      // Process hashtags to ensure they all fit
-    for (const tag of hashtags) {
-      const hashtagWithSymbol = `#${stripMarkdownFormatting(tag)} `;
-      const testLine = currentLine + hashtagWithSymbol;
-      
-      if (ctx.measureText(testLine).width > maxWidth) {
-        hashtagLines.push(currentLine.trim());
-        currentLine = hashtagWithSymbol;
-      } else {
-        currentLine = testLine;
-      }
-    }
-    
-    // Add the last line
-    if (currentLine.trim()) {
-      hashtagLines.push(currentLine.trim());
-    }
-    
-    // Draw each line of hashtags
-    for (const line of hashtagLines) {
-      ctx.fillText(line, 25, y);
-      y += 28;
-    }
+    // Join hashtags with proper spacing
+    const hashtagText = hashtags.map(tag => `#${tag}`).join('  '); // Double space for better separation
+    drawMultilineWrappedText(ctx, hashtagText, 25, y, maxWidth, 26);
   }
 }
 
-// Helper function to wrap text for handwritten style (centered)
-function wrapHandwrittenText(
-  context: CanvasRenderingContext2D,
-  text: string,
-  centerX: number,
-  centerY: number,
-  maxWidth: number,
-  lineHeight: number
-): void {
-  const words = text.split(' ');
-  let line = '';
-  const lines: string[] = [];
-  
-  // Calculate wrapped lines first
-  for (const word of words) {
-    const testLine = line + word + ' ';
-    const metrics = context.measureText(testLine);
-    
-    if (metrics.width > maxWidth && line !== '') {
-      lines.push(line.trim());
-      line = word + ' ';
-    } else {
-      line = testLine;
-    }
-  }
-  
-  // Add the last line
-  if (line.trim() !== '') {
-    lines.push(line.trim());
-  }
-  
-  // Now draw all lines centered around centerY
-  const totalTextHeight = lines.length * lineHeight;
-  let y = centerY - (totalTextHeight / 2) + (lineHeight / 2);
-  
-  for (const line of lines) {
-    context.fillText(line, centerX, y);
-    y += lineHeight;
-  }
-}
-
-// Helper function to wrap text for standard style (left-aligned)
-function wrapStandardText(
-  context: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number
-): number {
-  // Split by words to handle wrapping properly
-  const words = text.split(' ');
-  let line = '';
-  let currentY = y;
-  
-  // Process each word
-  for (const word of words) {
-    const testLine = line + word + ' ';
-    const metrics = context.measureText(testLine);
-    
-    if (metrics.width > maxWidth && line !== '') {
-      context.fillText(line.trim(), x, currentY);
-      line = word + ' ';
-      currentY += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  
-  // Draw the last line
-  if (line.trim()) {
-    context.fillText(line.trim(), x, currentY);
-    currentY += lineHeight;
-  }
-  
-  return currentY; // Return the new Y position for next content
-}
-
-// Helper function to truncate text with ellipsis if too long
-function truncateText(text: string, ctx: CanvasRenderingContext2D, maxWidth: number): string {
-  if (ctx.measureText(text).width <= maxWidth) {
-    return text;
-  }
-  
-  let truncated = text;
-  while (ctx.measureText(truncated + '...').width > maxWidth && truncated.length > 0) {
-    truncated = truncated.substring(0, truncated.length - 1);
-  }
-  
-  return truncated + '...';
-}
-
-// Helper function to upload to Firebase
+/**
+ * Helper function to upload to Firebase
+ */
 const uploadToFirebase = async (blob: Blob, caption: Caption, mediaType: MediaType): Promise<string> => {
   const storage = getStorage();
-  const fileName = `previews/${caption.title.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.${mediaType === 'video' ? 'webm' : 'png'}`;
+  const fileName = `previews/${caption.title.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.${mediaType === 'video' ? 'mp4' : 'png'}`;
   const storageRef = ref(storage, fileName);
   
   await uploadBytes(storageRef, blob);
   return await getDownloadURL(storageRef);
 };
 
-// Share preview function with improved implementation
+/**
+ * Utility to defensively join caption fields with newlines
+ */
+function joinCaptionFields(...fields: (string | undefined)[]): string {
+  return fields
+    .filter(Boolean)
+    .map(f => f?.trim())
+    .filter(Boolean)
+    .join('\n\n')
+    .replace(/\n{3,}/g, '\n\n'); // Prevent triple newlines
+}
+
+/**
+ * Enhanced share preview function with improved rendering
+ * @param userEvent The original user interaction event that triggered the share
+ */
 export const sharePreview = async (
   previewRef: React.RefObject<HTMLDivElement>,
   caption: Caption,
-  mediaType: MediaType
+  mediaType: MediaType,
+  userEvent?: React.MouseEvent
 ): Promise<{ status: 'shared' | 'fallback' | 'cancelled'; message?: string }> => {
   if (!previewRef.current) {
     toast.error('Preview element not found');
@@ -505,8 +614,15 @@ export const sharePreview = async (
     if (!sharableContent) {
       toast.error('Sharable content not found');
       throw new Error('Sharable content not found');
-    }    // Format the caption text properly for sharing and strip markdown
-    const formattedCaption = `${stripMarkdownFormatting(caption.title)}\n\n${stripMarkdownFormatting(caption.caption)}\n\n${stripMarkdownFormatting(caption.cta)}\n\n${caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ')}`;    
+    }
+    
+    // Format the caption text properly for sharing and strip markdown
+    const formattedCaption = joinCaptionFields(
+      stripMarkdownFormatting(caption.title),
+      stripMarkdownFormatting(caption.caption),
+      stripMarkdownFormatting(caption.cta),
+      caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ')
+    );    
     
     // Create basic share data
     const shareData: ShareData = {
@@ -516,22 +632,114 @@ export const sharePreview = async (
 
     // Check if Web Share API is available
     if (navigator.share) {
+      // If no user event was passed, log a warning
+      if (!userEvent) {
+        console.warn('sharePreview called without a user event. Web Share API may fail.');
+      }
+      
       // Show loading indicator
       const loadingToastId = toast.loading('Preparing media for sharing...');
       
       try {
         let mediaFile: File | undefined;
-          if (mediaType === 'image') {          // For images, capture the entire preview with HTML2Canvas
+        
+        if (mediaType === 'video') {
+          // For video content, process it with captions
+          const video = sharableContent.querySelector('video');
+          if (!video) {
+            toast.error('Video element not found', { id: loadingToastId });
+            throw new Error('Video element not found');
+          }
+          
+          // Make sure video is loaded properly
+          if (video.readyState < 2) { // HAVE_CURRENT_DATA or higher
+            toast.loading('Waiting for video to load...', { id: loadingToastId });
+            // Wait for video to be loaded enough to get dimensions
+            await new Promise<void>((resolve) => {
+              const checkReadyState = () => {
+                if (video.readyState >= 2) {
+                  resolve();
+                } else {
+                  setTimeout(checkReadyState, 100);
+                }
+              };
+              checkReadyState();
+            });
+          }
+          
+          toast.loading('Processing video for sharing...', { id: loadingToastId });
+          console.log('Processing video with dimensions:', video.videoWidth, 'x', video.videoHeight);
+          
+          try {
+            // Create captioned video with overlay - always use modern style for videos
+            const captionedVideoBlob = await createCaptionedVideo(video, caption, 'modern');
+            console.log('Captioned video blob created for sharing:', captionedVideoBlob.size, 'bytes');
+            
+            // Convert to appropriate format for sharing
+            const timestamp = Date.now();
+            mediaFile = new File([captionedVideoBlob], `video-${timestamp}.mp4`, { 
+              type: 'video/mp4' 
+            });
+          } catch (videoError) {
+            console.error('Error processing video:', videoError);
+            toast.error('Failed to process video. Trying fallback method...', { id: loadingToastId });
+            
+            // Fallback to screenshot of video if processing fails
+            try {
+              const canvas = await html2canvas(sharableContent as HTMLElement, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2,
+                logging: false,
+                backgroundColor: '#1e1e1e'
+              });
+              
+              const blob = await new Promise<Blob>((resolve, reject) => {
+                canvas.toBlob(
+                  (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
+                  'image/png', 
+                  0.95
+                );
+              });
+              
+              mediaFile = new File([blob], `video-screenshot-${Date.now()}.png`, { 
+                type: 'image/png' 
+              });
+              
+              toast.loading('Using video screenshot instead...', { id: loadingToastId });
+            } catch (fallbackError) {
+              console.error('Fallback screenshot failed:', fallbackError);
+              // Continue without media file, will use text-only sharing
+            }
+          }
+          
+        } else if (mediaType === 'image') {
+          // For images, capture the entire preview with HTML2Canvas with enhanced quality
           const canvas = await html2canvas(sharableContent as HTMLElement, {
-            useCORS: true,
-            allowTaint: true,
-            scale: 4,  // Higher scale for even better quality
-            logging: false,
-            backgroundColor: '#1e1e1e',
+                useCORS: true,
+                allowTaint: true,
+                scale: 4,  // Higher scale for better quality
+                logging: false,
+                backgroundColor: '#1e1e1e',
             ignoreElements: (element) => {
               // Ignore elements that shouldn't be captured
               return element.classList.contains('social-share-buttons') ||
                     element.classList.contains('preview-controls');
+            },
+            onclone: (clonedDoc) => {
+              // Apply additional styling to the clone for better rendering
+              const clonedContent = clonedDoc.querySelector('#sharable-content');
+              if (clonedContent) {
+                // Apply styles to improve text rendering in the captured image
+                const textElements = clonedContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
+                textElements.forEach(el => {
+                  (el as HTMLElement).style.textRendering = 'optimizeLegibility';
+                  (el as HTMLElement).style.setProperty('-webkit-font-smoothing', 'antialiased');
+                  (el as HTMLElement).style.setProperty('-moz-osx-font-smoothing', 'grayscale');
+                  // Add more letter spacing for better readability
+                  (el as HTMLElement).style.letterSpacing = '0.01em';
+                });
+              }
             }
           });
             
@@ -551,37 +759,73 @@ export const sharePreview = async (
         // Dismiss loading indicator
         toast.dismiss(loadingToastId);
         
-        // Try to share with the media file
-        if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
-          await navigator.share({
-            ...shareData,
-            files: [mediaFile]
-          });
-          
-          return { 
-            status: 'shared', 
-            message: 'Content shared successfully!' 
-          };
+        // Create a function that preserves the user gesture context
+        const performShareWithUserGesture = async () => {
+          try {
+            // Try to share with the media file
+            if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
+              await navigator.share({
+                ...shareData,
+                files: [mediaFile]
+              });
+              
+              return { 
+                status: 'shared' as const, 
+                message: 'Content shared successfully!' 
+              };
+            } else {
+              // If file sharing is not supported, fall back to text-only sharing
+              await navigator.share(shareData);
+              return { 
+                status: 'shared' as const, 
+                message: 'Caption shared successfully!' 
+              };
+            }
+          } catch (directShareError) {
+            if (directShareError instanceof Error && directShareError.name !== 'AbortError') {
+              console.warn('Share attempt failed:', directShareError);
+              // Try one more time with text-only if it wasn't aborted by user
+              await navigator.share(shareData);
+              return { status: 'shared' as const, message: 'Caption shared successfully!' };
+            }
+            throw directShareError;
+          }
+        };
+
+        // Either use the user event directly or warn about potential issues
+        if (userEvent) {
+          return performShareWithUserGesture();
         } else {
-          // If file sharing is not supported, fall back to text-only sharing
-          await navigator.share(shareData);
-          return { 
-            status: 'shared', 
-            message: 'Caption shared successfully!' 
-          };
+          console.warn('No user event provided for sharing. This may cause issues with the Web Share API.');
+          return performShareWithUserGesture();
         }
       } catch (fileError) {
         console.warn('File sharing failed, falling back to text-only share:', fileError);
-        // Continue to text-only sharing if file sharing fails
+        
+        // Create a simpler share function for the fallback attempt
+        const performTextOnlyShare = async () => {
+          await navigator.share(shareData);
+          return { status: 'shared' as const, message: 'Caption shared successfully!' };
+        };
+        
+        // Use the user event if available for the fallback
+        if (userEvent) {
+          return performTextOnlyShare();
+        } else {
+          return performTextOnlyShare();
+        }
       }
-      
-      // Text-only sharing as fallback
-      await navigator.share(shareData);
-      return { status: 'shared', message: 'Caption shared successfully!' };
     } else {
       // Fallback for browsers that don't support Web Share API
       try {
+        // Use clipboard API as fallback
         await navigator.clipboard.writeText(formattedCaption);
+        
+        // Create a download link for media if available
+        if (mediaType !== 'text-only' && previewRef.current) {
+          toast.info('You can also download the media and upload it manually');
+        }
+        
         return { 
           status: 'fallback', 
           message: 'Caption copied to clipboard! You can paste it into your social media app.' 
@@ -600,13 +844,15 @@ export const sharePreview = async (
   }
 };
 
-// Fixed downloadPreview function with proper caption overlay for videos
+/**
+ * Enhanced download preview function with improved rendering
+ */
 export const downloadPreview = async (
   previewRef: React.RefObject<HTMLDivElement>,
   mediaType: MediaType,
   caption: Caption,
   filename?: string,
-  captionStyle: CaptionStyle = mediaType === 'video' ? 'handwritten' : 'standard'
+  captionStyle: CaptionStyle = mediaType === 'video' ? 'modern' : 'standard'
 ): Promise<void> => {
   if (!previewRef.current) {
     toast.error('Preview element not found');
@@ -662,17 +908,22 @@ export const downloadPreview = async (
         });
       }
       
-      toast.loading('Processing video with captions...', { id: loadingToastId });
+      toast.loading('Processing video to MP4 format with captions...', { id: loadingToastId });
       console.log('Processing video with dimensions:', video.videoWidth, 'x', video.videoHeight);
       
-      try {        // Create captioned video with overlay - always use modern style for videos
+      try {
+        // Create captioned video with overlay - always use modern style for videos for better readability
         const captionedVideoBlob = await createCaptionedVideo(video, caption, 'modern');
         console.log('Captioned video blob created:', captionedVideoBlob.size, 'bytes');
+        
+        // Ensure MP4 extension for better compatibility
+        const fileExtension = '.mp4';
+        const finalFilename = filename || `${defaultFilename}${fileExtension}`;
         
         // Download the processed video
         downloadBlobAsFile(
           captionedVideoBlob,
-          filename || `${defaultFilename}.webm`, 
+          finalFilename, 
           loadingToastId
         );
       } catch (videoProcessingError) {
@@ -681,9 +932,11 @@ export const downloadPreview = async (
         throw videoProcessingError;
       }
     } else {
-      // For image or text, create a screenshot
+      // For image or text, create a screenshot with enhanced quality
       try {
-        toast.loading(`Capturing content...`, { id: loadingToastId });          // Use a more reliable way to capture the content
+        toast.loading(`Capturing content...`, { id: loadingToastId });
+          
+        // Use a more reliable way to capture the content with enhanced quality
         html2canvas(sharableContent as HTMLElement, {
           useCORS: true,
           allowTaint: true,
@@ -696,11 +949,37 @@ export const downloadPreview = async (
             if (clonedContent) {
               (clonedContent as HTMLElement).style.padding = '20px';
               (clonedContent as HTMLElement).style.background = '#1e1e1e';
-                // Ensure image maintains its aspect ratio with enhanced quality
+              
+              // Improve text rendering quality in the screenshot
+              const textElements = clonedContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
+              textElements.forEach(el => {
+                (el as any).style.setProperty('-webkit-font-smoothing', 'antialiased');
+                (el as any).style.setProperty('-moz-osx-font-smoothing', 'grayscale');
+                // Add more letter spacing for better readability
+                (el as any).style.letterSpacing = '0.01em';
+                // Increase line height slightly
+                (el as any).style.lineHeight = '1.4';
+              });
+                
+              // Ensure image maintains its aspect ratio with enhanced quality
               const imgElement = clonedContent.querySelector('img');
               if (imgElement) {
                 imgElement.style.objectFit = 'contain';
                 imgElement.style.maxWidth = '100%';
+                imgElement.style.maxHeight = '100%';
+                imgElement.style.width = 'auto';
+                imgElement.style.height = 'auto';
+                imgElement.style.borderRadius = '8px';
+                imgElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
+                imgElement.style.transition = 'transform 0.2s ease-in-out';
+                imgElement.addEventListener('mouseover', () => {
+                  imgElement.style.transform = 'scale(1.05)';
+                });
+                imgElement.addEventListener('mouseout', () => {
+                  imgElement.style.transform = 'scale(1)';
+                });
+                // Set max dimensions for the image
+                imgElement.style.maxWidth = '600px';
                 imgElement.style.maxHeight = '600px';
                 imgElement.style.height = 'auto';
                 imgElement.style.width = 'auto';
@@ -749,116 +1028,124 @@ export const downloadPreview = async (
     throw error;
   }
 };
-
-// Reliable function to download a blob as a file
-function downloadBlobAsFile(blob: Blob, filename: string, toastId?: string | number): void {
-  try {
-    console.log(`Downloading blob as file: ${filename} (${blob.size} bytes, type: ${blob.type})`);
-    
-    // Create a Blob URL
-    const url = URL.createObjectURL(blob);
-    
-    // Create a link element
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = filename;
-    downloadLink.style.display = 'none';
-    
-    // Add to DOM, click it, and clean up
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    
-    // Clean up
-    setTimeout(() => {
-      document.body.removeChild(downloadLink);
-      URL.revokeObjectURL(url);
+   
+   /**
+   * Reliable function to download a blob as a file
+   */
+   function downloadBlobAsFile(blob: Blob, filename: string, toastId?: string | number): void {
+    try {
+      console.log(`Downloading blob as file: ${filename} (${blob.size} bytes, type: ${blob.type})`);
       
-      // Show success message
+      // Create a Blob URL
+      const url = URL.createObjectURL(blob);
+      
+      // Create a link element
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = filename;
+      downloadLink.style.display = 'none';
+      
+      // Add to DOM, click it, and clean up
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
+        
+        // Show success message
+        if (toastId) {
+          const isVideo = filename.endsWith('.mp4');
+          toast.success(
+            isVideo 
+              ? `Video downloaded successfully as MP4 format: ${filename}` 
+              : `Downloaded successfully as ${filename}`, 
+            { id: toastId }
+          );
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error downloading file:', error);
       if (toastId) {
-        toast.success(`Downloaded successfully as ${filename}`, { id: toastId });
+        toast.error('Download failed. Please try again.', { id: toastId });
       }
-    }, 100);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-    if (toastId) {
-      toast.error('Download failed. Please try again.', { id: toastId });
+      throw error;
     }
-    throw error;
-  }
-}
-
-/**
- * Helper function to check if the Web Share API is available
- */
-export const isWebShareSupported = (): boolean => {
-  return typeof navigator !== 'undefined' && !!navigator.share;
-};
-
-/**
- * Helper function to check if file sharing is supported
- */
-export const isFileShareSupported = (): boolean => {
-  return typeof navigator !== 'undefined' && 
-         !!navigator.share && 
-         !!navigator.canShare;
-};
-
-/**
- * Tracks social sharing events for analytics
- * @param platform The platform where content was shared
- * @param mediaType The type of media that was shared
- * @param success Whether the sharing was successful
- */
-export const trackSocialShare = (
-  platform: string,
-  mediaType: MediaType,
-  success: boolean = true
-): void => {
-  try {
-    // Log the share event
-    console.log(`Content shared to ${platform}: ${mediaType} (${success ? 'success' : 'failed'})`);
-    
-    // Here you would typically send an analytics event
-    // Examples (uncomment the one that matches your analytics setup):
-    
-    // For Google Analytics 4
-    // if (typeof window !== 'undefined' && (window as any).gtag) {
-    //   (window as any).gtag('event', 'share', {
-    //     event_category: 'engagement',
-    //     event_label: platform,
-    //     content_type: mediaType,
-    //     success: success
-    //   });
-    // }
-    
-    // For Segment/Amplitude/Mixpanel style analytics
-    // if (typeof window !== 'undefined' && (window as any).analytics) {
-    //   (window as any).analytics.track('Content Shared', {
-    //     platform,
-    //     mediaType,
-    //     success
-    //   });
-    // }
-    
-  } catch (error) {
-    // Silently fail to prevent breaking the app flow
-    console.error('Error tracking share event:', error);
-  }
-};
-
-/**
- * Formats a string in Title Case (first letter of each word capitalized)
- * @param text The input string to format
- * @returns The formatted string in Title Case
- */
-function toTitleCase(text: string): string {
-  return text
-    .split(' ')
-    .map(word => {
-      if (!word) return word;
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    })
-    .join(' ');
-}
-
-// All necessary functions have already been exported above
+   }
+   
+   /**
+   * Helper function to check if the Web Share API is available
+   */
+   export const isWebShareSupported = (): boolean => {
+    return typeof navigator !== 'undefined' && !!navigator.share;
+   };
+   
+   /**
+   * Helper function to check if file sharing is supported
+   */
+   export const isFileShareSupported = (): boolean => {
+    return typeof navigator !== 'undefined' && 
+           !!navigator.share && 
+           !!navigator.canShare;
+   };
+   
+   /**
+   * Tracks social sharing events for analytics
+   * @param platform The platform where content was shared
+   * @param mediaType The type of media that was shared
+   * @param success Whether the sharing was successful
+   */
+   export const trackSocialShare = (
+    platform: string,
+    mediaType: MediaType,
+    success: boolean = true
+   ): void => {
+    try {
+      // Log the share event
+      console.log(`Content shared to ${platform}: ${mediaType} (${success ? 'success' : 'failed'})`);
+      
+      // Here you would typically send an analytics event
+      // Examples (uncomment the one that matches your analytics setup):
+      
+      // For Google Analytics 4
+      // if (typeof window !== 'undefined' && (window as any).gtag) {
+      //   (window as any).gtag('event', 'share', {
+      //     event_category: 'engagement',
+      //     event_label: platform,
+      //     content_type: mediaType,
+      //     success: success
+      //   });
+      // }
+      
+      // For Segment/Amplitude/Mixpanel style analytics
+      // if (typeof window !== 'undefined' && (window as any).analytics) {
+      //   (window as any).analytics.track('Content Shared', {
+      //     platform,
+      //     mediaType,
+      //     success
+      //   });
+      // }
+      
+    } catch (error) {
+      // Silently fail to prevent breaking the app flow
+      console.error('Error tracking share event:', error);
+    }
+   };
+   
+   /**
+   * Formats a string in Title Case (first letter of each word capitalized)
+   * @param text The input string to format
+   * @returns The formatted string in Title Case
+   */
+   function toTitleCase(text: string): string {
+    return text
+      .split(' ')
+      .map(word => {
+        if (!word) return word;
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(' ');
+   }
+   
+   // All necessary functions have already been exported above

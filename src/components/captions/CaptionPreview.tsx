@@ -47,24 +47,25 @@ const CaptionPreview = forwardRef<HTMLDivElement, CaptionPreviewProps>(({
                     </div>
                   </div>
                 )}
-              </div>            ) : (
-              <div className="aspect-video w-full relative">
+              </div>            ) : (              <div className="aspect-video w-full relative rounded-md overflow-hidden shadow-md">
                 <video 
                   src={previewUrl} 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-cover bg-gray-900" 
                   controls
                   crossOrigin="anonymous"
-                />                {/* For videos, always show modern caption overlay with left-aligned text */}
+                  playsInline
+                  preload="auto"
+                />{/* For videos, always show modern caption overlay with left-aligned text */}
                 {caption && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-65 p-4 backdrop-blur-sm">
-                    <p className="text-white text-xl font-bold mb-2">{stripMarkdownFormatting(caption.title)}</p>
-                    <p className="text-white text-base mb-2">{stripMarkdownFormatting(caption.caption)}</p>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-12 backdrop-blur-[2px]">
+                    <p className="text-white text-xl font-bold mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.title)}</p>
+                    <p className="text-white text-base mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.caption)}</p>
                     {caption.cta && (
-                      <p className="text-gray-200 text-sm italic mb-2">{stripMarkdownFormatting(caption.cta)}</p>
+                      <p className="text-gray-200 text-sm italic mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.cta)}</p>
                     )}
                     <div className="flex flex-wrap gap-1 mt-1">
                       {caption.hashtags.map((hashtag, idx) => (
-                        <span key={idx} className="text-blue-400 text-sm font-medium">
+                        <span key={idx} className="text-blue-400 text-sm font-medium drop-shadow-md">
                           #{stripMarkdownFormatting(hashtag)}
                         </span>
                       ))}

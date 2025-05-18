@@ -1,9 +1,12 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GeneratedCaption } from '@/services/openaiService';
 import { MediaType } from '@/types/mediaTypes';
 import SocialSharing from './SocialSharing';
-import { sharePreview, downloadPreview } from '@/utils/sharingUtils';
+import ShareDialog from './ShareDialog';
+import ShareInfo from './ShareInfo';
+import { downloadPreview } from '@/utils/sharingUtils';
+import { prepareMediaForSharing } from '@/utils/mediaPreparation';
 import { toast } from "sonner";
 
 interface CaptionSharingActionsProps {
@@ -35,12 +38,20 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
   mediaType,
   captionOverlayMode
 }) => {
+  // State for the share dialog
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [preparedShareData, setPreparedShareData] = useState<{
+    title: string;
+    text: string;
+    file?: File;
+  } | null>(null);
+  
   // Log previewRef on mount and update to help with debugging
   useEffect(() => {
     console.log('CaptionSharingActions previewRef:', previewRef);
     console.log('previewRef current:', previewRef.current);
   }, [previewRef, previewRef.current]);
-
+  
   const handleShareToSocial = async () => {
     if (!previewRef.current) {
       toast.error("Preview container not found. Please try again.");
@@ -61,21 +72,32 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
     }
     
     try {
+      // Start the sharing process and show the dialog immediately
       setIsSharing(true);
+      setShowShareDialog(true);
+      setPreparedShareData(null); // Reset any previous data
+      
       console.log("Starting sharing process for media type:", mediaType);
       
-      const result = await sharePreview(
+      // Prepare the media in the background
+      const prepared = await prepareMediaForSharing(
         previewRef,
         captions[selectedCaption],
         mediaType
       );
       
-      if (result.message) {
-        toast.success(result.message);
-      }
+      // Update the dialog with prepared content
+      setPreparedShareData({
+        title: prepared.title,
+        text: prepared.formattedCaption,
+        file: prepared.mediaFile
+      });
+      
+      // Dialog stays open for user to click actual share button
     } catch (error) {
-      console.error("Error sharing:", error);
-      toast.error("Failed to share. Please try again.");
+      console.error("Error preparing media for sharing:", error);
+      toast.error("Failed to prepare content for sharing. Please try again.");
+      setShowShareDialog(false);
     } finally {
       setIsSharing(false);
     }
@@ -106,15 +128,16 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
   useEffect(() => {
     const handleDownloadProcess = async () => {
       if (isDownloading && previewRef.current) {
-        try {
-          const caption = captions[selectedCaption];
+        try {          const caption = captions[selectedCaption];
           if (!caption) {
             toast.error("No caption selected for download");
             setIsDownloading(false);
             return;
           }
-            const timestamp = new Date().getTime();
-          const filename = `${caption.title.toLowerCase().replace(/\s+/g, '-')}-${timestamp}`;          
+          const timestamp = new Date().getTime();
+          // Add appropriate file extension based on media type
+          const extension = mediaType === 'video' ? '.mp4' : '.png';
+          const filename = `${caption.title.toLowerCase().replace(/\s+/g, '-')}-${timestamp}${extension}`;          
           // Always use modern (overlay) style for videos
           const captionStyle = mediaType === 'video' ? 'modern' : (captionOverlayMode === 'overlay' ? 'handwritten' : 'standard');
           
@@ -138,17 +161,33 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
     
     handleDownloadProcess();
   }, [isDownloading, previewRef, captions, selectedCaption, mediaType, captionOverlayMode, setIsDownloading]);
-  
   return (
-    <SocialSharing 
-      isEditing={isEditing}
-      isSharing={isSharing}
-      onShareClick={handleShareToSocial}
-      selectedPlatform={selectedPlatform}
-      caption={captions[selectedCaption]}
-      mediaType={mediaType}
-      previewUrl={previewUrl}
-    />
+    <>
+      <SocialSharing 
+        isEditing={isEditing}
+        isSharing={isSharing}
+        onShareClick={handleShareToSocial}
+        selectedPlatform={selectedPlatform}
+        caption={captions[selectedCaption]}
+        mediaType={mediaType}
+        previewUrl={previewUrl}
+      />
+      
+      {/* Add explanation about two-step sharing for videos */}
+      {mediaType === 'video' && <ShareInfo isVideo={true} className="mt-3" />}
+      
+      {/* Two-step sharing dialog */}
+      {showShareDialog && (
+        <ShareDialog
+          isOpen={showShareDialog}
+          onClose={() => setShowShareDialog(false)}
+          title={preparedShareData?.title || (captions[selectedCaption]?.title || "Share Content")}
+          text={preparedShareData?.text || ""}
+          file={preparedShareData?.file}
+          isProcessing={!preparedShareData} // Show processing state until data is ready
+        />
+      )}
+    </>
   );
 };
 

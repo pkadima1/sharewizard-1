@@ -9,7 +9,7 @@ import { MediaType } from '@/types/mediaTypes';
 interface SocialSharingProps {
   isEditing: boolean;
   isSharing: boolean;
-  onShareClick: () => void;
+  onShareClick: () => void;  // Simplified - no event needed with new approach
   selectedPlatform?: string;
   caption?: any;
   mediaType?: MediaType;
@@ -26,7 +26,6 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
   previewUrl
 }) => {
   if (isEditing) return null;
-
   const handleDirectShare = async (platform: string) => {
     try {
       toast.info(`Preparing to share on ${platform}...`);
@@ -51,9 +50,9 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
         }
       }
       
-      // Fall back to browser sharing with both text and media
+      // With new approach, just trigger the dialog flow without event
       onShareClick();
-      console.log(`Shared via browser share API`);
+      console.log(`Initiated two-step share process via dialog`);
     } catch (error) {
       console.error(`Error sharing to ${platform}:`, error);
       toast.error(`Failed to share to ${platform}. Trying browser sharing instead.`);
@@ -79,9 +78,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
   return (
     <div className="space-y-3">
       <h3 className="font-medium dark:text-white">Share to Social Media</h3>
-      
-      {/* Selected platform share button - prominently displayed if a platform is selected */}
-      {selectedPlatformDetails && (
+        {/* Selected platform share button - prominently displayed if a platform is selected */}      {selectedPlatformDetails && (
         <Button
           className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
           onClick={() => handleDirectShare(selectedPlatformDetails.name)}
@@ -119,8 +116,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
           // Skip the platform that's already selected for the main button
           if (key === selectedPlatform) return null;
           
-          return (
-            <Button 
+          return (            <Button 
               key={key}
               variant="outline" 
               size="sm" 
