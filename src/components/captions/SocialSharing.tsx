@@ -77,7 +77,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
 
   return (
     <div className="space-y-3">
-      <h3 className="font-medium dark:text-white">Share to Social Media</h3>
+      <h2 className="font-medium dark:text-white">Download to Share to prefered Social Media Platform </h2>
         {/* Selected platform share button - prominently displayed if a platform is selected */}      {selectedPlatformDetails && (
         <Button
           className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
@@ -104,14 +104,16 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
         ) : (
           <Share className="h-4 w-4 mr-2" />
         )}
-        Share via Browser (WhatsApp, Telegram, etc.)
+        Direct Share via Browser (WhatsApp, Telegram, etc.)
       </Button>
       
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      {/* ====================commented out for now until full SM platforms integration============*/}
+
+       {/*<div className="text-sm text-gray-500 dark:text-gray-400">
         Or share directly to:
       </div>
       
-      <div className="grid grid-cols-3 gap-2">
+     <div className="grid grid-cols-3 gap-2">
         {Object.entries(platforms).map(([key, platform]) => {
           // Skip the platform that's already selected for the main button
           if (key === selectedPlatform) return null;
@@ -128,7 +130,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
             </Button>
           );
         })}
-      </div>
+      </div>*/}
     </div>
   );
 };

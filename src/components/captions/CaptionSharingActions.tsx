@@ -167,7 +167,11 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
         isEditing={isEditing}
         isSharing={isSharing}
         onShareClick={handleShareToSocial}
-        selectedPlatform={selectedPlatform}
+
+
+        /* ====================commented out for now until full SM platforms integration============*/
+       
+       // selectedPlatform={selectedPlatform}
         caption={captions[selectedCaption]}
         mediaType={mediaType}
         previewUrl={previewUrl}
