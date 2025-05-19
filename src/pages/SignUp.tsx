@@ -253,8 +253,7 @@ const SignUp: React.FC = () => {
                       className="w-4 h-4 border-gray-300 rounded text-primary focus:ring-primary dark:border-gray-700 dark:bg-gray-800"
                     />
                   </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300">
+                  <div className="ml-3 text-sm">                    <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300">
                       I agree to the{' '}
                       <Link to="/terms" className="text-primary hover:text-primary/90">
                         Terms of Service

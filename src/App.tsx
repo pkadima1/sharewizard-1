@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
@@ -15,14 +16,16 @@ import Dashboard from "./pages/Dashboard";
 import Pricing from "./pages/Pricing";
 import CaptionGenerator from "./pages/CaptionGenerator";
 import NotFound from "./pages/NotFound";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import PreviewRepost from "./pages/PreviewRepost";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
-          <Sonner />          <BrowserRouter>
-            <div className="flex flex-col min-h-screen">
+          <Sonner />          <BrowserRouter>            <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-grow main-container">
                 <Routes>
@@ -30,14 +33,16 @@ const App = () => <QueryClientProvider client={queryClient}>
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/pricing" element={<Pricing />} />
                   <Route path="/caption-generator" element={<CaptionGenerator />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="/terms" element={<TermsAndConditions />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/preview-repost" element={<PreviewRepost />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
+              <Footer />
             </div>
           </BrowserRouter>
         </TooltipProvider>

@@ -595,7 +595,10 @@ function joinCaptionFields(...fields: (string | undefined)[]): string {
 
 /**
  * Enhanced share preview function with improved rendering
- * @param userEvent The original user interaction event that triggered the share
+ * @param previewRef Ref object pointing to the sharable content container
+ * @param caption The caption data
+ * @param mediaType The type of media (image, video, text-only)
+ * @param userEvent The original user interaction event that triggered the share (optional)
  */
 export const sharePreview = async (
   previewRef: React.RefObject<HTMLDivElement>,
@@ -608,14 +611,14 @@ export const sharePreview = async (
     throw new Error('Preview element not found');
   }
 
+  // Target the sharable-content element directly from the ref
+  const sharableContent = previewRef.current;
+  if (!sharableContent) {
+    toast.error('Sharable content element not found in ref.');
+    throw new Error('Sharable content element not found in ref.');
+  }
+
   try {
-    // Target the sharable-content element
-    const sharableContent = previewRef.current.querySelector('#sharable-content');
-    if (!sharableContent) {
-      toast.error('Sharable content not found');
-      throw new Error('Sharable content not found');
-    }
-    
     // Format the caption text properly for sharing and strip markdown
     const formattedCaption = joinCaptionFields(
       stripMarkdownFormatting(caption.title),
@@ -691,7 +694,48 @@ export const sharePreview = async (
                 allowTaint: true,
                 scale: 2,
                 logging: false,
-                backgroundColor: '#1e1e1e'
+                backgroundColor: '#1e1e1e',
+                onclone: (clonedDoc) => {
+                  // Apply additional styling to the cloned document before capturing
+                  const clonedContent = clonedDoc.getElementById('sharable-content');
+                  if (clonedContent) {
+                    // Set container styles for centering content block
+                    (clonedContent as HTMLElement).style.width = '100%';
+                    (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
+                    (clonedContent as HTMLElement).style.margin = '0 auto';
+                    (clonedContent as HTMLElement).style.padding = '20px';
+                    (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
+                    (clonedContent as HTMLElement).style.display = 'flex';
+                    (clonedContent as HTMLElement).style.flexDirection = 'column';
+                    (clonedContent as HTMLElement).style.alignItems = 'center'; // Center children horizontally
+
+                    // Find and style the media element (img or video)
+                    const mediaElement = clonedContent.querySelector('img, video');
+                    if (mediaElement) {
+                      (mediaElement as HTMLElement).style.objectFit = 'contain'; // Maintain aspect ratio
+                      (mediaElement as HTMLElement).style.width = 'auto'; // Allow width to adjust based on aspect ratio and container
+                      (mediaElement as HTMLElement).style.height = 'auto'; // Allow height to adjust
+                      (mediaElement as HTMLElement).style.maxWidth = '100%'; // Do not exceed container width
+                      (mediaElement as HTMLElement).style.border = 'none'; // Remove border
+                      (mediaElement as HTMLElement).style.display = 'block';
+                      (mediaElement as HTMLElement).style.margin = '0 auto 10px auto'; // Center with margin below
+                    }
+
+                    // Find and style the caption container
+                    const captionContainer = clonedContent.querySelector('.caption-overlay, .caption-below');
+                    if (captionContainer) {
+                      // Caption container should visually align with the media element by using the same max-width and centering
+                      (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
+                      (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
+                      (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
+                      (captionContainer as HTMLElement).style.padding = '20px';
+                      (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
+                      (captionContainer as HTMLElement).style.borderRadius = '8px';
+                      (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
+                      (captionContainer as HTMLElement).style.textAlign = 'left';
+                    }
+                  }
+                }
               });
               
               const blob = await new Promise<Blob>((resolve, reject) => {
@@ -713,32 +757,59 @@ export const sharePreview = async (
             }
           }
           
-        } else if (mediaType === 'image') {
-          // For images, capture the entire preview with HTML2Canvas with enhanced quality
+        } else if (mediaType === 'image' || mediaType === 'text-only') {
+          // For images or text-only, capture the entire preview with HTML2Canvas with enhanced quality
           const canvas = await html2canvas(sharableContent as HTMLElement, {
                 useCORS: true,
                 allowTaint: true,
-                scale: 4,  // Higher scale for better quality
+                scale: 4, // Higher scale for better quality
                 logging: false,
-                backgroundColor: '#1e1e1e',
+                backgroundColor: '#1e1e1e', // Ensure dark background
             ignoreElements: (element) => {
-              // Ignore elements that shouldn't be captured
+              // Ignore elements that shouldn't be captured (like action buttons in the live preview)
               return element.classList.contains('social-share-buttons') ||
-                    element.classList.contains('preview-controls');
+                    element.classList.contains('preview-controls') ||
+                    element.tagName === 'BUTTON'; // Ignore all buttons
             },
             onclone: (clonedDoc) => {
-              // Apply additional styling to the clone for better rendering
-              const clonedContent = clonedDoc.querySelector('#sharable-content');
+              // Apply additional styling to the cloned document before capturing
+              const clonedContent = clonedDoc.getElementById('sharable-content');
               if (clonedContent) {
-                // Apply styles to improve text rendering in the captured image
-                const textElements = clonedContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
-                textElements.forEach(el => {
-                  (el as HTMLElement).style.textRendering = 'optimizeLegibility';
-                  (el as HTMLElement).style.setProperty('-webkit-font-smoothing', 'antialiased');
-                  (el as HTMLElement).style.setProperty('-moz-osx-font-smoothing', 'grayscale');
-                  // Add more letter spacing for better readability
-                  (el as HTMLElement).style.letterSpacing = '0.01em';
-                });
+                // Set container styles for centering content block
+                (clonedContent as HTMLElement).style.width = '100%';
+                (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
+                (clonedContent as HTMLElement).style.margin = '0 auto';
+                (clonedContent as HTMLElement).style.padding = '20px';
+                (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
+                (clonedContent as HTMLElement).style.display = 'flex';
+                (clonedContent as HTMLElement).style.flexDirection = 'column';
+                (clonedContent as HTMLElement).style.alignItems = 'center'; // Center children horizontally
+
+                // Find and style the media element (img or video)
+                const mediaElement = clonedContent.querySelector('img, video');
+                if (mediaElement) {
+                  (mediaElement as HTMLElement).style.objectFit = 'contain'; // Maintain aspect ratio
+                  (mediaElement as HTMLElement).style.width = 'auto'; // Allow width to adjust based on aspect ratio and container
+                  (mediaElement as HTMLElement).style.height = 'auto'; // Allow height to adjust
+                  (mediaElement as HTMLElement).style.maxWidth = '100%'; // Do not exceed container width
+                  (mediaElement as HTMLElement).style.border = 'none'; // Remove border
+                  (mediaElement as HTMLElement).style.display = 'block';
+                  (mediaElement as HTMLElement).style.margin = '0 auto 10px auto'; // Center with margin below
+                }
+
+                // Find and style the caption container
+                const captionContainer = clonedContent.querySelector('.caption-overlay, .caption-below');
+                if (captionContainer) {
+                  // Caption container should visually align with the media element by using the same max-width and centering
+                  (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
+                  (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
+                  (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
+                  (captionContainer as HTMLElement).style.padding = '20px';
+                  (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
+                  (captionContainer as HTMLElement).style.borderRadius = '8px';
+                  (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
+                  (captionContainer as HTMLElement).style.textAlign = 'left';
+                }
               }
             }
           });
@@ -846,6 +917,11 @@ export const sharePreview = async (
 
 /**
  * Enhanced download preview function with improved rendering
+ * @param previewRef Ref object pointing to the sharable content container
+ * @param mediaType The type of media (image, video, text-only)
+ * @param caption The caption data
+ * @param filename Optional filename for the downloaded file
+ * @param captionStyle Optional caption style (defaults based on mediaType)
  */
 export const downloadPreview = async (
   previewRef: React.RefObject<HTMLDivElement>,
@@ -859,11 +935,11 @@ export const downloadPreview = async (
     throw new Error('Preview element not found');
   }
 
-  // Target the sharable-content element
-  const sharableContent = previewRef.current.querySelector('#sharable-content');
+  // Target the sharable-content element directly from the ref
+  const sharableContent = previewRef.current;
   if (!sharableContent) {
-    toast.error('Sharable content not found');
-    throw new Error('Sharable content not found');
+    toast.error('Sharable content element not found in ref.');
+    throw new Error('Sharable content element not found in ref.');
   }
   
   // Create a loading toast
@@ -942,55 +1018,45 @@ export const downloadPreview = async (
           allowTaint: true,
           scale: 4, // Higher scale for better quality
           logging: false,
-          backgroundColor: '#1e1e1e',
+          backgroundColor: '#1e1e1e', // Ensure dark background
           onclone: (clonedDoc) => {
-            // Apply any specific styles to the cloned document before capturing
-            const clonedContent = clonedDoc.querySelector('#sharable-content');
+            // Apply additional styling to the cloned document before capturing
+            const clonedContent = clonedDoc.getElementById('sharable-content');
             if (clonedContent) {
+              // Set container styles for centering content block
+              (clonedContent as HTMLElement).style.width = '100%';
+              (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
+              (clonedContent as HTMLElement).style.margin = '0 auto';
               (clonedContent as HTMLElement).style.padding = '20px';
-              (clonedContent as HTMLElement).style.background = '#1e1e1e';
-              
-              // Improve text rendering quality in the screenshot
-              const textElements = clonedContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span');
-              textElements.forEach(el => {
-                (el as any).style.setProperty('-webkit-font-smoothing', 'antialiased');
-                (el as any).style.setProperty('-moz-osx-font-smoothing', 'grayscale');
-                // Add more letter spacing for better readability
-                (el as any).style.letterSpacing = '0.01em';
-                // Increase line height slightly
-                (el as any).style.lineHeight = '1.4';
-              });
-                
-              // Ensure image maintains its aspect ratio with enhanced quality
-              const imgElement = clonedContent.querySelector('img');
-              if (imgElement) {
-                imgElement.style.objectFit = 'contain';
-                imgElement.style.maxWidth = '100%';
-                imgElement.style.maxHeight = '100%';
-                imgElement.style.width = 'auto';
-                imgElement.style.height = 'auto';
-                imgElement.style.borderRadius = '8px';
-                imgElement.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
-                imgElement.style.transition = 'transform 0.2s ease-in-out';
-                imgElement.addEventListener('mouseover', () => {
-                  imgElement.style.transform = 'scale(1.05)';
-                });
-                imgElement.addEventListener('mouseout', () => {
-                  imgElement.style.transform = 'scale(1)';
-                });
-                // Set max dimensions for the image
-                imgElement.style.maxWidth = '600px';
-                imgElement.style.maxHeight = '600px';
-                imgElement.style.height = 'auto';
-                imgElement.style.width = 'auto';
-                imgElement.style.margin = '0 auto';
-                imgElement.style.display = 'block';
-                // Add image quality enhancements via CSS
-                imgElement.style.imageRendering = 'high-quality'; // For browsers that support it
-                imgElement.style.imageRendering = '-webkit-optimize-contrast'; // For webkit browsers
-                imgElement.style.backfaceVisibility = 'hidden'; // Helps with rendering quality
-                // Force a repaint for better quality (small opacity change isn't visible)
-                imgElement.style.opacity = '0.99';
+              (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
+              (clonedContent as HTMLElement).style.display = 'flex';
+              (clonedContent as HTMLElement).style.flexDirection = 'column';
+              (clonedContent as HTMLElement).style.alignItems = 'center'; // Center children horizontally
+
+              // Find and style the media element (img or video)
+              const mediaElement = clonedContent.querySelector('img, video');
+              if (mediaElement) {
+                (mediaElement as HTMLElement).style.objectFit = 'contain'; // Maintain aspect ratio
+                (mediaElement as HTMLElement).style.width = 'auto'; // Allow width to adjust based on aspect ratio and container
+                (mediaElement as HTMLElement).style.height = 'auto'; // Allow height to adjust
+                (mediaElement as HTMLElement).style.maxWidth = '100%'; // Do not exceed container width
+                (mediaElement as HTMLElement).style.border = 'none'; // Remove border
+                (mediaElement as HTMLElement).style.display = 'block';
+                (mediaElement as HTMLElement).style.margin = '0 auto 10px auto'; // Center with margin below
+              }
+
+              // Find and style the caption container
+              const captionContainer = clonedContent.querySelector('.caption-overlay, .caption-below');
+              if (captionContainer) {
+                // Caption container should visually align with the media element by using the same max-width and centering
+                (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
+                (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
+                (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
+                (captionContainer as HTMLElement).style.padding = '20px';
+                (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
+                (captionContainer as HTMLElement).style.borderRadius = '8px';
+                (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
+                (captionContainer as HTMLElement).style.textAlign = 'left';
               }
             }
           }
