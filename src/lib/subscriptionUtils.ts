@@ -438,11 +438,11 @@ export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' =
   // Removed 'basic' case entirely
   switch (planType) {
     case 'basicMonth':
-      return 'price_1RNzACGCd9fidigrkEymjrh7'; // Basic Plan Monthly
+      return 'price_1RQkCnGCd9fidigr9N0HDUvq'; // Basic Plan Monthly
     case 'basicYear':
-      return 'price_1RNz3nGCd9fidigrluCD0x6l'; // Basic Plan Yearly
+      return 'price_1RQkCwGCd9fidigrPeVinl74'; // Basic Plan Yearly
     case 'flexy':
-      return 'price_1QzLOMGCd9fidigrt9Bk0C67';
+      return 'price_1RQkD0GCd9fidigrgxJu0iKw';
     default:
       return '';
   }
@@ -452,11 +452,11 @@ export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly'
   // Removed 'basic' case entirely
   switch (planType) {
     case 'basicMonth':
-      return 'prod_SIaK9lSsPk6Vw3'; // Basic Plan Monthly
+      return 'prod_SLR4jh9pTyTHPm'; // Basic Plan Monthly
     case 'basicYear':
-      return 'prod_SIaE8lkPP3Dbkp'; // Basic Plan Yearly
+      return 'prod_SLR55czo8NpcuP'; // Basic Plan Yearly
     case 'flexy':
-      return 'prod_Rt7dTWahmAAQ98';
+      return 'prod_SLR57yTpxpuzit';
     default:
       return '';
   }
@@ -466,11 +466,11 @@ export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearl
   // Removed 'basic' case entirely
   switch (planType) {
     case 'basicMonth':
-      return 'https://buy.stripe.com/test_5kQcN561vgGL2u6cBveAg0e';
+      return 'https://buy.stripe.com/7sYdR961v2PV9WyfNHeAg00';
     case 'basicYear':
-      return 'https://buy.stripe.com/test_eVq8wP89DeyD8SufNHeAg0d';
+      return 'https://buy.stripe.com/9B6cN5gG90HNecOfNHeAg01';
     case 'flexy':
-      return 'https://buy.stripe.com/test_3csg35cXzdy7d4AfZ8';
+      return 'https://buy.stripe.com/9B6eVdey1bmrd8KatneAg02';
     default:
       return '';
   }
