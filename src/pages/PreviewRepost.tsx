@@ -23,7 +23,8 @@ const PreviewRepost = () => {
 
   const { currentUser } = useAuth();
 
-  const [showCaptionOverlay, setShowCaptionOverlay] = useState(!!mediaFile);
+  // Initialize showCaptionOverlay to true if mediaFile is an image or video
+  const [showCaptionOverlay, setShowCaptionOverlay] = useState(mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')));
   const [isEditingText, setIsEditingText] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -207,24 +208,29 @@ const PreviewRepost = () => {
       </div>
 
       {/* Sharable content area */}
-      <div ref={previewRef} id="sharable-content">
-        {/* Media (Image/Video) Display - Conditionally rendered */}
-        {mediaFile && (
-          <div className="relative w-full max-w-md mx-auto mb-4">
-            <img
-              src={URL.createObjectURL(mediaFile)}
-              alt="Preview"
-              className="w-full rounded-lg object-cover max-h-[500px]"
-            />
+      <div ref={previewRef} id="sharable-content" className="relative w-full max-w-md mx-auto bg-background rounded-lg overflow-hidden shadow-lg">
+        {/* Media Preview (Image or Video) */}
+        {mediaFile && mediaFile.type.startsWith('image') && (
+          <img src={URL.createObjectURL(mediaFile)} alt="Preview" className="w-full h-auto" />
+        )}
+        {mediaFile && mediaFile.type.startsWith('video') && (
+          <video
+            ref={(videoElement) => {
+              // You might want to store a reference to the video element if needed elsewhere
+              // videoRef.current = videoElement;
+            }}
+            src={URL.createObjectURL(mediaFile)}
+            controls
+            className="w-full h-auto"
+          />
+        )}
 
-            {/* Caption overlay on media */}
-            {showCaptionOverlay && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg">
-                <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
-                <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
-                <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
-              </div>
-            )}
+        {/* Caption Overlay (for images or videos with overlay enabled, and not editing text) */}
+        {mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && showCaptionOverlay && !isEditingText && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg">
+            <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
+            <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
+            <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
           </div>
         )}
 
@@ -307,20 +313,20 @@ const PreviewRepost = () => {
           </div>
         )}
 
-        {/* Caption below media (conditionally rendered based on showCaptionOverlay and mediaFile) */}
-        {mediaFile && !showCaptionOverlay && (
-           <div className="w-full max-w-md mx-auto mb-4 bg-card text-card-foreground p-4 rounded-lg shadow-md">
-             {currentCaption.title && <h2 className="text-xl font-bold mb-2">{currentCaption.title}</h2>}
-             <p className="whitespace-pre-wrap text-base mb-2">
+        {/* Always visible caption text below media if no overlay OR if media is present but overlay is NOT enabled, and not editing text */}
+        {((!mediaFile) || (mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && !showCaptionOverlay)) && !isEditingText && (
+          <div className="w-full max-w-md mx-auto mb-4 bg-card text-card-foreground p-4 rounded-lg shadow-md">
+            {currentCaption.title && <h2 className="text-xl font-bold mb-2">{currentCaption.title}</h2>}
+            <p className="whitespace-pre-wrap text-base mb-2">
               {currentCaption.caption}
             </p>
-             {currentCaption.cta && <p className="text-sm text-muted-foreground mb-2">{currentCaption.cta}</p>}
-             {currentCaption.hashtags && currentCaption.hashtags.length > 0 && (
-               <p className="text-sm text-blue-400 font-medium">
-                 {currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}
-               </p>
-             )}
-           </div>
+            {currentCaption.cta && <p className="text-sm text-muted-foreground mb-2">{currentCaption.cta}</p>}
+            {currentCaption.hashtags && currentCaption.hashtags.length > 0 && (
+              <p className="text-sm text-blue-400 font-medium">
+                {currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
@@ -333,8 +339,8 @@ const PreviewRepost = () => {
         <Button className="flex-1" variant="outline" onClick={() => navigate(-1)}>Back</Button>
       </div>
 
-       {/* Caption Overlay Toggle (only for images) */}
-       {mediaFile && mediaFile.type.startsWith('image') && (
+       {/* Caption Overlay Toggle (only for images and videos) */}
+       {mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && (
          <div className="flex items-center justify-center space-x-2 mt-4 mb-8">
            <Switch checked={showCaptionOverlay} onCheckedChange={setShowCaptionOverlay} id="caption-overlay-toggle" />
            <label htmlFor="caption-overlay-toggle" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
