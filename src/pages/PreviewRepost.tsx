@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Download, Copy } from 'lucide-react';
-import { sharePreview, downloadPreview } from '../utils/sharingUtils';
+import { sharePreview, downloadPreview, createCaptionedVideo } from '../utils/sharingUtils';
 import { MediaType } from '@/types/mediaTypes';
 
 const PreviewRepost = () => {
@@ -28,6 +28,33 @@ const PreviewRepost = () => {
   const [isEditingText, setIsEditingText] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const [processedVideoFile, setProcessedVideoFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);
+
+  // Auto-process video with caption when video is added or caption changes
+  useEffect(() => {
+    if (mediaFile && mediaFile.type.startsWith('video')) {
+      setProcessing(true);
+      setProcessedVideoFile(null);
+      setTimeout(async () => {
+        const video = document.querySelector('#preview-video');
+        if (video) {
+          try {
+            const captionedBlob = await createCaptionedVideo(video as HTMLVideoElement, currentCaption, 'modern');
+            const file = new File([captionedBlob], `video-${Date.now()}.mp4`, { type: 'video/mp4' });
+            setProcessedVideoFile(file);
+          } catch (err) {
+            toast.error('Failed to process video with caption.');
+          } finally {
+            setProcessing(false);
+          }
+        } else {
+          setProcessing(false);
+        }
+      }, 500); // Give time for video to render
+    }
+  }, [mediaFile, currentCaption]);
 
   if (!currentCaption || !gen) {
     return <div className="p-4">Invalid preview data.</div>;
@@ -80,7 +107,7 @@ const PreviewRepost = () => {
     });
   };
 
-  const handleShareOrDownload = async (action: 'share' | 'download') => {
+  const handleShareOrDownload = async (action: 'share' | 'download', userEvent?: React.MouseEvent) => {
     const targetUserId = currentUser?.uid || gen.userId;
     if (!targetUserId) {
       toast.error("User ID is not available for operation.");
@@ -90,59 +117,97 @@ const PreviewRepost = () => {
 
     try {
       const genRef = doc(db, 'users', targetUserId, 'generations', gen.id);
-
+      const isVideo = mediaFile && mediaFile.type.startsWith('video');
       if (action === 'share') {
-        // Use the sharePreview utility for Web Share API
-        const mediaType: MediaType = mediaFile ? (mediaFile.type.startsWith('video') ? 'video' : 'image') : 'text-only';
+        const mediaType: MediaType = isVideo ? 'video' : (mediaFile ? 'image' : 'text-only');
+        if (isVideo) {
+          if (processing) {
+            toast.info('Video is still processing. Please wait.');
+            return;
+          }
+          if (!processedVideoFile) {
+            toast.error('Processed video not available.');
+            return;
+          }
+          // Use Web Share API directly with processed video file
+          try {
+            await navigator.share({
+              files: [processedVideoFile],
+              title: currentCaption.title,
+              text: currentCaption.caption,
+            });
+            const updateData: any = {
+              share_count: (gen.share_count || 0) + 1,
+              posted: true,
+            };
+            await updateDoc(genRef, updateData);
+            toast.success('Video shared successfully!');
+          } catch (error) {
+            toast.error('Sharing failed.');
+          }
+          return;
+        }
         const result = await sharePreview(
           previewRef,
           currentCaption,
-          mediaType
+          mediaType,
+          userEvent
         );
-
         if (result.status === 'shared') {
-          // Update share count in Firebase upon successful share (including fallbacks)
           const updateData: any = {
             share_count: (gen.share_count || 0) + 1,
             posted: true, // Mark as posted if shared
           };
-           await updateDoc(genRef, updateData);
-           // sharePreview already shows success toast
+          await updateDoc(genRef, updateData);
         } else if (result.status === 'cancelled') {
           toast.info('Sharing cancelled.');
         } else if (result.status === 'fallback') {
-           // sharePreview already shows fallback toast and handles clipboard copy
-           // Optionally update share count for fallback too
-           const updateData: any = {
+          const updateData: any = {
             share_count: (gen.share_count || 0) + 1,
             posted: true, // Mark as posted if shared
           };
-           await updateDoc(genRef, updateData);
+          await updateDoc(genRef, updateData);
         }
-        // Do NOT navigate to profile page here, stay on preview
-
       } else if (action === 'download') {
-        // Keep existing download logic, now using the downloadPreview utility
-        const mediaType: MediaType = mediaFile ? (mediaFile.type.startsWith('video') ? 'video' : 'image') : 'text-only';
-         // downloadPreview utility handles the download process and success toast
-         await downloadPreview(
+        const mediaType: MediaType = isVideo ? 'video' : (mediaFile ? 'image' : 'text-only');
+        if (isVideo) {
+          if (processing) {
+            toast.info('Video is still processing. Please wait.');
+            return;
+          }
+          if (!processedVideoFile) {
+            toast.error('Processed video not available.');
+            return;
+          }
+          // Download the processed video file
+          const url = URL.createObjectURL(processedVideoFile);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = processedVideoFile.name;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          toast.success('Downloaded successfully!');
+          const updateData: any = {
+            download_count: (gen.download_count || 0) + 1,
+            posted: true,
+          };
+          await updateDoc(genRef, updateData);
+          return;
+        }
+        await downloadPreview(
           previewRef,
           mediaType,
           currentCaption,
           mediaFile?.name // Pass original filename hint
-         );
-
-        // Update download count in Firebase upon successful download
+        );
         const updateData: any = {
           download_count: (gen.download_count || 0) + 1,
           posted: true, // Mark as posted if downloaded
         };
         await updateDoc(genRef, updateData);
-
-        // Optional: navigate to profile after download? Keeping the navigation for download for now.
-        // navigate('/profile');
       }
-
     } catch (error: any) {
       console.error('Operation error:', error);
       toast.error(`Operation failed: ${error.message}`);
@@ -200,7 +265,7 @@ const PreviewRepost = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 mt-20">
       <div className="flex justify-between items-center mb-4">
         <Button onClick={() => navigate(-1)} variant="outline">Back</Button>
         <h1 className="text-2xl font-bold">Preview Post</h1>
@@ -208,35 +273,71 @@ const PreviewRepost = () => {
       </div>
 
       {/* Sharable content area */}
-      <div ref={previewRef} id="sharable-content" className="relative w-full max-w-md mx-auto bg-background rounded-lg overflow-hidden shadow-lg">
+      <div ref={previewRef} id="sharable-content" className="relative w-full max-w-md mx-auto bg-background rounded-4xl overflow-hidden shadow-lg">
         {/* Media Preview (Image or Video) */}
         {mediaFile && mediaFile.type.startsWith('image') && (
-          <img src={URL.createObjectURL(mediaFile)} alt="Preview" className="w-full h-auto" />
+          <div className="w-full max-w-md mx-auto">
+            <div className="relative w-full">
+              <img
+                src={URL.createObjectURL(mediaFile)}
+                alt="Preview"
+                className="w-full h-auto"
+                id="preview-image"
+              />
+              {showCaptionOverlay && !isEditingText ? (
+                <div
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg"
+                  style={{ width: '100%' }}
+                >
+                  <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
+                  <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
+                  <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
+                </div>
+              ) : null}
+              {!showCaptionOverlay && !isEditingText ? (
+                <div className="w-full bg-card text-card-foreground p-4 rounded-lg shadow-md mt-2">
+                  {currentCaption.title && <h2 className="text-xl font-bold mb-2">{currentCaption.title}</h2>}
+                  <p className="whitespace-pre-wrap text-base mb-2">
+                    {currentCaption.caption}
+                  </p>
+                  {currentCaption.cta && <p className="text-sm text-muted-foreground mb-2">{currentCaption.cta}</p>}
+                  {currentCaption.hashtags && currentCaption.hashtags.length > 0 && (
+                    <p className="text-sm text-blue-400 font-medium">
+                      {currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}
+                    </p>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          </div>
         )}
         {mediaFile && mediaFile.type.startsWith('video') && (
-          <video
-            ref={(videoElement) => {
-              // You might want to store a reference to the video element if needed elsewhere
-              // videoRef.current = videoElement;
-            }}
-            src={URL.createObjectURL(mediaFile)}
-            controls
-            className="w-full h-auto"
-          />
-        )}
-
-        {/* Caption Overlay (for images or videos with overlay enabled, and not editing text) */}
-        {mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && showCaptionOverlay && !isEditingText && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg">
-            <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
-            <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
-            <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
+          <div className="relative w-full">
+            <video
+              id="preview-video"
+              src={URL.createObjectURL(mediaFile)}
+              controls
+              className="w-full h-auto"
+            />
+            {/* Always show caption overlay for video */}
+            {!isEditingText && (
+              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg">
+                <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
+                <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
+                <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
+              </div>
+            )}
+            {processing && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 z-10">
+                <span className="text-white text-lg font-semibold">Processing video...</span>
+              </div>
+            )}
           </div>
         )}
 
         {/* Text-only post display or Edit mode */}
         {!mediaFile && (
-          <div className="w-full max-w-md mx-auto mb-4 bg-card text-card-foreground p-4 rounded-lg shadow-md">
+          <div className={`mx-auto my-8 max-w-lg p-6 rounded-2xl shadow-lg bg-card text-card-foreground preview-caption-card ${isEditingText ? '' : ''}`}>
             {isEditingText ? (
               // Edit mode UI for text-only
               <div className="flex flex-col gap-4">
@@ -292,39 +393,33 @@ const PreviewRepost = () => {
                     {currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}
                   </p>
                 )}
-                <div className="flex justify-end space-x-2 mt-4">
-                   {/* Copy button for text-only */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const textContent = `${currentCaption.title ? currentCaption.title + '\n\n' : ''}${currentCaption.caption}${currentCaption.cta ? '\n\n' + currentCaption.cta : ''}${currentCaption.hashtags && currentCaption.hashtags.length > 0 ? '\n' + currentCaption.hashtags.map(tag => `#${tag}`).join(' ') : ''}`.trim();
-                      navigator.clipboard.writeText(textContent)
-                        .then(() => toast.success('Caption copied!'))
-                        .catch(err => toast.error('Failed to copy caption.', err));
-                    }}
-                  >
-                    <Copy className="mr-2 h-4 w-4" /> Copy
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleEditClick}>Edit</Button>
-                </div>
+                {/* Action buttons only in preview, not in processed card */}
+                {!processing && (
+                  <div className="flex justify-end space-x-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const textParts = [
+                          currentCaption.title,
+                          currentCaption.caption,
+                          currentCaption.cta,
+                          currentCaption.hashtags && currentCaption.hashtags.length > 0
+                            ? currentCaption.hashtags.map(tag => `#${tag}`).join(' ')
+                            : ''
+                        ].filter(Boolean);
+                        const textContent = textParts.join('\n\n').trim();
+                        navigator.clipboard.writeText(textContent)
+                          .then(() => toast.success('Caption copied!'))
+                          .catch(err => toast.error('Failed to copy caption.', err));
+                      }}
+                    >
+                      <Copy className="mr-2 h-4 w-4" /> Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleEditClick}>Edit</Button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Always visible caption text below media if no overlay OR if media is present but overlay is NOT enabled, and not editing text */}
-        {((!mediaFile) || (mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && !showCaptionOverlay)) && !isEditingText && (
-          <div className="w-full max-w-md mx-auto mb-4 bg-card text-card-foreground p-4 rounded-lg shadow-md">
-            {currentCaption.title && <h2 className="text-xl font-bold mb-2">{currentCaption.title}</h2>}
-            <p className="whitespace-pre-wrap text-base mb-2">
-              {currentCaption.caption}
-            </p>
-            {currentCaption.cta && <p className="text-sm text-muted-foreground mb-2">{currentCaption.cta}</p>}
-            {currentCaption.hashtags && currentCaption.hashtags.length > 0 && (
-              <p className="text-sm text-blue-400 font-medium">
-                {currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}
-              </p>
             )}
           </div>
         )}
@@ -332,15 +427,15 @@ const PreviewRepost = () => {
 
       {/* Action buttons */}
       <div className="flex gap-2 sticky bottom-0 bg-background py-2 z-10">
-        <Button className="flex-1" onClick={() => handleShareOrDownload('share')}>Share</Button>
-        <Button className="flex-1" onClick={() => handleShareOrDownload('download')}>
+        <Button className="flex-1" disabled={processing || (mediaFile && mediaFile.type.startsWith('video') && !processedVideoFile)} onClick={(e) => handleShareOrDownload('share', e)}>Share</Button>
+        <Button className="flex-1" disabled={processing || (mediaFile && mediaFile.type.startsWith('video') && !processedVideoFile)} onClick={() => handleShareOrDownload('download')}>
           <Download className="mr-2 h-4 w-4" /> Download
         </Button>
         <Button className="flex-1" variant="outline" onClick={() => navigate(-1)}>Back</Button>
       </div>
 
-       {/* Caption Overlay Toggle (only for images and videos) */}
-       {mediaFile && (mediaFile.type.startsWith('image') || mediaFile.type.startsWith('video')) && (
+       {/* Caption Overlay Toggle (only for images) */}
+       {mediaFile && mediaFile.type.startsWith('image') && (
          <div className="flex items-center justify-center space-x-2 mt-4 mb-8">
            <Switch checked={showCaptionOverlay} onCheckedChange={setShowCaptionOverlay} id="caption-overlay-toggle" />
            <label htmlFor="caption-overlay-toggle" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
