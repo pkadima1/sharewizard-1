@@ -487,7 +487,7 @@ const Profile: React.FC = () => {
           className="mb-6"
         >
           <ProfileCard user={user} onEditProfile={() => setIsEditModalOpen(true)} />
-          <UsageStats stats={user.stats} subscriptionTier={user.subscriptionTier} />
+          {/* <UsageStats stats={user.stats} subscriptionTier={user.subscriptionTier} /> */}
         </motion.div>
 
         {/* Summary Cards */}
