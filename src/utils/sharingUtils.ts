@@ -600,6 +600,17 @@ function joinCaptionFields(...fields: (string | undefined)[]): string {
  * @param mediaType The type of media (image, video, text-only)
  * @param userEvent The original user interaction event that triggered the share (optional)
  */
+/**
+ * Shares preview content using the Web Share API with appropriate fallbacks.
+ * 
+ * @param previewRef React ref to the DOM element containing the sharable content
+ * @param caption The caption data object with title, text, etc.
+ * @param mediaType Type of media being shared (image, video, text)
+ * @param userEvent IMPORTANT: The original click/touch event that triggered this share action.
+ *                  This is REQUIRED for the Web Share API to work properly due to security
+ *                  restrictions requiring user gestures for sharing actions.
+ * @returns Promise with sharing status and message
+ */
 export const sharePreview = async (
   previewRef: React.RefObject<HTMLDivElement>,
   caption: Caption,
@@ -611,7 +622,6 @@ export const sharePreview = async (
     throw new Error('Preview element not found');
   }
 
-  // Target the sharable-content element directly from the ref
   const sharableContent = previewRef.current;
   if (!sharableContent) {
     toast.error('Sharable content element not found in ref.');
@@ -619,33 +629,24 @@ export const sharePreview = async (
   }
 
   try {
-    // Format the caption text properly for sharing and strip markdown
     const formattedCaption = joinCaptionFields(
       stripMarkdownFormatting(caption.title),
       stripMarkdownFormatting(caption.caption),
       stripMarkdownFormatting(caption.cta),
       caption.hashtags.map(tag => `#${stripMarkdownFormatting(tag)}`).join(' ')
     );    
-    
-    // Create basic share data
     const shareData: ShareData = {
       title: stripMarkdownFormatting(caption.title),
       text: formattedCaption
     };
 
-    // Check if Web Share API is available
     if (navigator.share) {
-      // If no user event was passed, log a warning
       if (!userEvent) {
         console.warn('sharePreview called without a user event. Web Share API may fail.');
       }
-      
-      // Show loading indicator
       const loadingToastId = toast.loading('Preparing media for sharing...');
-      
       try {
         let mediaFile: File | undefined;
-        
         if (mediaType === 'video') {
           // For video content, process it with captions
           const video = sharableContent.querySelector('video');
@@ -757,53 +758,45 @@ export const sharePreview = async (
             }
           }
           
-        } else if (mediaType === 'image' || mediaType === 'text-only') {
-          // For images or text-only, capture the entire preview with HTML2Canvas with enhanced quality
+        } else if (mediaType === 'image') {
+          // For images, capture the entire preview with HTML2Canvas with enhanced quality
           const canvas = await html2canvas(sharableContent as HTMLElement, {
-                useCORS: true,
-                allowTaint: true,
-                scale: 4, // Higher scale for better quality
-                logging: false,
-                backgroundColor: '#1e1e1e', // Ensure dark background
+            useCORS: true,
+            allowTaint: true,
+            scale: 4, // Higher scale for better quality
+            logging: false,
+            backgroundColor: '#1e1e1e',
             ignoreElements: (element) => {
-              // Ignore elements that shouldn't be captured (like action buttons in the live preview)
               return element.classList.contains('social-share-buttons') ||
-                    element.classList.contains('preview-controls') ||
-                    element.tagName === 'BUTTON'; // Ignore all buttons
+                element.classList.contains('preview-controls') ||
+                element.tagName === 'BUTTON';
             },
             onclone: (clonedDoc) => {
-              // Apply additional styling to the cloned document before capturing
               const clonedContent = clonedDoc.getElementById('sharable-content');
               if (clonedContent) {
-                // Set container styles for centering content block
                 (clonedContent as HTMLElement).style.width = '100%';
-                (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
+                (clonedContent as HTMLElement).style.maxWidth = '600px';
                 (clonedContent as HTMLElement).style.margin = '0 auto';
                 (clonedContent as HTMLElement).style.padding = '20px';
                 (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
                 (clonedContent as HTMLElement).style.display = 'flex';
                 (clonedContent as HTMLElement).style.flexDirection = 'column';
-                (clonedContent as HTMLElement).style.alignItems = 'center'; // Center children horizontally
-
-                // Find and style the media element (img or video)
+                (clonedContent as HTMLElement).style.alignItems = 'center';
                 const mediaElement = clonedContent.querySelector('img, video');
                 if (mediaElement) {
-                  (mediaElement as HTMLElement).style.objectFit = 'contain'; // Maintain aspect ratio
-                  (mediaElement as HTMLElement).style.width = 'auto'; // Allow width to adjust based on aspect ratio and container
-                  (mediaElement as HTMLElement).style.height = 'auto'; // Allow height to adjust
-                  (mediaElement as HTMLElement).style.maxWidth = '100%'; // Do not exceed container width
-                  (mediaElement as HTMLElement).style.border = 'none'; // Remove border
+                  (mediaElement as HTMLElement).style.objectFit = 'contain';
+                  (mediaElement as HTMLElement).style.width = 'auto';
+                  (mediaElement as HTMLElement).style.height = 'auto';
+                  (mediaElement as HTMLElement).style.maxWidth = '100%';
+                  (mediaElement as HTMLElement).style.border = 'none';
                   (mediaElement as HTMLElement).style.display = 'block';
-                  (mediaElement as HTMLElement).style.margin = '0 auto 10px auto'; // Center with margin below
+                  (mediaElement as HTMLElement).style.margin = '0 auto 10px auto';
                 }
-
-                // Find and style the caption container
                 const captionContainer = clonedContent.querySelector('.caption-overlay, .caption-below');
                 if (captionContainer) {
-                  // Caption container should visually align with the media element by using the same max-width and centering
-                  (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
-                  (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
-                  (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
+                  (captionContainer as HTMLElement).style.width = '100%';
+                  (captionContainer as HTMLElement).style.maxWidth = '600px';
+                  (captionContainer as HTMLElement).style.margin = '0 auto';
                   (captionContainer as HTMLElement).style.padding = '20px';
                   (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
                   (captionContainer as HTMLElement).style.borderRadius = '8px';
@@ -813,96 +806,129 @@ export const sharePreview = async (
               }
             }
           });
-            
           const blob = await new Promise<Blob>((resolve, reject) => {
             canvas.toBlob(
-              (b) => b ? resolve(b) : reject(new Error('Failed to create blob')), 
-              'image/png', 
+              (b) => b ? resolve(b) : reject(new Error('Failed to create blob')),
+              'image/png',
               0.95
             );
           });
-            
-          mediaFile = new File([blob], `image-${Date.now()}.png`, { 
-            type: 'image/png' 
+          mediaFile = new File([blob], `image-${Date.now()}.png`, { type: 'image/png' });
+        } else if (mediaType === 'text-only') {
+          // For text-only, capture the card as an image and share as file
+          const canvas = await html2canvas(sharableContent as HTMLElement, {
+            useCORS: true,
+            allowTaint: true,
+            scale: 4,
+            logging: false,
+            backgroundColor: '#121924',
+            ignoreElements: (element) => {
+              if (element.classList.contains('text-caption-actions') || element.tagName === 'BUTTON') {
+                return true;
+              }
+              return false;
+            },
+            onclone: (clonedDoc) => {
+              const clonedContent = clonedDoc.getElementById('sharable-content');
+              if (clonedContent) {
+                (clonedContent as HTMLElement).style.backgroundColor = '#121924';
+                (clonedContent as HTMLElement).style.boxShadow = 'none';
+                (clonedContent as HTMLElement).style.padding = '0';
+                (clonedContent as HTMLElement).style.margin = '0 auto';
+                (clonedContent as HTMLElement).style.maxWidth = '600px';
+                (clonedContent as HTMLElement).style.borderRadius = '18px';
+                (clonedContent as HTMLElement).style.display = 'block';
+              }
+            }
           });
+          const blob = await new Promise<Blob>((resolve, reject) => {
+            canvas.toBlob(
+              (b) => b ? resolve(b) : reject(new Error('Failed to create blob')),
+              'image/png',
+              0.95
+            );
+          });
+          mediaFile = new File([blob], `caption-card-${Date.now()}.png`, { type: 'image/png' });
         }
-          
-        // Dismiss loading indicator
         toast.dismiss(loadingToastId);
-        
-        // Create a function that preserves the user gesture context
         const performShareWithUserGesture = async () => {
           try {
-            // Try to share with the media file
             if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
               await navigator.share({
                 ...shareData,
                 files: [mediaFile]
               });
-              
-              return { 
-                status: 'shared' as const, 
-                message: 'Content shared successfully!' 
+              return {
+                status: 'shared' as const,
+                message: 'Content shared successfully!'
               };
             } else {
-              // If file sharing is not supported, fall back to text-only sharing
               await navigator.share(shareData);
-              return { 
-                status: 'shared' as const, 
-                message: 'Caption shared successfully!' 
+              return {
+                status: 'shared' as const,
+                message: 'Caption shared successfully!'
               };
             }
           } catch (directShareError) {
-            if (directShareError instanceof Error && directShareError.name !== 'AbortError') {
-              console.warn('Share attempt failed:', directShareError);
-              // Try one more time with text-only if it wasn't aborted by user
-              await navigator.share(shareData);
-              return { status: 'shared' as const, message: 'Caption shared successfully!' };
+            if (directShareError instanceof Error) {
+              if (directShareError.name === 'NotAllowedError') {
+                await navigator.clipboard.writeText(formattedCaption);
+                toast.success('Caption copied to clipboard! You can paste it into your social media app.');
+                return {
+                  status: 'fallback' as const,
+                  message: 'Caption copied to clipboard!'
+                };
+              }
+              if (directShareError.name !== 'AbortError') {
+                try {
+                  await navigator.share(shareData);
+                  return { status: 'shared' as const, message: 'Caption shared successfully!' };
+                } catch (textShareError) {
+                  await navigator.clipboard.writeText(formattedCaption);
+                  toast.success('Caption copied to clipboard! You can paste it into your social media app.');
+                  return {
+                    status: 'fallback' as const,
+                    message: 'Caption copied to clipboard!'
+                  };
+                }
+              }
             }
             throw directShareError;
           }
         };
-
-        // Either use the user event directly or warn about potential issues
         if (userEvent) {
-          return performShareWithUserGesture();
+          let sharePromise: Promise<any>;
+          try {
+            if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
+              sharePromise = navigator.share({
+                ...shareData,
+                files: [mediaFile]
+              });
+            } else {
+              sharePromise = navigator.share(shareData);
+            }
+            await sharePromise;
+            return { status: 'shared' as const, message: 'Content shared successfully!' };
+          } catch (error) {
+            return performShareWithUserGesture();
+          }
         } else {
-          console.warn('No user event provided for sharing. This may cause issues with the Web Share API.');
           return performShareWithUserGesture();
         }
       } catch (fileError) {
-        console.warn('File sharing failed, falling back to text-only share:', fileError);
-        
-        // Create a simpler share function for the fallback attempt
-        const performTextOnlyShare = async () => {
-          await navigator.share(shareData);
-          return { status: 'shared' as const, message: 'Caption shared successfully!' };
-        };
-        
-        // Use the user event if available for the fallback
-        if (userEvent) {
-          return performTextOnlyShare();
-        } else {
-          return performTextOnlyShare();
-        }
+        return { status: 'fallback', message: 'Sharing failed.' };
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
       try {
-        // Use clipboard API as fallback
         await navigator.clipboard.writeText(formattedCaption);
-        
-        // Create a download link for media if available
         if (mediaType !== 'text-only' && previewRef.current) {
           toast.info('You can also download the media and upload it manually');
         }
-        
-        return { 
-          status: 'fallback', 
-          message: 'Caption copied to clipboard! You can paste it into your social media app.' 
+        return {
+          status: 'fallback',
+          message: 'Caption copied to clipboard! You can paste it into your social media app.'
         };
       } catch (clipboardError) {
-        console.error('Clipboard fallback failed:', clipboardError);
         throw new Error('Sharing not supported on this browser');
       }
     }
@@ -910,7 +936,6 @@ export const sharePreview = async (
     if (error instanceof Error && error.name === 'AbortError') {
       return { status: 'cancelled' };
     }
-    console.error('Error sharing content:', error);
     throw error;
   }
 };
@@ -1018,7 +1043,17 @@ export const downloadPreview = async (
           allowTaint: true,
           scale: 4, // Higher scale for better quality
           logging: false,
-          backgroundColor: '#1e1e1e', // Ensure dark background
+          backgroundColor: mediaType === 'text-only' ? 'transparent' : '#1e1e1e',
+          ignoreElements: (element) => {
+            // Ignore action buttons for text-only
+            if (mediaType === 'text-only' && (element.classList.contains('text-caption-actions') || element.tagName === 'BUTTON')) {
+              return true;
+            }
+            // Existing ignores
+            return element.classList.contains('social-share-buttons') ||
+                  element.classList.contains('preview-controls') ||
+                  element.tagName === 'BUTTON';
+          },
           onclone: (clonedDoc) => {
             // Apply additional styling to the cloned document before capturing
             const clonedContent = clonedDoc.getElementById('sharable-content');

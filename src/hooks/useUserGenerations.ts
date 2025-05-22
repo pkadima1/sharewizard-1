@@ -20,6 +20,8 @@ export interface Generation {
     hashtags: string[];
     title: string;
   }>;
+  downloaded_count?: number;
+  shared_count?: number;
 }
 
 export function useUserGenerations(userId: string) {
