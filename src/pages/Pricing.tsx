@@ -154,10 +154,9 @@ const Pricing: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
-              <div className="mt-4">
+                <div className="mt-4">
                 <div className="flex items-baseline">
-                  <span className="text-3xl font-bold text-adaptive-primary">£0</span>
+                  <span className="text-3xl font-bold text-adaptive-primary">$0</span>
                   <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">forever</span>
                 </div>
                 <div className="text-sm text-adaptive-tertiary font-medium mt-1">
@@ -211,21 +210,16 @@ const Pricing: React.FC = () => {
                 </div>
                 <Star className="h-5 w-5 text-yellow-400" />
               </div>
-              
-              <div className="mt-4">
+                <div className="mt-4">
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold text-adaptive-primary">
-                    {billingCycle === 'monthly' ? '£5.99' : '£29.99'}
+                    {billingCycle === 'monthly' ? '$8.00' : '$40.00'}
                   </span>
                   <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">
                     {billingCycle === 'monthly' ? '/month' : '/year'}
                   </span>
                 </div>
-                {billingCycle === 'monthly' ? (
-                  <div className="text-sm text-green-400 font-medium mt-1">
-                    £2.99 for 1st month (-49.9%)
-                  </div>
-                ) : (
+                {billingCycle === 'yearly' && (
                   <div className="text-sm text-green-400 font-medium mt-1">
                     Save 58% compared to monthly
                   </div>
@@ -289,9 +283,8 @@ const Pricing: React.FC = () => {
               <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">
                 Pay as you go option for extra content
               </p>
-              
-              <div className="flex items-baseline">
-                <span className="text-3xl font-bold text-adaptive-primary">£1.99</span>
+                <div className="flex items-baseline">
+                <span className="text-3xl font-bold text-adaptive-primary">$3.00</span>
                 <span className="text-gray-700 dark:text-gray-200 text-sm ml-2"> per pack</span>
               </div>
             </div>

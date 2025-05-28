@@ -5,6 +5,30 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+
+// Import testing utilities for debugging text overlays
+// This will expose debugging functions to the window object
+import './utils/textOverlayTesting.js';
+import './utils/textOverlayDiagnostics.js';
+
+// Import text overlay utilities and make them globally available
+import { 
+  drawCustomTextOverlay, 
+  getTextOverlayDataFromElement,
+  initializeMediaFileCache 
+} from './utils/textOverlayHelpers';
+
+// Make text overlay utilities globally available for use in other components
+if (typeof window !== 'undefined') {
+  // @ts-ignore - adding to window
+  window.drawCustomTextOverlay = drawCustomTextOverlay;
+  // @ts-ignore - adding to window
+  window.getTextOverlayDataFromElement = getTextOverlayDataFromElement;
+  
+  // Ensure media file cache is initialized
+  initializeMediaFileCache();
+}
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Index from "./pages/Index";

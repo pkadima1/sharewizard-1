@@ -487,7 +487,7 @@ const Profile: React.FC = () => {
           className="mb-6"
         >
           <ProfileCard user={user} onEditProfile={() => setIsEditModalOpen(true)} />
-          {/* <UsageStats stats={user.stats} subscriptionTier={user.subscriptionTier} /> */}
+          <UsageStats stats={user.stats} subscriptionTier={user.subscriptionTier} />
         </motion.div>
 
         {/* Summary Cards */}
@@ -497,7 +497,7 @@ const Profile: React.FC = () => {
           transition={{ duration: 0.3, delay: 0.1 }}
           className="grid grid-cols-3 gap-2 mb-6"
         >
-          <Card className="text-center py-4 shadow-sm hover:shadow-md transition-all">
+        {}  <Card className="text-center py-4 shadow-sm hover:shadow-md transition-all">
             <div className="text-2xl font-bold">{totalGenerated}</div>
             <div className="text-xs text-muted-foreground">Generated</div>
           </Card>

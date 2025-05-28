@@ -1,6 +1,6 @@
 // PlatformSelector.tsx - IMPROVED VERSION
 import React, { useState } from 'react';
-import { Instagram, Twitter, Linkedin, Facebook, Youtube, Music, AlertTriangle, Info, X } from 'lucide-react';
+import { Instagram, Twitter, Linkedin, Facebook, Youtube, Music, AlertTriangle, Info, X, Download, Copy, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -74,6 +74,44 @@ const PLATFORMS = [
   }
 ];
 
+// Platform sharing message type
+interface PlatformSharingMessage {
+  title: string;
+  iconComponent: React.ComponentType<any>;
+  iconColor: string;
+  message: string;
+  buttonText: string;
+  footer?: string;
+}
+
+// Define platform-specific sharing messages
+const PLATFORM_SHARING_MESSAGES: Record<string, PlatformSharingMessage> = {
+  instagram: {
+    title: "🚀 Let's Get This Caption Live!",
+    iconComponent: Instagram,
+    iconColor: "text-pink-500",
+    message: "Instagram prefers a different sharing flow. We've made it easy: simply download your post or copy and paste your caption directly in the Instagram app. Sharing made simple — in just one tap.",
+    buttonText: "Create with Instagram",
+    footer: "Instagram doesn't support direct in-app sharing — but you're in control with these quick options!"
+  },
+  tiktok: {
+    title: "📱 Ready for TikTok Magic!",
+    iconComponent: Music,
+    iconColor: "text-black",
+    message: "TikTok loves your fresh content! Simply download your optimized caption, then upload it with your video in the TikTok app. Your trending moment awaits—let's make it happen!",
+    buttonText: "Create with TikTok",
+    footer: "Download your caption when it's ready, to go viral on TikTok!"
+  },
+  youtube: {
+    title: "🎬 YouTube Content Creator Mode",
+    iconComponent: Youtube,
+    iconColor: "text-red-500",
+    message: "Perfect for YouTube! Copy your SEO-optimized caption and description to use in YouTube Studio. Upload directly to your channel and maximize your video's discovery potential.",
+    buttonText: "Create for YouTube",
+    footer: "Boost your YouTube presence with our professionally crafted, SEO-friendly captions!"
+  }
+};
+
 interface PlatformSelectorProps {
   selectedPlatform: string;
   onPlatformChange: (platform: string) => void;
@@ -112,8 +150,9 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
           Select Social Media Platform
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-          Choose where you want to share your content. Your captions will be optimized for the selected platform.
-        </p>
+🎯 Get ready to go viral — one platform at a time.
+<br />
+We’ll tailor every caption to match the voice, format, and rhythm of your selected platform. Just pick your favorite!        </p>
       </div>
 
       {/* Platform grid - Improved with hover effects and better visual hierarchy */}
@@ -139,12 +178,11 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
               <platform.icon className="w-8 h-8" />
               <span className="text-lg font-semibold">{platform.name}</span>
             </div>
-            
-            {/* Limited sharing badge */}
+              {/* Alternative sharing badge */}
             {platform.limitedSharing && (
-              <div className="absolute top-2 right-2 bg-amber-500/90 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center">
-                <AlertTriangle className="w-3 h-3 mr-1" />
-                Limited sharing
+              <div className="absolute top-2 right-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center">
+                <Download className="w-3 h-3 mr-1" />
+                Quick post export
               </div>
             )}
             
@@ -162,9 +200,10 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
       <div className="bg-blue-900/20 rounded-xl p-4 border border-blue-700/30 flex space-x-3 mt-6">
         <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
         <div className="space-y-2">
-          <h3 className="text-blue-400 font-medium">Platform Tips</h3>
+          <h3 className="text-blue-400 font-medium">💡 Smart Captions, Perfectly Tuned</h3>
           <p className="text-sm text-gray-300">
-            Choose the platform where you want to share your content. The caption generator will optimize your content based on the platform's best practices and character limits.
+              We’ve studied the best practices of each platform — from tone to timing to text limits. Choose your channel, and we’ll do the rest. 🙌
+
           </p>
           
           {/* Show selected platform details */}
@@ -173,60 +212,138 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
               <p className="text-sm font-medium text-white">{selectedPlatformDetails.name} Details:</p>
               <ul className="text-xs text-gray-300 mt-1 space-y-1">
                 <li>• Character Limit: <span className="text-blue-300">{selectedPlatformDetails.characterLimit}</span></li>
-                <li>• Best For: <span className="text-blue-300">{selectedPlatformDetails.recommendedFor}</span></li>
-                {selectedPlatformDetails.limitedSharing && (
-                  <li className="text-amber-300 flex items-center">
-                    <AlertTriangle className="w-3 h-3 mr-1" />
-                    Limited direct sharing capability
+                <li>• Best For: <span className="text-blue-300">{selectedPlatformDetails.recommendedFor}</span></li>                {selectedPlatformDetails.limitedSharing && (
+                  <li className="text-blue-300 flex items-center">
+                    <Download className="w-3 h-3 mr-1" />
+                    Easy export options available
                   </li>
                 )}
               </ul>
             </div>
           )}
         </div>
-      </div>
-
-      {/* Warning modal for limited sharing platforms */}
+      </div>      {/* Platform-specific sharing modal */}
       {showWarningModal && platformForWarning && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 rounded-xl max-w-md w-full p-6 border border-gray-700 shadow-2xl">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center text-amber-400">
-                <AlertTriangle className="w-6 h-6 mr-2" />
-                <h3 className="text-lg font-bold">Limited Sharing Capability</h3>
-              </div>
-              <button 
-                onClick={() => setShowWarningModal(false)}
-                className="text-gray-400 hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <p className="text-gray-300 mb-5">
-              The selected social media platform <span className="text-white font-semibold">{
-                PLATFORMS.find(p => p.id === platformForWarning)?.name
-              }</span> doesn't allow direct sharing. You'll need to share using the Web API, or download the post to share on your favorite social media platform.
-            </p>
-            
-            <div className="flex justify-end space-x-3">
-              <Button
-                variant="outline"
-                className="border-gray-700 hover:bg-gray-800 text-gray-300"
-                onClick={() => setShowWarningModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => {
-                  onPlatformChange(platformForWarning);
-                  setShowWarningModal(false);
-                }}
-              >
-                I Understand
-              </Button>
-            </div>
+            {platformForWarning && PLATFORM_SHARING_MESSAGES[platformForWarning] ? (
+              <>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center">
+                    {/* Use dynamic Icon component */}
+                    {(() => {
+                      const IconComponent = PLATFORM_SHARING_MESSAGES[platformForWarning].iconComponent;
+                      return <IconComponent className={`w-6 h-6 mr-2 ${PLATFORM_SHARING_MESSAGES[platformForWarning].iconColor}`} />;
+                    })()}
+                    <h3 className="text-lg font-bold text-white">{PLATFORM_SHARING_MESSAGES[platformForWarning].title}</h3>
+                  </div>
+                  <button 
+                    onClick={() => setShowWarningModal(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="text-gray-300 mb-5 space-y-4">
+                  <p>{PLATFORM_SHARING_MESSAGES[platformForWarning].message}</p>
+                  
+                  {/* Action buttons that are contextual to the platform */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-5">
+                    {platformForWarning === 'instagram' }
+                    {/*&& (
+                      <>
+                        <Button variant="outline" className="flex-1 gap-2">
+                          <Copy className="w-4 h-4" />
+                          Copy Caption
+                        </Button>
+                        <Button variant="outline" className="flex-1 gap-2">
+                          <Download className="w-4 h-4" />
+                          Download Assets
+                        </Button>
+                      </>
+                    )}*/}
+                    {platformForWarning === 'tiktok'}
+                    {platformForWarning === 'youtube'}
+                    {/*} && (
+                      <>
+                        <Button variant="outline" className="flex-1 gap-2">
+                          <Copy className="w-4 h-4" />
+                          Copy for YouTube
+                        </Button>
+                      </>
+                    )} */}
+                  </div>
+                  
+                  {/* Footer note */}
+                  {PLATFORM_SHARING_MESSAGES[platformForWarning].footer && (
+                    <p className="text-xs text-gray-400 italic mt-4">
+                      {PLATFORM_SHARING_MESSAGES[platformForWarning].footer}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    variant="outline"
+                    className="border-gray-700 hover:bg-gray-800 text-gray-300"
+                    onClick={() => setShowWarningModal(false)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                    onClick={() => {
+                      onPlatformChange(platformForWarning);
+                      setShowWarningModal(false);
+                    }}
+                  >
+                    {PLATFORM_SHARING_MESSAGES[platformForWarning].buttonText}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              // Fallback for any platform not specifically configured
+              <>
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center text-blue-400">
+                    <Rocket className="w-6 h-6 mr-2" />
+                    <h3 className="text-lg font-bold">Alternative Sharing Options</h3>
+                  </div>
+                  <button 
+                    onClick={() => setShowWarningModal(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <p className="text-gray-300 mb-5">
+                  For <span className="text-white font-semibold">{
+                    PLATFORMS.find(p => p.id === platformForWarning)?.name
+                  }</span>, we offer convenient options to download your caption or copy it directly to share on your favorite platform.
+                </p>
+                
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    variant="outline"
+                    className="border-gray-700 hover:bg-gray-800 text-gray-300"
+                    onClick={() => setShowWarningModal(false)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => {
+                      onPlatformChange(platformForWarning);
+                      setShowWarningModal(false);
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
