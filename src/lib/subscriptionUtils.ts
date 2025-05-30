@@ -421,14 +421,14 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
 };
 
 export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): { price: string, saving?: string, promo?: string } => {
-  // Removed 'basic' case entirely
+  // Updated with USD pricing
   switch (planType) {
     case 'basicMonth':
-      return { price: '£5.99/month', promo: '£2.99 for 1st month (-49.9%)' };
+      return { price: '$8.00/month' };
     case 'basicYear':
-      return { price: '£29.99/year', saving: 'Save 58%' };
+      return { price: '$40.00/year', saving: 'Save 58%' };
     case 'flexy':
-      return { price: '£1.99 per pack' };
+      return { price: '$3.00 per pack' };
     default:
       return { price: 'Free' };
   }
@@ -438,45 +438,45 @@ export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' =
   // Removed 'basic' case entirely
   switch (planType) {
     case 'basicMonth':
-      return 'price_1RQkCnGCd9fidigr9N0HDUvq'; // Basic Plan Monthly
+      return 'price_1RTGhNGCd9fidigraVTwiPFB'; // Basic Plan Monthly
     case 'basicYear':
-      return 'price_1RQkCwGCd9fidigrPeVinl74'; // Basic Plan Yearly
+      return 'price_1RTH3yGCd9fidigrrhPoTMga'; // Basic Plan Yearly
     case 'flexy':
-      return 'price_1RQkD0GCd9fidigrgxJu0iKw';
+      return 'price_1RTHNhGCd9fidigrric9VnxJ'; // Flex Plan
     default:
       return '';
   }
 };
 
 export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Removed 'basic' case entirely
+  // Updated product IDs based on new plans
   switch (planType) {
     case 'basicMonth':
-      return 'prod_SLR4jh9pTyTHPm'; // Basic Plan Monthly
+      return 'prod_SO2mG5NoYykdKq'; // Basic Plan Monthly
     case 'basicYear':
-      return 'prod_SLR55czo8NpcuP'; // Basic Plan Yearly
+      return 'prod_SO3AIuuRCfM8Jf'; // Basic Plan Yearly
     case 'flexy':
-      return 'prod_SLR57yTpxpuzit';
+      return 'prod_SO3UmcTFa3cSl7'; // Flex Plan
     default:
       return '';
   }
 };
 
 export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Removed 'basic' case entirely
+  // Updated purchase URLs for all plans
   switch (planType) {
     case 'basicMonth':
-      return 'https://buy.stripe.com/7sYdR961v2PV9WyfNHeAg00';
+      return 'https://buy.stripe.com/00w14n4Xrcqv8Su7hbeAg03';
     case 'basicYear':
-      return 'https://buy.stripe.com/9B6cN5gG90HNecOfNHeAg01';
+      return 'https://buy.stripe.com/bJeaEX9dH76b8SubxreAg04';
     case 'flexy':
-      return 'https://buy.stripe.com/9B6eVdey1bmrd8KatneAg02';
+      return 'https://buy.stripe.com/28E4gz2PjeyDd8KatneAg05';
     default:
       return '';
   }
 };
 
-export const STRIPE_CUSTOMER_PORTAL_URL = 'https://billing.stripe.com/p/login/test_7sI01W9bs7V07sYdQQ';
+export const STRIPE_CUSTOMER_PORTAL_URL = 'https://billing.stripe.com/p/login/test_aEU16H9FrcFScKc144';
 
 export const clearTrialPending = async (userId: string): Promise<boolean> => {
   try {

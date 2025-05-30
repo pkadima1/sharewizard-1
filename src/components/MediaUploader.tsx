@@ -1,4 +1,4 @@
-// MediaUploader.tsx - IMPROVED VERSION WITH EMBEDDED TEXT EDITOR AND EMOJI PICKER
+// MediaUploader.tsx - FIXED VERSION WITH EMBEDDED TEXT EDITOR AND EMOJI PICKER
 import React, { useState, useRef, useCallback, useEffect, MouseEvent, TouchEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -60,6 +60,12 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [textRotation, setTextRotation] = useState(0);
+  const [isLoading, setIsLoading] = useState<{
+    [key: string]: boolean;
+  }>({
+    saving: false,
+    camera: false,
+  });
   
   // Drag offset for text positioning
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -391,11 +397,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       toast("Upload an image or video first!");
       return;
     }
-    
     setShowTextEditor(!showTextEditor);
-    
     if (!showTextEditor) {
-      toast.success("Text editor activated. Type your text and position it on the image.");
+      toast.success("Text editor activated. Type your text and position it on the media.");
     }
   };
 
@@ -412,17 +416,14 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   // Unified pointer event handlers for text positioning
   const handleTextPointerDown = (e: React.PointerEvent) => {
-    if (!textDivRef.current || !imageRef.current) return;
-    
-    // Capture pointer to ensure all events go to this element
+    if (!textDivRef.current) return;
+    // Use videoRef for video, imageRef for image
+    const ref = isVideo ? videoRef : imageRef;
+    if (!ref.current) return;
     textDivRef.current.setPointerCapture(e.pointerId);
     setIsTextDragging(true);
-    
-    // Get element and image bounds
     const textRect = textDivRef.current.getBoundingClientRect();
-    const imageRect = imageRef.current.getBoundingClientRect();
-    
-    // Calculate offset from pointer position to text center
+    const mediaRect = ref.current.getBoundingClientRect();
     dragOffset.current = {
       x: e.clientX - (textRect.left + textRect.width / 2),
       y: e.clientY - (textRect.top + textRect.height / 2)
@@ -430,24 +431,17 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   };
 
   const handleTextPointerMove = (e: React.PointerEvent) => {
-    if (!isTextDragging || !textDivRef.current || !imageRef.current) return;
-    
-    // Calculate new position based on image bounds
-    const imageRect = imageRef.current.getBoundingClientRect();
+    if (!isTextDragging || !textDivRef.current) return;
+    // Use videoRef for video, imageRef for image
+    const ref = isVideo ? videoRef : imageRef;
+    if (!ref.current) return;
+    const mediaRect = ref.current.getBoundingClientRect();
     const textRect = textDivRef.current.getBoundingClientRect();
-    
-    // Convert to percentage coordinates relative to image
-    const newX = ((e.clientX - dragOffset.current.x - imageRect.left) / imageRect.width) * 100;
-    const newY = ((e.clientY - dragOffset.current.y - imageRect.top) / imageRect.height) * 100;
-    
-    // Calculate text dimensions as percentages of image
-    const textWidthPercent = (textRect.width / imageRect.width) * 100;
-    const textHeightPercent = (textRect.height / imageRect.height) * 100;
-    
-    // Add padding to prevent text from touching edges
-    const paddingPercent = 2; // 2% padding from edges
-    
-    // Clamp values with padding and text size consideration
+    const newX = ((e.clientX - dragOffset.current.x - mediaRect.left) / mediaRect.width) * 100;
+    const newY = ((e.clientY - dragOffset.current.y - mediaRect.top) / mediaRect.height) * 100;
+    const textWidthPercent = (textRect.width / mediaRect.width) * 100;
+    const textHeightPercent = (textRect.height / mediaRect.height) * 100;
+    const paddingPercent = 2;
     const clampedX = Math.max(
       (textWidthPercent / 2) + paddingPercent,
       Math.min(100 - (textWidthPercent / 2) - paddingPercent, newX)
@@ -456,7 +450,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       (textHeightPercent / 2) + paddingPercent,
       Math.min(100 - (textHeightPercent / 2) - paddingPercent, newY)
     );
-    
     setTextPosition({
       x: clampedX,
       y: clampedY
@@ -465,20 +458,93 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   const handleTextPointerUp = (e: React.PointerEvent) => {
     if (!textDivRef.current) return;
-    
-    // Release pointer capture
     textDivRef.current.releasePointerCapture(e.pointerId);
     setIsTextDragging(false);
   };
-
   // Apply all edits and save to canvas
   const handleSaveEdits = () => {
-    if (!selectedMedia || !selectedMedia.type.startsWith('image/') || !imageRef.current) {
-      toast.error("Can't save edits. Valid image required.");
+    if (!selectedMedia) {
+      toast.error("No media selected.");
       return;
     }
     
+    setIsLoading(prev => ({ ...prev, saving: true })); // Add loading state
+    
     try {
+      // Handle video files differently than images
+      const isVideoFile = selectedMedia.type.startsWith('video/');
+      
+      if (isVideoFile) {
+        // For videos, we don't modify the video file itself
+        // Instead, we store the text overlay data to display on top of the video during playback
+        
+        // Create a new File object with the same content but with text overlay metadata
+        const videoWithOverlay = new File([selectedMedia], selectedMedia.name, {
+          type: selectedMedia.type,
+          lastModified: Date.now()
+        });
+          // Store text overlay data as a custom property
+        // @ts-ignore - custom property for internal use
+        videoWithOverlay.textOverlayData = {
+          text: textOverlay,
+          position: textPosition,
+          color: textColor, 
+          size: textSize,
+          rotation: textRotation
+        };
+        
+        // Store the file in window.mediaFileCache if it exists
+        if (typeof window !== 'undefined') {
+          const previewBlobUrl = displayUrl || previewUrl;
+          if (previewBlobUrl && previewBlobUrl.startsWith('blob:')) {
+            // @ts-ignore - custom property for our internal use
+            if (!window.mediaFileCache) window.mediaFileCache = {};
+            
+            // Log the text overlay data being stored
+            console.log('Storing video with text overlay in cache:', {
+              url: previewBlobUrl,
+              textData: (videoWithOverlay as any).textOverlayData
+            });
+            
+            // @ts-ignore - store the file with its blob URL as the key
+            window.mediaFileCache[previewBlobUrl] = videoWithOverlay;
+            
+            // Also store with the current time to ensure we have a unique reference
+            // This helps in case the same URL is reused for different edits
+            const timeKey = `${previewBlobUrl}#${Date.now()}`;
+            // @ts-ignore - additional backup storage
+            window.mediaFileCache[timeKey] = videoWithOverlay;
+          }
+        }          // Update the selected media with our enhanced version
+          onMediaSelect(videoWithOverlay);
+          
+          console.log('Video with text overlay saved:', {
+            fileName: videoWithOverlay.name,
+            textOverlay: textOverlay,
+            hasOverlayData: !!((videoWithOverlay as any).textOverlayData)
+          });
+          
+          toast.success(
+            <div className="flex flex-col">
+              <span className="font-medium">Text overlay saved for video!</span>
+              <span className="text-xs mt-1">Text will appear during playback and sharing</span>
+            </div>,
+            { duration: 4000 }
+          );
+        
+        // Reset text editor state
+        setShowTextEditor(false);
+        setIsLoading(prev => ({ ...prev, saving: false }));
+        return;
+      }
+      
+      // For images, use canvas to apply text overlay
+      if (!imageRef.current) {
+        toast.error("Can't access image element.");
+        setIsLoading(prev => ({ ...prev, saving: false }));
+        return;
+      }
+      
       // Create a canvas to combine image + edits
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -501,58 +567,118 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       
       // Apply filter effects if needed
       if (selectedFilter) {
-        // This is simplified - in a real app you'd need to implement
-        // each filter effect manually on the canvas
-        // For now, we'll just add a note
-        console.log("Filter effects would be applied here:", selectedFilter);
+        // Apply filter simulation to canvas
+        applyFilterToCanvas(ctx, canvas.width, canvas.height, selectedFilter);
       }
       
       // Draw the text overlay if present
       if (textOverlay) {
         ctx.save();
-        ctx.font = `${textSize}px Arial`;
-        ctx.fillStyle = textColor;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        
         // Calculate pixel positions from percentages
         const x = (textPosition.x / 100) * canvas.width;
         const y = (textPosition.y / 100) * canvas.height;
+        
         ctx.translate(x, y);
         ctx.rotate((textRotation * Math.PI) / 180);
+        
+        // Use the exact font size proportional to image dimensions
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 500; // Base on a reference size
+        const scaledTextSize = Math.max(textSize * scaleFactor, 12); // Ensure minimum readability
+        
+        ctx.font = `${scaledTextSize}px Arial`;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
         // Add text shadow for better visibility
         ctx.shadowColor = 'rgba(0,0,0,0.7)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
+        ctx.shadowBlur = 4 * scaleFactor;
+        ctx.shadowOffsetX = 2 * scaleFactor;
+        ctx.shadowOffsetY = 2 * scaleFactor;
+        
         // Handle multi-line text by splitting on newlines
         const lines = textOverlay.split('\n');
-        const lineHeight = textSize * 1.2;
+        const lineHeight = scaledTextSize * 1.2;
         const totalTextHeight = lines.length * lineHeight;
+        
         lines.forEach((line, i) => {
           const yOffset = i * lineHeight - (totalTextHeight - lineHeight) / 2;
           ctx.fillText(line, 0, yOffset);
         });
+        
         ctx.restore();
       }
       
       // Convert canvas to blob and create a new URL
       canvas.toBlob((blob) => {
         if (blob) {
+          // Clean up previous URL if it exists
+          if (processedImageUrl) {
+            URL.revokeObjectURL(processedImageUrl);
+          }
+          
           // Create a new object URL for the processed image
           const processedUrl = URL.createObjectURL(blob);
           setProcessedImageUrl(processedUrl);
-          
-          // Create a File object from the blob that could be used for sharing
+            // Create a File object from the blob that will be used for sharing
           const processedFile = new File([blob], `edited_${selectedMedia.name}`, { 
-            type: "image/jpeg" 
+            type: "image/jpeg",
+            lastModified: Date.now()
           });
+          
+          // Store text overlay data in a data attribute on the file object for retrieval during sharing
+          if (textOverlay) {
+            // @ts-ignore - custom property for our internal use
+            processedFile.textOverlayData = {
+              text: textOverlay,
+              position: textPosition,
+              color: textColor,
+              size: textSize,
+              rotation: textRotation
+            };
+            
+            console.log('Storing image with text overlay data:', {
+              text: textOverlay,
+              position: textPosition,
+              color: textColor,
+              size: textSize,
+              rotation: textRotation
+            });
+          }
+          
+          // Store the file in window.mediaFileCache if it exists
+          if (typeof window !== 'undefined') {
+            // Create the cache if it doesn't exist
+            // @ts-ignore - custom property for our internal use
+            if (!window.mediaFileCache) window.mediaFileCache = {};
+            
+            // Store the file with its blob URL as the key
+            // @ts-ignore - store the file with its blob URL as the key
+            window.mediaFileCache[processedUrl] = processedFile;
+            
+            // Also store with a timestamp to ensure uniqueness
+            const timeKey = `${processedUrl}#${Date.now()}`;
+            // @ts-ignore - additional backup storage
+            window.mediaFileCache[timeKey] = processedFile;
+          }
           
           // Update the selected media with the edited version
           onMediaSelect(processedFile);
           
-          toast.success("Edits saved to image!");
+          if (textOverlay) {
+            toast.success(
+              <div className="flex flex-col">
+                <span className="font-medium">Edits saved with text overlay!</span>
+                <span className="text-xs mt-1">Text will appear in downloads and shared images</span>
+              </div>,
+              { duration: 4000 }
+            );
+          } else {
+            toast.success("Image edits saved successfully!");
+          }
           
-          // Reset editing state
+          // Reset editing state but keep current text for further edits if needed
           setShowTextEditor(false);
         }
       }, 'image/jpeg', 0.95);
@@ -560,12 +686,85 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     } catch (err: any) {
       console.error('Error saving edits:', err);
       toast.error(`Failed to save edits: ${err.message}`);
+    } finally {
+      setIsLoading(prev => ({ ...prev, saving: false }));
     }
   };
 
   const handleTextOnlyClick = () => {
     onTextOnlySelect();
     toast.success("Text-only mode activated");
+  };
+
+  // Helper function to apply filters to canvas
+  const applyFilterToCanvas = (ctx: CanvasRenderingContext2D, width: number, height: number, filter: string) => {
+    // Simple filter simulation - in production you'd use more sophisticated filter algorithms
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    
+    switch(filter) {
+      case 'grayscale':
+        for (let i = 0; i < data.length; i += 4) {
+          const avg = (data[i] + data[i+1] + data[i+2]) / 3;
+          data[i] = avg;     // red
+          data[i+1] = avg;   // green
+          data[i+2] = avg;   // blue
+        }
+        break;
+      case 'sepia':
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i+1];
+          const b = data[i+2];
+          data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));     // red
+          data[i+1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));   // green
+          data[i+2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));   // blue
+        }
+        break;
+      case 'invert':
+        for (let i = 0; i < data.length; i += 4) {
+          data[i] = 255 - data[i];         // red
+          data[i+1] = 255 - data[i+1];     // green
+          data[i+2] = 255 - data[i+2];     // blue
+        }
+        break;
+      case 'brightness-125':
+        for (let i = 0; i < data.length; i += 4) {
+          data[i] = Math.min(255, data[i] * 1.25);         // red
+          data[i+1] = Math.min(255, data[i+1] * 1.25);     // green
+          data[i+2] = Math.min(255, data[i+2] * 1.25);     // blue
+        }
+        break;
+      case 'contrast-125':
+        const factor = (259 * (125 + 255)) / (255 * (259 - 125));
+        for (let i = 0; i < data.length; i += 4) {
+          data[i] = Math.min(255, Math.max(0, factor * (data[i] - 128) + 128));         // red
+          data[i+1] = Math.min(255, Math.max(0, factor * (data[i+1] - 128) + 128));     // green
+          data[i+2] = Math.min(255, Math.max(0, factor * (data[i+2] - 128) + 128));     // blue
+        }
+        break;
+      case 'blur-sm':
+        // Simple blur - in production you'd use a proper convolution kernel
+        const tempData = new Uint8ClampedArray(data);
+        for (let y = 1; y < height - 1; y++) {
+          for (let x = 1; x < width - 1; x++) {
+            const idx = (y * width + x) * 4;
+            for (let c = 0; c < 3; c++) {
+              let sum = 0;
+              for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                  const neighborIdx = ((y + dy) * width + (x + dx)) * 4;
+                  sum += tempData[neighborIdx + c];
+                }
+              }
+              data[idx + c] = sum / 9;
+            }
+          }
+        }
+        break;
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
   };
 
   // Determine if the selected file is a video
@@ -586,7 +785,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   return (
     <div className="w-full p-4 sm:p-6">
       <div className="max-w-5xl mx-auto">
-        {/* Welcoming header section */}
+        {/* Welcome header section */}
         <div className="mb-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-1 text-gray-800 dark:text-white flex items-center">
             <span>Welcome, {userProfile?.displayName || currentUser?.displayName || 'User'}</span>
@@ -667,32 +866,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <Button 
                 onClick={handleUploadClick}
-                className="flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base"
+                className="flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
               >
                 <Upload className="h-4 w-4" />
-                Upload Media
-              </Button>
-              <Button 
-                variant={streamActive ? "default" : "secondary"}
-                className={`
-                  flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base
-                  ${isCapturing ? 'opacity-80 cursor-wait' : ''}
-                  ${streamActive ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
-                `}
-                onClick={handleCameraClick}
-                disabled={isCapturing}
-              >
-                {isCapturing ? (
-                  <>
-                    <div className="h-4 w-4 border-2 border-t-transparent rounded-full animate-spin mr-1"></div>
-                    Starting Camera...
-                  </>
-                ) : (
-                  <>
-                    <Camera className="h-4 w-4" />
-                    {streamActive ? 'Camera Active' : 'Use Camera'}
-                  </>
-                )}
+                Upload Media: Image or Video
               </Button>
             </div>
 
@@ -742,7 +919,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         muted
                       />
                       <div className="absolute inset-x-0 bottom-0 p-4 flex justify-center bg-gradient-to-t from-black/70 to-transparent">
-                        <Button 
+                        <Button
                           onClick={handleCapturePhoto}
                           disabled={isCapturing}
                           className="bg-red-500 hover:bg-red-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transform transition hover:scale-105"
@@ -775,7 +952,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         }
                         setStreamActive(false);
                       }}
-                   
                     >
                       <X className="h-4 w-4 mr-1" />
                       Close
@@ -812,15 +988,57 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 <div className="relative flex-grow bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden p-4">
                   {isVideo ? (
                     <div className="relative max-w-full">
-                      <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md flex items-center shadow-sm">
+                      <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md flex items-center shadow-sm z-10">
                         <VideoIcon className="h-3 w-3 mr-1" />
                         Video
                       </div>
-                      <video 
-                        src={displayUrl} 
-                        controls
-                        className="max-h-[350px] max-w-full object-contain rounded-md shadow-sm"
-                      />
+                      <div className="relative">
+                        <video 
+                          src={displayUrl} 
+                          controls
+                          className="max-h-[350px] max-w-full object-contain rounded-md shadow-sm"
+                          ref={videoRef}
+                        />
+                        {/* Draggable text overlay for video */}
+                        {textOverlay && (
+                          <div 
+                            ref={textDivRef}
+                            className={`absolute cursor-move whitespace-pre-wrap break-words text-center transition-all duration-100
+                              ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
+                            style={{
+                              top: `${textPosition.y}%`,
+                              left: `${textPosition.x}%`,
+                              transform: `translate(-50%, -50%) rotate(${textRotation}deg)`,
+                              color: textColor,
+                              fontSize: `${textSize}px`,
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                              maxWidth: '90%',
+                              padding: '8px',
+                              borderRadius: '4px',
+                              zIndex: 20,
+                              backgroundColor: isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
+                              touchAction: 'none',
+                              pointerEvents: 'auto',
+                              userSelect: 'none',
+                              WebkitUserSelect: 'none',
+                            }}
+                            onPointerDown={handleTextPointerDown}
+                            onPointerMove={handleTextPointerMove}
+                            onPointerUp={handleTextPointerUp}
+                          >
+                            {textOverlay}
+                            {isTextDragging && (
+                              <>
+                                <div className="absolute inset-0 bg-blue-500/10 border border-blue-500/40 rounded pointer-events-none"></div>
+                                <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
@@ -831,13 +1049,12 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         className={`${selectedFilter} transition-all rounded-md shadow-sm max-h-[350px] relative`}
                         style={imageStyle}
                       />
-                      
-                      {/* Draggable text overlay */}
+                      {/* Draggable text overlay for image */}
                       {textOverlay && (
                         <div 
                           ref={textDivRef}
                           className={`absolute cursor-move whitespace-pre-wrap break-words text-center transition-all duration-100
-                            ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
+                ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
                           style={{
                             top: `${textPosition.y}%`,
                             left: `${textPosition.x}%`,
@@ -850,7 +1067,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                             borderRadius: '4px',
                             zIndex: 10,
                             backgroundColor: isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
-                            touchAction: 'none', // Prevent default touch actions
+                            touchAction: 'none',
                           }}
                           onPointerDown={handleTextPointerDown}
                           onPointerMove={handleTextPointerMove}
@@ -860,7 +1077,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           {isTextDragging && (
                             <>
                               <div className="absolute inset-0 bg-blue-500/10 border border-blue-500/40 rounded pointer-events-none"></div>
-                              {/* Drag handles for visual feedback */}
                               <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
                               <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
                               <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
@@ -869,7 +1085,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           )}
                         </div>
                       )}
-
                       {/* Crop overlay */}
                       {isCropMode && (
                         <div className="absolute inset-0 border-2 border-dashed border-primary bg-black bg-opacity-50 rounded-md">
@@ -885,8 +1100,32 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 
                 {/* Media editing controls */}
                 <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                  {/* Embedded text editor - appears when text button is clicked */}
-                  {showTextEditor && !isVideo && (
+                  {/* Text overlay indicator - shows when text is applied but editor is closed */}
+                  {textOverlay && !showTextEditor && (
+                    <div className="mb-4 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-md flex items-center text-xs">
+                      <Type className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-primary" />
+                      <span className="text-primary">Text overlay applied: "{textOverlay.substring(0, 20)}{textOverlay.length > 20 ? '...' : ''}"</span>
+                      <button 
+                        className="ml-auto bg-primary/10 hover:bg-primary/20 rounded px-1.5 py-0.5 text-primary"
+                        onClick={() => setShowTextEditor(true)}
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  )}
+                  
+                  {/* Video-specific text overlay message */}
+                  {isVideo && textOverlay && (
+                    <div className="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                      <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start">
+                        <Info className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                        <span>Text overlays on videos will be saved with the video metadata and displayed during playback and sharing. <strong>No need to re-encode the video.</strong></span>
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Embedded text editor - appears when text button is clicked (now for both images and videos) */}
+                  {showTextEditor && (
                     <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="text-sm font-medium flex items-center">
@@ -1099,13 +1338,18 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       <span className="text-xs mt-1">Reset</span>
                     </button>
                     <button 
-                      className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
+                      className={`text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center ${isLoading.saving ? 'opacity-70' : ''}`}
                       onClick={handleSaveEdits}
+                      disabled={isLoading.saving}
                     >
                       <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <Check className="h-5 w-5" />
+                        {isLoading.saving ? (
+                          <div className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <Check className="h-5 w-5" />
+                        )}
                       </div>
-                      <span className="text-xs mt-1">Save</span>
+                      <span className="text-xs mt-1">{isLoading.saving ? 'Saving...' : 'Save'}</span>
                     </button>
                   </div>
                 </div>
