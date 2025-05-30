@@ -372,9 +372,9 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
           </div>
         </div>
         
-        {/* Key Metrics */}
+        {/* Key Metrics 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Posts Generated */}
+           Posts Generated 
           <div className="bg-card text-card-foreground rounded-lg p-4 shadow-sm flex items-start">
             <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
               <MessageSquareText className="w-5 h-5 text-blue-500 dark:text-blue-400" />
@@ -385,7 +385,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
             </div>
           </div>
           
-          {/* Drafts Saved */}
+           Drafts Saved 
           <div className="bg-card text-card-foreground rounded-lg p-4 shadow-sm flex items-start">
             <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900/30">
               <FileEdit className="w-5 h-5 text-purple-500 dark:text-purple-400" />
@@ -397,7 +397,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
             </div>
           </div>
           
-          {/* Posts Shared */}
+          {/* Posts Shared 
           <div className="bg-card text-card-foreground rounded-lg p-4 shadow-sm flex items-start">
             <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30">
               <Share2 className="w-5 h-5 text-green-500 dark:text-green-400" />
@@ -408,9 +408,9 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
               <div className="text-xs text-muted-foreground">Across all platforms</div>
             </div>
           </div>
-        </div>
+        </div>*/}
         
-        {/* Shares by Platform */}
+        {/* Shares by Platform 
         <div className="bg-card text-card-foreground rounded-lg p-6 shadow-sm">
           <h3 className="font-medium mb-4">Shares by Platform</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -446,7 +446,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
               <div className="text-xs text-muted-foreground">Other Apps</div>
             </div>
           </div>
-        </div>
+        </div>*/}
       </div>
       
       {/* Buy Flex Modal */}
@@ -527,7 +527,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
                 
                 <h3 className="font-medium">Basic Plan (Monthly)</h3>
                 
-                <div className="text-sm font-semibold">£5.99/month</div>
+                <div className="text-sm font-semibold">$8/month</div>
               </div>
               <ul className="text-sm space-y-1">
                 <li className="flex items-start">
@@ -536,7 +536,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
                 </li>
                   <li className="flex items-start">
                   <div className="text-blue-500 dark:text-blue-400 mr-2">★</div>
-                  <span><h5>🎉 Launch Offer: First Month for £2.99 Only!</h5></span>
+                  <span><h5>🎉 Launch Offer: First Month for $3 Only!</h5></span>
                 </li>
                 <li className="flex items-start">
                   <div className="text-blue-500 dark:text-blue-400 mr-2">★</div>
@@ -563,7 +563,7 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
             >
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-medium">Basic Plan (Yearly)</h3>
-                <div className="text-sm font-semibold">£29.99/year</div>
+                <div className="text-sm font-semibold">$40/year</div>
               </div>
               <ul className="text-sm space-y-1">
                 <li className="flex items-start">

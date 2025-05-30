@@ -4,6 +4,11 @@ import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MediaType, Caption, CaptionStyle, DownloadOptions } from '@/types/mediaTypes';
 import { stripMarkdownFormatting } from './textFormatters';
+import { 
+  drawCustomTextOverlay, 
+  getMediaFileFromCache, 
+  getTextOverlayDataFromElement 
+} from './textOverlayHelpers';
 
 /**
  * Helper function to create video with caption overlay
@@ -15,14 +20,32 @@ export const createCaptionedVideo = async (
   captionStyle: CaptionStyle = 'standard'
 ): Promise<Blob> => {
   return new Promise((resolve, reject) => {
-    try {
-      // Validate caption object to prevent errors and strip markdown
+    try {      // Validate caption object to prevent errors and strip markdown
       const validatedCaption: Caption = {
         title: stripMarkdownFormatting(caption?.title) || 'Untitled',
         caption: stripMarkdownFormatting(caption?.caption) || '',
         cta: stripMarkdownFormatting(caption?.cta) || '',
         hashtags: Array.isArray(caption?.hashtags) ? caption.hashtags.map(stripMarkdownFormatting) : []
       };
+      
+    // Get text overlay data using our comprehensive utility function
+      // This checks multiple sources to find the text overlay data
+      const textOverlayData = getTextOverlayDataFromElement(videoElement);
+      
+      // If we found text overlay data, log it for debugging
+      if (textOverlayData) {
+        console.log('Successfully found text overlay data for video:', textOverlayData);
+      } else {
+        // Try to get text overlay data from the mediaFile property if it exists
+        // This happens when text overlays are added in the previous step
+        // @ts-ignore - custom property
+        const mediaFileData = videoElement.mediaFile?.textOverlayData;
+        if (mediaFileData) {
+          console.log('Found text overlay data in mediaFile property:', mediaFileData);
+          // @ts-ignore - adding property to videoElement
+          videoElement.textOverlayData = mediaFileData;
+        }
+      }
 
       // Create a canvas with space for video and caption
       const canvas = document.createElement('canvas');
@@ -171,8 +194,13 @@ export const createCaptionedVideo = async (
                 } else {
                   drawStandardCaption(ctx, validatedCaption, videoElement, captionHeight);
                 }
+                  // Draw custom text overlay if available
+                if (textOverlayData) {
+                  console.log('Applying text overlay to video frame:', textOverlayData);
+                  drawCustomTextOverlay(ctx, textOverlayData, videoElement.videoWidth, videoElement.videoHeight);
+                }
               } catch (err) {
-                console.warn('Error drawing caption:', err);
+                console.warn('Error drawing caption or text overlay:', err);
               }
 
               // Request next frame if video is still playing

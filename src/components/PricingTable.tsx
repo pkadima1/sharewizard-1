@@ -63,8 +63,7 @@ const PricingTable: React.FC = () => {
   const { toast } = useToast();
   
   const currentPlan = userProfile?.plan_type || 'free';
-  
-  const handleSubscribe = async (plan: 'basic') => {
+    const handleSubscribe = async (plan: 'basic') => {
     if (!currentUser) {
       toast({
         title: "Login Required",
@@ -75,7 +74,7 @@ const PricingTable: React.FC = () => {
     }
     
     try {
-      const priceId = 'price_basic_monthly';
+      const priceId = 'price_1RTGhNGCd9fidigraVTwiPFB'; // Updated Basic Monthly price ID
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
     } catch (error: any) {
@@ -87,8 +86,7 @@ const PricingTable: React.FC = () => {
       });
     }
   };
-  
-  const handleBuyFlex = async () => {
+    const handleBuyFlex = async () => {
     if (!currentUser) {
       toast({
         title: "Login Required",
@@ -99,7 +97,7 @@ const PricingTable: React.FC = () => {
     }
     
     try {
-      const priceId = 'price_flex_pack';
+      const priceId = 'price_1RTHNhGCd9fidigrric9VnxJ'; // Updated Flex price ID
       const url = await createFlexCheckout(currentUser.uid, priceId, 1);
       window.location.assign(url);
     } catch (error: any) {
@@ -168,9 +166,8 @@ const PricingTable: React.FC = () => {
           <div className="p-6 border-b border-adaptive">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
               <CreditCard className="w-6 h-6 text-blue-500 dark:text-blue-300" />
-            </div>
-            <h3 className="text-xl font-semibold text-adaptive-primary">Basic</h3>
-            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$5.99</div>
+            </div>            <h3 className="text-xl font-semibold text-adaptive-primary">Basic</h3>
+            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$8.00</div>
             <div className="text-sm text-adaptive-tertiary">per month</div>
             
             <div className="mt-6">
@@ -206,9 +203,8 @@ const PricingTable: React.FC = () => {
           <div className="p-6 border-b border-adaptive">
             <div className="flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full mb-4">
               <Zap className="w-6 h-6 text-green-500 dark:text-green-300" />
-            </div>
-            <h3 className="text-xl font-semibold text-adaptive-primary">Flex</h3>
-            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$1.99</div>
+            </div>            <h3 className="text-xl font-semibold text-adaptive-primary">Flex</h3>
+            <div className="mt-4 text-3xl font-bold text-adaptive-primary">$3.00</div>
             <div className="text-sm text-adaptive-tertiary">per pack</div>
             
             <div className="mt-6">
@@ -242,7 +238,7 @@ const PricingTable: React.FC = () => {
         <h3 className="text-xl font-semibold text-center mb-8">Or, choose from our Stripe checkout options:</h3>
         <div className="max-w-3xl mx-auto">
           <div dangerouslySetInnerHTML={{ 
-            __html: `<stripe-pricing-table pricing-table-id="prctbl_1QzLaLGCd9fidigrJgMAKYwM" publishable-key="pk_test_51Qk8jFGCd9fidigrAGg1nszClaepwj0eyd7XFaxaiweCgCvl63VUQKbN40DlLjcXyhRAm7qWEK92k5Ks9nVKv3Jk008PaVRpPv"></stripe-pricing-table>`
+            __html: `<stripe-pricing-table pricing-table-id="prctbl_1RTHNvGCd9fidigr26DIBbTU" publishable-key="pk_test_51Qk8jFGCd9fidigrAGg1nszClaepwj0eyd7XFaxaiweCgCvl63VUQKbN40DlLjcXyhRAm7qWEK92k5Ks9nVKv3Jk008PaVRpPv"></stripe-pricing-table>`
           }} />
         </div>
       </div>
