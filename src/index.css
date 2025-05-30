@@ -389,3 +389,45 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Keyboard navigation enhancement styles */
+.keyboard-navigation *:focus {
+  outline: 2px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+
+.keyboard-navigation button:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation select:focus {
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+}
+
+/* Enhanced focus styles for keyboard shortcuts overlay */
+.keyboard-shortcuts-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Smooth transitions for help overlay */
+.keyboard-help-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.keyboard-help-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms ease-in-out, transform 200ms ease-in-out;
+}
+
+.keyboard-help-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.keyboard-help-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+}

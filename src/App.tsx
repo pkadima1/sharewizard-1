@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
+import LongFormWizard from "./pages/LongFormWizard";
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
     <ThemeProvider>
@@ -34,12 +35,12 @@ const App = () => <QueryClientProvider client={queryClient}>
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/pricing" element={<Pricing />} />
-                  <Route path="/caption-generator" element={<CaptionGenerator />} />
+                  <Route path="/pricing" element={<Pricing />} />                  <Route path="/caption-generator" element={<CaptionGenerator />} />
                   <Route path="/terms" element={<TermsAndConditions />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/preview-repost" element={<PreviewRepost />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}                  <Route path="*" element={<NotFound />} />
+                  <Route path="/longform" element={<LongFormWizard />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}<Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
               <Footer />
