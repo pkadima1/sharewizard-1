@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 import { 
   Info, 
   Clock, 
@@ -121,37 +122,36 @@ const Step5GenerationSettings = ({ formData, updateFormData }) => {
   const contentConfig = useMemo(() => {
     return CONTENT_TYPE_CONFIGS[formData.contentType] || CONTENT_TYPE_CONFIGS['blog-article'];
   }, [formData.contentType]);
-
-  // Calculate word count recommendations
-  const getWordCountRecommendations = () => {
+  // Content status for summary display
+  const getContentStatus = () => {
     const currentCount = formData.wordCount || 800;
     const [min, max] = contentConfig.optimalRange;
     
     if (currentCount >= 1200 && currentCount <= 1800) {
       return {
         status: 'seo-optimal',
-        message: 'SEO Optimal Range',
+        message: 'SEO Optimal Length',
         color: 'text-green-600',
         icon: CheckCircle2
       };
     } else if (currentCount >= min && currentCount <= max) {
       return {
         status: 'content-optimal',
-        message: 'Optimal for Content Type',
+        message: 'Good Length for Content Type',
         color: 'text-blue-600',
         icon: Target
       };
     } else if (currentCount < min) {
       return {
         status: 'too-short',
-        message: 'Consider adding more content',
+        message: 'Content Length: On the shorter side',
         color: 'text-amber-600',
         icon: AlertTriangle
       };
     } else {
       return {
         status: 'too-long',
-        message: 'May be too long for engagement',
+        message: 'Content Length: On the longer side',
         color: 'text-amber-600',
         icon: AlertTriangle
       };
@@ -167,8 +167,7 @@ const Step5GenerationSettings = ({ formData, updateFormData }) => {
     
     return Math.round(baseTime * wordCountMultiplier * complexityMultiplier * mediaMultiplier * 10) / 10;
   };
-
-  const wordCountRec = getWordCountRecommendations();
+  const contentStatus = getContentStatus();
   const estimatedTime = getEstimatedTime();
 
   return (
@@ -179,72 +178,53 @@ const Step5GenerationSettings = ({ formData, updateFormData }) => {
           <p className="text-muted-foreground">
             Customize your content generation with smart recommendations
           </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Word Count & Recommendations */}
+        </div>        <div className="grid gap-6 md:grid-cols-2">
+          {/* Word Count Summary Card */}
           <Card className="p-4 space-y-4 border-l-4 border-l-blue-500 shadow-sm">
             <h3 className="font-semibold flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Content Length
+              <FileText className="h-4 w-4" />
+              Content Summary
             </h3>
 
-            {/* Word Count Slider */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="word-count" className="text-sm font-medium">
-                  Word Count: {formData.wordCount || 800}
-                </Label>
-                <div className="flex gap-2">
-                  {/* SEO Optimal Badge */}
-                  {wordCountRec.status === 'seo-optimal' && (
-                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                      <CheckCircle2 className="h-3 w-3 mr-1" />
-                      SEO Optimal
-                    </Badge>
-                  )}                  <Badge variant="outline" className={wordCountRec.color}>
-                    {(() => {
-                      const IconComponent = wordCountRec.icon;
-                      return <IconComponent className="h-3 w-3 mr-1" />;
-                    })()}
-                    {wordCountRec.message}
-                  </Badge>
-                </div>
+            <div className="space-y-4">
+              {/* Content Type Information */}
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">Content Type:</Label>
+                <Badge className="font-medium">
+                  {formData.contentType ? formData.contentType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Blog Article'}
+                </Badge>
               </div>
               
-              <input
-                id="word-count"
-                type="range"
-                className="w-full accent-blue-500 h-2 bg-blue-100 dark:bg-blue-900 rounded-full appearance-none cursor-pointer"
-                min="300"
-                max="3000"
-                step="100"
-                value={formData.wordCount || 800}
-                onChange={(e) => updateFormData('wordCount', parseInt(e.target.value))}
-              />
-              
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>300</span>
-                <span className="font-medium text-green-600">1200-1800 (SEO Optimal)</span>
-                <span>3000</span>
+              {/* Word Count Information */}
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">Word Count:</Label>              <Badge className={`flex items-center gap-1 ${contentStatus.status === 'seo-optimal' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'}`}>
+                  {(() => {
+                    const IconComponent = contentStatus.icon;
+                    return <IconComponent className="h-3 w-3 mr-1" />;
+                  })()}
+                  {formData.wordCount || 800} words
+                </Badge>
               </div>
-            </div>
-
-            {/* Content Type Recommendations */}
-            <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-md">
-              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
-                Recommendation for {formData.contentType || 'blog-article'}
-              </h4>
-              <p className="text-xs text-blue-700 dark:text-blue-300">
-                {contentConfig.description}
-              </p>
-              <div className="flex justify-between mt-2 text-xs">
-                <span className="text-blue-600 dark:text-blue-400">
-                  Optimal: {contentConfig.optimalRange[0]}-{contentConfig.optimalRange[1]} words
-                </span>
-                <span className="text-blue-600 dark:text-blue-400">
-                  Level: {contentConfig.readingLevel}
-                </span>
+              
+              {/* Reading Level Information */}
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">Reading Level:</Label>
+                <Badge className={READING_LEVELS[contentConfig.readingLevel].color}>
+                  {contentConfig.readingLevel}
+                </Badge>
+              </div>
+              
+              <Separator />
+              
+              {/* Content Type Description */}
+              <div className="bg-blue-50 dark:bg-blue-950/30 p-3 rounded-md">
+                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1 flex items-center gap-1">
+                  <Info className="h-3.5 w-3.5" />
+                  Content Details
+                </h4>
+                <p className="text-xs text-blue-700 dark:text-blue-300">
+                  {contentConfig.description}
+                </p>
               </div>
             </div>
           </Card>
@@ -421,12 +401,11 @@ const Step5GenerationSettings = ({ formData, updateFormData }) => {
           
           <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">Optimization Status</h4>
-              <div className="space-y-1 text-xs">
+              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">Optimization Status</h4>              <div className="space-y-1 text-xs">
                 <div className="flex items-center justify-between">
                   <span>SEO Optimization:</span>
-                  <Badge className={wordCountRec.status === 'seo-optimal' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}>
-                    {wordCountRec.status === 'seo-optimal' ? 'Optimal' : 'Good'}
+                  <Badge className={contentStatus.status === 'seo-optimal' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'}>
+                    {contentStatus.status === 'seo-optimal' ? 'Optimal' : 'Good'}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">

@@ -16,6 +16,11 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { httpsCallable, HttpsCallableResult } from "firebase/functions";
+import { functions } from '@/lib/firebase';
 import { 
   Info, 
   CheckCircle2, 
@@ -41,7 +46,9 @@ import {
   Facebook,
   Copy,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 
 // SEO scoring weights
@@ -101,11 +108,41 @@ const GENERATION_COSTS = {
   premium: { credits: 12, features: ['Advanced content', 'Research integration', 'Plagiarism check', 'Multiple formats'] }
 };
 
+// Define the interface for the function response
+interface GenerateLongformResponse {
+  content: string;
+  outline: any;
+  metadata: {
+    actualWordCount: number;
+    outlineGenerationTime: number;
+    contentGenerationTime: number;
+    contentQuality: {
+      hasEmotionalElements: boolean;
+      hasActionableContent: boolean;
+      seoOptimized: boolean;
+      structureComplexity: number;
+    }
+  }
+}
+
 const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep }) => {
   const [selectedExportFormats, setSelectedExportFormats] = useState(['markdown']);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+  const [generationResult, setGenerationResult] = useState<GenerateLongformResponse | null>(null);
+  const [generationProgress, setGenerationProgress] = useState(0);
+  const [generationStage, setGenerationStage] = useState<'outline' | 'content' | 'complete' | null>(null);
+  
+  const navigate = useNavigate();
+
+  // Create the callable function
+  const generateLongformContentFunction = httpsCallable<
+    any, 
+    GenerateLongformResponse
+  >(functions, 'generateLongformContent');
 
   // Initialize export format from formData
   useEffect(() => {
@@ -251,13 +288,12 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
         completed: !!formData.contentTone,
         required: true,
         editStep: 3
-      },
-      {
+      },      {
         id: 'word-count',
         label: 'Word count configured',
         completed: !!(formData.wordCount && formData.wordCount >= 500),
         required: false,
-        editStep: 4
+        editStep: 3
       },
       {
         id: 'format',
@@ -415,6 +451,147 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
     
     return Math.round(baseTime * wordMultiplier * complexityMultiplier * formatMultiplier * 10) / 10;
   }, [formData, selectedExportFormats]);
+
+  // Handle the generation process
+  const handleGenerate = async () => {
+    if (completionChecklist.requiredCompleted < completionChecklist.requiredCount) {
+      toast.error("Please complete all required items before generating content.");
+      return;
+    }
+    
+    let progressUpdateInterval: NodeJS.Timeout | null = null;
+    let contentGenerationInterval: NodeJS.Timeout | null = null;
+    
+    try {
+      setIsGenerating(true);
+      setGenerationError(null);
+      setGenerationProgress(10);
+      setGenerationStage('outline');
+
+      // Prepare the data for the function call
+      const functionData = {
+        topic: formData.topic,
+        audience: formData.audience,
+        industry: formData.industry,
+        contentType: formData.contentType || 'blog-article',
+        contentTone: formData.contentTone || 'professional',
+        structureFormat: formData.structureFormat || 'intro-points-cta',
+        wordCount: formData.wordCount || 800,
+        keywords: formData.keywords || [],
+        optimizedTitle: formData.optimizedTitle || formData.topic,
+        includeImages: formData.includeImages || false,
+        includeStats: formData.includeStats || false,
+        plagiarismCheck: formData.plagiarismCheck !== false,
+        outputFormat: selectedExportFormats[0] || 'markdown',
+        ctaType: formData.ctaType || 'none',
+        structureNotes: formData.structureNotes || '',
+        mediaUrls: (formData.mediaFiles || []).map(file => file.url || '')
+      };      // Update progress based on typical function execution timeline
+      progressUpdateInterval = setInterval(() => {
+        setGenerationProgress(prev => {
+          // Outline generation typically takes ~30% of the total time
+          if (generationStage === 'outline' && prev < 30) return prev + 1;
+          // Content generation takes ~65% of the total time
+          if (generationStage === 'content' && prev < 95) return prev + 0.5;
+          // Keep progress steady if we're at the expected stage limit
+          return prev;
+        });
+      }, 800); // Slightly faster updates for smoother progress      // Call the Firebase function
+      const result = await generateLongformContentFunction(functionData);
+      
+      // Update progress and stage based on function response
+      setGenerationStage('content');
+      setGenerationProgress(50);
+      
+      // Update progress to simulate content generation phase
+      contentGenerationInterval = setInterval(() => {
+        setGenerationProgress(prev => {
+          if (prev < 95) return prev + 1;
+          return prev;
+        });
+      }, 1000);
+      
+      // Short delay to simulate content processing
+      setTimeout(() => {
+        if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+        if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+        
+        // Handle success
+        if (result.data) {
+          setGenerationResult(result.data);
+          setGenerationProgress(100);
+          setGenerationStage('complete');
+          
+          // Store the result in Firestore (this is handled by the function)
+          toast.success("Content generated successfully!");
+            // Navigate to the dashboard longform tab
+          setTimeout(() => {
+            navigate('/dashboard?tab=longform', { 
+              state: { 
+                newContentGenerated: true,
+                generationCompleted: true
+              } 
+            });
+          }, 2000);
+        }
+      }, 1500);        } catch (error: any) {
+      if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+      if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+      
+      console.error("Generation error:", error);
+      
+      // Enhanced error handling with specific messages for common errors
+      let errorMessage = "An unexpected error occurred during content generation. Please try again.";
+      
+      if (error.code) {
+        // Handle Firebase error codes
+        switch (error.code) {
+          case 'functions/cancelled':
+            errorMessage = "The generation process was cancelled. Please try again.";
+            break;
+          case 'functions/deadline-exceeded':
+            errorMessage = "The generation process took too long. Try reducing the word count or simplifying your request.";
+            break;
+          case 'functions/resource-exhausted':
+            errorMessage = "You've reached your content generation limit. Please upgrade your plan to continue.";
+            break;
+          case 'functions/unauthenticated':
+          case 'functions/permission-denied':
+            errorMessage = "You don't have permission to generate content. Please log in again or contact support.";
+            break;
+          case 'functions/internal':
+            errorMessage = `Content generation failed due to an internal error: ${error.message}. Please try again or contact support if this persists.`;
+            break;
+          case 'functions/invalid-argument':
+            errorMessage = `Invalid input provided: ${error.message}. Please check your inputs and try again.`;
+            break;
+          default:
+            // Use the error message from Firebase if available
+            errorMessage = error.message || errorMessage;
+        }
+      } else if (error.message) {
+        // Handle non-Firebase errors
+        errorMessage = `Generation failed: ${error.message}`;
+      }
+        setGenerationError(errorMessage);
+      setIsGenerating(false);
+      toast.error("Failed to generate content", {
+        description: errorMessage
+      });
+      console.error("Generation error:", error);
+    }
+  };
+
+  // Retry generation after an error
+  const handleRetryGeneration = () => {
+    setGenerationError(null);
+    handleGenerate();
+  };
+
+  // Handle quick edit
+  const handleQuickEdit = (field) => {
+    onEditStep(field.editStep);
+  };
 
   return (
     <TooltipProvider>
@@ -792,37 +969,104 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
           </div>
         </Card>
 
+        {/* Generation Progress */}
+        {isGenerating && !generationError && (
+          <Card className="p-6 text-center">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Generating Your Content</h3>
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                </div>
+                
+                <div className="w-full max-w-md space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>
+                      {generationStage === 'outline' 
+                        ? 'Creating intelligent content outline...' 
+                        : generationStage === 'content'
+                          ? 'Generating human-like content...'
+                          : 'Finalizing content...'}
+                    </span>
+                    <span>{generationProgress}%</span>
+                  </div>
+                  <Progress value={generationProgress} className="h-2" />
+                </div>
+                  <p className="text-sm text-muted-foreground">
+                  {generationStage === 'outline' 
+                    ? 'Using Gemini AI to create a sophisticated content outline with intelligent structure' 
+                    : generationStage === 'content'
+                      ? 'Using GPT to transform the outline into engaging, human-like content optimized for your audience'
+                      : 'Applying final formatting, quality checks, and SEO optimization'}
+                </p>
+                
+                <div className="flex justify-center gap-2 mt-2">
+                  <Badge variant={generationStage === 'outline' ? 'default' : 'outline'}>Outline</Badge>
+                  <Badge variant={generationStage === 'content' ? 'default' : 'outline'}>Content</Badge>
+                  <Badge variant={generationStage === 'complete' ? 'default' : 'outline'}>Finalize</Badge>
+                </div>
+                
+                <p className="text-xs text-muted-foreground">
+                  This process takes approximately {estimatedTime} minutes. Please don't close this window.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Error Alert */}
+        {generationError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Generation Failed</AlertTitle>
+            <AlertDescription>
+              {generationError}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRetryGeneration}
+                className="mt-2 flex items-center gap-1"
+              >
+                <RefreshCw className="h-3 w-3" />
+                Retry Generation
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Generate Button */}
-        <Card className="p-6 text-center">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold">Ready to Generate Your Content?</h3>
-              <p className="text-sm text-muted-foreground">
-                Your content will be generated with the current settings. This process will take approximately {estimatedTime} minutes.
+        {!isGenerating && !generationError && (
+          <Card className="p-6 text-center">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold">Ready to Generate Your Content?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Your content will be generated with the current settings. This process will take approximately {estimatedTime} minutes.
+                </p>
+              </div>
+              
+              <Button
+                size="lg"
+                onClick={handleGenerate}
+                disabled={completionChecklist.requiredCompleted < completionChecklist.requiredCount}
+                className="w-full h-12 text-base"
+              >
+                <Zap className="h-5 w-5 mr-2" />
+                Generate Content ({generationCost.credits} Credits)
+              </Button>
+
+              {completionChecklist.requiredCompleted < completionChecklist.requiredCount && (
+                <p className="text-sm text-red-600 dark:text-red-400">
+                  Please complete all required items before generating content.
+                </p>
+              )}
+              
+              <p className="text-xs text-muted-foreground">
+                Content will be generated in {selectedExportFormats.length} format{selectedExportFormats.length > 1 ? 's' : ''}: {selectedExportFormats.join(', ')}
               </p>
             </div>
-            
-            <Button
-              size="lg"
-              onClick={onGenerate}
-              disabled={completionChecklist.requiredCompleted < completionChecklist.requiredCount}
-              className="w-full h-12 text-base"
-            >
-              <Zap className="h-5 w-5 mr-2" />
-              Generate Content ({generationCost.credits} Credits)
-            </Button>
-
-            {completionChecklist.requiredCompleted < completionChecklist.requiredCount && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                Please complete all required items before generating content.
-              </p>
-            )}
-            
-            <p className="text-xs text-muted-foreground">
-              Content will be generated in {selectedExportFormats.length} format{selectedExportFormats.length > 1 ? 's' : ''}: {selectedExportFormats.join(', ')}
-            </p>
-          </div>
-        </Card>
+          </Card>
+        )}
       </div>
     </TooltipProvider>
   );

@@ -29,7 +29,9 @@ import {
   Download,
   Phone,
   Mail,
-  Globe
+  Globe,
+  TrendingUp,
+  AlertTriangle
 } from 'lucide-react';
 import ContentPreview from '@/components/wizard/smart/ContentPreview';
 
@@ -183,7 +185,6 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
   );
   const [expandedSections, setExpandedSections] = useState(new Set(['tone', 'structure']));
   const [showToneExample, setShowToneExample] = useState(false);
-
   // Initialize from formData
   useEffect(() => {
     // Set default values for any missing fields
@@ -192,6 +193,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     if (!formData.structureFormat) updateFormData('structureFormat', 'intro-points-cta');
     if (!formData.ctaType) updateFormData('ctaType', 'none');
     if (formData.includeStats === undefined) updateFormData('includeStats', false);
+    if (!formData.wordCount) updateFormData('wordCount', 800);
     
     // Check if we should show structure notes based on selection
     if (formData.structureFormat === 'custom') {
@@ -232,11 +234,64 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
   const getSelectedCTA = () => {
     return CTA_TYPE_OPTIONS.find(c => c.value === formData.ctaType) || CTA_TYPE_OPTIONS[4];
   };
-
   // Calculate total word count
   const calculateTotalWords = () => {
     const structure = getSelectedStructure();
     return structure.sections.reduce((total, section) => total + section.words, 0);
+  };
+  // Get content length recommendation based on content type and tone
+  const getContentLengthRecommendation = () => {
+    const currentCount = formData.wordCount || 800;
+    
+    // Define optimal ranges for different content types
+    const contentRanges = {
+      'blog-article': [1200, 1800],
+      'newsletter': [800, 1200],
+      'case-study': [1500, 2500],
+      'guide': [2000, 3000],
+      'thought-piece': [1000, 1500]
+    };
+    
+    const contentType = formData.contentType || 'blog-article';
+    const [min, max] = contentRanges[contentType] || [1200, 1800];
+    
+    if (currentCount >= 1200 && currentCount <= 1800) {
+      return " this length is ideal for SEO and reader engagement.";
+    } else if (currentCount >= min && currentCount <= max) {
+      return ` a length of ${min}-${max} words is recommended for optimal results.`;
+    } else if (currentCount < min) {
+      return ` consider adding more content. At least ${min} words is recommended.`;
+    } else {
+      return " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces.";
+    }
+  };
+  
+  // Get word count status for badge and visual indicators
+  const getWordCountStatus = () => {
+    const currentCount = formData.wordCount || 800;
+    const contentType = formData.contentType || 'blog-article';
+    
+    // Define optimal ranges for different content types
+    const contentRanges = {
+      'blog-article': [1200, 1800],
+      'newsletter': [800, 1200],
+      'case-study': [1500, 2500],
+      'guide': [2000, 3000],
+      'thought-piece': [1000, 1500]
+    };
+    
+    const [min, max] = contentRanges[contentType] || [1200, 1800];
+    
+    // SEO optimal range always takes precedence
+    if (currentCount >= 1200 && currentCount <= 1800) {
+      return { status: 'optimal', message: 'SEO Optimal' };
+    } else if (currentCount < min) {
+      return { status: 'warning', message: 'Too Short' };
+    } else if (currentCount > max) {
+      return { status: 'warning', message: 'Very Long' };
+    } else {
+      return { status: 'normal', message: `${currentCount} words` };
+    }
   };
   return (
     <TooltipProvider>
@@ -333,7 +388,96 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               </div>
             </Card>
 
-            {/* Structure Format Card */}
+            {/* Structure Format Card */}            {/* Word Count Card - NEW */}
+            <Card className="p-4 border-l-4 border-l-purple-500 shadow-sm overflow-hidden">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-purple-600" />
+                    Content Length
+                  </h3>
+                  
+                  {/* Word Count Status Badge */}
+                  {getWordCountStatus().status === 'optimal' ? (
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      SEO Optimal
+                    </Badge>
+                  ) : getWordCountStatus().status === 'warning' ? (
+                    <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      {getWordCountStatus().message}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {formData.wordCount || 800} words
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Word Count Slider with Current Value Display */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="word-count" className="text-sm font-medium flex items-center gap-1.5">
+                      <span>Word Count:</span> 
+                      <span className="font-bold text-purple-700 dark:text-purple-300">
+                        {formData.wordCount || 800}
+                      </span>
+                    </Label>
+                  </div>
+                  
+                  <div className="relative">
+                    <input
+                      id="word-count"
+                      type="range"
+                      className="w-full accent-purple-500 h-2 bg-purple-100 dark:bg-purple-900 rounded-full appearance-none cursor-pointer"
+                      min="300"
+                      max="3000"
+                      step="100"
+                      value={formData.wordCount || 800}
+                      onChange={(e) => updateFormData('wordCount', parseInt(e.target.value))}
+                    />
+                    
+                    {/* SEO Optimal Range Highlight */}
+                    <div 
+                      className="absolute top-0 h-2 bg-green-300 dark:bg-green-800/50 rounded-full pointer-events-none"
+                      style={{ 
+                        left: `${(1200 - 300) / (3000 - 300) * 100}%`, 
+                        width: `${(1800 - 1200) / (3000 - 300) * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                  
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>300</span>
+                    <span className="font-medium text-green-600">1200-1800 (SEO Optimal)</span>
+                    <span>3000</span>
+                  </div>
+                </div>
+
+                {/* Content Length Recommendation */}
+                <div className="bg-purple-50 dark:bg-purple-950/30 p-3 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-purple-600" />
+                    <h4 className="text-sm font-medium text-purple-800 dark:text-purple-200">
+                      Content Length Impact
+                    </h4>
+                  </div>
+                  <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
+                    For {formData.contentType || 'blog-article'} content with a {formData.contentTone || 'professional'} tone, 
+                    {getContentLengthRecommendation()}
+                  </p>
+                  
+                  {/* Reading Time Estimate */}
+                  <div className="flex items-center gap-2 mt-2 text-xs text-purple-600 dark:text-purple-400">
+                    <Clock className="h-3 w-3" />
+                    <span>Estimated reading time: {Math.ceil((formData.wordCount || 800) / 200)} minutes</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
             <Card className="p-4 border-l-4 border-l-blue-500 shadow-sm">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -518,8 +662,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 topic={formData.topic}
                 keywords={formData.keywords || []}
                 contentTone={formData.contentTone}
-                structureFormat={formData.structureFormat}
-                wordCount={calculateTotalWords()}
+                structureFormat={formData.structureFormat}                wordCount={formData.wordCount || calculateTotalWords()}
                 includeImages={formData.includeImages}
                 audience={formData.audience}
                 industry={formData.industry}
@@ -529,13 +672,12 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
           </div>
         </div>
 
-        {/* Helper tip box */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-100 dark:border-blue-900 rounded-md">
+        {/* Helper tip box */}        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-100 dark:border-blue-900 rounded-md">
           <h3 className="font-medium text-blue-800 dark:text-blue-400 flex items-center gap-2 mb-2">
             <Info className="h-4 w-4" />
-            <span>Content Structure Tips</span>
+            <span>Content Structure & Length Tips</span>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <p className="text-blue-700 dark:text-blue-300">
                 <strong>Structure Impact:</strong> The structure you choose impacts how readers engage with your content. 
@@ -546,6 +688,12 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               <p className="text-purple-700 dark:text-purple-300">
                 <strong>Tone Consistency:</strong> Maintain your chosen tone throughout the content. 
                 The preview updates in real-time to show how your selections will affect the final output.
+              </p>
+            </div>
+            <div>
+              <p className="text-green-700 dark:text-green-300">
+                <strong>Optimal Length:</strong> For SEO purposes, articles between 1200-1800 words tend to rank better.
+                Shorter content works well for newsletters, while comprehensive guides benefit from longer content.
               </p>
             </div>
           </div>

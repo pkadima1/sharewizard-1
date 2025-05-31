@@ -228,12 +228,11 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
             content: 'Recommendation and summary',
             estimatedWords: Math.floor(remainingWords * 0.1)
           });
-          break;
-
-        default: // article
+          break;        default: // article
           outline.push({
             id: '1',
-            title: `Understanding ${keywordText}: A Comprehensive Guide`,
+            // Use the full topic if available instead of just the keyword
+            title: topic && topic.trim() !== '' ? topic : `Understanding ${keywordText}: A Comprehensive Guide`,
             type: 'heading',
             content: 'Main article title',
             estimatedWords: 10
@@ -282,11 +281,9 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
 
     return generateOutline();
   }, [structureFormat, wordCount, keywords, topic, includeImages, audience]);
-
   // Generate tone sample text
   const toneSample = useMemo(() => {
-    const keywordText = keywords.length > 0 ? keywords[0] : 'your topic';
-    
+    const keywordText = keywords.length > 0 ? keywords[0] : (topic && topic.trim() !== '' ? topic : 'your topic');
     const toneExamples: Record<string, string> = {
       professional: `In today's competitive ${industry || 'business'} landscape, understanding ${keywordText} has become essential for ${audience || 'professionals'}. This comprehensive approach will help you implement effective strategies that drive measurable results.`,
       
@@ -321,48 +318,45 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
       default: return <FileText className="h-4 w-4" />;
     }
   };
-
   return (
     <TooltipProvider>
-      <div className={`space-y-6 ${className}`}>
-        {/* Header with controls */}
-        <Card className="p-4 border-l-4 border-l-primary shadow-sm">
+      <div className={`max-w-full space-y-6 overflow-hidden ${className}`}>        {/* Header with controls */}
+        <Card className="p-4 border-l-4 border-l-primary shadow-md bg-gradient-to-r from-primary/5 to-transparent overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Eye className="h-5 w-5 text-primary" />
-                Content Preview
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold flex items-center gap-2 truncate">
+                <Eye className="h-5 w-5 text-primary flex-shrink-0" />
+                <span className="truncate">Content Preview</span>
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1 break-words">
                 See how your content will look and flow
               </p>
             </div>
-            
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
               {/* Preview type toggle */}
-              <div className="flex rounded-lg border p-1">
+              <div className="flex rounded-lg border p-1 bg-background">
                 <Button
                   variant={previewType === 'outline' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setPreviewType('outline')}
-                  className="text-xs"
+                  className="text-xs h-8"
                 >
-                  <List className="h-3 w-3 mr-1" />
-                  Outline
+                  <List className="h-3 w-3 mr-1 flex-shrink-0" />
+                  <span className="hidden xs:inline">Outline</span>
                 </Button>
                 <Button
                   variant={previewType === 'sample' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setPreviewType('sample')}
-                  className="text-xs"
+                  className="text-xs h-8"
                 >
-                  <FileText className="h-3 w-3 mr-1" />
-                  Sample
+                  <FileText className="h-3 w-3 mr-1 flex-shrink-0" />
+                  <span className="hidden xs:inline">Sample</span>
                 </Button>
               </div>
               
               {/* Device toggle */}
-              <div className="flex rounded-lg border p-1">
+              <div className="flex rounded-lg border p-1 bg-background">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -435,11 +429,10 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
                 <p className="text-xs text-muted-foreground">Sections</p>
               </div>
             </div>
-          </Card>
-        </div>
+          </Card>        </div>
 
         {/* Main preview area */}
-        <Card className={`p-4 ${viewMode === 'mobile' ? 'max-w-sm mx-auto' : ''}`}>
+        <Card className={`p-4 shadow-md border-gray-200 dark:border-gray-700 overflow-hidden ${viewMode === 'mobile' ? 'max-w-sm mx-auto' : ''}`}>
           {previewType === 'outline' ? (
             // Outline view
             <div className="space-y-4">
@@ -450,37 +443,37 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
                 </Badge>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
                 {contentOutline.map((section, index) => (
-                  <div key={section.id} className="flex items-start gap-3">
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-medium mt-0.5">
+                  <div key={section.id} className="flex items-start gap-3 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-medium mt-0.5 flex-shrink-0">
                       {index + 1}
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getSectionIcon(section.type)}
-                        <span className="font-medium text-sm">{section.title}</span>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="flex-shrink-0">{getSectionIcon(section.type)}</span>
+                        <span className="font-medium text-sm truncate">{section.title}</span>
                         {section.type === 'image' && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs flex-shrink-0">
                             Image
                           </Badge>
                         )}
                       </div>
                       
-                      <p className="text-xs text-muted-foreground mb-2">
+                      <p className="text-xs text-muted-foreground mb-2 break-words">
                         {section.content}
                       </p>
                       
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
                         {section.estimatedWords > 0 && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 flex-shrink-0">
                             <FileText className="h-3 w-3" />
                             ~{section.estimatedWords} words
                           </span>
                         )}
                         {section.imageCount && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 flex-shrink-0">
                             <ImageIcon className="h-3 w-3" />
                             {section.imageCount} image{section.imageCount > 1 ? 's' : ''}
                           </span>
@@ -488,31 +481,29 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                ))}              </div>
             </div>
           ) : (
             // Sample content view
-            <div className="space-y-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="space-y-6 max-h-[550px] overflow-y-auto pr-2">
+              <div className="flex items-center justify-between mb-4 sticky top-0 bg-card pt-1 pb-2 z-10">
                 <h4 className="font-semibold">Content Sample</h4>
                 <Badge variant="secondary" className="text-xs capitalize">
                   {contentTone} tone
                 </Badge>
               </div>
-              
-              {/* Sample title */}
-              <div>
-                <h1 className={`font-bold mb-2 ${viewMode === 'mobile' ? 'text-xl' : 'text-2xl'}`}>
-                  {contentOutline[0]?.title || `Understanding ${keywords[0] || topic}`}
+                {/* Sample title */}
+              <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+                <h1 className={`font-bold mb-2 ${viewMode === 'mobile' ? 'text-xl' : 'text-2xl'} break-words`}>
+                  {topic && topic.trim() !== '' ? topic : contentOutline[0]?.title || `Understanding ${keywords[0] || 'Content'}`}
                 </h1>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                   <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
+                    <Clock className="h-3 w-3 flex-shrink-0" />
                     {readingTime} min read
                   </span>
                   <span className="flex items-center gap-1">
-                    <BarChart3 className="h-3 w-3" />
+                    <BarChart3 className="h-3 w-3 flex-shrink-0" />
                     {wordCount} words
                   </span>
                 </div>
@@ -521,8 +512,8 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
               <Separator />
               
               {/* Sample content with tone */}
-              <div className="prose prose-sm max-w-none">
-                <p className="text-muted-foreground leading-relaxed">
+              <div className="prose prose-sm max-w-none bg-white dark:bg-gray-800/60 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                <p className="text-muted-foreground leading-relaxed break-words">
                   {toneSample}
                 </p>
                 
@@ -534,12 +525,11 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
                     </p>
                   </div>
                 )}
-                
-                <h3 className="font-semibold mt-6 mb-2">
+                  <h3 className="font-semibold mt-6 mb-2 break-words">
                   {contentOutline.find(s => s.type === 'heading' && s.id !== '1')?.title || 'Key Section'}
                 </h3>
                 
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed break-words">
                   This section will dive deeper into the specific aspects of {keywords[0] || topic}, 
                   providing actionable insights and practical examples that {audience || 'readers'} can 
                   implement immediately in their {industry || 'work'}.
@@ -548,44 +538,43 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
                 <ul className="mt-4 space-y-2">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Key benefit or insight #1</span>
+                    <span className="text-sm break-words">Key benefit or insight #1</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Key benefit or insight #2</span>
+                    <span className="text-sm break-words">Key benefit or insight #2</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">Key benefit or insight #3</span>
+                    <span className="text-sm break-words">Key benefit or insight #3</span>
                   </li>
                 </ul>
               </div>
               
               {/* Call to action preview */}
-              <Card className="p-4 bg-primary/5 border-primary/20">
+              <Card className="p-4 bg-primary/5 border-primary/20 shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
-                  <Target className="h-4 w-4 text-primary" />
-                  <span className="font-medium text-primary">Next Steps</span>
+                  <Target className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span className="font-medium text-primary break-words">Next Steps</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground break-words">
                   Ready to implement these {keywords[0] || topic} strategies? 
                   Start with the first recommendation and track your progress.
                 </p>
-              </Card>
-            </div>
+              </Card>            </div>
           )}
         </Card>
 
         {/* Tone explanation */}
         {contentTone && (
-          <Card className="p-4 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+          <Card className="p-4 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 shadow-md overflow-hidden">
             <div className="flex items-center gap-2 mb-2">
-              <Lightbulb className="h-4 w-4 text-blue-600" />
-              <h4 className="font-medium text-blue-900 dark:text-blue-100">
+              <Lightbulb className="h-4 w-4 text-blue-600 flex-shrink-0" />
+              <h4 className="font-medium text-blue-900 dark:text-blue-100 break-words">
                 {contentTone.charAt(0).toUpperCase() + contentTone.slice(1)} Tone Preview
               </h4>
             </div>
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+            <p className="text-sm text-blue-800 dark:text-blue-200 break-words">
               Your content will be written in a <strong>{contentTone}</strong> tone, 
               {contentTone === 'professional' && ' maintaining a formal, business-appropriate style with industry expertise.'}
               {contentTone === 'casual' && ' using relaxed, conversational language that feels approachable and friendly.'}

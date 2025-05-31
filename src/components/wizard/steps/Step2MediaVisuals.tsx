@@ -24,7 +24,6 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
   const [includeImages, setIncludeImages] = useState(formData.includeImages || false);
   const { currentUser } = useAuth();
   const { toast } = useToast();
-
   // Auto-save functionality for this step
   const { hasSavedDraft, lastSaved, lastSavedFormatted, restoreDraft, clearDraft, saveNow } = useAutoSave(formData, {
     key: 'step2-media-visuals-draft',
@@ -33,22 +32,27 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
     showToast: false
   });
 
-  // Update parent form when files change
-  useEffect(() => {
-    updateFormData('mediaFiles', files);
-  }, [files]);
-
   // Update parent form when includeImages changes
   useEffect(() => {
     updateFormData('includeImages', includeImages);
   }, [includeImages]);
-
   // Handle draft restoration
   const handleRestoreDraft = () => {
     const restoredData = restoreDraft();
     if (restoredData) {
-      setFiles(restoredData.mediaFiles || []);
+      // Restore files with placement and caption data
+      if (restoredData.mediaFiles && Array.isArray(restoredData.mediaFiles)) {
+        // Ensure all files have the required properties
+        const updatedFiles = restoredData.mediaFiles.map((file, index) => ({
+          ...file,
+          mediaPlacement: file.mediaPlacement || restoredData.mediaPlacements?.[index] || 'inline',
+          mediaCaption: file.mediaCaption || restoredData.mediaCaptions?.[index] || ''
+        }));
+        setFiles(updatedFiles);
+      }
+      
       setIncludeImages(restoredData.includeImages || false);
+      
       toast({
         title: "Draft Restored",
         description: "Your saved media settings have been restored.",
@@ -161,15 +165,18 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
           reject(error);
         },
         async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          try {            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             const fileData = {
               id: fileId,
               name: file.name,
               url: downloadURL,
               type: file.type,
               size: file.size,
-              uploadedAt: new Date().toISOString()
+              uploadedAt: new Date().toISOString(),
+              // Adding required fields from schema
+              mediaPlacement: 'inline', // Default to inline, can be changed by user
+              mediaCaption: '', // Empty by default, can be filled by user
+              storagePath: `wizard-media/${currentUser.uid}/${fileId}`
             };
             resolve(fileData);
           } catch (error) {
@@ -179,10 +186,16 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
       );
     });
   };
-
   // Remove file
   const removeFile = (fileId) => {
     setFiles(prev => prev.filter(file => file.id !== fileId));
+  };
+
+  // Update file metadata (placement or caption)
+  const updateFileMetadata = (fileId, field, value) => {
+    setFiles(prev => prev.map(file => 
+      file.id === fileId ? { ...file, [field]: value } : file
+    ));
   };
 
   // Format file size
@@ -200,7 +213,6 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
     if (fileType.startsWith('video/')) return <Video className="h-4 w-4" />;
     return <File className="h-4 w-4" />;
   };
-
   // Calculate completion score
   const completionScore = () => {
     let score = 50; // Base score for visiting this step
@@ -208,6 +220,32 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
     if (files.length > 0) score += 25;
     return Math.min(score, 100);
   };
+
+  // Convert files to the required schema format for parent component
+  useEffect(() => {
+    // If we have files, prepare them in the required format
+    if (files.length > 0) {
+      const mediaFiles = files;
+      const mediaUrls = files.map(file => file.url);
+      const mediaTypes = files.map(file => file.type);
+      const mediaPlacements = files.map(file => file.mediaPlacement);
+      const mediaCaptions = files.map(file => file.mediaCaption || '');
+
+      // Update parent form with all the structured data
+      updateFormData('mediaFiles', mediaFiles);
+      updateFormData('mediaUrls', mediaUrls);
+      updateFormData('mediaTypes', mediaTypes);
+      updateFormData('mediaPlacements', mediaPlacements);
+      updateFormData('mediaCaptions', mediaCaptions);
+    } else {
+      // Reset all media-related fields when no files are present
+      updateFormData('mediaFiles', []);
+      updateFormData('mediaUrls', []);
+      updateFormData('mediaTypes', []);
+      updateFormData('mediaPlacements', []);
+      updateFormData('mediaCaptions', []);
+    }
+  }, [files]);
 
   return (
     <TooltipProvider>
@@ -273,12 +311,11 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
               </div>
 
               {/* Include Images Toggle */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-1">
-                  <Label htmlFor="include-images" className="text-sm font-medium">
+              <div className="flex items-center justify-between p-4 border rounded-lg">                <div className="space-y-1">
+                  <Label htmlFor="include-images" className="text-sm font-medium text-gray-800 dark:text-gray-200">
                     Include Image Suggestions
                   </Label>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Generate suggestions for relevant images to include in your content
                   </p>
                 </div>
@@ -287,11 +324,25 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                   checked={includeImages}
                   onCheckedChange={setIncludeImages}
                 />
-              </div>
-
-              {/* File Upload Area */}
-              <div className="space-y-4">
-                <h4 className="font-medium">Upload Media Files (Optional)</h4>
+              </div>              {/* File Upload Area */}
+              <div className="space-y-4">                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Upload Media Files (Optional)</h4>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
+                        <Image className="h-4 w-4 text-gray-500" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-sm p-3">                      <h5 className="font-medium mb-1">Media Placement Guide</h5>
+                      <ul className="text-sm space-y-1">
+                        <li><strong className="font-semibold">Header:</strong> Main image at the top of content</li>
+                        <li><strong className="font-semibold">Section 1/2:</strong> Supporting visuals for content sections</li>
+                        <li><strong className="font-semibold">Inline:</strong> Placed within the text flow</li>
+                        <li><strong className="font-semibold">End:</strong> Placed at the conclusion of content</li>
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
                   <input
                     type="file"
@@ -303,22 +354,19 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                     disabled={uploading}
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
-                    <UploadCloud className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <UploadCloud className="h-12 w-12 text-gray-400 mx-auto mb-4" />                    <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                       Drop files here or click to upload
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Supports images and videos up to {formatFileSize(MAX_FILE_SIZE)} each
                     </p>
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                       Maximum {MAX_FILES} files
                     </p>
                   </label>
-                </div>
-
-                {uploading && (
+                </div>                  {uploading && (
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-600">Uploading files...</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Uploading files...</p>
                     {Object.entries(uploadProgress).map(([fileId, progress]) => (
                       <Progress key={fileId} value={progress as number} className="w-full" />
                     ))}
@@ -330,49 +378,91 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
 
           {/* Right Column - Uploaded Files */}
           <Card className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Uploaded Files</h3>
-                <span className="text-sm text-gray-500">
+            <div className="space-y-4">              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Uploaded Files</h3>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
                   {files.length} / {MAX_FILES} files
                 </span>
               </div>
 
-              {files.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+              {files.length === 0 ? (                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   <FileImage className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>No files uploaded yet</p>
+                  <p className="text-gray-700 dark:text-gray-300">No files uploaded yet</p>
                   <p className="text-sm">Upload some media to enhance your content</p>
                 </div>
-              ) : (
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+              ) : (                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {files.map((file) => (
-                    <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        {getFileIcon(file.type)}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{file.name}</p>
-                          <p className="text-xs text-gray-500">
-                            {formatFileSize(file.size)} • {file.type.split('/')[1].toUpperCase()}
-                          </p>
+                    <div key={file.id} className="space-y-3 p-3 border rounded-lg overflow-hidden">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3 overflow-hidden min-w-0 flex-1">
+                          <div className="flex-shrink-0">
+                            {getFileIcon(file.type)}
+                          </div>                          <div className="flex-1 min-w-0 overflow-hidden">
+                            <p className="text-sm font-medium truncate text-gray-800 dark:text-gray-200">{file.name}</p>
+                            <div className="flex items-center space-x-1">
+                              <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                {formatFileSize(file.size)} • {file.type.split('/')[1].toUpperCase()}
+                              </p>
+                              {file.mediaPlacement && (                                <span className={`text-sm px-1.5 py-0.5 rounded-full ${
+                                  file.mediaPlacement === 'header' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                                  file.mediaPlacement === 'section_1' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+                                  file.mediaPlacement === 'section_2' ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200' :
+                                  file.mediaPlacement === 'end' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                                }`}>
+                                  {file.mediaPlacement}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
+                          {file.type.startsWith('image/') && (
+                            <img
+                              src={file.url}
+                              alt={file.name}
+                              className="h-10 w-10 object-cover rounded"
+                            />
+                          )}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile(file.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        {file.type.startsWith('image/') && (
-                          <img
-                            src={file.url}
-                            alt={file.name}
-                            className="h-10 w-10 object-cover rounded"
+                      
+                      {/* Media placement and caption controls */}                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <div>
+                          <Label htmlFor={`placement-${file.id}`} className="text-sm font-medium mb-1 block text-gray-700 dark:text-gray-300">
+                            Placement
+                          </Label><select
+                            id={`placement-${file.id}`}
+                            value={file.mediaPlacement}
+                            onChange={(e) => updateFileMetadata(file.id, 'mediaPlacement', e.target.value)}
+                            className="w-full text-sm p-1.5 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary dark:bg-gray-800 dark:text-gray-200"
+                          >
+                            <option value="header">Header</option>
+                            <option value="section_1">Section 1</option>
+                            <option value="section_2">Section 2</option>
+                            <option value="inline">Inline</option>
+                            <option value="end">End</option>
+                          </select>
+                        </div>                        <div>
+                          <Label htmlFor={`caption-${file.id}`} className="text-sm font-medium mb-1 block text-gray-700 dark:text-gray-300">
+                            Caption
+                          </Label><input
+                            id={`caption-${file.id}`}
+                            type="text"
+                            value={file.mediaCaption || ''}
+                            onChange={(e) => updateFileMetadata(file.id, 'mediaCaption', e.target.value)}
+                            placeholder="Add a caption..."
+                            className="w-full text-sm p-1.5 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary dark:bg-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                           />
-                        )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => removeFile(file.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -395,7 +485,7 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
           </Button>
         </div>        {/* Auto-save indicator */}
         {lastSavedFormatted && (
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
             Auto-saved {lastSavedFormatted}
           </div>
         )}

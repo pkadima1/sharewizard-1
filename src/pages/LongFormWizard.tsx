@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
+import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -122,9 +123,8 @@ const LongFormWizard = () => {
       return { currentStep: 0, completedSteps: [], skippedSteps: [] };
     }
   };
-
   const { currentStep: initialStep, completedSteps: initialCompleted, skippedSteps: initialSkipped } = loadSavedProgress();
-    const [currentStep, setCurrentStep] = useState(initialStep);
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [completedSteps, setCompletedSteps] = useState<number[]>(initialCompleted);
   const [skippedSteps, setSkippedSteps] = useState<number[]>(initialSkipped);
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
@@ -149,8 +149,8 @@ const LongFormWizard = () => {
     outputFormat: 'markdown',
     plagiarismCheck: true,
   });
-
   const navigate = useNavigate();
+  const safeNavigate = useSafeNavigation();
   const { suggestedKeywords, suggestedStructure, suggestedTone, isLoading } = useSmartSuggestions(formData);
   const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData);
   
@@ -773,13 +773,9 @@ const LongFormWizard = () => {
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Keyboard Shortcuts Help Overlay */}
-          {showKeyboardHelp && <KeyboardShortcutsOverlay />}        </Card>
-
-        {/* Keyboard Shortcuts Help Overlay */}
-        {showKeyboardHelp && <KeyboardShortcutsOverlay />}
+          )}          {/* Keyboard Shortcuts Help Overlay */}
+          {showKeyboardHelp && <KeyboardShortcutsOverlay />}
+        </Card>
       </div>
     </TooltipProvider>
   );

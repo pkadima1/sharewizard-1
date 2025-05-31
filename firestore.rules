@@ -26,9 +26,7 @@ service cloud.firestore {
     // Check if the user has a Premium (Pro) subscription
     function hasPremiumSubs() {
       return request.auth.token.stripeRole == "premium";
-    }
-
-    // =============================
+    }    // =============================
     // 👤 USER PROFILES
     // =============================
     
@@ -39,6 +37,30 @@ service cloud.firestore {
                      && (!request.resource.data.diff(resource.data).affectedKeys()
                          .hasAny(['plan_type', 'subscription_id', 'trial_end_date']));
       allow delete: if false;  // Users cannot delete their profiles directly
+      
+      // =============================
+      // 📄 USER CONTENT SUBCOLLECTIONS
+      // =============================
+      
+      // Allow users to read and write their own longform content
+      match /longform-content/{contentId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+      
+      // Allow users to read and write their own generations
+      match /generations/{generationId} {
+        allow read, write: if request.auth.uid == userId;
+        
+        // Allow access to shares subcollection
+        match /shares/{shareId} {
+          allow read, write: if request.auth.uid == userId;
+        }
+      }
+      
+      // Allow users to read and write their own captions
+      match /captions/{captionId} {
+        allow read, write: if request.auth.uid == userId;
+      }
     }
 
     // =============================
@@ -57,7 +79,15 @@ service cloud.firestore {
       }
       match /payments/{id} {
         allow read: if request.auth.uid == uid;
-      }
+      }    }
+
+    // =============================
+    // 💳 SUBSCRIPTION DATA SECURITY
+    // =============================
+
+    // Allow system functions to manage subscription data
+    match /subscriptions/{customerId} {
+      allow read, write: if request.auth.uid == customerId;
     }
 
     // =============================
