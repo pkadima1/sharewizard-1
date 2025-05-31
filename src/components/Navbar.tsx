@@ -94,8 +94,7 @@ const Navbar: React.FC = () => {
               }`}
             >
               Pricing
-            </Link>
-            <Link 
+            </Link>            <Link 
               to="/caption-generator" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/caption-generator') 
@@ -104,6 +103,16 @@ const Navbar: React.FC = () => {
               }`}
             >
               Caption Generator
+            </Link>
+            <Link 
+              to="/longform" 
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                isActive('/longform') 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              Blog Wizard
             </Link>
             <Link 
               to="/features" 
@@ -243,8 +252,7 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Pricing
-              </Link>
-              <Link 
+              </Link>              <Link 
                 to="/caption-generator" 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/caption-generator') 
@@ -254,6 +262,17 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Caption Generator
+              </Link>
+              <Link 
+                to="/longform" 
+                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                  isActive('/longform') 
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog Wizard
               </Link>
               <Link 
                 to="/features" 

@@ -17,6 +17,9 @@
 export { generateCaptionsV3 } from "./services/openai.js";
 export { syncSubscriptionToUserProfile } from "./syncSubscription.js";
 
+// Export longform content generation function
+export { generateLongformContent } from "./services/longformContent.js";
+
 
 // Add any additional function exports below
 
