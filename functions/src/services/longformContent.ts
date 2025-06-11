@@ -27,22 +27,14 @@
  */
 
 import { onCall, HttpsError } from "firebase-functions/v2/https";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { getOpenAIKey, getGeminiKey } from "../config/secrets.js";
+import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
 
-// Initialize Firebase Admin if not already initialized
-try {
-  initializeApp();
-  console.log("Firebase Admin initialized successfully for longform content");
-} catch (error: unknown) {
-  // App already exists
-  if ((error as { code?: string }).code !== "app/duplicate-app") {
-    console.error("Firebase admin initialization error", error);
-  }
-}
+// Initialize Firebase Admin with hybrid configuration
+initializeFirebaseAdmin();
 
 const db = getFirestore();
 
@@ -81,11 +73,11 @@ const initializeAIServices = () => {
   }
 };
 
-// Enhanced retry mechanism with exponential backoff
+// Enhanced retry mechanism with exponential backoff and better error handling
 const retryWithBackoff = async <T>(
   operation: () => Promise<T>, 
   maxRetries = config.retryAttempts, 
-  baseDelay = 1000
+  baseDelay = 500 // Reduced initial delay
 ): Promise<T> => {
   let lastError: Error;
   
@@ -94,16 +86,23 @@ const retryWithBackoff = async <T>(
       return await operation();
     } catch (error) {
       lastError = error as Error;
-      
-      // Don't retry on certain error types
+        // Don't retry on certain error types
       if (error instanceof HttpsError && 
           (error.code === "unauthenticated" || error.code === "permission-denied")) {
         throw error;
       }
       
-      if (attempt === maxRetries) break;
+      // For the last attempt, throw the error
+      if (attempt === maxRetries) {
+        throw lastError;
+      }
       
-      const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+      // Calculate delay with jitter for better distribution
+      const delay = Math.min(
+        baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
+        10000 // Cap at 10 seconds
+      );
+      
       console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms`);
       await new Promise(resolve => setTimeout(resolve, delay));
     }
@@ -203,53 +202,68 @@ const checkUsageLimits = async (uid: string) => {
   };
 };
 
-// Enhanced outline generation with better error handling
+// Enhanced outline generation with better error handling and improved fallback
 const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
   const geminiPrompt = buildGeminiPrompt(promptData);
-    return retryWithBackoff(async () => {
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-preview-05-20",
-      generationConfig: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.8,
-        maxOutputTokens: 2048,
+    // Try Gemini with enhanced error handling
+  try {
+    return await retryWithBackoff(async () => {    
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-2.0-flash-001",
+        generationConfig: {
+          temperature: 0.6, // Slightly lower for more consistent output
+          topK: 40,
+          topP: 0.9, // Increase for better completion
+          maxOutputTokens: 3000, // Increase token limit
+          responseMimeType: "application/json"
+        }
+      });
+      
+      const result = await model.generateContent(geminiPrompt);
+      const response = result.response.text();
+      
+      if (!response || response.length < 50) { // Lower threshold
+        throw new Error("Gemini response too short or empty");
+      }
+      
+      // Enhanced JSON parsing with cleanup
+      let cleanedResponse = response.trim();
+      
+      // Remove markdown code blocks if present
+      cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+      
+      try {
+        return JSON.parse(cleanedResponse);
+      } catch (parseError) {
+        console.error("JSON Parse Error:", parseError);
+        console.error("Raw response:", response);
+        
+        // Try to extract JSON from response with more aggressive cleanup
+        const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try {
+            // Fix common JSON issues
+            let fixedJson = jsonMatch[0]
+              .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Add quotes to keys
+              .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double
+              .replace(/,\s*}/g, '}') // Remove trailing commas
+              .replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+            
+            return JSON.parse(fixedJson);
+          } catch (secondParseError) {
+            console.error("Second parse attempt failed:", secondParseError);
+          }
+        }
+        
+        // If all JSON parsing fails, fall back to structured outline
+        console.warn("Gemini JSON parsing failed, using fallback outline");
+        throw new Error("JSON parsing failed, using fallback");
       }
     });
-    
-    const result = await model.generateContent(geminiPrompt);
-    const response = result.response.text();
-    
-    if (!response || response.length < 100) {
-      throw new Error("Gemini response too short or empty");
-    }
-    
-    // Enhanced JSON parsing with cleanup
-    let cleanedResponse = response.trim();
-    
-    // Remove markdown code blocks if present
-    cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
-    
-    try {
-      return JSON.parse(cleanedResponse);
-    } catch (parseError) {
-      console.error("JSON Parse Error:", parseError);
-      console.error("Raw response:", response);
-      
-      // Try to extract JSON from response
-      const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          return JSON.parse(jsonMatch[0]);
-        } catch (secondParseError) {
-          console.error("Second parse attempt failed:", secondParseError);
-        }
-      }
-      
-      // Return enhanced fallback outline
-      return createFallbackOutline(promptData);
-    }
-  });
+  } catch (error) {
+    console.warn("Gemini failed completely, using enhanced fallback outline:", error instanceof Error ? error.message : String(error));
+    return createFallbackOutline(promptData);
+  }
 };
 
 // Enhanced content generation with better prompt engineering

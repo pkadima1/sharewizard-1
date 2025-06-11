@@ -25,6 +25,10 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+
+// Check if we're using Firebase emulators
+const isUsingEmulators = process.env.NODE_ENV === 'development' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 import { DEFAULT_REQUEST_LIMIT } from '@/lib/constants';
 import { 
   checkUserPlan, 
@@ -447,8 +451,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         unsubscribeFromSubscription();
       }
     };
-  }, [currentUser]);
-  useEffect(() => {
+  }, [currentUser]);  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       
@@ -460,9 +463,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (userDoc.exists()) {
             setUserProfile({ id: userDoc.id, ...userDoc.data() });
           } else {
-            // Don't automatically create a profile, instead log a warning
-            console.warn("User exists in Firebase Auth but has no profile in Firestore");
-            // This will prevent non-registered users from accessing protected routes
+            // In emulator mode, automatically create a development profile
+            if (isUsingEmulators) {
+              console.log("🔧 Creating development user profile in emulator");
+              await createUserProfile(user, { displayName: user.displayName || 'Dev User' });
+            } else {
+              // Don't automatically create a profile in production
+              console.warn("User exists in Firebase Auth but has no profile in Firestore");
+            }
           }
         } catch (error: any) {
           console.error("Error fetching user profile:", error);

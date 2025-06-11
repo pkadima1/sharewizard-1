@@ -7,8 +7,7 @@
 
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeFirebaseAdmin, getFirestore } from "./config/firebase-admin.js";
 
 // Define interfaces for Stripe subscription data
 interface PriceMetadata {
@@ -32,16 +31,8 @@ interface StripeSubscription {
   trial_end?: number;
 }
 
-// Initialize Firebase Admin if not already initialized
-try {
-  initializeApp();
-  logger.info("Firebase Admin initialized successfully");
-} catch (error: unknown) {
-  // App already exists
-  if ((error as { code?: string }).code !== "app/duplicate-app") {
-    logger.error("Firebase admin initialization error", error);
-  }
-}
+// Initialize Firebase Admin with hybrid configuration
+initializeFirebaseAdmin();
 
 // Initialize Firestore
 const db = getFirestore();

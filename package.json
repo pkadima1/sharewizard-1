@@ -8,7 +8,11 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "dev:hybrid": "echo Starting hybrid development mode... && npm run dev",
+    "sync-user": "node scripts/sync-user-profile.js",
+    "emulators": "firebase emulators:start",
+    "emulators:ui": "firebase emulators:start --only functions,firestore,ui"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",

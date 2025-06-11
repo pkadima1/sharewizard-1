@@ -27,6 +27,9 @@ const isDevelopment = import.meta.env.DEV || isLocalhost;
 const useEmulators = isDevelopment && 
   (import.meta.env.VITE_USE_EMULATORS !== 'false');
 
+// Export for use in other modules
+export const isUsingEmulators = useEmulators;
+
 console.log(`🔥 Firebase initialized in ${isDevelopment ? 'development' : 'production'} mode`);
 console.log(`🔧 ${useEmulators ? 'Using emulators' : 'Using production services'}`);
 
@@ -42,11 +45,14 @@ export const functions = getFunctions(app, 'us-central1');
 // Connect to emulators if in development mode
 if (useEmulators) {
   try {
+    // Only connect to Functions emulator for local development
     connectFunctionsEmulator(functions, "127.0.0.1", 5001);
     console.log("✅ Connected to Functions emulator");
     
-    // Connect to other emulators if needed
-    // Uncomment these as needed for local development
+    // Use production Auth and Firestore for real user data
+    console.log("🌐 Using production Auth and Firestore with real user data");
+    
+    // Uncomment these lines if you want to use emulated services instead:
     // connectFirestoreEmulator(db, "127.0.0.1", 8080);
     // connectAuthEmulator(auth, "http://127.0.0.1:9099");
     // connectStorageEmulator(storage, "127.0.0.1", 9199);

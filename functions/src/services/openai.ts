@@ -1,19 +1,11 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 import OpenAI from "openai";
 import { getOpenAIKey } from "../config/secrets.js";
+import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
 
-// Initialize Firebase Admin if not already initialized
-try {
-  initializeApp();
-  console.log("Firebase Admin initialized successfully");
-} catch (error: unknown) {
-  // App already exists
-  if ((error as { code?: string }).code !== "app/duplicate-app") {
-    console.error("Firebase admin initialization error", error);
-  }
-}
+// Initialize Firebase Admin with hybrid configuration
+initializeFirebaseAdmin();
 
 // Initialize Firestore
 const db = getFirestore();

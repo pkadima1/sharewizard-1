@@ -8,19 +8,19 @@ const UpgradeBanner = () => {
 
       <ul className="text-left text-gray-100 mt-4 mb-4 space-y-2 list-disc list-inside">
         <li><strong>Includes 5 Bonus Requests</strong> with 5-Day Free Trial</li>
-        <li><strong>Launch Offer:</strong> First Month Just £2.99</li>
-        <li>Then only £5.99/month — cancel anytime</li>
+        <li><strong>Basic Monthly Plan:</strong> Only $8.00/month</li>
+        <li>70 requests/month — cancel anytime</li>
       </ul>
 
       <p className="text-xs text-gray-400 mb-4">
-        🎯 Limited to the first <strong>1,000 users</strong> — Use code: <span className="bg-gray-700 px-2 py-1 rounded text-white font-mono">PERFECTSTART</span>
+        🎯 Start with our <strong>5-day free trial</strong> — includes 5 bonus requests
       </p>
 
       <a
         href="https://engageperfect.com/pricing?plan=basic_monthly"
         className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 transition-colors rounded-lg text-white font-semibold text-base"
       >
-        Start for £2.99 →
+        Start Free Trial for $8.00/month →
       </a>
     </div>
   );
