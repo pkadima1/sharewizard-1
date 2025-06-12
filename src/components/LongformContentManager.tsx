@@ -37,6 +37,11 @@ import {
   exportToOneDriveWord,
   createGoogleDocsService 
 } from '@/services/googleDocsService';
+import { 
+  createCleanTextForCopy, 
+  createCleanHTMLForCopy, 
+  createInlineHTMLForCopy 
+} from '@/utils/cleanContentFormatter';
 
 interface LongformContentManagerProps {
   content: LongformContent[];
