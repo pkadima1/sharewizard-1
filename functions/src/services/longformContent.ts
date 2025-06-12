@@ -148,15 +148,64 @@ const validateInputs = (data: any) => {
         errors.push(`${key} must be no more than ${max}`);
       }
     }
-  });
-  
-  // Validate arrays
+  });    // Validate arrays
   if (data.keywords && (!Array.isArray(data.keywords) || data.keywords.length > 20)) {
     errors.push("keywords must be an array with no more than 20 items");
   }
   
   if (data.mediaUrls && (!Array.isArray(data.mediaUrls) || data.mediaUrls.length > 10)) {
     errors.push("mediaUrls must be an array with no more than 10 items");
+  }
+  
+  if (data.mediaCaptions && (!Array.isArray(data.mediaCaptions) || data.mediaCaptions.length > 10)) {
+    errors.push("mediaCaptions must be an array with no more than 10 items");
+  }
+  
+  if (data.mediaAnalysis && (!Array.isArray(data.mediaAnalysis) || data.mediaAnalysis.length > 10)) {
+    errors.push("mediaAnalysis must be an array with no more than 10 items");
+  }
+  
+  // Validate media placement strategy
+  if (data.mediaPlacementStrategy && !["auto", "manual", "semantic"].includes(data.mediaPlacementStrategy)) {
+    errors.push("mediaPlacementStrategy must be 'auto', 'manual', or 'semantic'");
+  }
+  // Validate boolean fields
+  if (data.includeStats !== undefined && typeof data.includeStats !== "boolean") {
+    errors.push("includeStats must be a boolean value");
+  }
+  
+  if (data.includeReferences !== undefined && typeof data.includeReferences !== "boolean") {
+    errors.push("includeReferences must be a boolean value");
+  }
+  
+  if (data.tocRequired !== undefined && typeof data.tocRequired !== "boolean") {
+    errors.push("tocRequired must be a boolean value");
+  }
+    if (data.summaryRequired !== undefined && typeof data.summaryRequired !== "boolean") {
+    errors.push("summaryRequired must be a boolean value");
+  }
+    if (data.structuredData !== undefined && typeof data.structuredData !== "boolean") {
+    errors.push("structuredData must be a boolean value");
+  }
+  
+  if (data.enableMetadataBlock !== undefined && typeof data.enableMetadataBlock !== "boolean") {
+    errors.push("enableMetadataBlock must be a boolean value");
+  }
+    // Validate optional string fields
+  if (data.writingPersonality !== undefined && typeof data.writingPersonality !== "string") {
+    errors.push("writingPersonality must be a string value");
+  }
+  
+  if (data.writingPersonality && data.writingPersonality.length > 100) {
+    errors.push("writingPersonality must be no more than 100 characters");
+  }
+  
+  if (data.readingLevel !== undefined && typeof data.readingLevel !== "string") {
+    errors.push("readingLevel must be a string value");
+  }
+  
+  if (data.readingLevel && data.readingLevel.length > 20) {
+    errors.push("readingLevel must be no more than 20 characters");
   }
   
   if (errors.length > 0) {
@@ -318,6 +367,13 @@ CONTEXT & REQUIREMENTS:
 • Keywords to include: ${data.keywords.join(", ")}
 ${data.structureNotes ? `• Additional Structure Notes: ${data.structureNotes}` : ""}
 ${data.includeStats ? "• MUST include relevant statistics and data points" : ""}
+${data.includeReferences ? "• MUST include credible external sources and references" : ""}
+${data.mediaUrls.length > 0 ? `
+• Media Assets: ${data.mediaUrls.length} images provided
+• Placement Strategy: ${data.mediaPlacementStrategy}
+• Media Analysis: ${data.mediaAnalysis.length > 0 ? "AI descriptions available for optimal placement" : "Basic media integration"}
+• Alt Text Requirements: Generate SEO-friendly alt text for each image
+` : ""}
 
 YOUR TASK:
 Create a comprehensive content outline that serves as a blueprint for writing ${data.wordCount}-word ${data.contentType} content. This outline will be used by a skilled writer to create engaging, human-centered content.
@@ -337,17 +393,24 @@ OUTLINE REQUIREMENTS:
    - Relatable examples from ${data.audience}'s experience
    - Industry-specific references that resonate
 
+📌 **Reader Journey Mapping**: For each section, define the reader's emotional state and what transformation or insight they should gain.
+
 4. **Content Enrichment Ideas**:
    ${data.includeStats ? "- Specific types of statistics/data to research and include" : ""}
+   ${data.includeReferences ? "- Types of authoritative sources to reference (.gov, .edu, industry leaders)" : ""}
    - Expert quotes or industry insights to reference
    - Common pain points of ${data.audience} to address
    - Actionable tips that provide immediate value
+   ${data.mediaUrls.length > 0 ? `- Strategic media placement recommendations for ${data.mediaUrls.length} visual assets
+   - SEO-optimized alt text suggestions for each image
+   - Visual content integration that enhances narrative flow` : ""}
 
 5. **SEO & Structure Optimization**:
    - Natural keyword integration strategy
    - Internal linking opportunities
    - Meta description suggestion (150-160 chars)
    - Featured snippet optimization approach
+   ${data.outputFormat === "html" ? "- Schema.org BlogPosting structured data requirements" : ""}
 
 6. **Conclusion Strategy**: 
    - Summary approach that reinforces key value
@@ -358,6 +421,7 @@ OUTLINE REQUIREMENTS:
    - Specific ${data.contentTone} tone characteristics
    - ${data.audience}-appropriate language level
    - Personality traits to inject (humor, authority, empathy, etc.)
+   ${data.writingPersonality ? `- Embody the personality of a ${data.writingPersonality} expert in writing style and approach` : ""}
 
 CRITICAL: This outline should enable a writer to create content that feels authentically human, not AI-generated. Focus on emotional resonance, practical value, and genuine connection with ${data.audience}.
 
@@ -378,12 +442,20 @@ Return ONLY a well-structured JSON object with this exact format:
       "title": "Section Title",
       "wordCount": 200,
       "tone": "specific tone for this section",
-      "keyPoints": ["Point 1", "Point 2", "Point 3"],
-      "humanElements": {
+      "keyPoints": ["Point 1", "Point 2", "Point 3"],      "humanElements": {
         "storyOpportunity": "specific story type to include",
         "emotionalConnection": "how to connect emotionally",
         "practicalValue": "concrete takeaway for reader"
-      },
+      },${data.includeReferences ? `      "referenceOpportunities": {
+        "authoritySourceTypes": "types of .gov, .edu, or industry authority sources to include",
+        "integrationStrategy": "how to naturally weave sources into content flow"
+      },` : ""}${data.mediaUrls.length > 0 ? `
+      "mediaPlacement": {
+        "recommendedImages": ["suggest which of the ${data.mediaUrls.length} images work best for this section"],
+        "placementRationale": "why these specific images enhance this section's message",
+        "altTextSuggestions": ["SEO-friendly alt text for each recommended image"],
+        "captionIdeas": ["engaging caption suggestions that tie images to content"]
+      },` : ""}
       "subsections": [
         {
           "subtitle": "Subsection Title",
@@ -398,12 +470,29 @@ Return ONLY a well-structured JSON object with this exact format:
     "primaryKeyword": "main keyword from list",
     "keywordDensity": "natural integration approach",
     "featuredSnippetTarget": "what type of snippet to target"
-  },
-  "conclusion": {
+  },  "conclusion": {
     "approach": "how to conclude powerfully",
     "emotionalGoal": "final feeling to leave reader with",
-    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}"
-  }
+    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}"  }${data.includeReferences ? `,
+  "referencesSection": {
+    "sourceCount": "3-7 sources recommended",
+    "sourceTypes": "mix of .gov, .edu, and authoritative industry sources",
+    "formattingStyle": "clean list with clickable links and brief descriptions"
+  }` : ""}${data.mediaUrls.length > 0 ? `,
+  "mediaStrategy": {
+    "overallPlacementApproach": "${data.mediaPlacementStrategy} placement strategy for optimal content flow",
+    "imageCount": ${data.mediaUrls.length},
+    "strategicPlacements": [
+      {
+        "imageIndex": 0,
+        "recommendedSection": "section name where this image works best",
+        "placementReason": "why this image enhances this specific section",
+        "altTextSuggestion": "SEO-optimized alt text",
+        "captionSuggestion": "engaging caption that ties to content"
+      }
+    ],
+    "visualNarrativeFlow": "how images collectively support the content's story arc"
+  }` : ""}
 }`;
 };
 
@@ -424,10 +513,16 @@ USER'S COMPLETE CONTEXT:
 • Core Topic: "${data.topic}"
 • Writing for: ${data.audience} in ${data.industry}
 • Desired Tone: ${data.contentTone}
+${data.writingPersonality ? `• Writing Personality: ${data.writingPersonality}` : ""}
+${data.readingLevel ? `• Target Reading Level: ${data.readingLevel} for clarity and accessibility` : ""}
 • Word Target: ${data.wordCount} words
 • Keywords to weave naturally: ${data.keywords.join(", ")}
 ${data.includeStats ? "• MUST include relevant statistics with sources" : ""}
-${data.mediaUrls.length > 0 ? `• Include references to ${data.mediaUrls.length} visual elements provided` : ""}
+${data.includeReferences ? "• MUST include 3-7 reputable external sources with clickable links" : ""}
+${data.mediaUrls.length > 0 ? `• Media Integration: ${data.mediaUrls.length} visual elements provided
+• Placement Strategy: Follow ${data.mediaPlacementStrategy} placement recommendations from outline
+• Alt Text Requirements: Generate SEO-friendly alt text for each image
+• Visual Storytelling: Use images to enhance narrative flow and break up text` : ""}
 
 CRITICAL WRITING GUIDELINES:
 
@@ -437,6 +532,7 @@ CRITICAL WRITING GUIDELINES:
 - Use contractions, occasional informal language, and natural speech patterns
 - Reference common experiences that ${data.audience} faces daily
 - Inject personality, opinions, and authentic voice throughout
+${data.writingPersonality ? `- Inject the personality of a ${data.writingPersonality} expert into the writing style` : ""}
 
 📖 **STORYTELLING INTEGRATION:**
 - Start sections with micro-stories, scenarios, or "picture this" moments
@@ -466,8 +562,49 @@ CRITICAL WRITING GUIDELINES:
 🔍 **SEO INTEGRATION (Natural):**
 - Weave keywords organically into compelling sentences
 - Use variations and related terms naturally throughout
+- Include keyword variations and semantically related terms to improve topic authority and SEO
 - Create scannable content with compelling subheadings
 - Include questions that match search intent
+
+${data.includeReferences ? `📚 **REFERENCES & CREDIBILITY:**
+- Include 3-7 reputable external sources in clickable markdown or HTML format throughout the content
+- Prioritize .gov, .edu, and industry authorities (e.g., Harvard.edu, WHO.int, Forbes.com)
+- Integrate source links naturally within the content flow, not just as citations
+- Add a "References" section at the end with all sources used
+- Use authoritative sources that enhance credibility and support key claims
+- Format links appropriately for ${data.outputFormat} output format` : ""}
+
+${data.mediaUrls.length > 0 ? `🖼️ **ENHANCED MEDIA INTEGRATION:**
+- Follow the mediaStrategy from the outline for optimal image placement
+- CRITICAL: Use the exact image placeholder format: ![Alt Text](image-${data.mediaUrls.map((_: any, i: number) => i + 1).join('|image-')})
+- Available images: ${data.mediaUrls.length} uploaded media files
+${data.mediaCaptions.length > 0 ? `- Image captions provided: ${data.mediaCaptions.map((caption: string, i: number) => `Image ${i + 1}: "${caption}"`).join(', ')}` : ''}
+${data.mediaAnalysis.length > 0 ? `- AI Analysis available: ${data.mediaAnalysis.map((analysis: string, i: number) => `Image ${i + 1}: "${analysis}"`).join(', ')}` : ''}
+- Place images strategically throughout content to break up text and enhance storytelling
+- Use SEO-optimized alt text for each image (descriptive and keyword-rich)
+- Include engaging captions that tie images directly to surrounding content
+- Reference images naturally in the text flow (e.g., "As shown in the image above..." or "The visual below illustrates...")
+- Ensure images support key points and provide visual breaks every 300-500 words
+- For ${data.mediaPlacementStrategy} placement: ${
+  data.mediaPlacementStrategy === 'auto' ? 'Let AI determine optimal placement for maximum engagement and content flow' :
+  data.mediaPlacementStrategy === 'manual' ? 'Follow exact placement specifications from media analysis and user preferences' :
+  'Use semantic analysis to place images where they best support content meaning and context'
+}
+- MANDATORY: Include at least one image reference per major section if images are available
+- Format: ![Descriptive alt text about the image content](image-1), ![Alt text for second image](image-2), etc.
+- Caption format: Place caption text immediately after image in italics: *Caption explaining relevance*` : ""}
+
+${data.outputFormat === "html" ? `📘 **STRUCTURED DATA (Schema.org):**
+- Add JSON-LD for BlogPosting schema at the beginning of the HTML content
+- Include proper schema markup with author, datePublished, headline, description
+- Use schema.org/BlogPosting structure for better SEO and rich snippets
+- Include wordCount, keywords, and industry-relevant organization data` : ""}
+
+${data.outputFormat === "html" && data.structuredData ? `🔗 **BLOG SCHEMA MARKUP:**
+- Include a valid JSON-LD schema block for type "BlogPosting" using schema.org structure
+- Add structured data in a <script type="application/ld+json"> block at the beginning
+- Use the content's title as headline, meta description, and proper author information
+- Include datePublished, wordCount, keywords, and publisher details` : ""}
 
 FORMATTING REQUIREMENTS:
 - Use markdown formatting for structure
@@ -475,10 +612,35 @@ FORMATTING REQUIREMENTS:
 - Include bullet points and numbered lists for scanability
 - Bold key concepts and important takeaways
 - Use short paragraphs (2-4 sentences max) for readability
+${data.tocRequired ? "- Begin the content with a clean, clickable Table of Contents" : ""}
+${data.summaryRequired ? "- End with a TL;DR section summarizing the 3-5 key takeaways" : ""}
 
 ${data.ctaType !== "none" ? `CTA INTEGRATION: Conclude with a natural, ${data.ctaType}-focused call-to-action that feels helpful, not salesy.` : "CONCLUSION: End with inspiring final thoughts that leave readers feeling empowered and informed."}
 
-${data.outputFormat === "html" ? "FORMAT: Return content in clean HTML format with proper heading tags and structure." : "FORMAT: Return content in clean Markdown format."}
+${data.enableMetadataBlock ? `🔍 **METADATA BLOCK:**
+After the main content, include a JSON metadata block with:
+- metaTitle: SEO-optimized title (50-60 chars)
+- metaDescription: compelling meta description (150-160 chars)
+- estimatedReadingTime: reading time in minutes
+- primaryEmotion: main emotion the content evokes
+- readingLevel: assessed reading level (e.g., "B2-C1", "High School", "College")
+- primaryKeyword: main target keyword
+- topics: array of 3-5 main topics/themes covered` : ""}
+
+${data.outputFormat === "html" ? `FORMAT: Return content in clean HTML format with proper heading tags and structure. START with JSON-LD schema markup in a <script type="application/ld+json"> tag containing BlogPosting schema with:
+- @context: "https://schema.org"
+- @type: "BlogPosting"
+- headline: "${data.topic}"
+- description: meta description from outline
+- datePublished: current date
+- wordCount: estimated word count
+- keywords: ${data.keywords.join(", ")}
+- author: { @type: "Person", name: "Expert ${data.industry} Writer" }
+- publisher: { @type: "Organization", name: "EngagePerfect" }
+Then follow with the actual HTML content.` : "FORMAT: Return content in clean Markdown format."}
+
+${data.includeReferences ? `📋 **SOURCES SECTION:**
+Add a section titled "Sources" at the end of the content that includes a bullet list of all external links used throughout the article. Format as clickable links in either Markdown format [Link Text](URL) or clean HTML format <a href="URL">Link Text</a> depending on the output format. Include brief descriptions of what each source provides.` : ""}
 
 Remember: This content should feel like it was written by a human expert who genuinely cares about helping ${data.audience} succeed in ${data.industry}. Every sentence should either inform, inspire, or provide practical value. Avoid AI-sounding phrases, generic advice, and robotic language patterns.
 
@@ -486,7 +648,8 @@ Write the complete ${data.wordCount}-word ${data.contentType} now:`;
 };
 
 const buildSystemPrompt = (data: any): string => {
-  return `You are an expert ${data.industry} content writer specializing in ${data.audience}-focused content. Write in a ${data.contentTone} tone with deep expertise and authentic human voice. Ensure the content is comprehensive, engaging, and provides genuine value to the reader.`;
+  const personalityText = data.writingPersonality ? ` with a ${data.writingPersonality} personality` : "";
+  return `You are an expert ${data.industry} content writer${personalityText} specializing in ${data.audience}-focused content. Write in a ${data.contentTone} tone with deep expertise and authentic human voice. Ensure the content is comprehensive, engaging, and provides genuine value to the reader.`;
 };
 
 /**
@@ -494,71 +657,129 @@ const buildSystemPrompt = (data: any): string => {
  * Ensures content generation can continue with high-quality structure
  */
 const createFallbackOutline = (data: any) => {
-  const sections = Math.max(4, Math.min(7, Math.ceil(data.wordCount / 300))); // 4-7 sections
-  const wordsPerSection = Math.floor(data.wordCount / sections);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { topic, audience, industry, wordCount, contentTone, keywords, includeReferences, mediaUrls, mediaPlacementStrategy, ctaType } = data;
+  
+  const sections = Math.max(4, Math.min(7, Math.ceil(wordCount / 300))); // 4-7 sections
+  const wordsPerSection = Math.floor(wordCount / sections);
   
   return {
     meta: {
-      estimatedReadingTime: `${Math.ceil(data.wordCount / 200)} minutes`,
+      estimatedReadingTime: `${Math.ceil(wordCount / 200)} minutes`,
       primaryEmotion: "informed and empowered",
-      keyValueProposition: `practical, actionable insights about ${data.topic} for ${data.audience}`
+      keyValueProposition: `Comprehensive guide to ${topic} for ${audience}`
     },
     hookOptions: [
-      `Have you ever wondered why ${data.topic} seems so challenging for most ${data.audience}?`,
-      `Picture this: You're facing a ${data.topic}-related challenge that could make or break your success in ${data.industry}.`,
-      `Here's a surprising truth about ${data.topic} that most ${data.audience} never discover...`
+      `Did you know that ${audience} face this exact challenge with ${topic} every single day?`,
+      `Picture this: You're a ${audience.toLowerCase()} trying to navigate ${topic}, and everything feels overwhelming.`,
+      `Here's the truth about ${topic} that most ${audience} never discover...`
     ],
-    sections: Array.from({ length: sections }, (_, i) => {
-      const sectionTypes = [
-        "Understanding the Fundamentals",
-        "Common Challenges and Solutions", 
-        "Best Practices and Strategies",
-        "Advanced Techniques",
-        "Real-World Applications",
-        "Future Trends and Opportunities",
-        "Implementation Guide"
-      ];
-      
-      return {
-        title: sectionTypes[i] || `Key Aspect ${i + 1} of ${data.topic}`,
-        wordCount: wordsPerSection,
-        tone: i === 0 ? "engaging and accessible" : i === sections - 1 ? "inspiring and actionable" : "informative and practical",
-        keyPoints: [
-          `Essential ${data.topic} concepts for ${data.audience}`,
-          `Practical applications in ${data.industry}`,
-          `Actionable steps and best practices`
-        ],
-        humanElements: {
-          storyOpportunity: `Real ${data.industry} scenario involving ${data.topic}`,
-          emotionalConnection: "shared challenges and breakthrough moments",
-          practicalValue: `Immediately implementable ${data.topic} strategies`
+    sections: Array.from({ length: sections }, (_, i) => ({
+      title: i === 0 ? `Understanding ${topic}: A Complete Guide for ${audience}` :
+             i === sections - 1 ? `Your Next Steps: Implementing ${topic} Successfully` :
+             `Strategy ${i}: Key Approaches to ${topic}`,
+      wordCount: wordsPerSection,
+      tone: contentTone,
+      keyPoints: [
+        `Essential information for ${audience}`,
+        `Practical implementation strategies`,
+        `Real-world examples and case studies`
+      ],
+      humanElements: {
+        storyOpportunity: `Real-world scenario relevant to ${industry}`,
+        emotionalConnection: "Building confidence and understanding",
+        practicalValue: "Actionable insights and next steps"
+      },
+      ...(includeReferences && {
+        referenceOpportunities: {
+          authoritySourceTypes: "Industry authorities, government sources, and research studies",
+          integrationStrategy: "Natural integration throughout content flow"
+        }
+      }),
+      ...(mediaUrls.length > 0 && i < mediaUrls.length && {
+        mediaPlacement: {
+          recommendedImages: [`Image ${i + 1} for section illustration`],
+          placementRationale: "Visual support for key concepts",
+          altTextSuggestions: [`${topic} illustration ${i + 1} for ${audience}`],
+          captionIdeas: [`Visual guide to ${topic} concept ${i + 1}`]
+        }
+      }),
+      subsections: [
+        {
+          subtitle: "Key Concepts",
+          focusArea: "Foundational understanding",
+          wordCount: Math.floor(wordsPerSection / 2)
         },
-        subsections: [
-          {
-            subtitle: `Core Principles`,
-            focusArea: `foundational understanding of ${data.topic}`,
-            wordCount: Math.floor(wordsPerSection * 0.4)
-          },
-          {
-            subtitle: `Practical Application`,
-            focusArea: `how ${data.audience} can apply this knowledge`,
-            wordCount: Math.floor(wordsPerSection * 0.6)
-          }
-        ]
-      };
-    }),
+        {
+          subtitle: "Practical Application", 
+          focusArea: "Implementation guidance",
+          wordCount: Math.floor(wordsPerSection / 2)
+        }
+      ]
+    })),
     seoStrategy: {
-      metaDescription: `Discover essential ${data.topic} strategies for ${data.audience} in ${data.industry}. Expert insights, practical tips, and actionable advice.`,
-      primaryKeyword: data.keywords[0] || data.topic,
+      metaDescription: `Discover essential ${topic} strategies for ${audience} in ${industry}. Expert insights, practical tips, and actionable advice.`,
+      primaryKeyword: keywords[0] || topic,
       keywordDensity: "natural integration throughout content with semantic variations",
       featuredSnippetTarget: "how-to guide with step-by-step instructions"
     },
     conclusion: {
       approach: "synthesize key insights and provide clear next steps",
       emotionalGoal: "confident and motivated to implement learnings",
-      ctaIntegration: data.ctaType !== "none" ? data.ctaType : "encouraging action without sales pressure"
+      ctaIntegration: ctaType !== "none" ? ctaType : "encouraging action without sales pressure"
+    },
+    ...(includeReferences && {
+      referencesSection: {
+        sourceCount: "3-7 sources recommended",
+        sourceTypes: "mix of .gov, .edu, and authoritative industry sources",
+        formattingStyle: "clean list with clickable links and brief descriptions"
+      }
+    }),
+    ...(mediaUrls.length > 0 && {
+      mediaStrategy: {
+        overallPlacementApproach: `${mediaPlacementStrategy} placement strategy for optimal content flow`,
+        imageCount: mediaUrls.length,
+        strategicPlacements: mediaUrls.map((_: any, index: number) => ({
+          imageIndex: index,
+          recommendedSection: `Section ${Math.min(index + 1, sections)}`,
+          placementReason: "Visual support for key concepts",
+          altTextSuggestion: `Illustration showing ${topic} concept ${index + 1}`,
+          captionSuggestion: `Visual guide to understanding this aspect of ${topic}`
+        })),
+        visualNarrativeFlow: "Images strategically placed to support learning progression"
+      }
+    })  };
+};
+
+/**
+ * Validates that media URLs are accessible Firebase Storage URLs
+ * This ensures images can be properly referenced in generated content
+ */
+const validateMediaUrls = async (mediaUrls: string[], userId: string): Promise<string[]> => {
+  const validUrls: string[] = [];
+  
+  for (const url of mediaUrls) {
+    try {
+      // Check if URL is a valid Firebase Storage URL
+      if (!url.includes('firebasestorage.googleapis.com') && !url.includes('storage.googleapis.com')) {
+        console.warn(`[LongForm] Skipping non-Firebase URL: ${url.substring(0, 50)}...`);
+        continue;
+      }
+      
+      // Validate URL accessibility by making a HEAD request
+      const response = await fetch(url, { method: 'HEAD' });
+      if (response.ok) {
+        validUrls.push(url);
+        console.log(`[LongForm] Validated media URL: ${url.substring(0, 50)}...`);
+      } else {
+        console.warn(`[LongForm] Media URL not accessible (${response.status}): ${url.substring(0, 50)}...`);
+      }
+    } catch (error) {
+      console.warn(`[LongForm] Error validating media URL: ${url.substring(0, 50)}...`, error);
     }
-  };
+  }
+  
+  return validUrls;
 };
 
 // Main longform content generation function
@@ -600,25 +821,43 @@ export const generateLongformContent = onCall({
     const usageCheck = await checkUsageLimits(uid);
     if (!usageCheck.hasUsage) {
       return usageCheck;
-    }
-    
-    // Step 5: Extract and structure inputs
+    }    // Step 5: Extract and structure inputs with media validation
     const promptData = {
       topic: data.topic,
       audience: data.audience,
       industry: data.industry,
       keywords: data.keywords || [],
       contentTone: data.contentTone,
+      writingPersonality: data.writingPersonality || "",
+      readingLevel: data.readingLevel || "",
       contentType: data.contentType || "blog-article",
       structureFormat: data.structureFormat || "intro-points-cta",
       wordCount: data.wordCount || 1200,
       includeStats: data.includeStats || false,
+      includeReferences: data.includeReferences || false,
+      tocRequired: data.tocRequired || false,
+      summaryRequired: data.summaryRequired || false,
+      structuredData: data.structuredData || false,
+      enableMetadataBlock: data.enableMetadataBlock || false,
       ctaType: data.ctaType || "none",
       mediaUrls: data.mediaUrls || [],
       mediaCaptions: data.mediaCaptions || [],
+      mediaAnalysis: data.mediaAnalysis || [], // AI-analyzed descriptions of uploaded images
+      mediaPlacementStrategy: data.mediaPlacementStrategy || "auto", // auto, manual, or semantic
       structureNotes: data.structureNotes || "",
       outputFormat: data.outputFormat || "markdown"
     };
+
+    // Step 5.1: Validate and process media URLs
+    if (promptData.mediaUrls.length > 0) {
+      console.log(`[LongForm] Processing ${promptData.mediaUrls.length} media URLs`);
+      
+      // Validate media URLs are accessible Firebase Storage URLs
+      const validatedUrls = await validateMediaUrls(promptData.mediaUrls, uid);
+      promptData.mediaUrls = validatedUrls;
+      
+      console.log(`[LongForm] ${validatedUrls.length} media URLs validated successfully`);
+    }
       console.log(`[LongForm] Generating ${promptData.wordCount}-word content for: ${promptData.topic}`);
     
     // Step 6: Generate outline with Gemini
@@ -643,14 +882,21 @@ export const generateLongformContent = onCall({
       moduleType: "longform",
       inputs: promptData,
       outline: outline,
-      content: generatedContent,
-      metadata: {
+      content: generatedContent,      metadata: {
         actualWordCount: generatedContent.split(/\s+/).filter(word => word.length > 0).length, // More accurate word count
         estimatedReadingTime: Math.ceil(generatedContent.split(/\s+/).filter(word => word.length > 0).length / 200),
         generatedAt: FieldValue.serverTimestamp(),        generationTime: Date.now() - startTime,
         outlineGenerationTime: outlineTime,
         contentGenerationTime: contentTime,
         version: "2.2.0", // Updated version with enhanced prompts
+        // New enhanced metadata fields
+        readingLevel: promptData.readingLevel || "General",
+        hasReferences: promptData.includeReferences || false,
+        contentPersonality: promptData.writingPersonality || "Professional",
+        contentEmotion: outline.meta?.primaryEmotion || "Informative",
+        topics: outline.meta?.topics || promptData.keywords?.slice(0, 5) || [promptData.topic],
+        metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
+        metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
         contentQuality: {
           hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
           hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
@@ -723,3 +969,4 @@ export const generateLongformContent = onCall({
     );
   }
 });
+

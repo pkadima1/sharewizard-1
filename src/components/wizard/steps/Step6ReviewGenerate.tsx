@@ -466,9 +466,7 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
       setIsGenerating(true);
       setGenerationError(null);
       setGenerationProgress(10);
-      setGenerationStage('outline');
-
-      // Prepare the data for the function call
+      setGenerationStage('outline');      // Prepare the data for the function call
       const functionData = {
         topic: formData.topic,
         audience: formData.audience,
@@ -485,8 +483,12 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
         outputFormat: selectedExportFormats[0] || 'markdown',
         ctaType: formData.ctaType || 'none',
         structureNotes: formData.structureNotes || '',
-        mediaUrls: (formData.mediaFiles || []).map(file => file.url || '')
-      };      // Update progress based on typical function execution timeline
+        mediaUrls: (formData.mediaFiles || []).map(file => file.url || ''),
+        // Enhanced Media Integration Fields
+        mediaCaptions: (formData.mediaFiles || []).map(file => file.metadata?.mediaCaption || ''),
+        mediaAnalysis: (formData.mediaFiles || []).map(file => file.metadata?.aiAnalysis || ''),
+        mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto' // auto, manual, or semantic
+      };// Update progress based on typical function execution timeline
       progressUpdateInterval = setInterval(() => {
         setGenerationProgress(prev => {
           // Outline generation typically takes ~30% of the total time

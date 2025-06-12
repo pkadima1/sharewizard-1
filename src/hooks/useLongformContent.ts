@@ -5,8 +5,7 @@ import { db } from '@/lib/firebase';
 export interface LongformContent {
   id: string;
   uid: string;
-  moduleType: string;
-  inputs: {
+  moduleType: string;  inputs: {
     topic: string;
     audience: string;
     industry: string;
@@ -16,15 +15,23 @@ export interface LongformContent {
     structureFormat: string;
     wordCount: number;
     includeStats: boolean;
-    ctaType: string;
-    mediaUrls: string[];
+    ctaType: string;    mediaUrls: string[];
     mediaCaptions: string[];
+    mediaAnalysis: string[]; // AI-analyzed descriptions of uploaded images
+    mediaPlacementStrategy: string; // auto, manual, or semantic
     structureNotes: string;
     outputFormat: string;
+    // New enhanced input fields
+    writingPersonality?: string;
+    readingLevel?: string;
+    includeReferences?: boolean;
+    tocRequired?: boolean;
+    summaryRequired?: boolean;
+    structuredData?: boolean;
+    enableMetadataBlock?: boolean;
   };
   outline: any;
-  content: string;
-  metadata: {
+  content: string;  metadata: {
     actualWordCount: number;
     estimatedReadingTime: number;
     generatedAt: any;
@@ -32,6 +39,14 @@ export interface LongformContent {
     outlineGenerationTime: number;
     contentGenerationTime: number;
     version: string;
+    // New enhanced metadata fields
+    readingLevel: string;
+    hasReferences: boolean;
+    contentPersonality: string;
+    contentEmotion: string;
+    topics: string[];
+    metaTitle: string;
+    metaDescription: string;
     contentQuality: {
       hasEmotionalElements: boolean;
       hasActionableContent: boolean;
