@@ -401,10 +401,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 description: "Your 5-day free trial has been activated.",
               });
             } else {
-              let planType = 'free';
-              if (subscriptionData.status === 'trialing') {
+              let planType = 'free';              if (subscriptionData.status === 'trialing') {
                 planType = 'trial';
               } else if (subscriptionData.role === 'basicMonth' || subscriptionData.role === 'basicYear') {
+                planType = subscriptionData.role; // Use the actual role
+              } else if (subscriptionData.role === 'premiumMonth' || subscriptionData.role === 'premiumYear') {
                 planType = subscriptionData.role; // Use the actual role
               } else if (subscriptionData.role === 'flexy') {
                 planType = 'flexy';
@@ -417,6 +418,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 requestsLimit = DEFAULT_REQUEST_LIMIT.basicMonth;
               } else if (subscriptionData.role === 'basicYear') {
                 requestsLimit = DEFAULT_REQUEST_LIMIT.basicYear;
+              } else if (subscriptionData.role === 'premiumMonth') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.premiumMonth;
+              } else if (subscriptionData.role === 'premiumYear') {
+                requestsLimit = DEFAULT_REQUEST_LIMIT.premiumYear;
               } else if (subscriptionData.role === 'flexy') {
                 requestsLimit = DEFAULT_REQUEST_LIMIT.flexy;
               }

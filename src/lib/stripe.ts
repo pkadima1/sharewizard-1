@@ -127,7 +127,7 @@ export const getUserRole = async (): Promise<string | null> => {
 /**
  * Checks if user has access to specified tier
  */
-export const checkUserAccess = async (requiredTier: 'basic' | 'flexy'): Promise<boolean> => {
+export const checkUserAccess = async (requiredTier: 'basic' | 'premium' | 'flexy'): Promise<boolean> => {
   try {
     const role = await getUserRole();
     
@@ -135,8 +135,12 @@ export const checkUserAccess = async (requiredTier: 'basic' | 'flexy'): Promise<
     
     switch (requiredTier) {
       case 'basic':
-        // Basic and Flexy users can access basic features
-        return role === 'basic' || role === 'basicMonth' || role === 'basicYear' || role === 'flexy';
+        // Basic, Premium and Flexy users can access basic features
+        return role === 'basic' || role === 'basicMonth' || role === 'basicYear' || 
+               role === 'premiumMonth' || role === 'premiumYear' || role === 'flexy';
+      case 'premium':
+        // Premium and Flexy users can access premium features
+        return role === 'premiumMonth' || role === 'premiumYear' || role === 'flexy';
       case 'flexy':
         // Only Flexy users can access flexy features
         return role === 'flexy';
