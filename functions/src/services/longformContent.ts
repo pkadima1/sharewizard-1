@@ -11,6 +11,11 @@
  * 
  * FLOW: Authentication → Validation → Usage Check → Gemini Outline → GPT Content → Storage → Response
  * 
+ * REQUEST TRACKING:
+ * - Blog generation costs 4 requests (complex two-stage AI process)
+ * - Caption generation costs 1 request (single AI call)
+ * - Usage validation ensures minimum 4 requests available before generation
+ * 
  * KEY FEATURES:
  * - Enhanced prompting for human-like content generation
  * - EEAT (Experience, Expertise, Authoritativeness, Trustworthiness) optimization
@@ -32,6 +37,9 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { getOpenAIKey, getGeminiKey } from "../config/secrets.js";
 import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
+
+// Request cost constants
+const BLOG_REQUEST_COST = 4; // Blog generation costs 4 requests due to complex two-stage AI process
 
 // Initialize Firebase Admin with hybrid configuration
 initializeFirebaseAdmin();
@@ -213,7 +221,7 @@ const validateInputs = (data: any) => {
   }
 };
 
-// Enhanced usage checking with better error messages
+// Enhanced usage checking with better error messages for blog generation (4 requests required)
 const checkUsageLimits = async (uid: string) => {
   const userDoc = await db.collection("users").doc(uid).get();
   
@@ -226,10 +234,10 @@ const checkUsageLimits = async (uid: string) => {
   const requestsLimit = userData.requests_limit || 0;
   const flexyRequests = userData.flexy_requests || 0;
   const planType = userData.plan_type || "free";
+    const totalAvailable = requestsLimit + flexyRequests;
   
-  const totalAvailable = requestsLimit + flexyRequests;
-  
-  if (requestsUsed >= totalAvailable) {
+  // Check if user has enough requests for blog generation
+  if (requestsUsed + BLOG_REQUEST_COST > totalAvailable) {
     const upgradeMessage = planType === "free" 
       ? "Upgrade to a paid plan to continue generating content."
       : "Purchase additional Flex requests to continue.";
@@ -237,8 +245,8 @@ const checkUsageLimits = async (uid: string) => {
     return {
       hasUsage: false,
       error: "limit_reached",
-      message: `You've used all ${totalAvailable} available requests. ${upgradeMessage}`,
-      requestsRemaining: 0,
+      message: `Blog generation requires ${BLOG_REQUEST_COST} requests. You need ${requestsUsed + BLOG_REQUEST_COST - totalAvailable} more requests. ${upgradeMessage}`,
+      requestsRemaining: totalAvailable - requestsUsed,
       planType
     };
   }
@@ -913,21 +921,18 @@ export const generateLongformContent = onCall({
       const userRef = db.collection("users").doc(uid);
       
       // Store content
-      transaction.set(contentRef, contentData);
-        // Update usage based on plan type
+      transaction.set(contentRef, contentData);      // Update usage based on plan type - Blog generation costs 4 requests
       if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
         transaction.update(userRef, {
-          flexy_requests: FieldValue.increment(-1)
+          flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
         });
       } else {
         transaction.update(userRef, {
-          requests_used: FieldValue.increment(1)
+          requests_used: FieldValue.increment(BLOG_REQUEST_COST)
         });
       }
-    });
-    
-    // Step 10: Calculate remaining requests
-    const remainingRequests = Math.max(0, usageCheck.requestsRemaining - 1);
+    });    // Step 10: Calculate remaining requests - Blog generation costs 4 requests
+    const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
     
     console.log(`[LongForm] Content generation completed in ${Date.now() - startTime}ms`);
     

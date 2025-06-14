@@ -6,16 +6,25 @@ import { config } from "./config/secrets.js";
 
 // Initialize Firebase Admin if not already initialized
 try {
-  admin.initializeApp();
-} catch (error: any) {
-  // App already exists
-  if (error.code !== "app/duplicate-app") {
+  if (!admin.apps.length) {
+    admin.initializeApp();
+  }
+} catch (error) {
+  const err = error as { code?: string };
+  // App already exists or another error
+  if (err.code !== "app/duplicate-app") {
     console.error("Firebase admin initialization error", error);
   }
 }
 
+// Get Stripe secret key from env or extension config
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || config.stripeSecretKey;
+if (!stripeSecretKey) {
+  throw new Error("STRIPE_SECRET_KEY is not set. Please set it in your environment or extension config.");
+}
+
 // Initialize Stripe with secret key
-const stripe = new Stripe(config.stripeSecretKey, {
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2025-04-30.basil" // Using latest Stripe API version as of May 2025
 });
 

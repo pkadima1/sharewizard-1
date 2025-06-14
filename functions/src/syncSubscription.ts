@@ -97,10 +97,8 @@ export const syncSubscriptionToUserProfile = onDocumentWritten({
       updateData.plan_type = currentUser.plan_type || "flexy";
       updateData.requests_used = existingUsed;
       if (resetDate) updateData.reset_date = resetDate;
-    }
-
-    // Handle normal plans: basicMonth, basicYear
-    else if (metadata.firebaseRole && ["basicMonth", "basicYear"].includes(metadata.firebaseRole)) {
+    }    // Handle normal plans: basicMonth, basicYear, premiumMonth, premiumYear
+    else if (metadata.firebaseRole && ["basicMonth", "basicYear", "premiumMonth", "premiumYear"].includes(metadata.firebaseRole)) {
       const newLimit = parseInt(
         metadata.request_limit || metadata.month_request_limit || metadata.year_request_limit || "0",
         10

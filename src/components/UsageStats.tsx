@@ -355,9 +355,8 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
                   Buy More Requests
                 </Button>
               )}
-              
-              {/* Only show manage subscription button for paid users */}
-              {(planType === 'basicMonth' || planType === 'trial') && (
+                {/* Only show manage subscription button for paid users */}
+              {(planType === 'basicMonth' || planType === 'basicYear' || planType === 'premiumMonth' || planType === 'premiumYear' || planType === 'trial') && (
                 <Button 
                   variant="outline" 
                   size="sm" 
