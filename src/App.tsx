@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { ChatProvider } from "./contexts/ChatContext";
 import RouterConfig from "./RouterConfig";
+import SupportChat from './components/SupportChat';
 
 // Import testing utilities for debugging text overlays
 // This will expose debugging functions to the window object
@@ -32,10 +34,13 @@ const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />          <RouterConfig />
-        </TooltipProvider>
+        <ChatProvider>
+          <TooltipProvider>          <Toaster />
+            <Sonner />
+            <RouterConfig />
+            <SupportChat />
+          </TooltipProvider>
+        </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>;

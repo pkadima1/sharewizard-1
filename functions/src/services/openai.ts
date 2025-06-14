@@ -4,6 +4,9 @@ import OpenAI from "openai";
 import { getOpenAIKey } from "../config/secrets.js";
 import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
 
+// Request cost constants
+const CAPTION_REQUEST_COST = 1; // Caption generation costs 1 request (single AI call)
+
 // Initialize Firebase Admin with hybrid configuration
 initializeFirebaseAdmin();
 
@@ -337,11 +340,10 @@ export const generateCaptionsV3 = onCall({
       
       // Step 6: Update user request count based on plan type
       let requests_remaining: number;
-      
-      if (userData.plan_type === "flexy" && userData.flexy_requests && userData.flexy_requests > 0) {
-        // Update flexy requests
+        if (userData.plan_type === "flexy" && userData.flexy_requests && userData.flexy_requests > 0) {
+        // Update flexy requests - Caption generation costs 1 request
         await db.collection("users").doc(uid).update({
-          flexy_requests: FieldValue.increment(-1)
+          flexy_requests: FieldValue.increment(-CAPTION_REQUEST_COST)
         });
         
         // Get updated flexy requests count for response
@@ -349,9 +351,9 @@ export const generateCaptionsV3 = onCall({
         const updatedUserData = updatedUserDoc.data() as { flexy_requests: number; requests_limit: number; requests_used: number };
         requests_remaining = (updatedUserData.flexy_requests || 0) + (updatedUserData.requests_limit - updatedUserData.requests_used);
       } else {
-        // Update standard requests
+        // Update standard requests - Caption generation costs 1 request
         await db.collection("users").doc(uid).update({
-          requests_used: FieldValue.increment(1)
+          requests_used: FieldValue.increment(CAPTION_REQUEST_COST)
         });
         
         // Get updated requests count for response

@@ -84,9 +84,15 @@ export const checkUserPlan = async (userId: string): Promise<{
           status: 'UPGRADE',
           message: 'Your trial requests are used up. Upgrade to a paid plan to continue.',
           usagePercentage
-        };
-      } else if (planType === 'basicMonth' || planType === 'basicYear') {
+        };      } else if (planType === 'basicMonth' || planType === 'basicYear') {
         // Handle both basic plan variations
+        return {
+          status: 'LIMIT_REACHED',
+          message: 'You have reached your request limit. Add Flex packs for additional requests.',
+          usagePercentage
+        };
+      } else if (planType === 'premiumMonth' || planType === 'premiumYear') {
+        // Handle both premium plan variations
         return {
           status: 'LIMIT_REACHED',
           message: 'You have reached your request limit. Add Flex packs for additional requests.',
@@ -140,6 +146,10 @@ export const formatPlanName = (planType: string): string => {
       return 'Basic Monthly Plan';
     case 'basicYear':
       return 'Basic Yearly Plan';
+    case 'premiumMonth':
+      return 'Premium Monthly Plan';
+    case 'premiumYear':
+      return 'Premium Yearly Plan';
     case 'flexy':
       return 'Flex Purchase';
     default:
@@ -169,9 +179,13 @@ export const getSuggestedUpgrade = (currentPlan: string): string => {
     case 'trial':
       return 'Your trial will end soon. Upgrade to continue.';
     case 'basicMonth':
-      return 'Save money by switching to yearly billing, or add Flex packs as needed.';
+      return 'Save money by switching to yearly billing, or upgrade to Premium for more requests.';
     case 'basicYear':
-      return 'You\'re on our best plan! Need more? Add Flex packs for additional requests.';
+      return 'Upgrade to Premium for more requests, or add Flex packs as needed.';
+    case 'premiumMonth':
+      return 'Save money by switching to yearly billing, or add Flex packs as needed.';
+    case 'premiumYear':
+      return 'You\'re on our highest plan! Need more? Add Flex packs for additional requests.';
     case 'flexy':
       return 'Need more requests? Purchase additional Flex packs anytime.';
     default:
@@ -398,8 +412,7 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
         'Manual sharing on social media platforms',
         'Friendly customer support'
       ];
-    case 'basicYear':
-      return [
+    case 'basicYear':      return [
         ...baseFeatures,
         '900 requests/year',
         'Single platform support',
@@ -407,6 +420,28 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
         'Mobile-friendly ready to post preview & download',
         'Manual sharing on social media platforms',
         'Friendly customer support'
+      ];
+    case 'premiumMonth':
+      return [
+        ...baseFeatures,
+        '500 requests/month',
+        'Multi-platform support',
+        'Advanced post ideas and captions',
+        'Mobile-friendly ready to post preview & download',
+        'Manual sharing on social media platforms',
+        'Priority customer support',
+        'Advanced analytics'
+      ];
+    case 'premiumYear':
+      return [
+        ...baseFeatures,
+        '6000 requests/year',
+        'Multi-platform support',
+        'Advanced post ideas and captions',
+        'Mobile-friendly ready to post preview & download',
+        'Manual sharing on social media platforms',
+        'Priority customer support',
+        'Advanced analytics'
       ];
     case 'flexy':
       return [
@@ -421,12 +456,16 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
 };
 
 export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): { price: string, saving?: string, promo?: string } => {
-  // Updated with USD pricing
+  // Updated with GBP pricing as per user requirements
   switch (planType) {
     case 'basicMonth':
       return { price: '$8.00/month' };
     case 'basicYear':
       return { price: '$40.00/year', saving: 'Save 58%' };
+    case 'premiumMonth':
+      return { price: '£29/month' };
+    case 'premiumYear':
+      return { price: '£199/year', saving: 'Save £149/year' };
     case 'flexy':
       return { price: '$3.00 per pack' };
     default:
@@ -435,12 +474,16 @@ export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly' = '
 };
 
 export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Removed 'basic' case entirely
+  // Updated with actual Premium plan Stripe price IDs
   switch (planType) {
     case 'basicMonth':
       return 'price_1RTGhNGCd9fidigraVTwiPFB'; // Basic Plan Monthly
     case 'basicYear':
       return 'price_1RTH3yGCd9fidigrrhPoTMga'; // Basic Plan Yearly
+    case 'premiumMonth':
+      return 'price_1RZcCkGCd9fidigrhkG3BMxU'; // Premium Plan Monthly
+    case 'premiumYear':
+      return 'price_1RZcXdGCd9fidigrubfO1RCe'; // Premium Plan Yearly
     case 'flexy':
       return 'price_1RTHNhGCd9fidigrric9VnxJ'; // Flex Plan
     default:
@@ -449,12 +492,16 @@ export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' =
 };
 
 export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Updated product IDs based on new plans
+  // Updated with actual Premium plan product IDs
   switch (planType) {
     case 'basicMonth':
       return 'prod_SO2mG5NoYykdKq'; // Basic Plan Monthly
     case 'basicYear':
       return 'prod_SO3AIuuRCfM8Jf'; // Basic Plan Yearly
+    case 'premiumMonth':
+      return 'prod_SUbPDj7fSL9tuZ'; // Premium Plan Monthly
+    case 'premiumYear':
+      return 'prod_SUblJDj9dYJalR'; // Premium Plan Yearly
     case 'flexy':
       return 'prod_SO3UmcTFa3cSl7'; // Flex Plan
     default:
@@ -463,12 +510,17 @@ export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly'
 };
 
 export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Updated purchase URLs for all plans
+  // Updated purchase URLs with actual Premium plan URLs
   switch (planType) {
     case 'basicMonth':
       return 'https://buy.stripe.com/00w14n4Xrcqv8Su7hbeAg03';
     case 'basicYear':
       return 'https://buy.stripe.com/bJeaEX9dH76b8SubxreAg04';
+    case 'premiumMonth':
+      return 'https://buy.stripe.com/8x29ATfC5cqvd8K1WReAg06'; // Premium Plan Monthly
+    case 'premiumYear':
+      return 'https://buy.stripe.com/5kQ9ATcpT1LRc4GfNHeAg07'; // Premium Plan Yearly
+      return 'https://buy.stripe.com/premium_year_placeholder'; // Premium Plan Yearly - update with actual Stripe URL
     case 'flexy':
       return 'https://buy.stripe.com/28E4gz2PjeyDd8KatneAg05';
     default:

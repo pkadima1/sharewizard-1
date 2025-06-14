@@ -177,10 +177,10 @@ const Profile: React.FC = () => {
 
     const unsubscribe = onSnapshot(userRef, (userSnapshot) => {
       if (userSnapshot.exists()) {
-        const userData = userSnapshot.data();
-        // Map Firebase plan_type to SubscriptionTier type
+        const userData = userSnapshot.data();        // Map Firebase plan_type to SubscriptionTier type
         let subscriptionTier: SubscriptionTier = 'free';
         if (userData.plan_type === 'basic' || userData.plan_type === 'basicMonth' || userData.plan_type === 'basicYear') subscriptionTier = 'basicMonth';
+        else if (userData.plan_type === 'premiumMonth' || userData.plan_type === 'premiumYear') subscriptionTier = userData.plan_type;
         else if (userData.plan_type === 'flexy') subscriptionTier = 'flexy';
 
         // Create a properly formatted UserProfile object

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Menu, X, Bell, User, ChevronDown } from 'lucide-react';
+import { LogOut, Menu, X, Bell, User, ChevronDown, Shield } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeToggle';
 import {
   DropdownMenu,
@@ -21,6 +21,9 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Check if user is admin
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
+                 currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
 
   useEffect(() => {
     const handleScroll = () => {
@@ -177,8 +180,7 @@ const Navbar: React.FC = () => {
                         <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{currentUser.email}</span>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuSeparator />                    <DropdownMenuItem asChild>
                       <Link to="/profile" className="cursor-pointer flex items-center">
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
@@ -191,6 +193,15 @@ const Navbar: React.FC = () => {
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem> 
+                    {/* Admin Dashboard link - only visible to admins */}
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="cursor-pointer flex items-center">
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>Admin Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-700 focus:text-red-700">
                       <LogOut className="mr-2 h-4 w-4" />

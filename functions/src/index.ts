@@ -20,6 +20,14 @@ export { syncSubscriptionToUserProfile } from "./syncSubscription.js";
 // Export longform content generation function
 export { generateLongformContent } from "./services/longformContent.js";
 
+// Export support chat function
+export { supportChat } from './supportChat.js';
+
+// Export admin chat dashboard functions
+export { getChatAnalytics } from './adminChatFunctions.js';
+export { getChatConversations } from './adminChatFunctions.js';
+export { getChatMessages } from './adminChatFunctions.js';
+export { exportChatData } from './adminChatFunctions.js';
 
 // Add any additional function exports below
 

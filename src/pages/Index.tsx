@@ -16,12 +16,12 @@ const Index = () => {
           {/* Left Column - Text Content */}
           <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-              Human-Like AI Caption<br />
+              Human-Like AI Content<br />
               That Truly <span className="text-blue-500">Engages</span>
             </h1>
             
             <p className="text-lg text-gray-300 max-w-lg">
-              Create captivating, personalized captions for your platforms. No more generic AI-like text, perfect human-like writing.
+              Create captivating, personalized captions for your platforms and Long Form Content up to 2500 words SEO, EEAT, GEO optimized. No more generic AI-like text, perfect human-like writing.
             </p>
             
             <div className="pt-4">
@@ -223,7 +223,7 @@ const Index = () => {
         <div className="text-center space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold">
             Ready to Create Perfect Content?
-            <br />Start With our Caption Generator!
+            <br />Start With our Caption and Long Form Content Generator!
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Join thousands of marketers and content creators using EngagePerfect AI.
