@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Lazy-loaded test components (only in development)
 const TestLongformGeneration = lazy(() => 
@@ -44,6 +45,9 @@ const RouterConfig = () => {
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/preview-repost" element={<PreviewRepost />} />                <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
+                
+                {/* Admin routes */}
+                <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
                 
                 {/* Development-only testing routes */}
                 {import.meta.env.DEV && (

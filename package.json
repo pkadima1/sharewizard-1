@@ -2,8 +2,7 @@
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "scripts": {
+  "type": "module",  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
@@ -11,9 +10,11 @@
     "preview": "vite preview",
     "test": "jest",
     "dev:hybrid": "echo Starting hybrid development mode... && npm run dev",
-    "sync-user": "node scripts/sync-user-profile.js",
-    "emulators": "firebase emulators:start",
-    "emulators:ui": "firebase emulators:start --only functions,firestore,ui"
+    "sync-user": "node scripts/sync-user-profile.js",    "emulators": "firebase emulators:start",
+    "emulators:ui": "firebase emulators:start --only functions,firestore,ui",
+    "api": "node scripts/start-api-server.js",
+    "dev:full": "concurrently \"npm run dev\" \"npm run api\"",
+    "validate:db": "node scripts/validate-collections.js"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
