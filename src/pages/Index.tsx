@@ -49,10 +49,10 @@ const Index = () => {
             
             <div className="mt-4 flex items-center gap-2">
               <div className="bg-blue-600 rounded-full h-8 w-8 flex items-center justify-center text-white text-xs">
-                JD
+                RH
               </div>
               <div className="text-sm text-gray-400">
-              Jane Doe<br />
+              Robert Hodgson<br />
 
                 Marketing Director
               </div>
@@ -174,9 +174,9 @@ const Index = () => {
           
           {/* Feature 3 */}
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Multiple Content Types-Coming Soon!</h3>
+            <h3 className="text-lg font-semibold mb-3">Multiple Content!</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Generate captions, social posts, emails, and product descriptions with ease.
+              Generate captions, social posts, Blog Posts, Research Articles, and more, with ease.
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -185,9 +185,9 @@ const Index = () => {
           
           {/* Feature 4 */}
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">SEO Optimization</h3>
+            <h3 className="text-lg font-semibold mb-3">SEO, EEAT, GEO Optimization</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Content optimized with search engines in mind to help boost your visibility.
+              Content optimized with search engines, EEAT principles, and GEO targeting in mind to help boost your visibility in the era of AI Search Engine.
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -198,7 +198,7 @@ const Index = () => {
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
             <h3 className="text-lg font-semibold mb-3">Fast Generation</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Create high-quality content in seconds, not hours or days.
+              Create high-quality content that emotionally connect with your brand, tone, style, industry  in seconds, not hours or days.
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -223,7 +223,7 @@ const Index = () => {
         <div className="text-center space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold">
             Ready to Create Perfect Content?
-            <br />Start With our Caption and Long Form Content Generator!
+            <br />Start With our Caption, SM Posts  and Long Form Content Generator!
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Join thousands of marketers and content creators using EngagePerfect AI.

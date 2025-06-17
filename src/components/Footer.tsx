@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Instagram, Twitter, Facebook, Linkedin } from 'lucide-react';
+import { Github, Instagram, Twitter, Facebook, Linkedin, Youtube } from 'lucide-react';
 import MobileFooterNav from './MobileFooterNav';
 
 const Footer: React.FC = () => {
@@ -20,27 +20,31 @@ const Footer: React.FC = () => {
               <span className="text-xl font-semibold text-gray-900 dark:text-white">EngagePerfect</span>
             </Link>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 max-w-md">
-              Create engaging social media content in seconds with our AI-powered platform
+              Create engaging Human-like social media, blog & article content in seconds with our AI-powered platform
             </p>
           </div>
           
           {/* Social media links */}
           <div className="flex space-x-4">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Twitter">
+            <a href="https://x.com/EngagePerfect" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Twitter">
               <Twitter size={20} />
             </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Facebook">
+            <a href="https://www.facebook.com/profile.php?id=61571288877573" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Facebook">
               <Facebook size={20} />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Instagram">
+            <a href="https://www.instagram.com/engageperfect/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="Instagram">
               <Instagram size={20} />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/company/engageperfect/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="LinkedIn">
               <Linkedin size={20} />
             </a>
+            <a href="https://www.youtube.com/@EngagePerfect" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="YouTube">
+              <Youtube size={20} />
+            </a>
+            {/* Add more social media links as needed 
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary transition-colors" aria-label="GitHub">
               <Github size={20} />
-            </a>
+            </a>*/}
           </div>
         </div>
         
