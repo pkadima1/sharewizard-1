@@ -28,8 +28,7 @@ export async function handleSubscriptionCheckoutCompleted(
     const firstItem = items[0];
     const metadata = firstItem?.price?.metadata || {};
     const interval = firstItem?.price?.recurring?.interval;
-    
-    // Extract the plan type from metadata
+      // Extract the plan type from metadata
     const planType = metadata.firebaseRole || 'basicMonth';
     const requestLimit = parseInt(
       metadata.request_limit || 
@@ -58,6 +57,16 @@ export async function handleSubscriptionCheckoutCompleted(
     }
     if (planType === 'basicYear' && interval !== 'year') {
       logger.error(`Plan type basicYear but Stripe interval is ${interval}`);
+      // Defensive: set to 365 days from now
+      correctResetDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+    }
+    if (planType === 'premiumMonth' && interval !== 'month') {
+      logger.error(`Plan type premiumMonth but Stripe interval is ${interval}`);
+      // Defensive: set to 30 days from now
+      correctResetDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    }
+    if (planType === 'premiumYear' && interval !== 'year') {
+      logger.error(`Plan type premiumYear but Stripe interval is ${interval}`);
       // Defensive: set to 365 days from now
       correctResetDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
     }
@@ -91,8 +100,7 @@ export async function handleSubscriptionCheckoutCompleted(
       logger.warn(`User document not found for userId ${customerId}`);
       return;
     }
-    
-    // Update user's subscription status
+      // Update user's subscription status
     await userRef.update({
       plan_type: status === 'trialing' ? 'trial' : planType,
       requests_limit: status === 'trialing' ? 5 : requestLimit,

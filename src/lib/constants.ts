@@ -1,5 +1,10 @@
-
 import { UserProfile } from "@/types";
+
+// Request costs for different content generation types
+export const REQUEST_COSTS = {
+  CAPTION_GENERATION: 1,  // Simple caption generation costs 1 request
+  BLOG_GENERATION: 4,     // Complex blog generation costs 4 requests (2-stage AI process)
+} as const;
 
 // Default request limits for each plan
 export const DEFAULT_REQUEST_LIMIT = {
@@ -7,6 +12,8 @@ export const DEFAULT_REQUEST_LIMIT = {
   trial: 5,         // Trial users get 5 requests
   basicMonth: 70,   // Basic month users get 70 requests
   basicYear: 900,   // Basic year users get 900 requests (75 per month)
+  premiumMonth: 500,  // Premium month users get 500 requests
+  premiumYear: 6000,  // Premium year users get 6000 requests (500 per month)
   flexy: 20         // Flexy one-time purchase gives 20 requests
 };
 
@@ -90,11 +97,20 @@ export const PLAN_LIMITS = {
     aiRequests: 70,
     postsPerMonth: 70,
     drafts: 30
-  },
-  basicYear: {
+  },  basicYear: {
     aiRequests: 900,
     postsPerMonth: 75,  // 900/12 = 75 per month
     drafts: 30
+  },
+  premiumMonth: {
+    aiRequests: 500,
+    postsPerMonth: 500,
+    drafts: 100
+  },
+  premiumYear: {
+    aiRequests: 6000,
+    postsPerMonth: 500,  // 6000/12 = 500 per month
+    drafts: 100
   },
   flexy: {
     aiRequests: 20,
@@ -128,6 +144,8 @@ export const getSubscriptionBadgeClass = (tier: string): string => {
     case 'trial': return 'status-badge-trial';
     case 'basicMonth': return 'status-badge-basicMonth';
     case 'basicYear': return 'status-badge-basicYear';
+    case 'premiumMonth': return 'status-badge-premiumMonth';
+    case 'premiumYear': return 'status-badge-premiumYear';
     case 'flexy': return 'status-badge-flex';
     default: return 'status-badge-free';
   }

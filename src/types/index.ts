@@ -1,5 +1,5 @@
 
-export type SubscriptionTier = 'free' | 'basicMonth' | 'basicYear' | 'flexy' | 'trial';
+export type SubscriptionTier = 'free' | 'basicMonth' | 'basicYear' | 'premiumMonth' | 'premiumYear' | 'flexy' | 'trial';
 
 export interface ShareCounts {
   twitter: number;

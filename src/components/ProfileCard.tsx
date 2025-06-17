@@ -11,12 +11,13 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
   const daysRemaining = user.planExpiryDate ? getDaysRemaining(user.planExpiryDate) : null;
-  
-  // Helper function to map backend subscription types to display names
+    // Helper function to map backend subscription types to display names
   const getDisplayTier = (tier: SubscriptionTier): string => {
     switch(tier) {
       case 'basicMonth': return 'Basic Monthly';
       case 'basicYear': return 'Basic Yearly';
+      case 'premiumMonth': return 'Premium Monthly';
+      case 'premiumYear': return 'Premium Yearly';
       case 'flexy': return 'Flex';
       case 'trial': return 'Trial';
       case 'free':
