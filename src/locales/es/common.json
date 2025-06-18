@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "pricing": "Precios",
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "caption_generator": "Generador de Subtítulos",
+    "blog_wizard": "Asistente de Blog"
+  },
+  "wizard": {
+    "step1": "Subir medios",
+    "step2": "Seleccionar nicho",
+    "step3": "Elegir plataforma",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "generate": "Generar subtítulos"
+  },
+  "auth": {
+    "welcome": "Bienvenido a EngagePerfect",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión"
+  }
+}

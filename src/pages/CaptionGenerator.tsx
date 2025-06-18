@@ -7,8 +7,11 @@ import GoalSelector from '@/components/GoalSelector';
 import ToneSelector from '@/components/ToneSelector';
 import GeneratedCaptions from '@/components/GeneratedCaptions';
 import { toast } from "sonner";
+import { useTranslation } from 'react-i18next';
 
 const CaptionGenerator: React.FC = () => {
+  // Use the translation hook with 'common' namespace for wizard steps and 'wizard' namespace for specific content
+  const { t } = useTranslation(['common', 'wizard']);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -27,30 +30,29 @@ const CaptionGenerator: React.FC = () => {
       }
     };
   }, [previewUrl]);
-
   const steps: WizardStep[] = [{
-    title: "Upload Media",
-    description: "Upload an image or video to generate captions",
+    title: t('wizard.step1', "Upload Media"),
+    description: t('wizard:mediaUpload.description', "Upload an image or video to generate captions"),
     isCompleted: !!selectedMedia || isTextOnly
   }, {
-    title: "Select Niche",
-    description: "Choose a niche for your content",
+    title: t('wizard.step2', "Select Niche"),
+    description: t('wizard:niche.description', "Choose a niche for your content"),
     isCompleted: !!selectedNiche
   }, {
-    title: "Platform",
-    description: "Select social media platform",
+    title: t('wizard.step3', "Platform"),
+    description: t('wizard:platform.description', "Select social media platform"),
     isCompleted: !!selectedPlatform
   }, {
-    title: "Goal",
-    description: "Define your content goal",
+    title: t('wizard.step4', "Goal"),
+    description: t('wizard:goal.description', "Define your content goal"),
     isCompleted: !!selectedGoal
   }, {
-    title: "Tone",
-    description: "Choose the tone for your caption",
+    title: t('wizard.step5', "Tone"),
+    description: t('wizard:tone.description', "Choose the tone for your caption"),
     isCompleted: !!selectedTone
   }, {
-    title: "Generated Captions",
-    description: "View and edit your captions",
+    title: t('wizard.step6', "Generated Captions"),
+    description: t('wizard:captions.description', "View and edit your captions"),
     isCompleted: false
   }];
   const handleMediaSelect = (file: File | null) => {
@@ -74,14 +76,13 @@ const CaptionGenerator: React.FC = () => {
       setCaptionOverlayMode('overlay');
     }
   };
-
   const handleTextOnlySelect = () => {
     setIsTextOnly(true);
     setSelectedMedia(null);
     setPreviewUrl(null);
 
     setCurrentStep(prev => prev + 1);
-    toast.success("Text-only caption mode enabled");
+    toast.success(t('wizard:textOnly.enabled', "Text-only caption mode enabled"));
   };
 
   const handleNicheChange = (niche: string) => {
@@ -110,26 +111,25 @@ const CaptionGenerator: React.FC = () => {
       setCaptionOverlayMode(mode);
     }
   };
-
   const handleNext = () => {
     if (currentStep === 0 && !selectedMedia && !isTextOnly) {
-      toast.error("Please upload a media file or select text-only mode to continue");
+      toast.error(t('wizard:errors.noMediaOrText', "Please upload a media file or select text-only mode to continue"));
       return;
     }
     if (currentStep === 1 && !selectedNiche) {
-      toast.error("Please select or enter a niche to continue");
+      toast.error(t('wizard:errors.noNiche', "Please select or enter a niche to continue"));
       return;
     }
     if (currentStep === 2 && !selectedPlatform) {
-      toast.error("Please select a platform to continue");
+      toast.error(t('wizard:errors.noPlatform', "Please select a platform to continue"));
       return;
     }
     if (currentStep === 3 && !selectedGoal) {
-      toast.error("Please select a content goal to continue");
+      toast.error(t('wizard:errors.noGoal', "Please select a content goal to continue"));
       return;
     }
     if (currentStep === 4 && !selectedTone) {
-      toast.error("Please select a content tone to continue");
+      toast.error(t('wizard:errors.noTone', "Please select a content tone to continue"));
       return;
     }
     if (currentStep < steps.length - 1) {
@@ -143,15 +143,14 @@ const CaptionGenerator: React.FC = () => {
     }
   };
   return (
-    <div className="min-h-screen flex flex-col bg-adaptive-primary">
-      <div className="px-4 py-[100px]">
+    <div className="min-h-screen flex flex-col bg-adaptive-primary">      <div className="px-4 py-[100px]">
         <h1 className="text-2xl md:text-3xl font-bold text-adaptive-primary text-center">
-          Caption Generator
+          {t('nav.caption_generator', "Caption Generator")}
         </h1>
         <p className="mt-2 text-adaptive-secondary text-center max-w-2xl mx-auto">
-          Create engaging captions for your social media posts with AI assistance
+          {t('wizard:pageDescription', "Create engaging captions for your social media posts with AI assistance")}
         </p>
-      </div>        <div className="container mx-auto flex-1 p-4 md:p-6 max-w-7xl">
+      </div><div className="container mx-auto flex-1 p-4 md:p-6 max-w-7xl">
         <div className="card-adaptive backdrop-blur-md shadow-md overflow-hidden">
           <WizardLayout 
             currentStep={currentStep} 

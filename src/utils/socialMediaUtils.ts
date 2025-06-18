@@ -1,7 +1,8 @@
-
 import { toast } from "sonner";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MediaType } from '@/types/mediaTypes';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 interface SharingOptions {
   caption: any;
@@ -34,18 +35,21 @@ export const shareToInstagram = async (options: SharingOptions): Promise<ShareRe
         window.open(instagramUrl, '_blank', 'width=600,height=600');
         return { 
           success: true, 
-          message: 'Instagram sharing window opened' 
+          message: i18next.t('sharing.windows.instagram', 'Instagram sharing window opened') 
         };
       }
       
       return { 
         success: false, 
-        error: 'Instagram API credentials not configured.' 
+        error: i18next.t('sharing.errors.instagramCredentials', 'Instagram API credentials not configured.') 
       };
     }
     
     if (!mediaUrl && mediaType !== 'text-only') {
-      return { success: false, error: 'Media URL is required for Instagram sharing' };
+      return { 
+        success: false, 
+        error: i18next.t('sharing.errors.mediaRequired', 'Media URL is required for Instagram sharing') 
+      };
     }
     
     console.log('Sharing to Instagram with:', { mediaType, captionTitle: caption?.title });
@@ -56,13 +60,13 @@ export const shareToInstagram = async (options: SharingOptions): Promise<ShareRe
     
     return { 
       success: true, 
-      message: 'Shared to Instagram successfully' 
+      message: i18next.t('sharing.success.instagram', 'Shared to Instagram successfully') 
     };
   } catch (error) {
     console.error('Instagram sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown Instagram sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown Instagram sharing error') 
     };
   }
 };
@@ -89,13 +93,13 @@ export const shareToTwitter = async (options: SharingOptions): Promise<ShareResu
     
     return { 
       success: true, 
-      message: 'Twitter sharing window opened' 
+      message: i18next.t('sharing.windows.twitter', 'Twitter sharing window opened') 
     };
   } catch (error) {
     console.error('Twitter sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown Twitter sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown Twitter sharing error') 
     };
   }
 };
@@ -127,13 +131,13 @@ export const shareToFacebook = async (options: SharingOptions): Promise<ShareRes
     
     return { 
       success: true, 
-      message: 'Facebook sharing window opened' 
+      message: i18next.t('sharing.windows.facebook', 'Facebook sharing window opened') 
     };
   } catch (error) {
     console.error('Facebook sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown Facebook sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown Facebook sharing error') 
     };
   }
 };
@@ -161,13 +165,13 @@ export const shareToLinkedIn = async (options: SharingOptions): Promise<ShareRes
     
     return { 
       success: true, 
-      message: 'LinkedIn sharing window opened' 
+      message: i18next.t('sharing.windows.linkedin', 'LinkedIn sharing window opened') 
     };
   } catch (error) {
     console.error('LinkedIn sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown LinkedIn sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown LinkedIn sharing error') 
     };
   }
 };
@@ -181,18 +185,18 @@ export const shareToTikTok = async (options: SharingOptions): Promise<ShareResul
     // We'll need to use their SDK or API in a real implementation
     
     // As a fallback, we can direct users to the TikTok app or website
-    toast.info('Opening TikTok. Please upload your media there.');
+    toast.info(i18next.t('sharing.redirects.tiktok', 'Opening TikTok. Please upload your media there.'));
     window.open('https://www.tiktok.com/upload', '_blank');
     
     return { 
       success: true, 
-      message: 'TikTok upload page opened' 
+      message: i18next.t('sharing.windows.tiktok', 'TikTok upload page opened') 
     };
   } catch (error) {
     console.error('TikTok sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown TikTok sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown TikTok sharing error') 
     };
   }
 };
@@ -205,24 +209,24 @@ export const shareToYouTube = async (options: SharingOptions): Promise<ShareResu
     if (mediaType !== 'video') {
       return { 
         success: false, 
-        error: 'Only videos can be shared to YouTube' 
+        error: i18next.t('sharing.errors.videoRequired', 'Only videos can be shared to YouTube') 
       };
     }
     
     // YouTube doesn't have a standard web share URL for uploading
     // Direct users to YouTube Studio
-    toast.info('Opening YouTube Studio. Please upload your video there.');
+    toast.info(i18next.t('sharing.redirects.youtube', 'Opening YouTube Studio. Please upload your video there.'));
     window.open('https://studio.youtube.com/channel/upload', '_blank');
     
     return { 
       success: true, 
-      message: 'YouTube Studio opened for upload' 
+      message: i18next.t('sharing.windows.youtube', 'YouTube Studio opened for upload') 
     };
   } catch (error) {
     console.error('YouTube sharing error:', error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown YouTube sharing error' 
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknown', 'Unknown YouTube sharing error') 
     };
   }
 };
@@ -253,14 +257,14 @@ export const shareToPlatform = async (
       default:
         return {
           success: false,
-          error: `Unsupported platform: ${platform}`
+          error: i18next.t('sharing.errors.unsupportedPlatform', 'Unsupported platform: {{platform}}', { platform })
         };
     }
   } catch (error) {
     console.error(`Error sharing to ${platform}:`, error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : `Unknown error sharing to ${platform}`
+      error: error instanceof Error ? error.message : i18next.t('sharing.errors.unknownPlatform', 'Unknown error sharing to {{platform}}', { platform })
     };
   }
 };
@@ -275,7 +279,7 @@ export const uploadMediaForSharing = async (
     // Fetch the media file
     const response = await fetch(mediaUrl);
     if (!response.ok) {
-      throw new Error('Failed to fetch media for sharing');
+      throw new Error(i18next.t('sharing.errors.fetchFailed', 'Failed to fetch media for sharing'));
     }
     
     const blob = await response.blob();

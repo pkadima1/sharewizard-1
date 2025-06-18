@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from 'react-i18next';
 
 interface GenerationLoadingProps {
   selectedMedia: File | null;
@@ -19,10 +19,13 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
   selectedTone,
   selectedNiche
 }) => {
-  return (    <div className="w-full max-w-6xl mx-auto p-6">
+  const { t } = useTranslation(['common', 'wizard']);
+  
+  return (    
+    <div className="w-full max-w-6xl mx-auto p-6">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/2 lg:w-3/5">
-          <h2 className="text-xl font-semibold text-adaptive-primary mb-4">Generating Captions...</h2>
+          <h2 className="text-xl font-semibold text-adaptive-primary mb-4">{t('wizard:captions.generating', 'Generating Captions...')}</h2>
           <div className="space-y-6">
             <div className="space-y-3">
               <Skeleton className="h-4 w-3/4" />
@@ -52,7 +55,7 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
               {selectedMedia && selectedMedia.type.startsWith('image') ? (
                 <div className="aspect-square w-full">
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                  <img src={previewUrl} alt={t('common.preview', 'Preview')} className="w-full h-full object-cover" />
                 </div>
               ) : selectedMedia && selectedMedia.type.startsWith('video') ? (
                 <div className="aspect-video w-full">
@@ -60,14 +63,17 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-64 bg-gray-200 dark:bg-gray-700">
-                  <span className="text-gray-500 dark:text-gray-400">Media preview</span>
+                  <span className="text-gray-500 dark:text-gray-400">{t('wizard:captions.mediaPreview', 'Media preview')}</span>
                 </div>
               )}
             </div>
             <div className="mt-4">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Creating engaging {selectedTone} captions for {selectedPlatform} 
-                in the {selectedNiche} niche...
+                {t('wizard:captions.creatingFor', 'Creating engaging {{tone}} captions for {{platform}} in the {{niche}} niche...', {
+                  tone: selectedTone,
+                  platform: selectedPlatform,
+                  niche: selectedNiche
+                })}
               </p>
             </div>
           </div>

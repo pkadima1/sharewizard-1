@@ -1,0 +1,41 @@
+{
+  "hero": {
+    "title": "Human-Like AI Content That Truly Engages",
+    "subtitle": "Create compelling content for your audience and platform with advanced AI that understands context and writes like a human.",
+    "cta": "Try for Free",
+    "secondaryCta": "See How It Works"
+  },
+  "features": {
+    "title": "See What You Can Create",
+    "subtitle": "Content That Sounds Like You, Not AI",
+    "humanLikeContent": {
+      "title": "Human-Like Content",
+      "description": "Generate content that sounds natural and authentic, not robotic or generic."
+    },
+    "contextAware": {
+      "title": "Context-Aware Ideas", 
+      "description": "AI that understands your industry, audience, and goals to create relevant content."
+    },
+    "multipleFormats": {
+      "title": "Multiple Content Formats",
+      "description": "From social media captions to long-form articles, create content for any platform."
+    },
+    "seoOptimization": {
+      "title": "SEO & CRO Optimization",
+      "description": "Content optimized for search engines and conversion rates to maximize your reach."
+    },
+    "instantGeneration": {
+      "title": "Instant Generation",
+      "description": "Create high-quality content in seconds, not hours. Perfect for busy creators and teams."
+    },
+    "crossPlatform": {
+      "title": "Cross-Platform Compatibility", 
+      "description": "Generate content optimized for all major social media platforms and blogs."
+    }
+  },
+  "cta": {
+    "title": "Ready to Create Perfect Content?",
+    "subtitle": "Start with our Caption, SMS Posts and Long-form Content Generator!",
+    "button": "Get Started for Free"
+  }
+}

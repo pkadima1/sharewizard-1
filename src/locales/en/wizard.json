@@ -1,0 +1,388 @@
+{
+  "pageDescription": "Create engaging captions for your social media posts with AI assistance",
+  "caption": {
+    "title": "Caption Generator",
+    "subtitle": "Create engaging captions for your social media posts with AI assistance",
+    "description": "Upload your media or capture directly to create engaging AI-powered captions"
+  },
+  "textOnly": {
+    "enabled": "Text-only caption mode enabled"
+  },
+  "errors": {
+    "noMediaOrText": "Please upload a media file or select text-only mode to continue",
+    "noNiche": "Please select or enter a niche to continue",
+    "noPlatform": "Please select a platform to continue",
+    "noGoal": "Please select a content goal to continue",
+    "noTone": "Please select a content tone to continue",
+    "generationFailed": "Generation Failed",
+    "connectionError": "Connection Error",
+    "corsHint": "This often happens due to browser security settings. Try using a different browser or refreshing the page."
+  },  "mediaUpload": {
+    "description": "Upload an image or video to generate captions",
+    "welcome": "Welcome",
+    "upload_media_instruction": "Upload your media or capture a photo to generate captions",
+    "drag_and_drop_media": "Drag & drop media here",
+    "supported_file_types": "JPG, PNG, GIF, WEBP, MP4, WEBM, MOV up to 10MB",
+    "upload_media_button": "Upload Media",
+    "create_text_only_caption": "Create text-only caption",
+    "or": "or",
+    "media_preview": "Media preview",
+    "upload_or_capture_media_instruction": "Upload or capture an image/video to preview",
+    "quick_tips": "Quick Tips",
+    "media_file_types": "images and videos up to 10MB",
+    "photo_camera_instruction": "directly in your browser",
+    "image_editing_features": "images with filters and text",
+    "text_overlays_instruction": "text to position it on media",
+    "create_finished_image_instruction": "your finished image for sharing",
+    "add_text_overlay": "Add Text Overlay",
+    "enter_text_instruction": "Enter text for your media",
+    "text_color": "Text color",
+    "text_size": "Text size",
+    "text_position": "Text position",
+    "click_and_drag_text_instruction": "Click and drag the text on the image to position it",
+    "apply_filter": "Apply Filter",
+    "uploadInstruction": "Upload or capture media to see a preview here",
+    "saving": "Saving...",
+    "saveToast": {
+      "title": "Text overlay saved for video!",
+      "description": "Text will appear during playback and sharing"
+    },
+    "rotate": "Rotate",
+    "counterRotate": "Counter-rotate",
+    "crop": "Crop",
+    "reset": "Reset",
+    "text": "Text",
+    "save": "Save"
+  },  "textOverlay": {
+    "title": "Custom Text Overlay",
+    "placeholder": "Enter your custom text...",
+    "textColor": "Text Color",
+    "textSize": "Text Size: {{size}}px",
+    "textRotation": "Text Rotation: {{degrees}}°",
+    "dragInstructions": "Click and drag the text on the image to position it",
+    "black": "Black"
+  
+  },
+  "niche": {
+    "description": "Choose a niche for your content",
+    "placeholder": "Type in anything you can think of in your language (Specify the language e.g. in Spanish)",
+    "tipText": "Being specific with your niche helps generate more relevant and engaging captions"
+  },
+  "platform": {
+    "description": "Select social media platform",
+    "readyToGoViral": "Get ready to go viral — one platform at a time.",
+    "tailoring": "We'll tailor every caption to match the voice, format, and rhythm of your selected platform.",
+    "smartCaptions": "Smart Captions, Perfectly Tuned",
+    "bestPractices": "We've studied the best practices of each platform — from tone to timing to text limits. Choose your channel, and we'll do the rest. ✨",
+    "platformDetails": "{{platform}} Details",
+    "easyExport": "Easy export available for this platform",
+    "recommendedFor": {
+      "linkedin": "Professional content and business updates",
+      "twitter": "Short updates, news, and trending topics",
+      "facebook": "Community engagement and general content",
+      "instagram": "Visual content with brief captions",
+      "tiktok": "Short, engaging video content",
+      "youtube": "Long-form video content with detailed descriptions"
+    },
+    "sharingMessages": {
+      "instagram": {
+        "title": "Let's Get This Caption Live!",
+        "message": "Instagram prefers a different sharing flow. We've made it easy: simply download your post or copy and paste your caption directly in the Instagram app. Sharing made simple — in just one tap.",
+        "buttonText": "Create with Instagram",
+        "footer": "Instagram doesn't support direct in-app sharing — but you're in control with these quick options!"
+      },
+      "tiktok": {
+        "title": "Ready for TikTok Fame?",
+        "message": "TikTok loves your fresh content! Simply download your optimized caption, then upload it with your video in the TikTok app. Your trending moment awaits—let's make it happen!",
+        "buttonText": "Create with TikTok",
+        "footer": "Download your caption when it's ready, to go viral on TikTok!"
+      },
+      "youtube": {
+        "title": "YouTube Content Creator Mode",
+        "message": "Perfect for YouTube! Copy your SEO-optimized caption and description to use in YouTube Studio. Upload directly to your channel and maximize your video's discovery potential.",
+        "buttonText": "Create for YouTube",
+        "footer": "Boost your YouTube presence with our professionally crafted, SEO-friendly captions!"
+      }
+    }
+  },
+  "goal": {
+    "description": "Define your content goal",
+    "strategy": "Goal Strategy",
+    "optimizedFor": "Your captions will be optimized for",
+    "bestForPrefix": "This type of content is best for",
+    "contentExamples": "Content Examples",
+    "tipText": "Focusing on one primary goal helps create more effective and targeted content. You can always change this for future posts.",
+    "bestForTypes": {
+      "boostengagement": "Content that encourages interaction",
+      "growaudience": "Broadly appealing content",
+      "shareknowledge": "Educational content that builds authority",
+      "drivesales": "Promotional content with clear CTAs",
+      "brandawareness": "Content that showcases brand values",
+      "buildcommunity": "Content that fosters relationships"
+    },
+    "examples": {
+      "boostengagement": "Questions, polls, controversial topics",
+      "growaudience": "Trending topics, viral challenges",
+      "shareknowledge": "Tutorials, tips, how-to guides",
+      "drivesales": "Product features, special offers, testimonials",
+      "brandawareness": "Brand stories, behind-the-scenes content",
+      "buildcommunity": "User-generated content, interactive discussions"
+    },
+    "descriptions": {
+      "boostengagement": "Increase likes, comments and shares",
+      "growaudience": "Expand your follower base and reach",
+      "shareknowledge": "Educate and provide value",
+      "drivesales": "Convert followers into customers",
+      "brandawareness": "Increase visibility and recognition",
+      "buildcommunity": "Foster relationships with followers"
+    }
+  },
+  "tone": {
+    "description": "Choose the tone for your caption",
+    "details": "Tone Details",
+    "bestUsedFor": "Best used for",
+    "worksWellOn": "Works well on",
+    "showToneExample": "Show tone example",
+    "hideToneExample": "Hide tone example",
+    "tipText": "Choose a tone that matches how you normally communicate with your audience for the most authentic results.",
+    "descriptions": {
+      "professional": "Formal and business-like approach",
+      "casual": "Relaxed and friendly tone",
+      "humorous": "Fun and entertaining style",
+      "inspirational": "Motivating and uplifting",
+      "educational": "Informative and instructive",
+      "persuasive": "Convincing and compelling"
+    },
+    "examples": {
+      "professional": "Industry expertise, data-driven content, business updates",
+      "casual": "Everyday conversation, personal stories, community posts",
+      "humorous": "Jokes, witty observations, playful content",
+      "inspirational": "Motivational quotes, success stories, empowering messages",
+      "educational": "How-to guides, tutorials, informative content",
+      "persuasive": "Product promotions, calls to action, compelling offers"
+    },
+    "works": {
+      "professional": "LinkedIn, corporate blogs, B2B content",
+      "casual": "Instagram, Facebook, personal blogs",
+      "humorous": "Twitter, TikTok, Instagram stories",
+      "inspirational": "Pinterest, Instagram, wellness platforms",
+      "educational": "YouTube, Medium, educational platforms",
+      "persuasive": "Landing pages, email marketing, sales content"
+    }
+  },
+  "captions": {
+    "description": "View and edit your captions",
+    "selectCaption": "Choose Your Caption",
+    "requestsRemaining": "{{count}} requests remaining",
+    "regenerate": "Regenerate",
+    "addCustomText": "Add Custom Text",
+    "preview": "Preview",
+    "captionText": "Caption Text",
+    "captionTextQuality": "Caption Text Quality",
+    "captionBelow": "Caption below",
+    "captionOverlay": "Caption overlay",
+    "updateSuccess": "Caption updated successfully!",
+    "showGeneratedWithCustom": "Show generated caption with custom text",
+    "copiedToClipboard": "Caption copied to clipboard!",
+    "downloadToShare": "Download to Share to preferred Social Media Platform",
+    "directShareBrowser": "Direct Share via Browser (WhatsApp, Telegram, etc.)",
+    "editor": {
+      "title": "Title",
+      "caption": "Caption",
+      "callToAction": "Call to action",
+      "hashtags": "Hashtags (comma separated)",
+      "saveChanges": "Save Changes",
+      "editCaption": "Edit Caption"
+    },
+    "sharing": {
+      "public": "Public - Anyone with the link can view",
+      "private": "Private - Only people you invite can view",
+      "password": "Password protected",
+      "expiry": "Set expiration date"
+    }
+  },
+  "longform": {
+    "title": "Long-form Content",
+    "subtitle": "Create comprehensive articles and blog posts with AI assistance",
+    "description": "Generate professional, SEO-optimized content for your blog or website"
+  },
+  "mediaUploader": {
+    "tips": {
+      "upload": "images or videos up to 50MB",
+      "capture": "photos directly from your device camera",
+      "edit": "your images with filters, text and rotation",
+      "drag": "text overlays by clicking and moving them",
+      "save": "your edits to create a finished image"
+    }
+  },
+  "steps": {
+    "welcome": "Welcome to ShareWizard",
+    "selectType": "Select content type",
+    "uploadContent": "Upload your content",
+    "configure": "Configure sharing options",
+    "preview": "Preview your content",
+    "finish": "Finish and share",
+    "step1": {
+      "title": "Upload Media",
+      "description": "Upload your image or video, or create text-only content",
+      "welcome": "Welcome, {{name}}",
+      "instruction": "Upload your media or capture directly to create engaging AI-powered captions",
+      "dragDrop": "Drag & drop your media here, or click to select",
+      "supports": "Supports JPG, PNG, GIF, WebP, MP4, WebM (max 50MB)",
+      "uploadButton": "Upload Media: Image or Video",
+      "textOnly": "Create text-only caption",
+      "mediaPreview": "Media Preview",
+      "capture": "Capture Photo",
+      "camera": "Use Camera",
+      "file": "Choose File"
+    },
+    "step2": {
+      "title": "Select Niche",
+      "description": "Choose your industry or niche",
+      "customNiche": "Custom niche (optional)",
+      "placeholder": "Describe your niche...",
+      "popular": "Or quickly select from common niches",
+      "business": "Business",
+      "lifestyle": "Lifestyle", 
+      "technology": "Technology",
+      "artDesign": "Art & Design",
+      "seoMarketing": "SEO & Marketing",
+      "fashion": "Fashion",
+      "fitness": "Fitness",
+      "food": "Food & Cooking",
+      "travel": "Travel",
+      "photography": "Photography",
+      "education": "Education",
+      "health": "Health & Wellness",
+      "gaming": "Gaming",
+      "entertainment": "Entertainment"
+    },
+    "step3": {
+      "title": "Platform",
+      "description": "Select the social media platform",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok", 
+      "youtube": "YouTube",
+      "pinterest": "Pinterest",
+      "snapchat": "Snapchat",
+      "limitedSharing": "The selected social media platform {{platform}} doesn't allow direct sharing. You can use browser Web API or download the post to share on your favorite platform."
+    },
+    "step4": {
+      "title": "What's the Goal of Your Content?",
+      "description": "Select the primary goal for your content. AI will generate captions optimized for this purpose.",
+      "boostengagement": "Boost Engagement",
+      "growaudience": "Grow Audience", 
+      "drivesales": "Drive Sales",
+      "shareknowledge": "Share Knowledge",
+      "brandawareness": "Brand Awareness",
+      "buildcommunity": "Build Community",
+      "announceNews": "Announce News",
+      "showcase": "Showcase Product/Service"
+    },
+    "step5": {
+      "title": "Choose Your Content's Tone",
+      "description": "Select the tone that best fits your brand voice and audience. This influences how your captions will sound.",
+      "professional": "Professional",
+      "casual": "Casual",
+      "humorous": "Humorous",
+      "inspirational": "Inspirational",
+      "educational": "Educational",
+      "persuasive": "Persuasive",
+      "friendly": "Friendly",
+      "authoritative": "Authoritative",
+      "playful": "Playful",
+      "emotional": "Emotional"
+    },
+    "step6": {
+      "title": "Generated Captions", 
+      "description": "Choose your favorite caption and customize if needed",
+      "generating": "Generating your captions...",
+      "selectCaption": "Select your favorite caption",
+      "editCaption": "Edit caption",
+      "customText": "Add custom text",
+      "sharePost": "Share Post",
+      "downloadPost": "Download Post",
+      "copyCaption": "Copy Caption",
+      "regenerate": "Generate New Captions",
+      "saveAsFavorite": "Save as Favorite",
+      "saveToDrafts": "Save to Drafts"
+    }
+  },
+  "longformSteps": {
+    "step1": {
+      "title": "What & Who",
+      "description": "Define your topic and target audience",
+      "topicLabel": "What will you write about?",
+      "topicPlaceholder": "e.g., How to improve social media engagement",
+      "audienceLabel": "Who are you writing for?",
+      "audiencePlaceholder": "e.g., Small business owners, digital marketers",
+      "industryLabel": "Select your industry for better suggestions",
+      "getIdeas": "Get Ideas",
+      "quickTips": "Quick Tips",
+      "tipsBe": "Be specific about your topic - avoid broad, generic subjects",
+      "tipsDefine": "Clearly define your target audience demographics and needs",
+      "tipsConsider": "Consider what your audience struggles with most"
+    },
+    "step2": {
+      "title": "Content Details",
+      "description": "Specify content requirements and preferences",
+      "wordCount": "Word count",
+      "contentType": "Content type",
+      "tone": "Writing tone",
+      "includeStats": "Include statistics and data",
+      "keywords": "Target keywords",
+      "ctaType": "Call-to-action type"
+    }
+  },
+  "contentTypes": {
+    "document": "Document",
+    "image": "Image",
+    "video": "Video",
+    "link": "Link"
+  },
+  "sharing": {
+    "public": "Public - Anyone with the link can view",
+    "private": "Private - Only people you invite can view",
+    "password": "Password protected",
+    "expiry": "Set expiration date"
+  },
+  "contentWizard": {
+    "progress": "Content Wizard Progress",
+    "currentStep": "Step {{current}} of {{total}}",
+    "timeRemaining": "{{minutes}} minutes remaining",
+    "saveProgress": "Save Progress",
+    "autoSaved": "Auto-saved {{time}}"
+  },
+  "generate": "Generate Captions",
+  "upgradeBanner": {
+    "title": "🎁 You've Used Your 3 Free Captions",
+    "subtitle": "But you're just getting started…",
+    "bonusRequests": "<strong>Includes 5 Bonus Requests</strong> with 5-Day Free Trial",
+    "basicPlan": "<strong>Basic Monthly Plan:</strong> Only $8.00/month",
+    "requestsPerMonth": "70 requests/month — cancel anytime",
+    "trialPromo": "🎯 Start with our <strong>5-day free trial</strong> — includes 5 bonus requests",
+    "checkboxText": "Start with our <strong>5-day free trial</strong> — includes 5 bonus requests",
+    "ctaButton": "Start Free Trial for $8.00/month →"
+  },
+  "filters": {
+    "original": "Original",
+    "grayscale": "Grayscale",
+    "sepia": "Sepia",
+    "invert": "Invert",
+    "blur": "Blur",
+    "brightness": "Brightness",
+    "contrast": "Contrast"
+  },
+  "filterDescriptions": {
+    "original": "No filter applied",
+    "grayscale": "Black and white effect",
+    "sepia": "Warm vintage look",
+    "invert": "Negative effect",
+    "blur": "Soft focus effect",
+    "brightness": "Brighter image",
+    "contrast": "Enhanced contrast"
+  }
+}

@@ -3,21 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from 'react-i18next';
 
 // Predefined niches with icons - kept the same for consistency
 const PREDEFINED_NICHES = [
-  { icon: "👔", name: "Business" },
-  { icon: "📱", name: "Technology" },
-  { icon: "🎨", name: "Art & Design" },
-  { icon: "🔍", name: "SEO & Marketing" },
-  { icon: "🏋️", name: "Fitness" },
-  { icon: "🍳", name: "Food & Cooking" },
-  { icon: "✈️", name: "Travel" },
-  { icon: "📚", name: "Education" },
-  { icon: "🛍️", name: "Fashion" },
-  { icon: "🎮", name: "Gaming" },
-  { icon: "📷", name: "Photography" },
-  { icon: "🎬", name: "Entertainment" }
+  { icon: "👔", name: "Business", translationKey: "business" },
+  { icon: "📱", name: "Technology", translationKey: "technology" },
+  { icon: "🎨", name: "Art & Design", translationKey: "artDesign" },
+  { icon: "🔍", name: "SEO & Marketing", translationKey: "seoMarketing" },
+  { icon: "🏋️", name: "Fitness", translationKey: "fitness" },
+  { icon: "🍳", name: "Food & Cooking", translationKey: "food" },
+  { icon: "✈️", name: "Travel", translationKey: "travel" },
+  { icon: "📚", name: "Education", translationKey: "education" },
+  { icon: "🛍️", name: "Fashion", translationKey: "fashion" },
+  { icon: "🎮", name: "Gaming", translationKey: "gaming" },
+  { icon: "📷", name: "Photography", translationKey: "photography" },
+  { icon: "🎬", name: "Entertainment", translationKey: "entertainment" }
 ];
 
 interface NicheSelectorProps {
@@ -30,6 +31,7 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
   const [customNiche, setCustomNiche] = useState<string>(selectedNiche || '');
   const [error, setError] = useState<string | null>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const { t } = useTranslation(['wizard', 'common']);
 
   // Auto-focus effect for better mobile experience when this step is active
   useEffect(() => {
@@ -41,14 +43,13 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
       }
     }, 300);
     
-    return () => clearTimeout(timer);
-  }, [customNiche]);
+    return () => clearTimeout(timer);  }, [customNiche]);
 
   // Handle custom niche input change
   const handleCustomNicheChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     if (value.length > 100) {
-      setError('Maximum 100 characters allowed');
+      setError(t('common:errors.maxCharacters', { max: 100 }));
       value = value.slice(0, 100);
     } else {
       setError(null);
@@ -56,11 +57,12 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
     setCustomNiche(value);
     onNicheChange(value);
   };
-
   // Handle predefined niche selection
-  const handleNicheSelect = (niche: string) => {
-    setCustomNiche(niche);
-    onNicheChange(niche);
+  const handleNicheSelect = (niche: { name: string, translationKey: string }) => {
+    // Use the translated value instead of the English name
+    const translatedNiche = t(`wizard:steps.step2.${niche.translationKey}`, { defaultValue: niche.name });
+    setCustomNiche(translatedNiche);
+    onNicheChange(translatedNiche);
     
     // Optional: Focus the input after selection for easy editing
     const inputElement = document.getElementById('niche-input');
@@ -72,27 +74,25 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
       {/* Input Section - Improved spacing and prominence */}
-      <div className="space-y-3">
-        <Label 
+      <div className="space-y-3">        <Label 
           htmlFor="niche-input" 
           className="block text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100"
         >
-          Enter your content niche
+          {t('wizard:steps.step2.title')}
         </Label>
         
         {/* Description text to help users understand what to do */}
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Describe your content area, topic, or industry to help generate relevant captions
+          {t('wizard:steps.step2.description')}
         </p>
         
         {/* Improved input with better styling, animation and focus states */}
         <div className={`
           relative transition-all duration-200 rounded-xl
           ${isFocused ? 'shadow-lg ring-2 ring-primary/30' : 'shadow'}
-        `}>
-          <Input
+        `}>          <Input
             id="niche-input"
-            placeholder="Type in anything you can think of in your language (Specify the language e.g. in Spanish)"
+            placeholder={t('wizard:niche.placeholder')}
             className={`
               w-full px-5 py-5 rounded-xl border-8 text-base sm:text-lg
               bg-white dark:bg-gray-900 text-gray-900 dark:text-white
@@ -112,26 +112,24 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
         </div>
         
         {/* Character count and error message */}
-        <div className="flex items-center justify-between">
-          <span className={`text-xs ${
+        <div className="flex items-center justify-between">          <span className={`text-xs ${
             customNiche.length >= 90 
               ? customNiche.length >= 100 
                 ? 'text-red-500 font-semibold' 
                 : 'text-amber-500' 
               : 'text-gray-500 dark:text-gray-400'
           }`}>
-            {customNiche.length}/100 characters
+            {customNiche.length}/100 {t('common:characters')}
           </span>
           {error && <span className="text-xs text-red-500 font-medium">{error}</span>}
         </div>
       </div>
 
       {/* Predefined niches section */}
-      <div className="space-y-3">
-        <div className="flex items-center">
+      <div className="space-y-3">        <div className="flex items-center">
           <div className="flex-grow h-px bg-gray-200 dark:bg-gray-800"></div>
           <p className="px-4 text-sm text-gray-600 dark:text-gray-400 font-medium">
-            Or quickly select from common niches
+            {t('wizard:steps.step2.popular')}
           </p>
           <div className="flex-grow h-px bg-gray-200 dark:bg-gray-800"></div>
         </div>
@@ -142,28 +140,32 @@ const NicheSelector: React.FC<NicheSelectorProps> = ({ selectedNiche, onNicheCha
             <Button
               key={niche.name}
               type="button"
-              variant={selectedNiche === niche.name ? "default" : "outline"}
+              variant={
+                selectedNiche === niche.name || 
+                selectedNiche === t(`wizard:steps.step2.${niche.translationKey}`, { defaultValue: niche.name }) 
+                  ? "default" 
+                  : "outline"
+              }
               className={`
-                justify-start transition-all h-auto py-3 px-4 rounded-xl text-base font-medium
-                ${selectedNiche === niche.name 
-                  ? 'border-primary bg-primary/10 text-primary-700 dark:bg-primary/20 shadow-md' 
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm'}
+                justify-start transition-all h-auto py-3 px-4 rounded-xl text-base font-medium                ${
+                  selectedNiche === niche.name || 
+                  selectedNiche === t(`wizard:steps.step2.${niche.translationKey}`, { defaultValue: niche.name })
+                    ? 'border-primary bg-primary/10 text-primary-700 dark:bg-primary/20 shadow-md' 
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 hover:shadow-sm'
+                }
                 ${niche.name === 'Photography' || niche.name === 'Entertainment' 
                   ? 'sm:col-span-1' 
                   : ''}
-              `}
-              onClick={() => handleNicheSelect(niche.name)}
-            >
-              <span className="mr-2 text-lg">{niche.icon}</span>
-              <span className="truncate">{niche.name}</span>
+              `}              onClick={() => handleNicheSelect(niche)}
+            >              <span className="mr-2 text-lg">{niche.icon}</span>
+              <span className="truncate">{t(`wizard:steps.step2.${niche.translationKey}`, { defaultValue: niche.name })}</span>
             </Button>
           ))}
         </div>
       </div>
-      
-      {/* Helper tip at the bottom for better guidance */}
+        {/* Helper tip at the bottom for better guidance */}
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800">
-        <span className="font-medium text-blue-600 dark:text-blue-400">💡 Tip:</span> Being specific with your niche helps generate more relevant and engaging captions
+        <span className="font-medium text-blue-600 dark:text-blue-400">💡 {t('common:tip')}:</span> {t('wizard:niche.tipText')}
       </div>
     </div>
   );

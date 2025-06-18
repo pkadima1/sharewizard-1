@@ -1,0 +1,55 @@
+{
+  "errors": {
+    "generationFailed": "Échec de la génération",
+    "connectionError": "Erreur de connexion",
+    "connectionErrorDescription": "Cela arrive souvent en raison des paramètres de sécurité du navigateur. Essayez d'utiliser un autre navigateur ou de rafraîchir la page.",
+    "maxCharacters": "Maximum 100 caractères autorisés",
+    "freeLimitReached": "Vous avez utilisé toutes vos requêtes gratuites",
+    "unauthorizedAccess": "Accès non autorisé. Veuillez vous connecter.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard."
+  },
+  "actions": {
+    "refreshPage": "Rafraîchir la page",
+    "tryAgain": "Réessayer",
+    "generatingAgain": "Tentative de génération des légendes à nouveau...",
+    "copiedToClipboard": "Copié dans le presse-papiers !",
+    "sharedTo": "Partagé sur {{platform}} !",
+    "savedToFavorites": "Enregistré dans les favoris !",
+    "saveToDrafts": "Enregistré dans les brouillons !",
+    "uploadImage": "Télécharger une image",
+    "takePicture": "Prendre une photo",
+    "selectFile": "Sélectionner un fichier"
+  },
+  "placeholders": {
+    "searchContent": "Rechercher du contenu...",
+    "customNiche": "Entrez votre niche personnalisée...",
+    "typeMessage": "Tapez votre message...",
+    "emailAddress": "votre@email.com"
+  },
+  "notifications": {
+    "welcome": "Bienvenue sur EngagePerfect !",
+    "loginSuccess": "Connexion réussie !",
+    "logoutSuccess": "Déconnexion réussie !",
+    "passwordReset": "Instructions de réinitialisation envoyées à votre e-mail",
+    "accountCreated": "Compte créé avec succès !",
+    "paymentSuccess": "Paiement réussi !",
+    "planUpgraded": "Plan mis à niveau avec succès !",
+    "trialStarted": "Votre essai gratuit a commencé !"
+  },
+  "support": {
+    "contactUs": "Contactez-nous",
+    "sendMessage": "Envoyer un message",
+    "supportTeam": "Équipe d'assistance",
+    "faq": "FAQ",
+    "helpCenter": "Centre d'aide",
+    "reportIssue": "Signaler un problème"
+  },
+  "mediaUpload": {
+    "dragDrop": "Glissez-déposez vos fichiers ici",
+    "orClickToUpload": "ou cliquez pour télécharger",
+    "fileTooBig": "Fichier trop volumineux. La taille maximale est de {{size}}MB",
+    "unsupportedFormat": "Format de fichier non pris en charge. Formats autorisés : {{formats}}",
+    "uploadSuccess": "Téléchargement réussi !",
+    "uploadFailed": "Échec du téléchargement. Veuillez réessayer."
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard", 
+    "pricing": "Pricing",
+    "login": "Login",
+    "signup": "Sign Up",
+    "caption_generator": "Caption Generator",
+    "blog_wizard": "Long-form Content",
+    "logout": "Logout"
+  },
+  "wizard": {
+    "step1": "Upload Media",
+    "step2": "Select Niche", 
+    "step3": "Platform",
+    "step4": "Goal",
+    "step5": "Tone",
+    "step6": "Generated Captions",
+    "next": "Next",
+    "previous": "Previous",
+    "generate": "Generate Captions",
+    "save": "Save",
+    "reset": "Reset",
+    "loading": "Loading...",
+    "progress": "Progress"
+  },
+  "buttons": {
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "tryFree": "Try for Free",
+    "upgrade": "Upgrade",
+    "subscribe": "Subscribe",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share",
+    "download": "Download",
+    "copy": "Copy",
+    "close": "Close",
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish"
+  },
+  "quickExport": "Quick post export",
+  "selected": "Selected",
+  "characterLimit": "Character Limit",
+  "bestFor": "Best For",
+  "noInformation": "No information available",
+  "back": "Back",
+  "close": "Close",
+  "quickTips": "Quick Tips",
+  "upload": "Upload",
+  "capture": "Capture",
+  "edit": "Edit",
+  "drag": "Drag",
+  "save": "Save",
+  "tip": "Tip",
+  "characters": "characters",
+  "share": "Share",
+  "download": "Download",
+  "preview": "Preview",
+  "refreshPage": "Refresh Page",
+  "tryAgain": "Try Again",
+  "errors": {
+    "maxCharacters": "Maximum {{max}} characters allowed"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "success": "Success!",
+    "error": "Error",
+    "completed": "Completed",
+    "pending": "Pending",
+    "failed": "Failed"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago",
+    "weeksAgo": "{{count}} weeks ago"
+  },  "general": {
+    "welcome": "Welcome",
+    "or": "Or",
+    "and": "And", 
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "choose": "Choose",
+    "upload": "Upload",
+    "preview": "Preview",
+    "settings": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "billing": "Billing",
+    "support": "Support",
+    "help": "Help",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "to": "to"
+  },
+  "sharing": {
+    "windows": {
+      "instagram": "Instagram sharing window opened",
+      "twitter": "Twitter sharing window opened",
+      "facebook": "Facebook sharing window opened",
+      "linkedin": "LinkedIn sharing window opened",
+      "tiktok": "TikTok upload page opened",
+      "youtube": "YouTube Studio opened for upload"
+    },
+    "success": {
+      "instagram": "Shared to Instagram successfully",
+      "twitter": "Shared to Twitter successfully",
+      "facebook": "Shared to Facebook successfully",
+      "linkedin": "Shared to LinkedIn successfully",
+      "tiktok": "Shared to TikTok successfully",
+      "youtube": "Shared to YouTube successfully"
+    },
+    "errors": {
+      "instagramCredentials": "Instagram API credentials not configured.",
+      "mediaRequired": "Media URL is required for Instagram sharing",
+      "videoRequired": "Only videos can be shared to YouTube",
+      "fetchFailed": "Failed to fetch media for sharing",
+      "unknown": "Unknown sharing error",
+      "unsupportedPlatform": "Unsupported platform: {{platform}}",
+      "unknownPlatform": "Unknown error sharing to {{platform}}"
+    },
+    "redirects": {
+      "tiktok": "Opening TikTok. Please upload your media there.",
+      "youtube": "Opening YouTube Studio. Please upload your video there."
+    }
+  }
+}

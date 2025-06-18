@@ -1,0 +1,389 @@
+{
+  "pageDescription": "Créez des légendes engageantes pour vos publications sur les réseaux sociaux avec l'assistance IA",
+  "caption": {
+    "title": "Générateur de Légendes",
+    "subtitle": "Créez des légendes engageantes pour vos publications avec l'IA",
+    "description": "Téléchargez votre média ou capturez directement pour créer des légendes IA engageantes"
+  },
+  "textOnly": {
+    "enabled": "Mode légende texte uniquement activé"
+  },
+  "errors": {
+    "noMediaOrText": "Veuillez télécharger un fichier média ou sélectionner le mode texte uniquement pour continuer",
+    "noNiche": "Veuillez sélectionner ou saisir une niche pour continuer",
+    "noPlatform": "Veuillez sélectionner une plateforme pour continuer",
+    "noGoal": "Veuillez sélectionner un objectif de contenu pour continuer",
+    "noTone": "Veuillez sélectionner un ton de contenu pour continuer",
+    "generationFailed": "Échec de la Génération",
+    "connectionError": "Erreur de Connexion",
+    "corsHint": "Cela se produit souvent en raison des paramètres de sécurité du navigateur. Essayez d'utiliser un autre navigateur ou d'actualiser la page."
+  },
+  "mediaUpload": {
+    "description": "Téléchargez une image ou vidéo pour générer des légendes",
+    "welcome": "Bienvenue",
+    "upload_media_instruction": "Téléchargez votre média ou capturez une photo pour générer des légendes",
+    "drag_and_drop_media": "Glissez-déposez le média ici",
+    "supported_file_types": "JPG, PNG, GIF, WEBP, MP4, WEBM, MOV jusqu'à 10Mo",
+    "upload_media_button": "Télécharger un Média",
+    "create_text_only_caption": "Créer une légende texte uniquement",
+    "or": "ou",
+    "media_preview": "Aperçu du média",
+    "upload_or_capture_media_instruction": "Téléchargez ou capturez une image/vidéo pour prévisualiser",
+    "quick_tips": "Conseils Rapides",
+    "media_file_types": "images et vidéos jusqu'à 10Mo",
+    "photo_camera_instruction": "directement dans votre navigateur",
+    "image_editing_features": "images avec filtres et texte",
+    "text_overlays_instruction": "texte pour le positionner sur le média",
+    "create_finished_image_instruction": "votre image finale pour le partage",
+    "add_text_overlay": "Ajouter du Texte",
+    "enter_text_instruction": "Saisissez du texte pour votre média",
+    "text_color": "Couleur du texte",
+    "text_size": "Taille du texte",
+    "text_position": "Position du texte",
+    "click_and_drag_text_instruction": "Cliquez et glissez le texte sur l'image pour le positionner",
+    "apply_filter": "Appliquer un Filtre",
+    "uploadInstruction": "Téléchargez ou capturez un média pour voir un aperçu ici",
+    "saving": "Enregistrement...",
+    "saveToast": {
+      "title": "Texte superposé sauvegardé pour la vidéo !",
+      "description": "Le texte apparaîtra pendant la lecture et le partage"
+    },
+    "rotate": "Tourner",    
+    "counterRotate": "Rotation inverse",
+    "crop": "Recadrer",
+    "reset": "Réinitialiser",
+    "text": "Texte",
+    "save": "Enregistrer"
+  },  "textOverlay": {
+    "title": "Superposition de Texte Personnalisé",
+    "placeholder": "Saisissez votre texte personnalisé...",
+    "textColor": "Couleur du Texte",
+    "textSize": "Taille du Texte: {{size}}px",
+    "textRotation": "Rotation du Texte: {{degrees}}°",
+    "dragInstructions": "Cliquez et glissez le texte sur l'image pour le positionner",
+    "black": "Noir"
+  },
+  
+  "niche": {
+    "description": "Choisissez une niche pour votre contenu",
+    "placeholder": "Saisissez tout ce qui vous vient à l'esprit dans votre langue (précisez la langue, par ex. en français)",
+    "tipText": "Être spécifique avec votre niche aide à générer des légendes plus pertinentes et engageantes"
+  },
+  "platform": {
+    "description": "Sélectionnez une plateforme de médias sociaux",
+    "readyToGoViral": "Préparez-vous à devenir viral — une plateforme à la fois.",
+    "tailoring": "Nous adapterons chaque légende pour correspondre à la voix, au format et au rythme de votre plateforme.",
+    "smartCaptions": "Légendes Intelligentes, Parfaitement Adaptées",
+    "bestPractices": "Nous avons étudié les meilleures pratiques de chaque plateforme — du ton au timing aux limites de texte. Choisissez votre canal, et nous ferons le reste. ✨",
+    "platformDetails": "Détails de {{platform}}",
+    "easyExport": "Export facile disponible pour cette plateforme",
+    "recommendedFor": {
+      "linkedin": "Contenu professionnel et mises à jour d'entreprise",
+      "twitter": "Mises à jour courtes, actualités et sujets tendance",
+      "facebook": "Engagement communautaire et contenu général",
+      "instagram": "Contenu visuel avec légendes brèves",
+      "tiktok": "Contenu vidéo court et engageant",
+      "youtube": "Contenu vidéo long avec descriptions détaillées"
+    },
+    "sharingMessages": {
+      "instagram": {
+        "title": "Publions cette légende !",
+        "message": "Instagram préfère un flux de partage différent. Nous l'avons simplifié : téléchargez votre publication ou copiez-collez votre légende directement dans l'application Instagram. Partage simplifié — en un seul clic.",
+        "buttonText": "Créer avec Instagram",
+        "footer": "Instagram ne prend pas en charge le partage direct dans l'application — mais vous gardez le contrôle avec ces options rapides !"
+      },
+      "tiktok": {
+        "title": "Prêt pour devenir célèbre sur TikTok ?",
+        "message": "TikTok adore votre contenu frais ! Téléchargez simplement votre légende optimisée, puis téléchargez-la avec votre vidéo dans l'application TikTok. Votre moment tendance vous attend !",
+        "buttonText": "Créer avec TikTok",
+        "footer": "Téléchargez votre légende quand elle est prête, pour devenir viral sur TikTok !"
+      },
+      "youtube": {
+        "title": "Mode Créateur de Contenu YouTube",
+        "message": "Parfait pour YouTube ! Copiez votre légende et description optimisées pour le référencement à utiliser dans YouTube Studio. Téléchargez directement sur votre chaîne et maximisez le potentiel de découverte de votre vidéo.",
+        "buttonText": "Créer pour YouTube",
+        "footer": "Boostez votre présence YouTube avec nos légendes professionnelles optimisées pour le référencement !"
+      }
+    }
+  },
+  "goal": {
+    "description": "Définissez votre objectif de contenu",
+    "strategy": "Stratégie d'objectif",
+    "optimizedFor": "Vos légendes seront optimisées pour",
+    "bestForPrefix": "Ce type de contenu est idéal pour",
+    "contentExamples": "Exemples de contenu",
+    "tipText": "Se concentrer sur un objectif principal aide à créer un contenu plus efficace et ciblé. Vous pouvez toujours le modifier pour les publications futures.",
+    "bestForTypes": {
+      "boostengagement": "Contenu qui encourage l'interaction",
+      "growaudience": "Contenu à large attrait",
+      "shareknowledge": "Contenu éducatif qui établit l'autorité",
+      "drivesales": "Contenu promotionnel avec des appels à l'action clairs",
+      "brandawareness": "Contenu qui met en valeur les valeurs de la marque",
+      "buildcommunity": "Contenu qui favorise les relations"
+    },
+    "examples": {
+      "boostengagement": "Questions, sondages, sujets controversés",
+      "growaudience": "Sujets tendance, défis viraux",
+      "shareknowledge": "Tutoriels, conseils, guides pratiques",
+      "drivesales": "Caractéristiques du produit, offres spéciales, témoignages",
+      "brandawareness": "Histoires de marque, contenu en coulisses",
+      "buildcommunity": "Contenu généré par les utilisateurs, discussions interactives"
+    },
+    "descriptions": {
+      "boostengagement": "Augmenter les likes, commentaires et partages",
+      "growaudience": "Développer votre base d'abonnés et votre portée",
+      "shareknowledge": "Éduquer et fournir de la valeur",
+      "drivesales": "Convertir les abonnés en clients",
+      "brandawareness": "Augmenter la visibilité et la reconnaissance",
+      "buildcommunity": "Favoriser les relations avec les abonnés"
+    }
+  },
+  "tone": {
+    "description": "Choisissez le ton pour votre légende",
+    "details": "Détails du Ton",
+    "bestUsedFor": "Idéal pour",
+    "worksWellOn": "Fonctionne bien sur",
+    "showToneExample": "Afficher un exemple de ton",
+    "hideToneExample": "Masquer l'exemple de ton",
+    "tipText": "Choisissez un ton qui correspond à la façon dont vous communiquez habituellement avec votre audience pour des résultats plus authentiques.",
+    "descriptions": {
+      "professional": "Approche formelle et professionnelle",
+      "casual": "Ton détendu et amical",
+      "humorous": "Style amusant et divertissant",
+      "inspirational": "Motivant et encourageant",
+      "educational": "Informatif et instructif",
+      "persuasive": "Convaincant et persuasif"
+    },
+    "examples": {
+      "professional": "Expertise industrielle, contenu basé sur des données, mises à jour professionnelles",
+      "casual": "Conversation quotidienne, histoires personnelles, publications communautaires",
+      "humorous": "Blagues, observations spirituelles, contenu ludique",
+      "inspirational": "Citations motivantes, histoires de réussite, messages inspirants",
+      "educational": "Guides pratiques, tutoriels, contenu informatif",
+      "persuasive": "Promotions de produits, appels à l'action, offres convaincantes"
+    },
+    "works": {
+      "professional": "LinkedIn, blogs d'entreprise, contenu B2B",
+      "casual": "Instagram, Facebook, blogs personnels",
+      "humorous": "Twitter, TikTok, stories Instagram",
+      "inspirational": "Pinterest, Instagram, plateformes de bien-être",
+      "educational": "YouTube, Medium, plateformes éducatives",
+      "persuasive": "Pages d'atterrissage, marketing par courriel, contenu de vente"
+    }
+  },
+  "captions": {
+    "description": "Voir et modifier vos légendes",
+    "selectCaption": "Choisissez Votre Légende",
+    "requestsRemaining": "{{count}} requêtes restantes",
+    "regenerate": "Régénérer",
+    "addCustomText": "Ajouter du Texte Personnalisé",
+    "preview": "Aperçu",
+    "captionText": "Texte de la Légende",
+    "captionTextQuality": "Qualité du Texte de la Légende",
+    "captionBelow": "Légende en dessous",
+    "captionOverlay": "Légende en superposition",
+    "updateSuccess": "Légende mise à jour avec succès !",
+    "showGeneratedWithCustom": "Afficher la légende générée avec le texte personnalisé",
+    "copiedToClipboard": "Légende copiée dans le presse-papiers !",
+    "downloadToShare": "Télécharger pour partager sur votre Plateforme de Médias Sociaux préférée",
+    "directShareBrowser": "Partage Direct via Navigateur (WhatsApp, Telegram, etc.)",
+    "editor": {
+      "title": "Titre",
+      "caption": "Légende",
+      "callToAction": "Appel à l'action",
+      "hashtags": "Hashtags (séparés par des virgules)",
+      "saveChanges": "Enregistrer les Modifications",
+      "editCaption": "Modifier la Légende"
+    },
+    "sharing": {
+      "public": "Public - Toute personne avec le lien peut voir",
+      "private": "Privé - Seules les personnes invitées peuvent voir",
+      "password": "Protégé par mot de passe",
+      "expiry": "Définir une date d'expiration"
+    }
+  },
+  "longform": {
+    "title": "Contenu Long-forme",
+    "subtitle": "Créez des articles et posts complets avec l'assistance IA",
+    "description": "Générez du contenu professionnel et optimisé SEO pour votre blog"
+  },
+  "mediaUploader": {
+    "tips": {
+      "upload": "images ou vidéos jusqu'à 50MB",
+      "capture": "photos directement depuis la caméra de votre appareil",
+      "edit": "vos images avec des filtres, du texte et des rotations",
+      "drag": "superpositions de texte en cliquant et en les déplaçant",
+      "save": "vos modifications pour créer une image finalisée"
+    }
+  },
+  "steps": {
+    "welcome": "Bienvenue sur ShareWizard",
+    "selectType": "Sélectionnez le type de contenu",
+    "uploadContent": "Téléchargez votre contenu",
+    "configure": "Configurez les options de partage",
+    "preview": "Prévisualisez votre contenu",
+    "finish": "Terminez et partagez",
+    "step1": {
+      "title": "Télécharger un Média",
+      "description": "Téléchargez votre image ou vidéo, ou créez du contenu texte uniquement",
+      "welcome": "Bienvenue, {{name}}",
+      "instruction": "Téléchargez votre média ou capturez directement pour créer des légendes IA",
+      "dragDrop": "Glissez-déposez votre média ici, ou cliquez pour sélectionner",
+      "supports": "Supporte JPG, PNG, GIF, WebP, MP4, WebM (max 50Mo)",
+      "uploadButton": "Télécharger un Média : Image ou Vidéo",
+      "textOnly": "Créer une légende texte uniquement",
+      "mediaPreview": "Aperçu du Média",
+      "capture": "Capturer une Photo",
+      "camera": "Utiliser la Caméra",
+      "file": "Choisir un Fichier"
+    },
+    "step2": {
+      "title": "Sélectionner une Niche",
+      "description": "Choisissez votre secteur ou niche",
+      "customNiche": "Niche personnalisée (optionnel)",
+      "placeholder": "Décrivez votre niche...",
+      "popular": "Ou choisissez parmi les niches populaires",
+      "business": "Business",
+      "lifestyle": "Style de vie", 
+      "technology": "Technologie",
+      "artDesign": "Art & Design",
+      "seoMarketing": "SEO & Marketing",
+      "fashion": "Mode",
+      "fitness": "Fitness",
+      "food": "Nourriture & Cuisine",
+      "travel": "Voyage",
+      "photography": "Photographie",
+      "education": "Éducation",
+      "health": "Santé & Bien-être",
+      "gaming": "Jeux vidéo",
+      "entertainment": "Divertissement"
+    },
+    "step3": {
+      "title": "Plateforme",
+      "description": "Sélectionnez la plateforme de réseau social",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "tiktok": "TikTok", 
+      "youtube": "YouTube",
+      "pinterest": "Pinterest",
+      "snapchat": "Snapchat",
+      "limitedSharing": "La plateforme {{platform}} ne permet pas le partage direct. Vous pouvez utiliser l'API Web du navigateur ou télécharger le post."
+    },
+    "step4": {
+      "title": "Quel est l'Objectif de Votre Contenu ?",
+      "description": "Sélectionnez l'objectif principal pour votre contenu. L'IA générera des légendes optimisées pour cet objectif.",
+      "boostengagement": "Augmenter l'Engagement",
+      "growaudience": "Développer l'Audience", 
+      "drivesales": "Générer des Ventes",
+      "shareknowledge": "Partager des Connaissances",
+      "brandawareness": "Notoriété de Marque",
+      "buildcommunity": "Construire une Communauté",
+      "announceNews": "Annoncer des Nouvelles",
+      "showcase": "Présenter Produit/Service"
+    },
+    "step5": {
+      "title": "Ton",
+      "description": "Choisissez le ton pour votre légende",
+      "professional": "Professionnel",
+      "casual": "Décontracté",
+      "humorous": "Humoristique",
+      "inspirational": "Inspirant",
+      "educational": "Éducatif",
+      "persuasive": "Persuasif",
+      "friendly": "Amical",
+      "authoritative": "Autoritaire",
+      "playful": "Ludique",
+      "emotional": "Émotionnel"
+    },
+    "step6": {
+      "title": "Légendes Générées", 
+      "description": "Choisissez votre légende préférée et personnalisez si nécessaire",
+      "generating": "Génération de vos légendes...",
+      "selectCaption": "Sélectionnez votre légende préférée",
+      "editCaption": "Modifier la légende",
+      "customText": "Ajouter du texte personnalisé",
+      "sharePost": "Partager le Post",
+      "downloadPost": "Télécharger le Post",
+      "copyCaption": "Copier la Légende",
+      "regenerate": "Générer de Nouvelles Légendes",
+      "saveAsFavorite": "Enregistrer en Favori",
+      "saveToDrafts": "Enregistrer en Brouillon"
+    }
+  },
+  "longformSteps": {
+    "step1": {
+      "title": "Quoi & Qui",
+      "description": "Définissez votre sujet et votre audience cible",
+      "topicLabel": "Sur quoi allez-vous écrire ?",
+      "topicPlaceholder": "ex: Comment améliorer l'engagement sur les réseaux sociaux",
+      "audienceLabel": "Pour qui écrivez-vous ?",
+      "audiencePlaceholder": "ex: Propriétaires de petites entreprises, marketeurs digitaux",
+      "industryLabel": "Sélectionnez votre secteur pour de meilleures suggestions",
+      "getIdeas": "Obtenir des Idées",
+      "quickTips": "Conseils Rapides",
+      "tipsBe": "Soyez spécifique sur votre sujet - évitez les sujets larges et génériques",
+      "tipsDefine": "Définissez clairement la démographie et les besoins de votre audience",
+      "tipsConsider": "Considérez ce avec quoi votre audience a le plus de difficultés"
+    },
+    "step2": {
+      "title": "Détails du Contenu",
+      "description": "Spécifiez les exigences et préférences du contenu",
+      "wordCount": "Nombre de mots",
+      "contentType": "Type de contenu",
+      "tone": "Ton d'écriture",
+      "includeStats": "Inclure des statistiques et données",
+      "keywords": "Mots-clés cibles",
+      "ctaType": "Type d'appel à l'action"
+    }
+  },
+  "contentTypes": {
+    "document": "Document",
+    "image": "Image",
+    "video": "Vidéo",
+    "link": "Lien"
+  },
+  "sharing": {
+    "public": "Public - Toute personne avec le lien peut voir",
+    "private": "Privé - Seules les personnes invitées peuvent voir",
+    "password": "Protégé par mot de passe",
+    "expiry": "Définir une date d'expiration"
+  },
+  "contentWizard": {
+    "progress": "Progression de l'Assistant de Contenu",
+    "currentStep": "Étape {{current}} sur {{total}}",
+    "timeRemaining": "{{minutes}} minutes restantes",
+    "saveProgress": "Enregistrer la Progression",
+    "autoSaved": "Sauvegarde automatique {{time}}"
+  },
+  "generate": "Générer des Légendes",
+  "upgradeBanner": {
+    "title": "🎁 Vous avez Utilisé Vos 3 Légendes Gratuites",
+    "subtitle": "Mais ce n'est que le début…",
+    "bonusRequests": "<strong>Inclut 5 Requêtes Bonus</strong> avec un Essai Gratuit de 5 Jours",
+    "basicPlan": "<strong>Forfait Mensuel Basique :</strong> Seulement 8,00 $/mois",
+    "requestsPerMonth": "70 requêtes/mois — annulez à tout moment",
+    "trialPromo": "🎯 Commencez avec notre <strong>essai gratuit de 5 jours</strong> — inclut 5 requêtes bonus",
+    "checkboxText": "Commencez avec notre <strong>essai gratuit de 5 jours</strong> — inclut 5 requêtes bonus",
+    "ctaButton": "Commencer l'Essai Gratuit à 8,00 $/mois →"
+  },
+  "filters": {
+    "original": "Original",
+    "grayscale": "Niveaux de gris",
+    "sepia": "Sépia",
+    "invert": "Inversé",
+    "blur": "Flou",
+    "brightness": "Luminosité",
+    "contrast": "Contraste"
+  },
+  "filterDescriptions": {
+    "original": "Aucun filtre appliqué",
+    "grayscale": "Effet noir et blanc",
+    "sepia": "Aspect vintage chaleureux",
+    "invert": "Effet négatif",
+    "blur": "Effet de mise au point douce",
+    "brightness": "Image plus lumineuse",
+    "contrast": "Contraste amélioré"
+  }
+}

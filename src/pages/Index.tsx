@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+  const { t } = useTranslation('home');
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
@@ -14,14 +16,12 @@ const Index = () => {
       <section className="container mx-auto px-4 sm:px-6 pt-8 pb-24 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left Column - Text Content */}
-          <div className="space-y-6">
-            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-              Human-Like AI Content<br />
-              That Truly <span className="text-blue-500">Engages</span>
+          <div className="space-y-6">            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
+              {t('hero.title')}
             </h1>
             
             <p className="text-lg text-gray-300 max-w-lg">
-              Create captivating, personalized captions for your platforms and Long Form Content up to 2500 words SEO, EEAT, GEO optimized. No more generic AI-like text, perfect human-like writing.
+              {t('hero.subtitle')}
             </p>
             
             <div className="pt-4">
@@ -233,7 +233,7 @@ const Index = () => {
               to="/caption-generator" 
               className="inline-block px-8 py-3.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
             >
-              Get Started for Free
+              {t('hero.cta')}
             </Link>
           </div>
         </div>

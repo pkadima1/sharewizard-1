@@ -6,6 +6,7 @@ import { X, Type, SmilePlus, Move } from 'lucide-react';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface TextOverlayEditorProps {
   onTextChange: (text: string) => void;
@@ -30,6 +31,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
   initialSize = 24,
   initialRotation = 0
 }) => {
+  const { t } = useTranslation(['common', 'wizard']);
   const [textOverlay, setTextOverlay] = useState(initialText);
   const [textColor, setTextColor] = useState(initialColor);
   const [textSize, setTextSize] = useState(initialSize);
@@ -62,11 +64,10 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
   }, [textRotation, onRotationChange]);
 
   return (
-    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">
-      <div className="flex justify-between items-center mb-2">
+    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">      <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-medium flex items-center">
           <Type className="h-4 w-4 mr-1.5 text-primary" />
-          Custom Text Overlay
+          {t('wizard:textOverlay.title', 'Custom Text Overlay')}
         </h3>
         <Button 
           variant="ghost" 
@@ -84,7 +85,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
             value={textOverlay}
             onChange={(e) => setTextOverlay(e.target.value)}
             className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
-            placeholder="Enter your custom text..."
+            placeholder={t('wizard:textOverlay.placeholder', 'Enter your custom text...')}
             rows={2}
             style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
           />
@@ -120,11 +121,10 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
           </div>
         )}
       </div>
-      
-      <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-gray-600 dark:text-gray-400">
-            Text Color
+            {t('wizard:textOverlay.textColor', 'Text Color')}
           </label>
           <div className="flex gap-2 mt-1 items-center">
             <input
@@ -139,14 +139,14 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
               onClick={() => setTextColor('#000000')}
               title="Set text color to black"
             >
-              Black
+              {t('wizard:textOverlay.black', 'Black')}
             </button>
           </div>
         </div>
         
         <div>
           <label className="text-xs text-gray-600 dark:text-gray-400">
-            Text Size: {textSize}px
+            {t('wizard:textOverlay.textSize', 'Text Size: {{size}}px', { size: textSize })}
           </label>
           <Slider
             value={[textSize]}
@@ -162,7 +162,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       {/* Text rotation slider */}
       <div className="mt-2">
         <label className="text-xs text-gray-600 dark:text-gray-400">
-          Text Rotation: {textRotation}&deg;
+          {t('wizard:textOverlay.textRotation', 'Text Rotation: {{degrees}}°', { degrees: textRotation })}
         </label>
         <Slider
           value={[textRotation]}
@@ -177,7 +177,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       {/* Draggable indicator */}
       <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
         <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-        <span>Click and drag the text on the image to position it</span>
+        <span>{t('wizard:textOverlay.dragInstructions', 'Click and drag the text on the image to position it')}</span>
       </div>
     </div>
   );

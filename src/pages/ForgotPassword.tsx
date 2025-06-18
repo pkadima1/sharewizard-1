@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,8 +6,9 @@ import { Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useTranslation } from 'react-i18next';
 
-const ForgotPassword: React.FC = () => {
+const ForgotPassword: React.FC = () => {  const { t } = useTranslation(['auth', 'common']);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -16,14 +16,13 @@ const ForgotPassword: React.FC = () => {
 
   const { resetPassword } = useAuth();
   const { toast } = useToast();
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('auth:errors.requiredField');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = t('auth:errors.invalidEmail');
     }
     
     setErrors(newErrors);
@@ -40,22 +39,20 @@ const ForgotPassword: React.FC = () => {
     setLoading(true);
     setMessage('');
     
-    try {
-      await resetPassword(email);
-      setMessage('Check your email for password reset instructions');
+    try {      await resetPassword(email);
+      setMessage(t('auth:forgotPassword.success', 'Check your email for password reset instructions'));
       toast({
-        title: "Email sent",
-        description: "Check your email for password reset instructions",
+        title: t('auth:forgotPassword.emailSent', 'Email sent'),
+        description: t('auth:forgotPassword.success', 'Check your email for password reset instructions'),
         variant: "default",
       });
-    } catch (error: any) {
-      let errorMessage = "Failed to reset password.";
+    } catch (error: any) {      let errorMessage = t('auth:forgotPassword.failed', 'Failed to reset password.');
       if (error.code === 'auth/user-not-found') {
-        errorMessage = "No account found with this email address.";
+        errorMessage = t('auth:forgotPassword.noAccount', 'No account found with this email address.');
       }
       setMessage('');
       toast({
-        title: "Error",
+        title: t('common:error', 'Error'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -76,10 +73,9 @@ const ForgotPassword: React.FC = () => {
                 src="/lovable-uploads/23327aae-0892-407a-a483-66a3aff1f9e7.png" 
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
-              />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Reset your password</h2>
+              />              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('auth:forgotPassword.title')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Enter your email address and we'll send you a link to reset your password.
+                {t('auth:forgotPassword.enterEmail', 'Enter your email address and we\'ll send you a link to reset your password.')}
               </p>
             </div>
 
@@ -91,9 +87,8 @@ const ForgotPassword: React.FC = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                <div>                  <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('auth:forgotPassword.email')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -104,9 +99,8 @@ const ForgotPassword: React.FC = () => {
                       name="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="you@example.com"
+                      onChange={(e) => setEmail(e.target.value)}                      className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                      placeholder={t('auth:forgotPassword.email')}
                     />
                   </div>
                   {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
@@ -118,14 +112,12 @@ const ForgotPassword: React.FC = () => {
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Sending reset link...' : 'Send password reset link'}
+                    {loading ? t('auth:sending', 'Sending...') : t('auth:forgotPassword.submit')}
                   </button>
                 </div>
-              </form>
-
-              <div className="mt-6 text-center">
+              </form>              <div className="mt-6 text-center">
                 <Link to="/login" className="font-medium text-primary hover:text-primary/90">
-                  Back to login
+                  {t('auth:forgotPassword.backToLogin')}
                 </Link>
               </div>
             </div>
@@ -133,9 +125,8 @@ const ForgotPassword: React.FC = () => {
         </div>
         <div className="relative flex-1 hidden w-0 lg:block">
           <div className="absolute inset-0 object-cover w-full h-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
-            <div className="text-center text-white p-8 max-w-md">
-              <h1 className="text-5xl font-bold mb-6">Password Recovery</h1>
-              <p className="text-xl mb-8">Don't worry - we'll help you get back into your account</p>
+            <div className="text-center text-white p-8 max-w-md">              <h1 className="text-5xl font-bold mb-6">{t('auth:forgotPassword.title')}</h1>
+              <p className="text-xl mb-8">{t('auth:forgotPassword.enterEmail')}</p>
             </div>
           </div>
         </div>

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { useTranslation } from 'react-i18next';
 
 // Define the content tones with enhanced properties
 const CONTENT_TONES = [
@@ -103,7 +104,8 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
   onToneChange,
   onGenerate,
   isGenerating
-}) => {
+}) => {  const { t } = useTranslation(['wizard', 'common']);
+
   // Get selected tone details
   const selectedToneDetails = CONTENT_TONES.find(tone => tone.id === selectedTone);
   
@@ -115,17 +117,14 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
 
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
-      {/* Heading and description */}
-      <div className="text-center mb-6">
+      {/* Heading and description */}      <div className="text-center mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Choose Your Content's Tone
+          {t('wizard:steps.step5.title')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-          Select the tone that best fits your brand voice and audience. This influences how your captions will sound.
+          {t('wizard:steps.step5.description')}
         </p>
-      </div>
-
-      {/* Tones grid with improved layout */}
+      </div>      {/* Tones grid with improved layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
         {sortedTones.map((tone) => (
           <button
@@ -139,11 +138,11 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
                 ? "ring-4 ring-white/30 shadow-xl scale-[1.02]" 
                 : "ring-0 hover:ring-2 hover:ring-white/20 hover:shadow-lg"
             )}
-            aria-label={`Select ${tone.title} tone`}
+            aria-label={`Select ${t(`wizard:steps.step5.${tone.id}`)} tone`}
           >
             {/* Emoji badge in top-right corner */}
             <div className="absolute -top-2 -right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
-              <span className="text-lg" role="img" aria-label={`${tone.title} emoji`}>
+              <span className="text-lg" role="img" aria-label={`${t(`wizard:steps.step5.${tone.id}`)} emoji`}>
                 {tone.emoji}
               </span>
             </div>
@@ -155,17 +154,15 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
                   <tone.icon className="w-5 h-5" />
                 </div>
                 
-                {selectedTone === tone.id && (
-                  <div className="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
-                    Selected
+                {selectedTone === tone.id && (                  <div className="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
+                    {t('common:selected')}
                   </div>
                 )}
               </div>
-              
-              {/* Tone title and description */}
+                {/* Tone title and description */}
               <div className="mt-1">
-                <h3 className="text-lg font-semibold">{tone.title}</h3>
-                <p className="text-sm text-white/90 mt-1">{tone.description}</p>
+                <h3 className="text-lg font-semibold">{t(`wizard:steps.step5.${tone.id}`)}</h3>
+                <p className="text-sm text-white/90 mt-1">{t(`wizard:tone.descriptions.${tone.id}`)}</p>
               </div>
             </div>
           </button>
@@ -181,21 +178,19 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
               selectedToneDetails.bgColor
             )}>
               <selectedToneDetails.icon className="w-5 h-5 text-white" />
-            </div>
-            <h3 className="text-blue-300 font-medium">
-              {selectedToneDetails.title} Tone Details
+            </div>            <h3 className="text-blue-300 font-medium">
+              {t(`wizard:steps.step5.${selectedToneDetails.id}`)} {t('wizard:tone.details')}
             </h3>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div className="bg-blue-950/40 p-3 rounded-lg">
-              <p className="text-blue-200 font-medium mb-1">Best used for:</p>
-              <p className="text-gray-300">{selectedToneDetails.examples}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">            <div className="bg-blue-950/40 p-3 rounded-lg">
+              <p className="text-blue-200 font-medium mb-1">{t('wizard:tone.bestUsedFor')}:</p>
+              <p className="text-gray-300">{t(`wizard:tone.examples.${selectedToneDetails.id}`)}</p>
             </div>
             
             <div className="bg-blue-950/40 p-3 rounded-lg">
-              <p className="text-blue-200 font-medium mb-1">Works well on:</p>
-              <p className="text-gray-300">{selectedToneDetails.works}</p>
+              <p className="text-blue-200 font-medium mb-1">{t('wizard:tone.worksWellOn')}:</p>
+              <p className="text-gray-300">{t(`wizard:tone.works.${selectedToneDetails.id}`)}</p>
             </div>
           </div>
           
@@ -205,7 +200,7 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
             className="mt-3 text-xs text-blue-300 hover:text-blue-200 flex items-center"
           >
             <Info className="w-3.5 h-3.5 mr-1" />
-            {showTonePreview ? "Hide tone example" : "Show tone example"}
+            {showTonePreview ? t('wizard:tone.hideToneExample') : t('wizard:tone.showToneExample')}
           </button>
           
           {/* Example text that shows when toggle is clicked */}
@@ -213,22 +208,22 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
             <div className="mt-2 p-3 bg-white/5 rounded-lg border border-blue-800/30 text-sm text-gray-300 animate-fadeIn">
               {/* Sample caption in the selected tone */}
               {selectedToneDetails.id === 'professional' && 
-                "Our latest research reveals industry-leading insights on market trends. Learn how these findings can enhance your business strategy in our detailed analysis."
+                t('Our latest research reveals industry-leading insights on market trends. Learn how these findings can enhance your business strategy in our detailed analysis.')
               }
               {selectedToneDetails.id === 'casual' && 
-                "Just hanging out at the beach today! The waves are perfect and I can't get enough of this sunshine. Who else is enjoying the weekend? ☀️🌊"
+                t('Just hanging out at the beach today! The waves are perfect and I can\'t get enough of this sunshine. Who else is enjoying the weekend? ☀️🌊')
               }
               {selectedToneDetails.id === 'humorous' && 
-                "When your coffee kicks in and suddenly you're ready to conquer the world... or at least your inbox. Anyone else feel like a superhero after caffeine? ☕💪😂"
+                t('When your coffee kicks in and suddenly you\'re ready to conquer the world... or at least your inbox. Anyone else feel like a superhero after caffeine? ☕💪😂')
               }
               {selectedToneDetails.id === 'persuasive' && 
-                "Don't miss this opportunity to transform your results. With our proven method, you'll see immediate improvements. Take action today while this offer lasts."
+                t('Don\'t miss this opportunity to transform your results. With our proven method, you\'ll see immediate improvements. Take action today while this offer lasts.')
               }
               {selectedToneDetails.id === 'inspirational' && 
-                "Every challenge you face is preparing you for something greater. Keep pushing forward—your breakthrough moment is closer than you think. ✨"
+                t('Every challenge you face is preparing you for something greater. Keep pushing forward—your breakthrough moment is closer than you think. ✨')
               }
               {selectedToneDetails.id === 'educational' && 
-                "Did you know that honeybees communicate through dance? The 'waggle dance' indicates direction and distance to food sources, demonstrating their remarkable intelligence."
+                t('Did you know that honeybees communicate through dance? The \'waggle dance\' indicates direction and distance to food sources, demonstrating their remarkable intelligence.')
               }
             </div>
           )}
@@ -253,12 +248,12 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
           {isGenerating ? (
             <>
               <div className="h-5 w-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
-              <span>Generating Captions...</span>
+              <span>{t('wizard:steps.step6.generating')}</span>
             </>
           ) : (
             <>
               <Sparkles className="w-5 h-5 mr-1.5" />
-              <span>Generate Captions</span>
+              <span>{t('wizard:wizard.generate')}</span>
             </>
           )}
         </Button>
@@ -269,7 +264,7 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
         <p className="flex items-start">
           <Info className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
           <span>
-            <span className="font-medium text-gray-700 dark:text-gray-300">Tip:</span> Choose a tone that matches how you normally communicate with your audience for the most authentic results.
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t('common:tip')}:</span> {t('wizard:tone.tipText')}
           </span>
         </p>
       </div>

@@ -1,0 +1,22 @@
+{
+  "steps": {
+    "welcome": "Bienvenido a ShareWizard",
+    "selectType": "Selecciona el tipo de contenido",
+    "uploadContent": "Sube tu contenido",
+    "configure": "Configura las opciones de compartir",
+    "preview": "Vista previa de tu contenido",
+    "finish": "Finaliza y comparte"
+  },
+  "contentTypes": {
+    "document": "Documento",
+    "image": "Imagen",
+    "video": "Vídeo",
+    "link": "Enlace"
+  },
+  "sharing": {
+    "public": "Público - Cualquier persona con el enlace puede ver",
+    "private": "Privado - Solo las personas que invites pueden ver",
+    "password": "Protegido con contraseña",
+    "expiry": "Establecer fecha de caducidad"
+  }
+}

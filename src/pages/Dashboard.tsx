@@ -9,8 +9,10 @@ import { clearTrialPending } from '@/lib/subscriptionUtils';
 import { useLongformContent } from '@/hooks/useLongformContent';
 import LongformContentManager from '@/components/LongformContentManager';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation(['dashboard', 'common']);
   const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -83,33 +85,30 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+      <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('dashboard:overview.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Welcome back, {currentUser.displayName || 'User'}!
+            {t('dashboard:overview.welcome', { name: currentUser.displayName || 'User' })}
           </p>
         </div>
 
         {/* Dashboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-3">            <TabsTrigger value="overview" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              Overview
+              {t('dashboard:overview.title')}
             </TabsTrigger>
             <TabsTrigger value="longform" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              Long-form Content
+              {t('dashboard:content.longform', 'Long-form Content')}
               {longformContent.length > 0 && (
                 <span className="ml-1 bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">
                   {longformContent.length}
                 </span>
               )}
-            </TabsTrigger>
-            <TabsTrigger value="captions" className="flex items-center gap-2">
+            </TabsTrigger>            <TabsTrigger value="captions" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Captions
+              {t('dashboard:content.captions', 'Captions')}
             </TabsTrigger>
           </TabsList>
 

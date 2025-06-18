@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import RouterConfig from "./RouterConfig";
 import SupportChat from './components/SupportChat';
+// Import the translation debugger for development
+import TranslationDebugger from './components/dev/TranslationDebugger';
 
 // Import testing utilities for debugging text overlays
 // This will expose debugging functions to the window object
@@ -35,10 +37,13 @@ const App = () => <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
         <ChatProvider>
-          <TooltipProvider>          <Toaster />
+          <TooltipProvider>
+          <Toaster />
             <Sonner />
             <RouterConfig />
             <SupportChat />
+            {/* Add the translation debugger in development mode */}
+            {import.meta.env.DEV && <TranslationDebugger />}
           </TooltipProvider>
         </ChatProvider>
       </AuthProvider>

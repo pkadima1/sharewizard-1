@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Copy } from 'lucide-react';
 import { GeneratedCaption } from '@/services/openaiService';
 import { toast } from "sonner";
 import { stripMarkdownFormatting } from '@/utils/textFormatters';
+import { useTranslation } from 'react-i18next';
 
 interface CaptionsListProps {
   captions: GeneratedCaption[];
@@ -17,13 +17,15 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
   selectedCaption,
   setSelectedCaption,
 }) => {
+  const { t } = useTranslation(['common', 'wizard']);
   const [hoveredCaption, setHoveredCaption] = React.useState<number | null>(null);
+  
   const handleCopyCaption = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     if (captions[index]) {
       const text = `${stripMarkdownFormatting(captions[index].caption)}\n\n${stripMarkdownFormatting(captions[index].cta)}\n\n${captions[index].hashtags.map(h => `#${stripMarkdownFormatting(h)}`).join(' ')}`;
       navigator.clipboard.writeText(text);
-      toast.success("Caption copied to clipboard!");
+      toast.success(t('wizard:captions.copiedToClipboard', "Caption copied to clipboard!"));
     }
   };
 
@@ -63,7 +65,7 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
               onClick={(e) => handleCopyCaption(index, e)}
             >
               <Copy className="h-4 w-4 mr-1" />
-              Copy
+              {t('common.copy', 'Copy')}
             </Button>
           </div>
         </div>

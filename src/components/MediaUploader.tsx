@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 // Import emoji picker (new dependency)
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import { useTranslation } from 'react-i18next';
 
 interface MediaUploaderProps {
   onMediaSelect: (file: File | null) => void;
@@ -36,6 +37,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   onTextOnlySelect
 }) => {
   const { currentUser, userProfile } = useAuth();
+  const { t } = useTranslation(['wizard', 'common']);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -68,17 +70,15 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   });
   
   // Drag offset for text positioning
-  const dragOffset = useRef({ x: 0, y: 0 });
-
-  // Enhanced image filters with icons and descriptions
+  const dragOffset = useRef({ x: 0, y: 0 });  // Enhanced image filters with icons and descriptions
   const imageFilters: ImageFilter[] = [
-    { name: 'Original', class: '', icon: <Image className="h-3 w-3" />, description: 'No filter applied' },
-    { name: 'Grayscale', class: 'grayscale', icon: <Sliders className="h-3 w-3" />, description: 'Black and white effect' },
-    { name: 'Sepia', class: 'sepia', icon: <Sliders className="h-3 w-3" />, description: 'Warm vintage look' },
-    { name: 'Invert', class: 'invert', icon: <RefreshCw className="h-3 w-3" />, description: 'Negative effect' },
-    { name: 'Blur', class: 'blur-sm', icon: <Sliders className="h-3 w-3" />, description: 'Soft focus effect' },
-    { name: 'Brightness', class: 'brightness-125', icon: <Sparkles className="h-3 w-3" />, description: 'Brighter image' },
-    { name: 'Contrast', class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: 'Enhanced contrast' },
+    { name: t('wizard:filters.original'), class: '', icon: <Image className="h-3 w-3" />, description: t('wizard:filterDescriptions.original') },
+    { name: t('wizard:filters.grayscale'), class: 'grayscale', icon: <Sliders className="h-3 w-3" />, description: t('wizard:filterDescriptions.grayscale') },
+    { name: t('wizard:filters.sepia'), class: 'sepia', icon: <Sliders className="h-3 w-3" />, description: t('wizard:filterDescriptions.sepia') },
+    { name: t('wizard:filters.invert'), class: 'invert', icon: <RefreshCw className="h-3 w-3" />, description: t('wizard:filterDescriptions.invert') },
+    { name: t('wizard:filters.blur'), class: 'blur-sm', icon: <Sliders className="h-3 w-3" />, description: t('wizard:filterDescriptions.blur') },
+    { name: t('wizard:filters.brightness'), class: 'brightness-125', icon: <Sparkles className="h-3 w-3" />, description: t('wizard:filterDescriptions.brightness') },
+    { name: t('wizard:filters.contrast'), class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: t('wizard:filterDescriptions.contrast') },
   ];
 
   // Clean up stream on unmount
@@ -523,11 +523,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             textOverlay: textOverlay,
             hasOverlayData: !!((videoWithOverlay as any).textOverlayData)
           });
-          
-          toast.success(
+            toast.success(
             <div className="flex flex-col">
-              <span className="font-medium">Text overlay saved for video!</span>
-              <span className="text-xs mt-1">Text will appear during playback and sharing</span>
+              <span className="font-medium">{t('wizard:mediaUpload.saveToast.title')}</span>
+              <span className="text-xs mt-1">{t('wizard:mediaUpload.saveToast.description')}</span>
             </div>,
             { duration: 4000 }
           );
@@ -784,11 +783,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   return (
     <div className="w-full p-4 sm:p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Welcome header section */}
+      <div className="max-w-5xl mx-auto">        {/* Welcome header section */}
         <div className="mb-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-1 text-gray-800 dark:text-white flex items-center">
-            <span>Welcome, {userProfile?.displayName || currentUser?.displayName || 'User'}</span>
+            <span>{t('wizard:mediaUpload.welcome', { name: userProfile?.displayName || currentUser?.displayName || 'User' })}</span>
             <button 
               onClick={() => setShowPopupTips(!showPopupTips)}
               className="ml-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400"
@@ -798,7 +796,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             </button>
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Upload your media or capture directly to create engaging AI-powered captions.
+            {t('wizard:mediaUpload.upload_media_instruction')}
           </p>
           
           {/* Tips popup */}
@@ -807,13 +805,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               <div className="flex gap-2">
                 <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Quick Tips:</p>
+                  <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">{t('wizard:mediaUpload.quick_tips')}</p>
                   <ul className="text-blue-600 dark:text-blue-400 space-y-1">
-                    <li>• <span className="font-medium">Upload</span> images or videos up to 50MB</li>
-                    <li>• <span className="font-medium">Capture</span> photos directly from your device camera</li>
-                    <li>• <span className="font-medium">Edit</span> your images with filters, text and rotation</li>
-                    <li>• <span className="font-medium">Drag</span> text overlays by clicking and moving them</li>
-                    <li>• <span className="font-medium">Save</span> your edits to create a finished image</li>
+                    <li>• <span className="font-medium">{t('common:upload')}</span> {t('wizard:mediaUpload.media_file_types')}</li>
+                    <li>• <span className="font-medium">{t('common:capture')}</span> {t('wizard:mediaUpload.photo_camera_instruction')}</li>
+                    <li>• <span className="font-medium">{t('common:edit')}</span> {t('wizard:mediaUpload.image_editing_features')}</li>
+                    <li>• <span className="font-medium">{t('common:drag')}</span> {t('wizard:mediaUpload.text_overlays_instruction')}</li>
+                    <li>• <span className="font-medium">{t('common:save')}</span> {t('wizard:mediaUpload.create_finished_image_instruction')}</li>
                   </ul>
                 </div>
               </div>
@@ -852,12 +850,11 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               <div className="flex flex-col items-center text-center">
                 <div className="h-16 w-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-4 shadow-sm">
                   <Upload className="h-8 w-8 text-blue-500" />
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-400 mb-2 font-medium">
-                  Drag & drop your media here, or click to select
+                </div>                <p className="text-sm text-gray-700 dark:text-gray-400 mb-2 font-medium">
+                  {t('wizard:mediaUpload.drag_and_drop_media')}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-500">
-                  Supports JPG, PNG, GIF, WebP, MP4, WebM (max 50MB)
+                  {t('wizard:mediaUpload.supported_file_types')}
                 </p>
               </div>
             </div>
@@ -869,7 +866,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 className="flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
               >
                 <Upload className="h-4 w-4" />
-                Upload Media: Image or Video
+                {t('wizard:mediaUpload.upload_media_button')}
               </Button>
             </div>
 
@@ -877,7 +874,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             <div className="text-center mt-4">
               <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
                 <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
-                <span className="text-sm">or</span>
+                <span className="text-sm">{t('wizard:mediaUpload.or')}</span>
                 <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <button 
@@ -885,18 +882,17 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 onClick={handleTextOnlyClick}
               >
                 <FileText className="h-4 w-4" />
-                <span className="font-medium">Create text-only caption</span>
+                <span className="font-medium">{t('wizard:mediaUpload.create_text_only_caption')}</span>
               </button>
             </div>
             
             {/* Camera feed with improved UI */}
             {streamActive && (
               <div className="mt-5 border rounded-xl overflow-hidden shadow-md animate-fadeIn">
-                <div className="relative bg-black">
-                  {cameraError ? (
+                <div className="relative bg-black">                  {cameraError ? (
                     <div className="p-8 text-center text-white">
                       <AlertCircle className="h-8 w-8 mx-auto mb-3 text-red-500" />
-                      <p className="text-red-400 font-medium">Camera Error</p>
+                      <p className="text-red-400 font-medium">{t('wizard:mediaUpload.camera_error', {message: cameraError})}</p>
                       <p className="text-sm text-gray-400 mt-1">{cameraError}</p>
                       <Button 
                         variant="outline" 
@@ -906,7 +902,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           setStreamActive(false);
                         }}
                       >
-                        Dismiss
+                        {t('common:buttons.close')}
                       </Button>
                     </div>
                   ) : (
@@ -939,7 +935,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 {streamActive && !cameraError && (
                   <div className="p-2 bg-gray-100 dark:bg-gray-800 flex justify-between items-center">
                     <p className="text-xs text-gray-600 dark:text-gray-400 ml-2">
-                      Camera active - click the button to capture
+                      {t('camera_active_instruction')}
                     </p>
                     <Button 
                       variant="ghost" 
@@ -954,7 +950,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       }}
                     >
                       <X className="h-4 w-4 mr-1" />
-                      Close
+                      {t('close')}
                     </Button>
                   </div>
                 )}
@@ -1104,12 +1100,12 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   {textOverlay && !showTextEditor && (
                     <div className="mb-4 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-md flex items-center text-xs">
                       <Type className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-primary" />
-                      <span className="text-primary">Text overlay applied: "{textOverlay.substring(0, 20)}{textOverlay.length > 20 ? '...' : ''}"</span>
+                      <span className="text-primary">{t('text_overlay_applied', { text: textOverlay.substring(0, 20) })}</span>
                       <button 
                         className="ml-auto bg-primary/10 hover:bg-primary/20 rounded px-1.5 py-0.5 text-primary"
                         onClick={() => setShowTextEditor(true)}
                       >
-                        Edit
+                        {t('edit')}
                       </button>
                     </div>
                   )}
@@ -1119,18 +1115,17 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     <div className="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                       <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start">
                         <Info className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
-                        <span>Text overlays on videos will be saved with the video metadata and displayed during playback and sharing. <strong>No need to re-encode the video.</strong></span>
+                        <span>{t('video_text_overlay_info')}</span>
                       </p>
                     </div>
                   )}
                   
                   {/* Embedded text editor - appears when text button is clicked (now for both images and videos) */}
                   {showTextEditor && (
-                    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">
-                      <div className="flex justify-between items-center mb-2">
+                    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">                      <div className="flex justify-between items-center mb-2">
                         <h3 className="text-sm font-medium flex items-center">
                           <Type className="h-4 w-4 mr-1.5 text-primary" />
-                          Add Text Overlay
+                          {t('wizard:mediaUpload.add_text_overlay')}
                         </h3>
                         <Button 
                           variant="ghost" 
@@ -1148,7 +1143,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                             value={textOverlay}
                             onChange={(e) => setTextOverlay(e.target.value)}
                             className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
-                            placeholder="Enter text to display on your image..."
+                            placeholder={t('wizard:mediaUpload.enter_text_instruction')}
                             rows={2}
                             style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
                           />
@@ -1185,10 +1180,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         )}
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
+                      <div className="grid grid-cols-2 gap-3">                        <div>
                           <label className="text-xs text-gray-600 dark:text-gray-400">
-                            Text Color
+                            {t('wizard:mediaUpload.text_color')}
                           </label>
                           <div className="flex gap-2 mt-1 items-center">
                             <input
@@ -1199,9 +1193,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                             />
                             <button
                               type="button"
-                              className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"
-                              onClick={() => setTextColor('#000000')}
-                              title="Set text color to black"
+                              className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"                              onClick={() => setTextColor('#000000')}
+                              title="Black"
                             >
                               Black
                             </button>
@@ -1210,7 +1203,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         
                         <div>
                           <label className="text-xs text-gray-600 dark:text-gray-400">
-                            Text Size: {textSize}px
+                            {t('wizard:mediaUpload.text_size')}: {textSize}px
                           </label>
                           <Slider
                             value={[textSize]}
@@ -1226,7 +1219,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       {/* Text rotation slider */}
                       <div className="mt-2">
                         <label className="text-xs text-gray-600 dark:text-gray-400">
-                          Text Rotation: {textRotation}&deg;
+                          {t('wizard:mediaUpload.text_position')}: {textRotation}&deg;
                         </label>
                         <Slider
                           value={[textRotation]}
@@ -1237,20 +1230,17 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           className="py-1.5"
                         />
                       </div>
-                      
-                      {/* Add draggable indicator */}
-                      <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
+                        {/* Add draggable indicator */}                      <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
                         <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-                        <span>Click and drag the text on the image to position it</span>
+                        <span>{t('wizard:mediaUpload.click_and_drag_text_instruction')}</span>
                       </div>
                     </div>
                   )}
 
                   {!isVideo && (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium flex items-center">
+                    <div className="mb-4">                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium flex items-center">
                         <Sliders className="h-3.5 w-3.5 mr-1.5" />
-                        Apply Filters:
+                        {t('wizard:mediaUpload.apply_filter')}:
                       </p>
                       <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
                         {imageFilters.map((filter) => (
@@ -1285,7 +1275,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                             <RotateCw className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Rotate</span>
+                          <span className="text-xs mt-1">{t('wizard:mediaUpload.rotate')}</span>
                         </button>
                         <button 
                           className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
@@ -1294,7 +1284,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                             <RotateCcw className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Counter</span>
+                          <span className="text-xs mt-1">{t('wizard:mediaUpload.counterRotate')}</span>
                         </button>
                         <button 
                           className={cn(
@@ -1309,7 +1299,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           )}>
                             <Crop className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Crop</span>
+                          <span className="text-xs mt-1">{t('wizard:mediaUpload.crop')}</span>
                         </button>
                       </>
                     )}
@@ -1326,7 +1316,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       )}>
                         <Type className="h-5 w-5" />
                       </div>
-                      <span className="text-xs mt-1">Text</span>
+                      <span className="text-xs mt-1">{t('wizard:mediaUpload.text')}</span>
                     </button>
                     <button 
                       className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
@@ -1335,7 +1325,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                         <RefreshCw className="h-5 w-5" />
                       </div>
-                      <span className="text-xs mt-1">Reset</span>
+                      <span className="text-xs mt-1">{t('wizard:mediaUpload.reset')}</span>
                     </button>
                     <button 
                       className={`text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center ${isLoading.saving ? 'opacity-70' : ''}`}
@@ -1349,7 +1339,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <Check className="h-5 w-5" />
                         )}
                       </div>
-                      <span className="text-xs mt-1">{isLoading.saving ? 'Saving...' : 'Save'}</span>
+                      <span className="text-xs mt-1">{isLoading.saving ? t('common:buttons.saving') : t('common:buttons.save')}</span>
                     </button>
                   </div>
                 </div>
@@ -1359,11 +1349,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 <div className="text-gray-400 dark:text-gray-600 max-w-xs">
                   <div className="mx-auto w-24 h-24 mb-4 opacity-30">
                     <img src="/placeholder.svg" alt="No media selected" className="w-full h-full" />
-                  </div>
-                  <h3 className="text-gray-600 dark:text-gray-400 font-medium mb-2">Media Preview</h3>
+                  </div>                  <h3 className="text-gray-600 dark:text-gray-400 font-medium mb-2">{t('wizard:steps.step1.mediaPreview')}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Upload an image or video, or use your camera to capture a photo.
-                    Your media will appear here for editing.
+                    {t('wizard:mediaUpload.uploadInstruction')}
                   </p>
                 </div>
               </div>

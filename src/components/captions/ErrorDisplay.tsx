@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import UpgradeBanner from '../UpgradeBanner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorDisplayProps {
   error: string;
@@ -15,8 +16,10 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   error,
   onTryAgainClick
 }) => {
+  const { t } = useTranslation(['common', 'wizard']);
+  
   const handleTryAgain = () => {
-    toast.info("Attempting to generate captions again...");
+    toast.info(t('wizard:captions.generatingAgain', "Attempting to generate captions again..."));
     onTryAgainClick();
   };
 
@@ -39,14 +42,14 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       <div className="bg-red-50 dark:bg-red-900/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
         <AlertCircle className="h-8 w-8 text-red-500 dark:text-red-400" />
       </div>
-      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">Generation Failed</h3>
+      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">{t('wizard:errors.generationFailed', 'Generation Failed')}</h3>
       <p className="text-adaptive-secondary mb-4 max-w-md">{error}</p>
       {isCorsError && (
         <Alert variant="destructive" className="mb-4 max-w-md">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Connection Error</AlertTitle>
+          <AlertTitle>{t('wizard:errors.connectionError', 'Connection Error')}</AlertTitle>
           <AlertDescription>
-            This often happens due to browser security settings. Try using a different browser or refreshing the page.
+            {t('wizard:errors.corsHint', 'This often happens due to browser security settings. Try using a different browser or refreshing the page.')}
           </AlertDescription>
         </Alert>
       )}
@@ -55,14 +58,14 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           variant="outline"
           onClick={() => window.location.reload()}
         >
-          Refresh Page
+          {t('common.refreshPage', 'Refresh Page')}
         </Button>
         <Button
           onClick={handleTryAgain}
           className="flex items-center gap-2"
         >
           <RefreshCw className="h-4 w-4" />
-          Try Again
+          {t('common.tryAgain', 'Try Again')}
         </Button>
       </div>
     </div>

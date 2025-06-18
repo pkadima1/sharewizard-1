@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { createSubscriptionCheckout, createFlexCheckout } from '@/lib/stripe';
 import { createEnhancedSubscriptionCheckout, createEnhancedFlexCheckout } from '@/lib/checkoutEnhancements';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const Pricing: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation('pricing');
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
   }>({});  const handlePurchase = async (plan: string, priceId: string) => {

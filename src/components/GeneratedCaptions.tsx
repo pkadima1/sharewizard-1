@@ -5,7 +5,7 @@ import { Type } from 'lucide-react';
 import { useCaptionGeneration } from '@/hooks/useCaptionGeneration';
 import useMediaType from '@/hooks/useMediaType';
 import CaptionsList from './captions/CaptionsList';
-import CaptionEditor from './captions/CaptionEditor';
+import { CaptionEditor } from './captions/CaptionEditor';
 import CaptionSharingActions from './captions/CaptionSharingActions';
 import CaptionPreview from './captions/CaptionPreview';
 import ErrorDisplay from './captions/ErrorDisplay';
@@ -13,6 +13,7 @@ import GenerationLoading from './captions/GenerationLoading';
 import EmptyState from './captions/EmptyState';
 import { TextOverlayEditor } from './TextOverlayEditor';
 import { DraggableTextOverlay } from './DraggableTextOverlay';
+import { useTranslation } from 'react-i18next';
 
 interface GeneratedCaptionsProps {
   selectedMedia: File | null;
@@ -43,6 +44,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   onCaptionOverlayModeChange,
   postIdea
 }) => {
+  const { t } = useTranslation(['common', 'wizard']);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -142,11 +144,11 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-adaptive-primary">Choose Your Caption</h2>
+        <h2 className="text-xl font-semibold text-adaptive-primary">{t('wizard:captions.selectCaption', 'Choose Your Caption')}</h2>
         <div className="flex items-center gap-4">
           {requestsRemaining !== null && (
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {requestsRemaining} requests remaining
+              {t('wizard:captions.requestsRemaining', '{{count}} requests remaining', { count: requestsRemaining })}
             </span>
           )}
           <Button 
@@ -154,7 +156,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
             size="sm"
             onClick={handleRegenerateClick}
           >
-            Regenerate
+            {t('wizard:captions.regenerate', 'Regenerate')}
           </Button>
         </div>
       </div>
@@ -176,7 +178,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-3"
               >
                 <Type className="h-4 w-4" />
-                Add Custom Text
+                {t('wizard:captions.addCustomText', 'Add Custom Text')}
               </Button>
             </div>
           )}
@@ -188,7 +190,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
             {captions.length > 0 && selectedCaption >= 0 && (
               <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-medium text-gray-900 dark:text-white">Preview</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-white">{t('wizard:captions.preview', 'Preview')}</h3>
                 </div>
                 <div ref={mediaContainerRef} className="relative">
                   <CaptionPreview 
@@ -263,7 +265,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                 {customTextOverlay.text && !isTextOnly && (
                   <div className="mt-4 flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Show generated caption with custom text
+                      {t('wizard:captions.showGeneratedWithCustom', 'Show generated caption with custom text')}
                     </span>
                     <Switch
                       checked={showCaptionWithCustomText}

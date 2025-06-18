@@ -5,6 +5,7 @@ import { Share, Instagram, Facebook, Twitter, Linkedin, Youtube, Music } from 'l
 import { toast } from "sonner";
 import { shareToPlatform } from '@/utils/socialMediaUtils';
 import { MediaType } from '@/types/mediaTypes';
+import { useTranslation } from 'react-i18next';
 
 interface SocialSharingProps {
   isEditing: boolean;
@@ -74,10 +75,11 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
   const selectedPlatformDetails = selectedPlatform && platforms[selectedPlatform as keyof typeof platforms] 
     ? platforms[selectedPlatform as keyof typeof platforms] 
     : null;
-
+  const { t } = useTranslation(['common', 'wizard']);
+  
   return (
     <div className="space-y-3">
-      <h2 className="font-medium dark:text-white">Download to Share to prefered Social Media Platform </h2>
+      <h2 className="font-medium dark:text-white">{t('wizard:captions.downloadToShare', 'Download to Share to preferred Social Media Platform')}</h2>
         {/* Selected platform share button - prominently displayed if a platform is selected */}      {selectedPlatformDetails && (
         <Button
           className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
@@ -89,7 +91,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
           ) : (
             <selectedPlatformDetails.icon className="h-4 w-4 mr-2" />
           )}
-          Share to {selectedPlatformDetails.name}
+          {t('common:share', 'Share')} {t('common:general.to', 'to')} {selectedPlatformDetails.name}
         </Button>
       )}
       
@@ -104,7 +106,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
         ) : (
           <Share className="h-4 w-4 mr-2" />
         )}
-        Direct Share via Browser (WhatsApp, Telegram, etc.)
+        {t('wizard:captions.directShareBrowser', 'Direct Share via Browser (WhatsApp, Telegram, etc.)')}
       </Button>
       
       {/* ====================commented out for now until full SM platforms integration============*/}

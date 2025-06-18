@@ -1,0 +1,88 @@
+{
+  "title": "Simple, Transparent Pricing",
+  "subtitle": "Choose the plan that's right for you",
+  "trialOffer": "Start with a 5-day Free Trial",
+  "trialDescription": "Experience the power of AI content generation. Cancel anytime during the trial to avoid charges.",
+  "startTrial": "Start Your Free Trial",
+  "plans": {
+    "free": {
+      "name": "Free Plan",
+      "price": "£0",
+      "description": "Feel the Experience",
+      "features": [
+        "3 free requests",
+        "Manual share support", 
+        "Post ideas and captions (image only support)"
+      ]
+    },
+    "basic": {
+      "name": "Basic Plan",
+      "monthly": {
+        "price": "£2.99",
+        "originalPrice": "£5.99",
+        "discount": "for 1st month (-49.9%)",
+        "period": "then £5.99/month"
+      },
+      "yearly": {
+        "price": "£29.99",
+        "period": "per year",
+        "discount": "save 58%"
+      },
+      "description": "Perfect for individuals and small creators",
+      "features": [
+        "5 days free trial (cancel anytime before 5 days to avoid charge)",
+        "70 requests/month",
+        "AI captions",
+        "Image-only support", 
+        "Mobile-friendly ready to post preview & download",
+        "Support for text or image captions",
+        "Share-ready for WhatsApp, Instagram, Telegram & more",
+        "Manual sharing on social media platforms",
+        "Friendly customer support"
+      ],
+      "yearlyFeatures": [
+        "900 requests/year",
+        "All monthly features",
+        "Priority support"
+      ]
+    },
+    "flexy": {
+      "name": "Flex Add-On",
+      "price": "£1.99",
+      "period": "per pack",
+      "description": "Pay as you go",
+      "features": [
+        "20 extra requests",
+        "No subscription needed",
+        "Use with any plan",
+        "Never expires"
+      ]
+    }
+  },
+  "allPlansInclude": "All Paid Plans Include",
+  "includedFeatures": [
+    "Tailored AI-generated captions (niche, tone, platform, goal)",
+    "Caption preview & share-ready formatting", 
+    "Web & mobile optimized",
+    "Optional add-ons for scaling content"
+  ],
+  "vatIncluded": "VAT included in all prices",
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "whatIsIncluded": "What's included in the free trial?",
+      "howDoesPricingWork": "How does EngagePerfect discount work?",
+      "whatIsFlex": "What is Flex Plan, and how does it work?",
+      "canICancel": "Can I cancel at any time?",
+      "differenceBasicPremium": "What's the difference between Basic and Premium plans?",
+      "bulkDiscount": "Do you offer refunds?"
+    }
+  },
+  "readyToStart": "Ready to get started?",
+  "readyDescription": "Join thousands of content creators who use EngagePerfect to create amazing content every day.",
+  "buttons": {
+    "startFreeTrial": "Start Your Free Trial Today",
+    "upgradeToPremium": "Upgrade to Premium",
+    "buyFlex": "Buy Flex Pack"
+  }
+}

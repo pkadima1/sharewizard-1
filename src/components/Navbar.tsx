@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, Menu, X, Bell, User, ChevronDown, Shield } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +23,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t, i18n } = useTranslation('common');
   // Check if user is admin
   const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
                  currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
@@ -85,8 +88,7 @@ const Navbar: React.FC = () => {
                   ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
                   : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
-            >
-              Home
+            >              {t('nav.home')}
             </Link>
             <Link 
               to="/pricing" 
@@ -96,8 +98,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Pricing
-            </Link>            <Link 
+              {t('nav.pricing')}            </Link>            <Link 
               to="/caption-generator" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/caption-generator') 
@@ -105,9 +106,8 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Caption Generator
-            </Link>
-            <Link 
+              {t('nav.caption_generator', 'Caption Generator')}
+            </Link>            <Link 
               to="/longform" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/longform') 
@@ -115,7 +115,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Blog Wizard
+              {t('nav.blog_wizard', 'Blog Wizard')}
             </Link>
             <Link 
               to="/features" 
@@ -136,10 +136,12 @@ const Navbar: React.FC = () => {
               }`}
             >
              {/* Blog*/}
-            </Link>
-          </nav>
-          
-          <div className="flex items-center space-x-4">
+            </Link>          </nav>          <div className="flex items-center space-x-4">
+            {/* Language Switcher */}
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
+            
             {/* Auth Actions */}
             {currentUser ? (
               <div className="flex items-center space-x-3">
@@ -216,13 +218,13 @@ const Navbar: React.FC = () => {
                   to="/login"
                   className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Link to="/signup">
                   <Button 
                     className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded-md transition-colors duration-200"
                   >
-                    Sign Up
+                    {t('nav.signup')}
                   </Button>
                 </Link>
               </div>
@@ -251,7 +253,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Home
+                {t('nav.home')}
               </Link>
               <Link 
                 to="/pricing" 
@@ -262,7 +264,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Pricing
+                {t('nav.pricing')}
               </Link>              <Link 
                 to="/caption-generator" 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -272,7 +274,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Caption Generator
+                {t('nav.caption_generator', 'Caption Generator')}
               </Link>
               <Link 
                 to="/longform" 
@@ -283,7 +285,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Blog Wizard
+                {t('nav.blog_wizard', 'Blog Wizard')}
               </Link>
               <Link 
                 to="/features" 
@@ -342,10 +344,17 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center">
                       <LogOut size={18} className="mr-2" />
                       Log out
-                    </div>
-                  </button>
+                    </div>                  </button>
                 </>
-              )}
+              )}              {/* Language Switcher for Mobile */}
+              <div className="px-3 py-4 mt-2 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex flex-col">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Language</p>
+                  <div className="flex">
+                    <LanguageSwitcher isMobile={true} />
+                  </div>
+                </div>
+              </div>
             </nav>
           </div>
         )}

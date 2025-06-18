@@ -2,6 +2,7 @@
 import React from 'react';
 import { TrendingUp, DollarSign, Flame, BookOpen, Target, Users, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 // Define the content goals with their properties
 const CONTENT_GOALS = [
@@ -84,19 +85,19 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
 }) => {
   // Get selected goal details for the info box
   const selectedGoalDetails = CONTENT_GOALS.find(goal => goal.id === selectedGoal);
+  const { t } = useTranslation(['wizard', 'common']);
 
   // Sort goals by priority
   const sortedGoals = [...CONTENT_GOALS].sort((a, b) => a.priority - b.priority);
 
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
-      {/* Heading and description */}
-      <div className="text-center mb-6">
+      {/* Heading and description */}      <div className="text-center mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          What's the Goal of Your Content?
+          {t('wizard:steps.step4.title')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-          Select the primary goal for your content. AI will generate captions optimized for this purpose.
+          {t('wizard:steps.step4.description')}
         </p>
       </div>
 
@@ -122,18 +123,16 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
                 <div className="bg-white/20 rounded-lg p-2.5 backdrop-blur-sm">
                   <goal.icon className="w-5 h-5" />
                 </div>
-                
-                {selectedGoal === goal.id && (
+                  {selectedGoal === goal.id && (
                   <div className="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
-                    Selected
+                    {t('common:selected')}
                   </div>
                 )}
               </div>
               
               {/* Goal title and description */}
-              <div>
-                <h3 className="text-lg font-semibold">{goal.title}</h3>
-                <p className="text-sm text-white/90 mt-1 line-clamp-2">{goal.description}</p>
+              <div>                <h3 className="text-lg font-semibold">{t(`wizard:steps.step4.${goal.id.replace('-', '')}`)}</h3>
+                <p className="text-sm text-white/90 mt-1 line-clamp-2">{t(`wizard:goal.descriptions.${goal.id.replace('-', '')}`, {defaultValue: goal.description})}</p>
               </div>
             </div>
           </button>
@@ -150,33 +149,30 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
             <selectedGoalDetails.icon className="w-6 h-6 text-white" />
           </div>
           
-          <div className="space-y-2 flex-1">
-            <h3 className="text-blue-300 font-medium flex items-center">
+          <div className="space-y-2 flex-1">            <h3 className="text-blue-300 font-medium flex items-center">
               <Info className="w-4 h-4 mr-1.5" />
-              Goal Strategy: {selectedGoalDetails.title}
+              {t('wizard:goal.strategy')}: {t(`wizard:steps.step4.${selectedGoalDetails.id.replace('-', '')}`)}
             </h3>
             
-            <div className="space-y-3">
-              <p className="text-sm text-gray-300">
-                Your captions will be optimized for <span className="text-white font-medium">{selectedGoalDetails.title.toLowerCase()}</span>. 
-                This type of content is <span className="text-blue-200">best for {selectedGoalDetails.bestFor.toLowerCase()}</span>.
+            <div className="space-y-3">              <p className="text-sm text-gray-300">
+                {t('wizard:goal.optimizedFor')} <span className="text-white font-medium">{t(`wizard:steps.step4.${selectedGoalDetails.id.replace('-', '')}`).toLowerCase()}</span>. 
+                {t('wizard:goal.bestForPrefix')} <span className="text-blue-200">{t(`wizard:goal.bestForTypes.${selectedGoalDetails.id.replace('-', '')}`, {defaultValue: selectedGoalDetails.bestFor})}</span>.
               </p>
               
               <div className="text-xs text-gray-400 bg-blue-950/50 p-3 rounded-lg">
-                <span className="text-blue-300 font-medium block mb-1">Content Examples:</span>
-                {selectedGoalDetails.examples}
+                <span className="text-blue-300 font-medium block mb-1">{t('wizard:goal.contentExamples')}:</span>
+                {t(`wizard:goal.examples.${selectedGoalDetails.id.replace('-', '')}`, {defaultValue: selectedGoalDetails.examples})}
               </div>
             </div>
           </div>
         </div>
       )}
       
-      {/* Tip box for better guidance */}
-      <div className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg mt-2">
+      {/* Tip box for better guidance */}      <div className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800/50 p-3 rounded-lg mt-2">
         <p className="flex items-start">
           <Info className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
           <span>
-            <span className="font-medium text-gray-700 dark:text-gray-300">Tip:</span> Focusing on one primary goal helps create more effective and targeted content. You can always change this for future posts.
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t('common:tip')}:</span> {t('wizard:goal.tipText')}
           </span>
         </p>
       </div>

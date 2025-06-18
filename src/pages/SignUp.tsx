@@ -6,8 +6,10 @@ import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useTranslation } from 'react-i18next';
 
 const SignUp: React.FC = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -125,11 +127,11 @@ const SignUp: React.FC = () => {
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
               />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Create an account</h2>
+              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('auth:create_account')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{' '}
+                {t('auth:already_have_account')}{' '}
                 <Link to="/login" className="font-medium text-primary hover:text-primary/90">
-                  Sign in
+                  {t('auth:sign_in')}
                 </Link>
               </p>
             </div>
@@ -138,7 +140,7 @@ const SignUp: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Username
+                    {t('auth:username')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -151,7 +153,7 @@ const SignUp: React.FC = () => {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Your username"
+                      placeholder={t('auth:your_username')}
                     />
                   </div>
                   {errors.username && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.username}</p>}
@@ -159,7 +161,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                    {t('auth:email_address')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -180,7 +182,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
+                    {t('auth:password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -193,7 +195,7 @@ const SignUp: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Create a strong password"
+                      placeholder={t('auth:create_strong_password')}
                     />
                     <button
                       type="button"
@@ -212,7 +214,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Confirm Password
+                    {t('auth:confirm_password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -225,7 +227,7 @@ const SignUp: React.FC = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Confirm your password"
+                      placeholder={t('auth:confirm_your_password')}
                     />
                     <button
                       type="button"
@@ -254,13 +256,13 @@ const SignUp: React.FC = () => {
                     />
                   </div>
                   <div className="ml-3 text-sm">                    <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300">
-                      I agree to the{' '}
+                      {t('auth:i_agree_to')}{' '}
                       <Link to="/terms" className="text-primary hover:text-primary/90">
-                        Terms of Service
+                        {t('auth:terms_of_service')}
                       </Link>{' '}
-                      and{' '}
+                      {t('auth:and')}{' '}
                       <Link to="/privacy" className="text-primary hover:text-primary/90">
-                        Privacy Policy
+                        {t('auth:privacy_policy')}
                       </Link>
                     </label>
                     {errors.terms && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.terms}</p>}
@@ -273,7 +275,7 @@ const SignUp: React.FC = () => {
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Creating account...' : 'Sign up'}
+                    {loading ? t('auth:creating_account') : t('auth:sign_up')}
                   </button>
                 </div>
               </form>
@@ -284,7 +286,7 @@ const SignUp: React.FC = () => {
                     <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">Or continue with</span>
+                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">{t('auth:or_continue_with')}</span>
                   </div>
                 </div>
 
@@ -300,7 +302,7 @@ const SignUp: React.FC = () => {
                         d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z"
                       />
                     </svg>
-                    Continue with Google
+                    {t('auth:continue_with_google')}
                   </button>
                 </div>
               </div>

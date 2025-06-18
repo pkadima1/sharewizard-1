@@ -1,0 +1,139 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord", 
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "caption_generator": "Générateur de Légendes",
+    "blog_wizard": "Contenu Long-forme",
+    "logout": "Déconnexion"
+  },  
+  "wizard": {
+    "step1": "Télécharger un Média",
+    "step2": "Sélectionner une Niche", 
+    "step3": "Plateforme",
+    "step4": "Objectif",
+    "step5": "Ton",
+    "step6": "Légendes Générées",
+    "step": "Étape",
+    "of": "sur",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "generate": "Générer des Légendes",
+    "save": "Enregistrer",
+    "reset": "Réinitialiser",
+    "loading": "Génération en cours...",
+    "progress": "Progression"
+  },
+  "buttons": {
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "tryFree": "Essayer gratuitement",
+    "upgrade": "Mettre à niveau",
+    "subscribe": "S'abonner",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "share": "Partager",
+    "download": "Télécharger",
+    "copy": "Copier",
+    "close": "Fermer",
+    "back": "Retour",
+    "continue": "Continuer",
+    "finish": "Terminer"
+  },
+  "quickExport": "Export rapide",
+  "selected": "Sélectionné",
+  "characterLimit": "Limite de caractères",
+  "bestFor": "Idéal pour",
+  "noInformation": "Aucune information disponible",
+  "back": "Retour",
+  "close": "Fermer",
+  "quickTips": "Conseils Rapides",
+  "upload": "Télécharger",
+  "capture": "Capturer",
+  "edit": "Modifier",
+  "drag": "Glisser",
+  "save": "Enregistrer",
+  "tip": "Conseil",
+  "characters": "caractères",
+  "share": "Partager",
+  "download": "Télécharger",
+  "preview": "Aperçu",
+  "refreshPage": "Actualiser la Page",
+  "tryAgain": "Réessayer",
+  "errors": {
+    "maxCharacters": "Maximum {{max}} caractères autorisés"
+  },
+  "status": {
+    "loading": "Chargement...",
+    "saving": "Enregistrement...",
+    "success": "Succès !",
+    "error": "Erreur",
+    "completed": "Terminé",
+    "pending": "En attente",
+    "failed": "Échec"
+  },
+  "time": {
+    "justNow": "À l'instant",
+    "minutesAgo": "Il y a {{count}} minutes",
+    "hoursAgo": "Il y a {{count}} heures",
+    "daysAgo": "Il y a {{count}} jours",
+    "weeksAgo": "Il y a {{count}} semaines"
+  },  "general": {
+    "welcome": "Bienvenue",
+    "or": "Ou",
+    "and": "Et", 
+    "all": "Tout",
+    "none": "Aucun",
+    "select": "Sélectionner",
+    "choose": "Choisir",
+    "upload": "Télécharger",
+    "preview": "Aperçu",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "account": "Compte",
+    "billing": "Facturation",
+    "support": "Support",
+    "help": "Aide",
+    "about": "À propos",
+    "contact": "Contact",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "to": "vers"
+  },
+  "sharing": {
+    "windows": {
+      "instagram": "Fenêtre de partage Instagram ouverte",
+      "twitter": "Fenêtre de partage Twitter ouverte",
+      "facebook": "Fenêtre de partage Facebook ouverte",
+      "linkedin": "Fenêtre de partage LinkedIn ouverte",
+      "tiktok": "Page de téléchargement TikTok ouverte",
+      "youtube": "YouTube Studio ouvert pour le téléchargement"
+    },
+    "success": {
+      "instagram": "Partagé sur Instagram avec succès",
+      "twitter": "Partagé sur Twitter avec succès",
+      "facebook": "Partagé sur Facebook avec succès",
+      "linkedin": "Partagé sur LinkedIn avec succès",
+      "tiktok": "Partagé sur TikTok avec succès",
+      "youtube": "Partagé sur YouTube avec succès"
+    },
+    "errors": {
+      "instagramCredentials": "Les identifiants de l'API Instagram ne sont pas configurés.",
+      "mediaRequired": "Une URL média est requise pour le partage Instagram",
+      "videoRequired": "Seules les vidéos peuvent être partagées sur YouTube",
+      "fetchFailed": "Échec de la récupération du média pour le partage",
+      "unknown": "Erreur de partage inconnue",
+      "unsupportedPlatform": "Plateforme non prise en charge : {{platform}}",
+      "unknownPlatform": "Erreur inconnue lors du partage sur {{platform}}"
+    },
+    "redirects": {
+      "tiktok": "Ouverture de TikTok. Veuillez y télécharger votre média.",
+      "youtube": "Ouverture de YouTube Studio. Veuillez y télécharger votre vidéo."
+    }
+  }
+}

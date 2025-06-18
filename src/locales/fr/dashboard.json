@@ -1,0 +1,68 @@
+{
+  "overview": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue, {{name}} !",
+    "subtitle": "Voici ce qui se passe avec votre contenu",
+    "stats": "Vos statistiques",
+    "recentShares": "Activité Récente", 
+    "popularContent": "Contenu Populaire",
+    "quickActions": "Actions Rapides"
+  },
+  "stats": {
+    "totalShares": "Total Généré",
+    "activeShares": "Publié", 
+    "totalViews": "Vues Totales",
+    "averageViews": "Temps de Lecture Moyen",
+    "requestsUsed": "Requêtes Utilisées",
+    "requestsRemaining": "Requêtes Restantes"
+  },
+  "content": {
+    "empty": "Aucun post trouvé",
+    "create": "Essayez d'ajuster vos filtres ou de créer du nouveau contenu",
+    "filter": "Filtrer le contenu",
+    "search": "Rechercher votre contenu", 
+    "sort": "Trier par",
+    "gridView": "Grille",
+    "listView": "Liste",
+    "hideFilters": "Masquer les Filtres",
+    "filterOptions": "Options de Filtre et Tri",
+    "allPlatforms": "Toutes les Plateformes",
+    "allGoals": "Tous les Objectifs",
+    "newestFirst": "Plus Récent d'Abord",
+    "longform": "Contenu long",
+    "captions": "Légendes"
+  },
+  "actions": {
+    "view": "Voir",
+    "edit": "Modifier", 
+    "delete": "Supprimer",
+    "share": "Partager",
+    "analytics": "Analytiques",
+    "duplicate": "Dupliquer",
+    "export": "Exporter"
+  },
+  "quickActions": {
+    "captionGenerator": "Générateur de Légendes IA",
+    "captionDesc": "Créer des légendes engageantes pour les réseaux sociaux avec l'IA",
+    "longformContent": "Contenu Long-forme", 
+    "longformDesc": "Générer des articles et guides complets avec l'IA",
+    "generateCaptions": "Générer des Légendes",
+    "viewMyContent": "Voir Mon Contenu"
+  },
+  "subscription": {
+    "currentPlan": "Plan Actuel : {{plan}}",
+    "memberSince": "Membre Depuis",
+    "subscriptionPlan": "Plan d'Abonnement",
+    "usageStatistics": "Statistiques d'Utilisation",
+    "requestUsage": "Utilisation des Requêtes",
+    "upgradePrompt": "Choisissez un plan et commencez votre essai gratuit de 5 jours",
+    "startTrial": "Commencer l'Essai Gratuit de 5 Jours"
+  },
+  "activity": {
+    "generated": "Généré",
+    "posted": "Publié", 
+    "favorites": "Favoris",
+    "noActivity": "Aucune activité récente",
+    "createFirst": "Créez votre premier contenu pour voir l'activité ici"
+  }
+}

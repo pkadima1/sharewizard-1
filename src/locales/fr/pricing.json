@@ -1,0 +1,88 @@
+{
+  "title": "Tarification Simple et Transparente",
+  "subtitle": "Choisissez le plan qui vous convient",
+  "trialOffer": "Commencez avec un Essai Gratuit de 5 Jours",
+  "trialDescription": "Découvrez la puissance de la génération de contenu IA. Annulez à tout moment pendant l'essai.",
+  "startTrial": "Commencer Votre Essai Gratuit",
+  "plans": {
+    "free": {
+      "name": "Plan Gratuit",
+      "price": "0€",
+      "description": "Ressentez l'Expérience",
+      "features": [
+        "3 requêtes gratuites",
+        "Support de partage manuel", 
+        "Idées de posts et légendes (support image uniquement)"
+      ]
+    },
+    "basic": {
+      "name": "Plan Basique",
+      "monthly": {
+        "price": "2,99€",
+        "originalPrice": "5,99€",
+        "discount": "pour le 1er mois (-49,9%)",
+        "period": "puis 5,99€/mois"
+      },
+      "yearly": {
+        "price": "29,99€",
+        "period": "par an",
+        "discount": "économisez 58%"
+      },
+      "description": "Parfait pour les particuliers et petits créateurs",
+      "features": [
+        "Essai gratuit de 5 jours (annulez avant 5 jours pour éviter les frais)",
+        "70 requêtes/mois",
+        "Légendes IA",
+        "Support image uniquement", 
+        "Aperçu mobile-friendly prêt à publier & télécharger",
+        "Support pour légendes texte ou image",
+        "Prêt à partager pour WhatsApp, Instagram, Telegram & plus",
+        "Partage manuel sur les plateformes de réseaux sociaux",
+        "Support client amical"
+      ],
+      "yearlyFeatures": [
+        "900 requêtes/an",
+        "Toutes les fonctionnalités mensuelles",
+        "Support prioritaire"
+      ]
+    },
+    "flexy": {
+      "name": "Extension Flex",
+      "price": "1,99€",
+      "period": "par pack",
+      "description": "Payez selon votre utilisation",
+      "features": [
+        "20 requêtes supplémentaires",
+        "Aucun abonnement nécessaire",
+        "À utiliser avec tout plan",
+        "N'expire jamais"
+      ]
+    }
+  },
+  "allPlansInclude": "Tous les Plans Payants Incluent",
+  "includedFeatures": [
+    "Légendes IA personnalisées (niche, ton, plateforme, objectif)",
+    "Aperçu de légende & formatage prêt à partager", 
+    "Optimisé web & mobile",
+    "Extensions optionnelles pour faire évoluer le contenu"
+  ],
+  "vatIncluded": "TVA incluse dans tous les prix",
+  "faq": {
+    "title": "Questions Fréquemment Posées",
+    "questions": {
+      "whatIsIncluded": "Qu'est-ce qui est inclus dans l'essai gratuit ?",
+      "howDoesPricingWork": "Comment fonctionne la remise EngagePerfect ?",
+      "whatIsFlex": "Qu'est-ce que le Plan Flex et comment ça marche ?",
+      "canICancel": "Puis-je annuler à tout moment ?",
+      "differenceBasicPremium": "Quelle est la différence entre les plans Basique et Premium ?",
+      "bulkDiscount": "Offrez-vous des remboursements ?"
+    }
+  },
+  "readyToStart": "Prêt à commencer ?",
+  "readyDescription": "Rejoignez des milliers de créateurs de contenu qui utilisent EngagePerfect chaque jour.",
+  "buttons": {
+    "startFreeTrial": "Commencer Votre Essai Gratuit Aujourd'hui",
+    "upgradeToPremium": "Passer à Premium",
+    "buyFlex": "Acheter un Pack Flex"
+  }
+}

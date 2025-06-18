@@ -1,8 +1,9 @@
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
+import LanguageRedirect from './components/LanguageRedirect';
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
@@ -27,13 +28,34 @@ const RouterConfig = () => {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          <ErrorBoundary>
+        <div className="flex flex-col min-h-screen">          <ErrorBoundary>
+            <LanguageRedirect />
             <Navbar />
           </ErrorBoundary>
           <main className="flex-grow main-container">
             <ErrorBoundary>
               <Routes>
+                {/* Routes with language prefix */}
+                <Route path="/:lang">
+                  <Route index element={<Index />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="signup" element={<SignUp />} />
+                  <Route path="forgot-password" element={<ForgotPassword />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="pricing" element={<Pricing />} />
+                  <Route path="caption-generator" element={<CaptionGenerator />} />
+                  <Route path="terms" element={<TermsAndConditions />} />
+                  <Route path="privacy" element={<PrivacyPolicy />} />
+                  <Route path="preview-repost" element={<PreviewRepost />} />
+                  <Route path="longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
+                  
+                  {/* Admin routes with language prefix */}
+                  <Route path="admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+                
+                {/* Default routes without language prefix */}
                 <Route path="/" element={<Index />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
@@ -44,8 +66,9 @@ const RouterConfig = () => {
                 <Route path="/caption-generator" element={<CaptionGenerator />} />
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/preview-repost" element={<PreviewRepost />} />                <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
-                
+                <Route path="/preview-repost" element={<PreviewRepost />} />                
+                <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
+                  
                 {/* Admin routes */}
                 <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
                 

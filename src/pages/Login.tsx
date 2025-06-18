@@ -6,8 +6,10 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useTranslation } from 'react-i18next';
 
 const Login: React.FC = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,13 +32,12 @@ const Login: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      if (!email.trim()) {
+      newErrors.email = t('auth:errors.requiredField');
     }
     
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth:errors.requiredField');
     }
     
     setErrors(newErrors);
@@ -65,25 +66,24 @@ const Login: React.FC = () => {
         description: "Welcome back to EngagePerfect AI",
         variant: "default",
       });
-      navigate('/caption-generator');
-    } catch (error: any) {
-      let errorMessage = "Failed to sign in.";
+      navigate('/caption-generator');    } catch (error: any) {
+      let errorMessage = t('auth:login.failedSignIn', "Failed to sign in.");
       let shouldRedirectToSignup = false;
       
       if (error.code === 'auth/user-not-found') {
-        errorMessage = "Account not found. Please sign up first.";
+        errorMessage = t('auth:login.accountNotFound', "Account not found. Please sign up first.");
         shouldRedirectToSignup = true;
       } else if (error.code === 'auth/wrong-password') {
-        errorMessage = "Incorrect password.";
+        errorMessage = t('auth:login.incorrectPassword', "Incorrect password.");
       } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = "Too many failed login attempts. Please try again later.";
+        errorMessage = t('auth:login.tooManyAttempts', "Too many failed login attempts. Please try again later.");
       } else if (error.message && error.message.includes("Please sign up first")) {
-        errorMessage = "Account not found. Please sign up first.";
+        errorMessage = t('auth:login.accountNotFound', "Account not found. Please sign up first.");
         shouldRedirectToSignup = true;
       }
       
       toast({
-        title: "Error",
+        title: t('common:error', "Error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -141,17 +141,15 @@ const Login: React.FC = () => {
       <div className="flex min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="w-full max-w-md mx-auto lg:w-96">
-            <div className="flex flex-col items-center">
-              <img 
+            <div className="flex flex-col items-center">              <img 
                 src="/lovable-uploads/23327aae-0892-407a-a483-66a3aff1f9e7.png" 
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
-              />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Sign in to your account</h2>
+              />              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('auth:login.title')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account?{' '}
+                {t('auth:login.noAccount')}{' '}
                 <Link to="/signup" className="font-medium text-primary hover:text-primary/90">
-                  Create an account
+                  {t('auth:login.signUp')}
                 </Link>
               </p>
             </div>
@@ -160,7 +158,7 @@ const Login: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                    {t('auth.email')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -171,9 +169,8 @@ const Login: React.FC = () => {
                       name="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="you@example.com"
+                      onChange={(e) => setEmail(e.target.value)}                      className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                      placeholder={t('auth:login.email')}
                     />
                   </div>
                   {errors.email && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email}</p>}
@@ -181,7 +178,7 @@ const Login: React.FC = () => {
 
                 <div>
                   <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
+                    {t('auth:login.password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -192,9 +189,8 @@ const Login: React.FC = () => {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Your password"
+                      onChange={(e) => setPassword(e.target.value)}                      className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                      placeholder={t('auth:login.password')}
                     />
                     <button
                       type="button"
@@ -220,26 +216,23 @@ const Login: React.FC = () => {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-4 h-4 border-gray-300 rounded text-primary focus:ring-primary dark:border-gray-700 dark:bg-gray-800"
-                    />
-                    <label htmlFor="remember-me" className="block ml-2 text-sm text-gray-700 dark:text-gray-300">
-                      Remember me
+                    />                    <label htmlFor="remember-me" className="block ml-2 text-sm text-gray-700 dark:text-gray-300">
+                      {t('auth:login.rememberMe')}
                     </label>
                   </div>
 
                   <div className="text-sm">
                     <Link to="/forgot-password" className="font-medium text-primary hover:text-primary/90">
-                      Forgot your password?
+                      {t('auth:login.forgotPassword')}
                     </Link>
                   </div>
-                </div>
-
-                <div>
+                </div>                <div>
                   <button
                     type="submit"
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Signing in...' : 'Sign in'}
+                    {loading ? 'Signing in...' : t('auth:login.submit')}
                   </button>
                 </div>
               </form>

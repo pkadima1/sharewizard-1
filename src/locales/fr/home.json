@@ -1,0 +1,41 @@
+{
+  "hero": {
+    "title": "Contenu IA Humain Qui Engage Vraiment!",
+    "subtitle": "Créez du contenu convaincant pour votre audience et plateforme avec une IA avancée qui comprend le contexte.",
+    "cta": "Essayer Gratuitement",
+    "secondaryCta": "Voir Comment Ça Marche"
+  },
+  "features": {
+    "title": "Voyez Ce Que Vous Pouvez Créer",
+    "subtitle": "Du Contenu Qui Sonne Comme Vous, Pas Comme l'IA",
+    "humanLikeContent": {
+      "title": "Contenu Humain",
+      "description": "Générez du contenu qui sonne naturel et authentique, pas robotique ou générique."
+    },
+    "contextAware": {
+      "title": "Idées Contextuelles", 
+      "description": "IA qui comprend votre secteur, audience et objectifs pour créer du contenu pertinent."
+    },
+    "multipleFormats": {
+      "title": "Formats de Contenu Multiples",
+      "description": "Des légendes de réseaux sociaux aux articles longs, créez du contenu pour toute plateforme."
+    },
+    "seoOptimization": {
+      "title": "Optimisation SEO & CRO",
+      "description": "Contenu optimisé pour les moteurs de recherche et taux de conversion pour maximiser votre portée."
+    },
+    "instantGeneration": {
+      "title": "Génération Instantanée",
+      "description": "Créez du contenu de haute qualité en secondes, pas en heures. Parfait pour les créateurs occupés."
+    },
+    "crossPlatform": {
+      "title": "Compatibilité Multi-Plateforme", 
+      "description": "Générez du contenu optimisé pour toutes les principales plateformes de réseaux sociaux et blogs."
+    }
+  },
+  "cta": {
+    "title": "Prêt à Créer du Contenu Parfait ?",
+    "subtitle": "Commencez avec notre Générateur de Légendes et de Contenu Long-forme !",
+    "button": "Commencer Gratuitement"
+  }
+}

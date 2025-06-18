@@ -1,0 +1,30 @@
+{
+  "overview": {
+    "title": "Panel",
+    "welcome": "¡Bienvenido de nuevo, {{name}}!",
+    "stats": "Tus estadísticas",
+    "recentShares": "Compartidos recientes",
+    "popularContent": "Contenido popular"
+  },
+  "stats": {
+    "totalShares": "Total de compartidos",
+    "activeShares": "Compartidos activos",
+    "totalViews": "Total de vistas",
+    "averageViews": "Promedio de vistas por compartido"
+  },  "content": {
+    "empty": "Aún no has compartido ningún contenido",
+    "create": "Crea tu primer compartido",
+    "filter": "Filtrar contenido",
+    "search": "Buscar en tu contenido",
+    "sort": "Ordenar por",
+    "longform": "Contenido extenso",
+    "captions": "Subtítulos"
+  },
+  "actions": {
+    "view": "Ver",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "share": "Compartir",
+    "analytics": "Analíticas"
+  }
+}
