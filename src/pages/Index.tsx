@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 
 const Index = () => {
+  const { t } = useTranslation('home');
+  
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
@@ -16,12 +19,11 @@ const Index = () => {
           {/* Left Column - Text Content */}
           <div className="space-y-6">
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-              Human-Like AI Content<br />
-              That Truly <span className="text-blue-500">Engages</span>
+              {t('hero.title')}
             </h1>
             
             <p className="text-lg text-gray-300 max-w-lg">
-              Create captivating, personalized captions for your platforms and Long Form Content up to 2500 words SEO, EEAT, GEO optimized. No more generic AI-like text, perfect human-like writing.
+              {t('hero.subtitle')}
             </p>
             
             <div className="pt-4">
@@ -29,7 +31,7 @@ const Index = () => {
                 to="/caption-generator" 
                 className="inline-block px-8 py-3.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
               >
-                Go to Generator
+                {t('hero.cta')}
               </Link>
             </div>
           </div>
@@ -42,19 +44,16 @@ const Index = () => {
               </svg>
               <span className="font-semibold text-sm text-blue-500">EngagePerfect</span>
             </div>
-            
-            <p className="text-gray-300 mb-4">
-            "EngagePerfect AI created content that resonates with our audience far better than any AI tool we've used before."
+              <p className="text-gray-300 mb-4">
+              {t('testimonial.quote')}
             </p>
             
             <div className="mt-4 flex items-center gap-2">
               <div className="bg-blue-600 rounded-full h-8 w-8 flex items-center justify-center text-white text-xs">
                 RH
-              </div>
-              <div className="text-sm text-gray-400">
-              Robert Hodgson<br />
-
-                Marketing Director
+              </div>              <div className="text-sm text-gray-400">
+                {t('testimonial.name')}<br />
+                {t('testimonial.title')}
               </div>
             </div>
           </div>
@@ -64,7 +63,7 @@ const Index = () => {
       {/* Instagram Post Preview Mockup */}
       <section className="container mx-auto px-4 sm:px-6 py-12 max-w-6xl">
         <div className="bg-gray-900/60 backdrop-blur-sm py-10 px-4 rounded-2xl border border-gray-800">
-          <h3 className="text-center text-2xl font-semibold mb-8 text-white">See What You Can Create</h3>
+          <h3 className="text-center text-2xl font-semibold mb-8 text-white">{t('features.title')}</h3>
           
           <div className="mx-auto max-w-sm shadow-2xl rounded-xl overflow-hidden border border-gray-800">
             {/* Instagram Post Header */}
@@ -86,27 +85,14 @@ const Index = () => {
                 </svg>
               </div>
             </div>
-            
-            {/* Instagram Post Image - Using the image from public folder */}
+              {/* Instagram Post Image - Image already contains text overlay */}
             <div className="relative">
               <img 
                 src="/EngagePerfectAI.png" 
                 alt="Woman by London Tower Bridge" 
                 className="w-full object-cover h-[400px]" 
               />
-              
-              {/* Overlay Text 
-              <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 to-transparent text-white">
-                <h2 className="text-2xl font-bold mb-2">Boost Your Influence with AI Magic!</h2>
-                <p className="text-sm">Discover how AI-driven human-like content can elevate your brand's presence on Instagram, TikTok, and other social platforms—engaging audiences like never before.</p>
-                <p className="mt-3 text-sm font-medium">Ready to revolutionize your content strategy? Try EngagePerfect now for free!</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="text-blue-400 text-sm">#AIGrowth</span>
-                  <span className="text-blue-400 text-sm">#DigitalInfluence</span>
-                  <span className="text-blue-400 text-sm">#ContentCreationMagic</span>
-                  <span className="text-blue-400 text-sm">#HumanLikeContent</span>
-                </div>
-              </div>*/}
+              {/* No additional text overlay - the image already has embedded text */}
             </div>
             
             {/* Instagram Post Footer */}
@@ -126,35 +112,31 @@ const Index = () => {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
                   <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-              </div>
-              <div className="text-white text-sm">
+              </div>              <div className="text-white text-sm">
                 <span className="font-semibold">Created with EngagePerfect</span> • <span className="text-gray-400">https://engageperfect.com</span>
               </div>
             </div>
           </div>
         </div>
       </section>
-      
-      {/* Features Section */}
+        {/* Features Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 max-w-6xl">
         <div className="text-center mb-12">
           <div className="inline-block px-3 py-1 rounded-full bg-blue-900/30 text-blue-400 text-xs font-medium mb-4">
-            Key Features
+            {t('features.title')}
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold">
-            Content That Sounds Like You, Not AI
-          </h2>
-          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-            Our advanced AI technology creates content with personality, tone, and style that feels genuine and engaging.
+            {t('features.subtitle')}
+          </h2>          <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+            {t('features.description')}
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Feature 1 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">          {/* Feature 1 */}
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Human-Like Content</h3>
+            <h3 className="text-lg font-semibold mb-3">{t('features.humanLikeContent.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Content that feels personalized and sounds like real people wrote it, not generic AI.
+              {t('features.humanLikeContent.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -162,10 +144,9 @@ const Index = () => {
           </div>
           
           {/* Feature 2 */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Consistent Brand Voice</h3>
+          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">            <h3 className="text-lg font-semibold mb-3">{t('features.contextAware.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Maintain your brand's unique voice across various platforms for stronger brand identity.
+              {t('features.contextAware.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -173,10 +154,9 @@ const Index = () => {
           </div>
           
           {/* Feature 3 */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Multiple Content!</h3>
+          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">            <h3 className="text-lg font-semibold mb-3">{t('features.multipleFormats.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Generate captions, social posts, Blog Posts, Research Articles, and more, with ease.
+              {t('features.multipleFormats.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -184,10 +164,9 @@ const Index = () => {
           </div>
           
           {/* Feature 4 */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">SEO, EEAT, GEO Optimization</h3>
+          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">            <h3 className="text-lg font-semibold mb-3">{t('features.seoOptimization.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Content optimized with search engines, EEAT principles, and GEO targeting in mind to help boost your visibility in the era of AI Search Engine.
+              {t('features.seoOptimization.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -195,10 +174,9 @@ const Index = () => {
           </div>
           
           {/* Feature 5 */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Fast Generation</h3>
+          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">            <h3 className="text-lg font-semibold mb-3">{t('features.instantGeneration.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Create high-quality content that emotionally connect with your brand, tone, style, industry  in seconds, not hours or days.
+              {t('features.instantGeneration.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -206,10 +184,9 @@ const Index = () => {
           </div>
           
           {/* Feature 6 */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">
-            <h3 className="text-lg font-semibold mb-3">Easy Customization</h3>
+          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 hover:border-blue-800 transition-colors">            <h3 className="text-lg font-semibold mb-3">{t('features.crossPlatform.title')}</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Tailor output with simple controls to get exactly what you need.
+              {t('features.crossPlatform.description')}
             </p>
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white text-lg">•</span>
@@ -217,23 +194,21 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
-      {/* CTA Section */}
+        {/* CTA Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 max-w-6xl">
         <div className="text-center space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold">
-            Ready to Create Perfect Content?
-            <br />Start With our Caption, SM Posts  and Long Form Content Generator!
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Join thousands of marketers and content creators using EngagePerfect AI.
+            {t('cta.title')}
+            <br />{t('cta.subtitle')}
+          </h2>          <p className="text-gray-400 max-w-2xl mx-auto">
+            {t('cta.description')}
           </p>
           <div className="pt-4">
             <Link 
               to="/caption-generator" 
               className="inline-block px-8 py-3.5 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
             >
-              Get Started for Free
+              {t('cta.button')}
             </Link>
           </div>
         </div>

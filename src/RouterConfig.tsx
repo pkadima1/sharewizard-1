@@ -17,62 +17,62 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Gallery from "./pages/Gallery";
 
 // Lazy-loaded test components (only in development)
 const TestLongformGeneration = lazy(() => 
   import('./components/tests/TestLongformGeneration')
 );
 
-const RouterConfig = () => {
-  return (
+const RouterConfig = () => {  return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          <ErrorBoundary>
-            <Navbar />
+      <div className="flex flex-col min-h-screen">
+        <ErrorBoundary>
+          <Navbar />
+        </ErrorBoundary>
+        <main className="flex-grow main-container">
+          <ErrorBoundary>            
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/caption-generator" element={<CaptionGenerator />} />
+              <Route path="/terms" element={<TermsAndConditions />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/preview-repost" element={<PreviewRepost />} />
+              <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
+              <Route path="/gallery" element={<Gallery />} />
+              
+              {/* Admin routes */}
+              <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+              
+              {/* Development-only testing routes */}
+              {import.meta.env.DEV && (
+                <Route 
+                  path="/test-longform" 
+                  element={
+                    <ErrorBoundary>
+                      <Suspense fallback={<div className="p-8 text-center">Loading test component...</div>}>
+                        <TestLongformGeneration />
+                      </Suspense>
+                    </ErrorBoundary>
+                  } 
+                />
+              )}
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </ErrorBoundary>
-          <main className="flex-grow main-container">
-            <ErrorBoundary>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/caption-generator" element={<CaptionGenerator />} />
-                <Route path="/terms" element={<TermsAndConditions />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/preview-repost" element={<PreviewRepost />} />                <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
-                
-                {/* Admin routes */}
-                <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
-                
-                {/* Development-only testing routes */}
-                {import.meta.env.DEV && (
-                  <Route 
-                    path="/test-longform" 
-                    element={
-                      <ErrorBoundary>
-                        <Suspense fallback={<div className="p-8 text-center">Loading test component...</div>}>
-                          <TestLongformGeneration />
-                        </Suspense>
-                      </ErrorBoundary>
-                    } 
-                  />
-                )}
-                
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </ErrorBoundary>
-          </main>
-          <ErrorBoundary>
-            <Footer />
-          </ErrorBoundary>
-        </div>
-      </BrowserRouter>
+        </main>
+        <ErrorBoundary>
+          <Footer />
+        </ErrorBoundary>
+      </div>
     </ErrorBoundary>
   );
 };

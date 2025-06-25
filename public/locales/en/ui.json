@@ -1,0 +1,55 @@
+{
+  "errors": {
+    "generationFailed": "Generation Failed",
+    "connectionError": "Connection Error",
+    "connectionErrorDescription": "This often happens due to browser security settings. Try using a different browser or refreshing the page.",
+    "maxCharacters": "Maximum 100 characters allowed",
+    "freeLimitReached": "You have used all your free requests",
+    "unauthorizedAccess": "Unauthorized access. Please log in.",
+    "serverError": "Server error. Please try again later."
+  },
+  "actions": {
+    "refreshPage": "Refresh Page",
+    "tryAgain": "Try Again",
+    "generatingAgain": "Attempting to generate captions again...",
+    "copiedToClipboard": "Copied to clipboard!",
+    "sharedTo": "Shared to {{platform}}!",
+    "savedToFavorites": "Saved to favorites!",
+    "saveToDrafts": "Saved to drafts!",
+    "uploadImage": "Upload Image",
+    "takePicture": "Take Picture",
+    "selectFile": "Select File"
+  },
+  "placeholders": {
+    "searchContent": "Search content...",
+    "customNiche": "Enter your custom niche...",
+    "typeMessage": "Type your message...",
+    "emailAddress": "your@email.com"
+  },
+  "notifications": {
+    "welcome": "Welcome to EngagePerfect!",
+    "loginSuccess": "Login successful!",
+    "logoutSuccess": "Logout successful!",
+    "passwordReset": "Password reset instructions sent to your email",
+    "accountCreated": "Account created successfully!",
+    "paymentSuccess": "Payment successful!",
+    "planUpgraded": "Plan upgraded successfully!",
+    "trialStarted": "Your free trial has started!"
+  },
+  "support": {
+    "contactUs": "Contact Us",
+    "sendMessage": "Send Message",
+    "supportTeam": "Support Team",
+    "faq": "FAQ",
+    "helpCenter": "Help Center",
+    "reportIssue": "Report Issue"
+  },
+  "mediaUpload": {
+    "dragDrop": "Drag and drop your files here",
+    "orClickToUpload": "or click to upload",
+    "fileTooBig": "File too large. Maximum size is {{size}}MB",
+    "unsupportedFormat": "Unsupported file format. Allowed formats: {{formats}}",
+    "uploadSuccess": "Upload successful!",
+    "uploadFailed": "Upload failed. Please try again."
+  }
+}

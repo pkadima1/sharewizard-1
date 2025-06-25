@@ -1,0 +1,92 @@
+{
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard", 
+    "pricing": "Pricing",
+    "login": "Login",
+    "signup": "Sign Up",
+    "caption_generator": "Caption Generator",
+    "blog_wizard": "Long-form Content",
+    "gallery": "Gallery",
+    "logout": "Logout"
+  },
+  "wizard": {
+    "step1": "Upload Media",
+    "step2": "Select Niche", 
+    "step3": "Platform",
+    "step4": "Goal",
+    "step5": "Tone",
+    "step6": "Generated Captions",
+    "next": "Next",
+    "previous": "Previous",
+    "generate": "Generate Captions",
+    "save": "Save",
+    "reset": "Reset",
+    "loading": "Loading...",
+    "progress": "Progress"
+  },
+  "buttons": {
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "tryFree": "Try for Free",
+    "upgrade": "Upgrade",
+    "subscribe": "Subscribe",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share",
+    "download": "Download",
+    "copy": "Copy",
+    "close": "Close",
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish"
+  },
+  "quickExport": "Quick post export",
+  "selected": "Selected",
+  "characterLimit": "Character Limit",
+  "bestFor": "Best For",
+  "noInformation": "No information available",
+  "back": "Back",
+  "close": "Close",
+  "quickTips": "Quick Tips",
+  "upload": "Upload",
+  "capture": "Capture",
+  "edit": "Edit",
+  "drag": "Drag",
+  "save": "Save",
+  "tip": "Tip",
+  "characters": "characters",
+  "share": "Share",
+  "download": "Download",
+  "preview": "Preview",
+  "refreshPage": "Refresh Page",
+  "tryAgain": "Try Again",
+  "errors": {
+    "maxCharacters": "Maximum {{max}} characters allowed"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "success": "Success!",
+    "error": "Error",
+    "failed": "Failed"
+  },
+  "time": {
+    "weeksAgo": "{{count}} weeks ago"
+  },
+  "general": {
+    "to": "to"
+  },
+  "sharing": {
+  },
+  "days_remaining": "{{count}} days remaining",
+  "days_remaining_one": "1 day remaining",
+  "requests_remaining": "{{count}} requests remaining",
+  "requests_remaining_one": "1 request remaining",
+  "activating": "Activating...",
+  "cancel_trial": "Cancel Trial",
+  "manage_plan": "Manage Plan"
+}

@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, Menu, X, Bell, User, ChevronDown, Shield } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +23,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
   // Check if user is admin
   const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
                  currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
@@ -77,8 +80,7 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
             {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            <Link 
+          <nav className="hidden md:flex items-center space-x-1">            <Link 
               to="/" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/') 
@@ -86,7 +88,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Home
+              {t('nav.home')}
             </Link>
             <Link 
               to="/pricing" 
@@ -96,8 +98,8 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Pricing
-            </Link>            <Link 
+              {t('nav.pricing')}
+            </Link><Link 
               to="/caption-generator" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/caption-generator') 
@@ -116,6 +118,16 @@ const Navbar: React.FC = () => {
               }`}
             >
               Blog Wizard
+            </Link>
+            <Link 
+              to="/gallery" 
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                isActive('/gallery') 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              {t('nav.gallery')}
             </Link>
             <Link 
               to="/features" 
@@ -138,8 +150,12 @@ const Navbar: React.FC = () => {
              {/* Blog*/}
             </Link>
           </nav>
-          
-          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
+            {/* Language Switcher - Always visible */}
+            <div className="hidden md:flex items-center">
+              <LanguageSwitcher />
+            </div>
+            
             {/* Auth Actions */}
             {currentUser ? (
               <div className="flex items-center space-x-3">
@@ -209,25 +225,23 @@ const Navbar: React.FC = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>
-            ) : (
+              </div>            ) : (
               <div className="flex items-center space-x-2 sm:space-x-4">
+                <LanguageSwitcher />
                 <Link 
                   to="/login"
                   className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                 >
-                  Login
+                  {t('nav.login')}
                 </Link>
                 <Link to="/signup">
                   <Button 
                     className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded-md transition-colors duration-200"
                   >
-                    Sign Up
+                    {t('nav.signup')}
                   </Button>
                 </Link>
-              </div>
-            )}
-            
+              </div>            )}
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -284,6 +298,17 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Blog Wizard
+              </Link>
+              <Link 
+                to="/gallery" 
+                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                  isActive('/gallery') 
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('nav.gallery')}
               </Link>
               <Link 
                 to="/features" 
@@ -344,8 +369,15 @@ const Navbar: React.FC = () => {
                       Log out
                     </div>
                   </button>
-                </>
-              )}
+                </>              )}              {/* Language switcher in mobile menu */}
+              <div className="px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Language:</span>
+                  <div className="ml-2">
+                    <LanguageSwitcher />
+                  </div>
+                </div>
+              </div>
             </nav>
           </div>
         )}

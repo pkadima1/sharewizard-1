@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,12 +6,14 @@ import { Mail } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { t } = useAppTranslation('auth');
 
   const { resetPassword } = useAuth();
   const { toast } = useToast();
@@ -21,9 +22,9 @@ const ForgotPassword: React.FC = () => {
     const newErrors: Record<string, string> = {};
     
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('errors.emailRequired');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = t('errors.emailInvalid');
     }
     
     setErrors(newErrors);
@@ -42,16 +43,16 @@ const ForgotPassword: React.FC = () => {
     
     try {
       await resetPassword(email);
-      setMessage('Check your email for password reset instructions');
+      setMessage(t('forgotPassword.emailSent'));
       toast({
-        title: "Email sent",
-        description: "Check your email for password reset instructions",
+        title: t('forgotPassword.title'),
+        description: t('forgotPassword.emailSent'),
         variant: "default",
       });
     } catch (error: any) {
-      let errorMessage = "Failed to reset password.";
+      let errorMessage = t('errors.failedToReset', 'Failed to reset password.');
       if (error.code === 'auth/user-not-found') {
-        errorMessage = "No account found with this email address.";
+        errorMessage = t('forgotPassword.noAccount');
       }
       setMessage('');
       toast({
@@ -77,9 +78,9 @@ const ForgotPassword: React.FC = () => {
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
               />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Reset your password</h2>
+              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('forgotPassword.title')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Enter your email address and we'll send you a link to reset your password.
+                {t('forgotPassword.subtitle')}
               </p>
             </div>
 
@@ -93,7 +94,7 @@ const ForgotPassword: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                    {t('email_address')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -118,14 +119,14 @@ const ForgotPassword: React.FC = () => {
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Sending reset link...' : 'Send password reset link'}
+                    {loading ? t('forgotPassword.sending') : t('forgotPassword.submit')}
                   </button>
                 </div>
               </form>
 
               <div className="mt-6 text-center">
                 <Link to="/login" className="font-medium text-primary hover:text-primary/90">
-                  Back to login
+                  {t('forgotPassword.backToLogin')}
                 </Link>
               </div>
             </div>
@@ -134,8 +135,8 @@ const ForgotPassword: React.FC = () => {
         <div className="relative flex-1 hidden w-0 lg:block">
           <div className="absolute inset-0 object-cover w-full h-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
             <div className="text-center text-white p-8 max-w-md">
-              <h1 className="text-5xl font-bold mb-6">Password Recovery</h1>
-              <p className="text-xl mb-8">Don't worry - we'll help you get back into your account</p>
+              <h1 className="text-5xl font-bold mb-6">{t('forgotPassword.recoveryTitle')}</h1>
+              <p className="text-xl mb-8">{t('forgotPassword.recoverySubtitle')}</p>
             </div>
           </div>
         </div>

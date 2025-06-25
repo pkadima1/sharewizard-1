@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord", 
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "caption_generator": "Générateur de Légendes",
+    "blog_wizard": "Contenu Long-forme",
+    "gallery": "Galerie",
+    "logout": "Déconnexion"
+  },  
+  "wizard": {
+    "step1": "Télécharger un Média",
+    "step2": "Sélectionner une Niche", 
+    "step3": "Plateforme",
+    "step4": "Objectif",
+    "step5": "Ton",
+    "step6": "Légendes Générées",
+    "step": "Étape",
+    "of": "sur",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "generate": "Générer des Légendes",
+    "save": "Enregistrer",
+    "reset": "Réinitialiser",
+    "loading": "Génération en cours...",
+    "progress": "Progression"
+  },
+  "buttons": {
+    "getStarted": "Commencer",
+    "learnMore": "En savoir plus",
+    "tryFree": "Essayer gratuitement",
+    "upgrade": "Mettre à niveau",
+    "subscribe": "S'abonner",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "finish": "Terminer"
+  },
+  "quickExport": "Export rapide",
+  "selected": "Sélectionné",
+  "characterLimit": "Limite de caractères",
+  "bestFor": "Idéal pour",
+  "noInformation": "Aucune information disponible",
+  "back": "Retour",
+  "close": "Fermer",
+  "quickTips": "Conseils Rapides",
+  "upload": "Télécharger",
+  "capture": "Capturer",
+  "edit": "Modifier",
+  "drag": "Glisser",
+  "save": "Enregistrer",
+  "tip": "Conseil",
+  "characters": "caractères",
+  "share": "Partager",
+  "download": "Télécharger",
+  "preview": "Aperçu",
+  "refreshPage": "Actualiser la Page",
+  "tryAgain": "Réessayer",
+  "errors": {
+    "maxCharacters": "Maximum {{max}} caractères autorisés"
+  },
+  "status": {
+    "failed": "Échec"
+  },
+  "time": {
+    "weeksAgo": "Il y a {{count}} semaines"
+  },
+  "general": {
+    "to": "vers"
+  },
+  "sharing": {
+  },
+  "days_remaining": "{{count}} jours restants",
+  "days_remaining_one": "1 jour restant",
+  "requests_remaining": "{{count}} requêtes restantes",
+  "requests_remaining_one": "1 requête restante",
+  "activating": "Activation en cours...",
+  "cancel_trial": "Annuler l'essai",
+  "manage_plan": "Gérer l'abonnement"
+}

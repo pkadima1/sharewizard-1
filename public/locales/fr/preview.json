@@ -1,0 +1,11 @@
+{
+  "show_caption_on_media": "Légende sur le Média",
+  "show_caption_below": "Légende Sous le Média",
+  "caption_always_on_video": "Superposition de légende toujours activée pour les vidéos",
+  "edit_text_overlay": "Modifier la Superposition de Texte",
+  "add_text_overlay": "Ajouter une Superposition de Texte",
+  "preview_post": "Aperçu du Post",
+  "processing_video": "Traitement de la vidéo...",
+  "processing_wait": "Cela peut prendre un moment",
+  "back": "Retour"
+}
