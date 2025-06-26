@@ -82,6 +82,15 @@
   },
   "sharing": {
   },
+  "carousel": {
+    "title": "See What You Can Create",
+    "noMedia": "No images found in the gallery.",
+    "uploadPrompt": "Upload images to the galleryimage folder in Firebase Storage to display a carousel here",
+    "viewAll": "View All",
+    "imageCaption": "Boost Your Influence with AI Magic!",
+    "imageDescription": "Transform ordinary content into engaging, personalized experiences that captivate your audience and drive real results.",
+    "viewButton": "View"
+  },
   "days_remaining": "{{count}} days remaining",
   "days_remaining_one": "1 day remaining",
   "requests_remaining": "{{count}} requests remaining",

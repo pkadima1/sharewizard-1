@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
+import { HomeCarousel } from '@/components/HomeCarousel';
 
 const Index = () => {
   const { t } = useTranslation('home');
@@ -60,66 +61,43 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Instagram Post Preview Mockup */}
-      <section className="container mx-auto px-4 sm:px-6 py-12 max-w-6xl">
-        <div className="bg-gray-900/60 backdrop-blur-sm py-10 px-4 rounded-2xl border border-gray-800">
-          <h3 className="text-center text-2xl font-semibold mb-8 text-white">{t('features.title')}</h3>
-          
-          <div className="mx-auto max-w-sm shadow-2xl rounded-xl overflow-hidden border border-gray-800">
-            {/* Instagram Post Header */}
-            <div className="bg-gray-900 flex items-center p-3 border-b border-gray-800">
-              <div className="flex items-center gap-2 flex-1">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs">
-                  EP
-                </div>
-                <div className="font-medium text-sm">EngagePerfect</div>
-                <div className="ml-1 text-blue-500">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="text-gray-400">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 12H5.01M12 12H12.01M19 12H19.01M6 12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11C5.55228 11 6 11.4477 6 12ZM13 12C13 12.5523 12.5523 13 12 13C11.4477 13 11 12.5523 11 12C11 11.4477 11.4477 11 12 11C12.5523 11 13 11.4477 13 12ZM20 12C20 12.5523 19.5523 13 19 13C18.4477 13 18 12.5523 18 12C18 11.4477 18.4477 11 19 11C19.5523 11 20 11.4477 20 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-            </div>
-              {/* Instagram Post Image - Image already contains text overlay */}
-            <div className="relative">
-              <img 
-                src="/EngagePerfectAI.png" 
-                alt="Woman by London Tower Bridge" 
-                className="w-full object-cover h-[400px]" 
-              />
-              {/* No additional text overlay - the image already has embedded text */}
-            </div>
-            
-            {/* Instagram Post Footer */}
-            <div className="bg-gray-900 p-3">
-              <div className="flex justify-between mb-2">
-                <div className="flex gap-4">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                    <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                  <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>              <div className="text-white text-sm">
-                <span className="font-semibold">Created with EngagePerfect</span> • <span className="text-gray-400">https://engageperfect.com</span>
-              </div>
-            </div>
-          </div>
+      {/* Centered Carousel Title Section */}
+      <section className="w-full">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center pt-8 sm:pt-12 lg:pt-16 pb-6 sm:pb-8 lg:pb-10">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+            {t('carousel.title', 'See What You Can Create')}
+          </h2>
+          <div className="w-16 sm:w-20 lg:w-24 h-1 sm:h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 mx-auto rounded-full mt-3 sm:mt-4 animate-pulse"></div>
         </div>
       </section>
-        {/* Features Section */}
+      
+      {/* 3D Image Carousel Section - Main Visual Feature (Full Width) */}
+      <section className="w-full">
+        <HomeCarousel />
+        
+        {/* Custom animation styles for carousel effects */}
+        <style>{`
+          @keyframes pulse-slow {
+            0%, 100% {
+              opacity: 0.2;
+            }
+            50% {
+              opacity: 0.5;
+            }
+          }
+          .animate-pulse-slow {
+            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          }
+          .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+        `}</style>
+      </section>
+
+      {/* Features Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 max-w-6xl">
         <div className="text-center mb-12">
           <div className="inline-block px-3 py-1 rounded-full bg-blue-900/30 text-blue-400 text-xs font-medium mb-4">
@@ -194,7 +172,8 @@ const Index = () => {
           </div>
         </div>
       </section>
-        {/* CTA Section */}
+      
+      {/* CTA Section */}
       <section className="container mx-auto px-4 sm:px-6 py-16 max-w-6xl">
         <div className="text-center space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold">
