@@ -99,7 +99,7 @@ const Navbar: React.FC = () => {
               }`}
             >
               {t('nav.pricing')}
-            </Link><Link 
+            </Link>            <Link 
               to="/caption-generator" 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/caption-generator') 
@@ -107,7 +107,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Caption Generator
+              {t('nav.caption_generator')}
             </Link>
             <Link 
               to="/longform" 
@@ -117,7 +117,7 @@ const Navbar: React.FC = () => {
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              Blog Wizard
+              {t('nav.blog_wizard')}
             </Link>
             <Link 
               to="/gallery" 
@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
                       : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link> 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -199,14 +199,14 @@ const Navbar: React.FC = () => {
                     <DropdownMenuSeparator />                    <DropdownMenuItem asChild>
                       <Link to="/profile" className="cursor-pointer flex items-center">
                         <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
+                        <span>{t('nav.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
                     {/* Dashboard menu item hidden for now */}
                   <DropdownMenuItem asChild>
                       <Link to="/dashboard" className="cursor-pointer flex items-center">
                         <Bell className="mr-2 h-4 w-4" />
-                        <span>Dashboard</span>
+                        <span>{t('nav.dashboard')}</span>
                       </Link>
                     </DropdownMenuItem> 
                     {/* Admin Dashboard link - only visible to admins */}
@@ -214,14 +214,14 @@ const Navbar: React.FC = () => {
                       <DropdownMenuItem asChild>
                         <Link to="/admin" className="cursor-pointer flex items-center">
                           <Shield className="mr-2 h-4 w-4" />
-                          <span>Admin Dashboard</span>
+                          <span>{t('nav.adminDashboard')}</span>
                         </Link>
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-700 focus:text-red-700">
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
+                      <span>{t('nav.logOut')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

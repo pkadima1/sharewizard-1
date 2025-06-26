@@ -19,7 +19,7 @@ i18n
     // Debug mode for development
     debug: import.meta.env.DEV,
     // Namespace configuration
-    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing'],
+    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator'],
     defaultNS: 'common',
     // Backend configuration for loading translations
     backend: {

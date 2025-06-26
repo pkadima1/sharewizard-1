@@ -1,5 +1,6 @@
 // PlatformSelector.tsx - IMPROVED VERSION
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Instagram, Twitter, Linkedin, Facebook, Youtube, Music, AlertTriangle, Info, X, Download, Copy, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -121,6 +122,38 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
   selectedPlatform, 
   onPlatformChange 
 }) => {
+  const { t, ready } = useTranslation('caption-generator');
+  
+  // Fallback function to prevent showing translation keys
+  const translate = (key: string, options?: any): string => {
+    const translation = t(key, options);
+    // Ensure we always return a string
+    const translationStr = typeof translation === 'string' ? translation : String(translation);
+    
+    // Add debug logging if in development
+    if (import.meta.env.DEV) {
+      console.log(`Translation key: ${key}, result: ${translationStr}, ready: ${ready}`);
+    }
+    
+    // If translation returns the key (meaning it failed), return a fallback
+    if (translationStr === key) {
+      const fallbacks: Record<string, string> = {
+        'steps.platform.heading': 'Select Social Media Platform',
+        'steps.platform.subheading': '🎯 Get ready to go viral — one platform at a time.',
+        'steps.platform.platformDescription': "We'll tailor every caption to match the voice, format, and rhythm of your selected platform. Just pick your favorite!",
+        'steps.platform.smartTipsTitle': '💡 Smart Captions, Perfectly Tuned',
+        'steps.platform.smartTipsDescription': "We've studied the best practices of each platform — from tone to timing to text limits. Choose your channel, and we'll do the rest. 🙌",
+        'steps.platform.selected': 'Selected',
+        'steps.platform.quickExport': 'Quick post export',
+        'steps.platform.back': 'Back',
+        'steps.platform.continue': 'Continue',
+        'steps.platform.fallbackTitle': 'Alternative Sharing Options'
+      };
+      return fallbacks[key] || translationStr;
+    }
+    return translationStr;
+  };
+  
   // State for showing warning modal when selecting platforms with limited sharing
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [platformForWarning, setPlatformForWarning] = useState<string | null>(null);
@@ -147,12 +180,13 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
       {/* Heading and description */}
       <div className="text-center mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Select Social Media Platform
+          {translate('steps.platform.heading')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-🎯 Get ready to go viral — one platform at a time.
-<br />
-We’ll tailor every caption to match the voice, format, and rhythm of your selected platform. Just pick your favorite!        </p>
+          {translate('steps.platform.subheading')}
+          <br />
+          {translate('steps.platform.platformDescription')}
+        </p>
       </div>
 
       {/* Platform grid - Improved with hover effects and better visual hierarchy */}
@@ -182,14 +216,14 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
             {platform.limitedSharing && (
               <div className="absolute top-2 right-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center">
                 <Download className="w-3 h-3 mr-1" />
-                Quick post export
+                {translate('steps.platform.quickExport')}
               </div>
             )}
             
             {/* Selected indicator */}
             {selectedPlatform === platform.id && (
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white/20 text-white text-xs px-3 py-1 rounded-full">
-                Selected
+                {translate('steps.platform.selected')}
               </div>
             )}
           </button>
@@ -200,22 +234,22 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
       <div className="bg-blue-900/20 rounded-xl p-4 border border-blue-700/30 flex space-x-3 mt-6">
         <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
         <div className="space-y-2">
-          <h3 className="text-blue-400 font-medium">💡 Smart Captions, Perfectly Tuned</h3>
+          <h3 className="text-blue-400 font-medium">{translate('steps.platform.smartTipsTitle')}</h3>
           <p className="text-sm text-gray-300">
-              We’ve studied the best practices of each platform — from tone to timing to text limits. Choose your channel, and we’ll do the rest. 🙌
-
+            {translate('steps.platform.smartTipsDescription')}
           </p>
           
           {/* Show selected platform details */}
           {selectedPlatformDetails && (
             <div className="mt-3 bg-blue-950/50 p-3 rounded-lg">
-              <p className="text-sm font-medium text-white">{selectedPlatformDetails.name} Details:</p>
+              <p className="text-sm font-medium text-white">{t('steps.platform.detailsLabel', { platform: selectedPlatformDetails.name })}</p>
               <ul className="text-xs text-gray-300 mt-1 space-y-1">
-                <li>• Character Limit: <span className="text-blue-300">{selectedPlatformDetails.characterLimit}</span></li>
-                <li>• Best For: <span className="text-blue-300">{selectedPlatformDetails.recommendedFor}</span></li>                {selectedPlatformDetails.limitedSharing && (
+                <li>• {t('steps.platform.characterLimit', { limit: selectedPlatformDetails.characterLimit })}</li>
+                <li>• {t('steps.platform.bestFor', { purpose: selectedPlatformDetails.recommendedFor })}</li>
+                {selectedPlatformDetails.limitedSharing && (
                   <li className="text-blue-300 flex items-center">
                     <Download className="w-3 h-3 mr-1" />
-                    Easy export options available
+                    {t('steps.platform.exportOptions')}
                   </li>
                 )}
               </ul>
@@ -235,7 +269,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                       const IconComponent = PLATFORM_SHARING_MESSAGES[platformForWarning].iconComponent;
                       return <IconComponent className={`w-6 h-6 mr-2 ${PLATFORM_SHARING_MESSAGES[platformForWarning].iconColor}`} />;
                     })()}
-                    <h3 className="text-lg font-bold text-white">{PLATFORM_SHARING_MESSAGES[platformForWarning].title}</h3>
+                    <h3 className="text-lg font-bold text-white">{t(`steps.platform.${platformForWarning}Title`)}</h3>
                   </div>
                   <button 
                     onClick={() => setShowWarningModal(false)}
@@ -246,7 +280,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                 </div>
                 
                 <div className="text-gray-300 mb-5 space-y-4">
-                  <p>{PLATFORM_SHARING_MESSAGES[platformForWarning].message}</p>
+                  <p>{t(`steps.platform.${platformForWarning}Message`)}</p>
                   
                   {/* Action buttons that are contextual to the platform */}
                   <div className="flex flex-col sm:flex-row gap-3 mt-5">
@@ -278,7 +312,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                   {/* Footer note */}
                   {PLATFORM_SHARING_MESSAGES[platformForWarning].footer && (
                     <p className="text-xs text-gray-400 italic mt-4">
-                      {PLATFORM_SHARING_MESSAGES[platformForWarning].footer}
+                      {t(`steps.platform.${platformForWarning}Footer`)}
                     </p>
                   )}
                 </div>
@@ -289,7 +323,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                     className="border-gray-700 hover:bg-gray-800 text-gray-300"
                     onClick={() => setShowWarningModal(false)}
                   >
-                    Back
+                    {translate('steps.platform.back')}
                   </Button>
                   <Button
                     className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
@@ -298,7 +332,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                       setShowWarningModal(false);
                     }}
                   >
-                    {PLATFORM_SHARING_MESSAGES[platformForWarning].buttonText}
+                    {t(`steps.platform.${platformForWarning}Button`)}
                   </Button>
                 </div>
               </>
@@ -308,7 +342,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center text-blue-400">
                     <Rocket className="w-6 h-6 mr-2" />
-                    <h3 className="text-lg font-bold">Alternative Sharing Options</h3>
+                    <h3 className="text-lg font-bold">{translate('steps.platform.fallbackTitle')}</h3>
                   </div>
                   <button 
                     onClick={() => setShowWarningModal(false)}
@@ -319,9 +353,9 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                 </div>
                 
                 <p className="text-gray-300 mb-5">
-                  For <span className="text-white font-semibold">{
-                    PLATFORMS.find(p => p.id === platformForWarning)?.name
-                  }</span>, we offer convenient options to download your caption or copy it directly to share on your favorite platform.
+                  {t('steps.platform.fallbackMessage', { 
+                    platform: PLATFORMS.find(p => p.id === platformForWarning)?.name 
+                  })}
                 </p>
                 
                 <div className="flex justify-end space-x-3">
@@ -330,7 +364,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                     className="border-gray-700 hover:bg-gray-800 text-gray-300"
                     onClick={() => setShowWarningModal(false)}
                   >
-                    Back
+                    {translate('steps.platform.back')}
                   </Button>
                   <Button
                     className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -339,7 +373,7 @@ We’ll tailor every caption to match the voice, format, and rhythm of your sele
                       setShowWarningModal(false);
                     }}
                   >
-                    Continue
+                    {translate('steps.platform.continue')}
                   </Button>
                 </div>
               </>

@@ -1,6 +1,7 @@
 // MediaUploader.tsx - FIXED VERSION WITH EMBEDDED TEXT EDITOR AND EMOJI PICKER
 import React, { useState, useRef, useCallback, useEffect, MouseEvent, TouchEvent } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { 
   Upload, Camera, X, RotateCw, Crop, Type, RefreshCw, Check,
@@ -36,6 +37,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   onTextOnlySelect
 }) => {
   const { currentUser, userProfile } = useAuth();
+  const { t, i18n } = useTranslation('caption-generator');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -72,13 +74,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   // Enhanced image filters with icons and descriptions
   const imageFilters: ImageFilter[] = [
-    { name: 'Original', class: '', icon: <Image className="h-3 w-3" />, description: 'No filter applied' },
-    { name: 'Grayscale', class: 'grayscale', icon: <Sliders className="h-3 w-3" />, description: 'Black and white effect' },
-    { name: 'Sepia', class: 'sepia', icon: <Sliders className="h-3 w-3" />, description: 'Warm vintage look' },
-    { name: 'Invert', class: 'invert', icon: <RefreshCw className="h-3 w-3" />, description: 'Negative effect' },
-    { name: 'Blur', class: 'blur-sm', icon: <Sliders className="h-3 w-3" />, description: 'Soft focus effect' },
-    { name: 'Brightness', class: 'brightness-125', icon: <Sparkles className="h-3 w-3" />, description: 'Brighter image' },
-    { name: 'Contrast', class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: 'Enhanced contrast' },
+    { name: t('mediaUploader.filters.original'), class: '', icon: <Image className="h-3 w-3" />, description: t('mediaUploader.filters.originalDesc') },
+    { name: t('mediaUploader.filters.grayscale'), class: 'grayscale', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.grayscaleDesc') },
+    { name: t('mediaUploader.filters.sepia'), class: 'sepia', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.sepiaDesc') },
+    { name: t('mediaUploader.filters.invert'), class: 'invert', icon: <RefreshCw className="h-3 w-3" />, description: t('mediaUploader.filters.invertDesc') },
+    { name: t('mediaUploader.filters.blur'), class: 'blur-sm', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.blurDesc') },
+    { name: t('mediaUploader.filters.brightness'), class: 'brightness-125', icon: <Sparkles className="h-3 w-3" />, description: t('mediaUploader.filters.brightnessDesc') },
+    { name: t('mediaUploader.filters.contrast'), class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.contrastDesc') },
   ];
 
   // Clean up stream on unmount
@@ -132,13 +134,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     const isValidType = [...validImageTypes, ...validVideoTypes].includes(fileType);
 
     if (!isValidType) {
-      toast.error("Invalid file type. Please upload JPG, PNG, GIF, WebP, MP4, WebM, or MOV files.");
+      toast.error(t('mediaUploader.toasts.invalidFileType'));
       return;
     }
 
     // Validate file size
     if (fileSize > 50) {
-      toast.error("File is too large. Maximum size is 50MB.");
+      toast.error(t('mediaUploader.toasts.fileTooLarge'));
       return;
     }
 
@@ -153,7 +155,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setShowTextEditor(false);
 
     onMediaSelect(file);
-    toast.success("Media uploaded successfully!");
+    toast.success(t('mediaUploader.toasts.uploadSuccess'));
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,7 +199,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setProcessedImageUrl(null);
     setShowTextEditor(false);
     
-    toast.success("Media removed");
+    toast.success(t('mediaUploader.toasts.mediaRemoved'));
   };
 
   // Improved camera functions
@@ -214,7 +216,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
       // Check if MediaDevices API is available
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Camera access not supported in this browser");
+        throw new Error(t('mediaUploader.errors.cameraNotSupported'));
       }
 
       // Request user media with explicit constraints
@@ -235,7 +237,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       
       // Ensure the video element exists
       if (!videoRef.current) {
-        throw new Error("Video element not available");
+        throw new Error(t('mediaUploader.errors.videoElementNotAvailable'));
       }
       
       // Assign the stream to the video element
@@ -247,33 +249,33 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           videoRef.current.play()
             .then(() => {
               setIsCapturing(false);
-              toast.success("Camera activated successfully");
+              toast.success(t('mediaUploader.toasts.cameraActivated'));
             })
             .catch(err => {
               console.error("Error playing video:", err);
-              setCameraError("Could not start video playback");
+              setCameraError(t('mediaUploader.errors.videoPlaybackError'));
               setIsCapturing(false);
             });
         }
       };
       
       videoRef.current.onerror = () => {
-        setCameraError("Error loading video stream");
+        setCameraError(t('mediaUploader.errors.videoStreamError'));
         setIsCapturing(false);
       };
       
     } catch (err: any) {
       console.error('Error accessing camera:', err);
-      setCameraError(err.message || "Could not access the camera");
+      setCameraError(err.message || t('mediaUploader.errors.cameraNotSupported'));
       setStreamActive(false);
       setIsCapturing(false);
       
       if (err.name === 'NotAllowedError') {
-        toast.error("Camera access denied. Please check your browser permissions.");
+        toast.error(t('mediaUploader.toasts.cameraDenied'));
       } else if (err.name === 'NotFoundError') {
-        toast.error("No camera detected on your device.");
+        toast.error(t('mediaUploader.toasts.cameraNotFound'));
       } else {
-        toast.error(`Camera error: ${err.message}`);
+        toast.error(t('mediaUploader.toasts.cameraError', { error: err.message }));
       }
     }
   };
@@ -281,7 +283,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   // FIXED CAPTURE FUNCTION
   const handleCapturePhoto = () => {
     if (!streamActive || !streamRef.current || !videoRef.current || !canvasRef.current) {
-      toast.error("Camera not active or couldn't access camera elements");
+      toast.error(t('mediaUploader.toasts.cameraNotActive'));
       return;
     }
     
@@ -293,7 +295,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       const ctx = canvas.getContext('2d');
       
       if (!ctx) {
-        throw new Error("Could not get canvas context");
+        throw new Error(t('mediaUploader.errors.canvasContextError'));
       }
       
       // Set canvas dimensions to match video dimensions
@@ -302,7 +304,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       
       // Check if video dimensions are valid
       if (canvas.width === 0 || canvas.height === 0) {
-        throw new Error("Invalid video dimensions");
+        throw new Error(t('mediaUploader.errors.invalidVideoDimensions'));
       }
       
       // Draw the current video frame to the canvas
@@ -325,16 +327,16 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           
           // Set the captured image as the selected media
           onMediaSelect(capturedFile);
-          toast.success("Photo captured successfully!");
+          toast.success(t('mediaUploader.toasts.photoCaptured'));
         } else {
-          throw new Error("Failed to create image blob");
+          throw new Error(t('mediaUploader.errors.imageBlobError'));
         }
         setIsCapturing(false);
       }, 'image/jpeg', 0.95);
       
     } catch (err: any) {
       console.error('Error capturing photo:', err);
-      toast.error(`Failed to capture photo: ${err.message}`);
+      toast.error(t('mediaUploader.toasts.captureError', { error: err.message }));
       setIsCapturing(false);
     }
   };
@@ -342,70 +344,71 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   // Image editing functions
   const handleRotate = () => {
     if (!selectedMedia) {
-      toast("Upload an image or video first!");
+      toast(t('mediaUploader.toasts.uploadFirst'));
       return;
     }
     
     // Only allow rotation for images
     if (!selectedMedia.type.startsWith('image/')) {
-      toast("Rotation is only available for images");
+      toast(t('mediaUploader.toasts.rotationImageOnly'));
       return;
     }
     
     setRotationAngle((prevAngle) => (prevAngle + 90) % 360);
-    toast.success("Image rotated 90° clockwise");
+    toast.success(t('mediaUploader.toasts.rotatedClockwise'));
   };
 
   const handleCounterRotate = () => {
     if (!selectedMedia) {
-      toast("Upload an image or video first!");
+      toast(t('mediaUploader.toasts.uploadFirst'));
       return;
     }
     
     // Only allow rotation for images
     if (!selectedMedia.type.startsWith('image/')) {
-      toast("Rotation is only available for images");
+      toast(t('mediaUploader.toasts.rotationImageOnly'));
       return;
     }
     
     setRotationAngle((prevAngle) => (prevAngle - 90 + 360) % 360);
-    toast.success("Image rotated 90° counter-clockwise");
+    toast.success(t('mediaUploader.toasts.rotatedCounterClockwise'));
   };
 
   const handleCrop = () => {
     if (!selectedMedia) {
-      toast("Upload an image or video first!");
+      toast(t('mediaUploader.toasts.uploadFirst'));
       return;
     }
     
     // Only allow crop for images for now
     if (!selectedMedia.type.startsWith('image/')) {
-      toast("Cropping is only available for images");
+      toast(t('mediaUploader.toasts.cropImageOnly'));
       return;
     }
     
     setIsCropMode(!isCropMode);
     if (!isCropMode) {
-      toast.success("Crop mode enabled. Drag to adjust crop area.");
+      toast.success(t('mediaUploader.toasts.cropEnabled'));
     } else {
-      toast.success("Crop mode disabled");
+      toast.success(t('mediaUploader.toasts.cropDisabled'));
     }
   };
 
   const handleAddText = () => {
     if (!selectedMedia) {
-      toast("Upload an image or video first!");
+      toast(t('mediaUploader.toasts.uploadFirst'));
       return;
     }
     setShowTextEditor(!showTextEditor);
     if (!showTextEditor) {
-      toast.success("Text editor activated. Type your text and position it on the media.");
+      toast.success(t('mediaUploader.toasts.textEditorActivated'));
     }
   };
 
   const handleFilterChange = (filterClass: string) => {
     setSelectedFilter(filterClass);
-    toast.success(`Filter applied: ${filterClass ? filterClass : 'Original'}`);
+    const filterName = filterClass ? filterClass : t('mediaUploader.filters.original');
+    toast.success(t('mediaUploader.toasts.filterApplied', { filter: filterName }));
   };
 
   // Emoji picker handler
@@ -464,7 +467,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   // Apply all edits and save to canvas
   const handleSaveEdits = () => {
     if (!selectedMedia) {
-      toast.error("No media selected.");
+      toast.error(t('mediaUploader.toasts.noMediaSelected'));
       return;
     }
     
@@ -526,8 +529,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           
           toast.success(
             <div className="flex flex-col">
-              <span className="font-medium">Text overlay saved for video!</span>
-              <span className="text-xs mt-1">Text will appear during playback and sharing</span>
+              <span className="font-medium">{t('mediaUploader.toasts.videoOverlaySaved')}</span>
+              <span className="text-xs mt-1">{t('mediaUploader.toasts.videoOverlayNote')}</span>
             </div>,
             { duration: 4000 }
           );
@@ -540,7 +543,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       
       // For images, use canvas to apply text overlay
       if (!imageRef.current) {
-        toast.error("Can't access image element.");
+        toast.error(t('mediaUploader.errors.canvasContextError'));
         setIsLoading(prev => ({ ...prev, saving: false }));
         return;
       }
@@ -550,7 +553,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       const ctx = canvas.getContext('2d');
       
       if (!ctx) {
-        throw new Error("Could not create canvas context");
+        throw new Error(t('mediaUploader.errors.canvasContextCreateError'));
       }
       
       // Set canvas dimensions to match image
@@ -669,13 +672,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           if (textOverlay) {
             toast.success(
               <div className="flex flex-col">
-                <span className="font-medium">Edits saved with text overlay!</span>
-                <span className="text-xs mt-1">Text will appear in downloads and shared images</span>
+                <span className="font-medium">{t('mediaUploader.toasts.editsSavedWithText')}</span>
+                <span className="text-xs mt-1">{t('mediaUploader.toasts.editsSavedWithTextNote')}</span>
               </div>,
               { duration: 4000 }
             );
           } else {
-            toast.success("Image edits saved successfully!");
+            toast.success(t('mediaUploader.toasts.editsSaved'));
           }
           
           // Reset editing state but keep current text for further edits if needed
@@ -685,7 +688,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       
     } catch (err: any) {
       console.error('Error saving edits:', err);
-      toast.error(`Failed to save edits: ${err.message}`);
+      toast.error(t('mediaUploader.toasts.saveError', { error: err.message }));
     } finally {
       setIsLoading(prev => ({ ...prev, saving: false }));
     }
@@ -693,7 +696,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
   const handleTextOnlyClick = () => {
     onTextOnlySelect();
-    toast.success("Text-only mode activated");
+    toast.success(t('mediaUploader.toasts.textOnlyActivated'));
   };
 
   // Helper function to apply filters to canvas
@@ -788,17 +791,17 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         {/* Welcome header section */}
         <div className="mb-6">
           <h2 className="text-xl sm:text-2xl font-semibold mb-1 text-gray-800 dark:text-white flex items-center">
-            <span>Welcome, {userProfile?.displayName || currentUser?.displayName || 'User'}</span>
+            <span>{t('mediaUploader.welcome.title', { name: userProfile?.displayName || currentUser?.displayName || 'User' })}</span>
             <button 
               onClick={() => setShowPopupTips(!showPopupTips)}
               className="ml-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400"
-              aria-label="Show tips"
+              aria-label={t('mediaUploader.welcome.tipsToggle')}
             >
               <Info className="h-4 w-4" />
             </button>
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Upload your media or capture directly to create engaging AI-powered captions.
+            {t('mediaUploader.welcome.subtitle')}
           </p>
           
           {/* Tips popup */}
@@ -807,13 +810,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               <div className="flex gap-2">
                 <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Quick Tips:</p>
+                  <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">{t('mediaUploader.tips.title')}</p>
                   <ul className="text-blue-600 dark:text-blue-400 space-y-1">
-                    <li>• <span className="font-medium">Upload</span> images or videos up to 50MB</li>
-                    <li>• <span className="font-medium">Capture</span> photos directly from your device camera</li>
-                    <li>• <span className="font-medium">Edit</span> your images with filters, text and rotation</li>
-                    <li>• <span className="font-medium">Drag</span> text overlays by clicking and moving them</li>
-                    <li>• <span className="font-medium">Save</span> your edits to create a finished image</li>
+                    <li>• <span className="font-medium">{t('mediaUploader.tips.upload')}</span></li>
+                    <li>• <span className="font-medium">{t('mediaUploader.tips.capture')}</span></li>
+                    <li>• <span className="font-medium">{t('mediaUploader.tips.edit')}</span></li>
+                    <li>• <span className="font-medium">{t('mediaUploader.tips.drag')}</span></li>
+                    <li>• <span className="font-medium">{t('mediaUploader.tips.save')}</span></li>
                   </ul>
                 </div>
               </div>
@@ -854,10 +857,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   <Upload className="h-8 w-8 text-blue-500" />
                 </div>
                 <p className="text-sm text-gray-700 dark:text-gray-400 mb-2 font-medium">
-                  Drag & drop your media here, or click to select
+                  {t('mediaUploader.upload.dragDrop')}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-500">
-                  Supports JPG, PNG, GIF, WebP, MP4, WebM (max 50MB)
+                  {t('mediaUploader.upload.supportedFormats')}
                 </p>
               </div>
             </div>
@@ -869,7 +872,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 className="flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
               >
                 <Upload className="h-4 w-4" />
-                Upload Media: Image or Video
+                {t('mediaUploader.upload.buttonText')}
               </Button>
             </div>
 
@@ -877,7 +880,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
             <div className="text-center mt-4">
               <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
                 <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
-                <span className="text-sm">or</span>
+                <span className="text-sm">{t('mediaUploader.upload.or')}</span>
                 <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
               </div>
               <button 
@@ -885,7 +888,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 onClick={handleTextOnlyClick}
               >
                 <FileText className="h-4 w-4" />
-                <span className="font-medium">Create text-only caption</span>
+                <span className="font-medium">{t('mediaUploader.upload.textOnlyOption')}</span>
               </button>
             </div>
             
@@ -896,7 +899,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   {cameraError ? (
                     <div className="p-8 text-center text-white">
                       <AlertCircle className="h-8 w-8 mx-auto mb-3 text-red-500" />
-                      <p className="text-red-400 font-medium">Camera Error</p>
+                      <p className="text-red-400 font-medium">{t('mediaUploader.camera.error')}</p>
                       <p className="text-sm text-gray-400 mt-1">{cameraError}</p>
                       <Button 
                         variant="outline" 
@@ -906,7 +909,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           setStreamActive(false);
                         }}
                       >
-                        Dismiss
+                        {t('mediaUploader.camera.dismiss')}
                       </Button>
                     </div>
                   ) : (
@@ -939,7 +942,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 {streamActive && !cameraError && (
                   <div className="p-2 bg-gray-100 dark:bg-gray-800 flex justify-between items-center">
                     <p className="text-xs text-gray-600 dark:text-gray-400 ml-2">
-                      Camera active - click the button to capture
+                      {t('mediaUploader.camera.active')}
                     </p>
                     <Button 
                       variant="ghost" 
@@ -954,7 +957,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       }}
                     >
                       <X className="h-4 w-4 mr-1" />
-                      Close
+                      {t('mediaUploader.camera.close')}
                     </Button>
                   </div>
                 )}
@@ -978,7 +981,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   <button 
                     className="bg-gray-900/70 hover:bg-gray-900/90 text-white rounded-full p-1.5 shadow-md"
                     onClick={handleRemoveMedia}
-                    aria-label="Remove media"
+                    aria-label={t('mediaUploader.preview.removeMedia')}
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -990,7 +993,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     <div className="relative max-w-full">
                       <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md flex items-center shadow-sm z-10">
                         <VideoIcon className="h-3 w-3 mr-1" />
-                        Video
+                        {t('mediaUploader.preview.video')}
                       </div>
                       <div className="relative">
                         <video 
@@ -1090,7 +1093,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         <div className="absolute inset-0 border-2 border-dashed border-primary bg-black bg-opacity-50 rounded-md">
                           <div className="absolute inset-10 border-2 border-white rounded"></div>
                           <div className="absolute bottom-2 right-2 bg-white/90 text-xs text-gray-800 px-2 py-1 rounded shadow-sm">
-                            Crop mode active
+                            {t('mediaUploader.preview.cropMode')}
                           </div>
                         </div>
                       )}
@@ -1104,12 +1107,12 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   {textOverlay && !showTextEditor && (
                     <div className="mb-4 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-md flex items-center text-xs">
                       <Type className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-primary" />
-                      <span className="text-primary">Text overlay applied: "{textOverlay.substring(0, 20)}{textOverlay.length > 20 ? '...' : ''}"</span>
+                      <span className="text-primary">{t('mediaUploader.textEditor.overlayApplied', { text: textOverlay.substring(0, 20) + (textOverlay.length > 20 ? '...' : '') })}</span>
                       <button 
                         className="ml-auto bg-primary/10 hover:bg-primary/20 rounded px-1.5 py-0.5 text-primary"
                         onClick={() => setShowTextEditor(true)}
                       >
-                        Edit
+                        {t('mediaUploader.textEditor.edit')}
                       </button>
                     </div>
                   )}
@@ -1119,7 +1122,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     <div className="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                       <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start">
                         <Info className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
-                        <span>Text overlays on videos will be saved with the video metadata and displayed during playback and sharing. <strong>No need to re-encode the video.</strong></span>
+                        <span>{t('mediaUploader.textEditor.videoOverlayNote')}</span>
                       </p>
                     </div>
                   )}
@@ -1130,7 +1133,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="text-sm font-medium flex items-center">
                           <Type className="h-4 w-4 mr-1.5 text-primary" />
-                          Add Text Overlay
+                          {t('mediaUploader.textEditor.title')}
                         </h3>
                         <Button 
                           variant="ghost" 
@@ -1148,13 +1151,14 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                             value={textOverlay}
                             onChange={(e) => setTextOverlay(e.target.value)}
                             className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
-                            placeholder="Enter text to display on your image..."
+                            placeholder={t('mediaUploader.textEditor.placeholder')}
                             rows={2}
                             style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
                           />
                           <button
                             className="absolute right-2 bottom-2 text-gray-500 hover:text-primary"
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                            title={t('mediaUploader.textEditor.emojiPicker.buttonTooltip')}
                           >
                             <SmilePlus className="h-4 w-4" />
                           </button>
@@ -1179,6 +1183,22 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                                 set="native"
                                 previewPosition="none"
                                 skinTonePosition="none"
+                                searchPosition="top"
+                                locale={i18n.language}
+                                i18n={{
+                                  search: t('mediaUploader.textEditor.emojiPicker.searchPlaceholder'),
+                                  categories: {
+                                    frequent: t('mediaUploader.textEditor.emojiPicker.categories.frequentlyUsed'),
+                                    people: t('mediaUploader.textEditor.emojiPicker.categories.smileysAndPeople'),
+                                    nature: t('mediaUploader.textEditor.emojiPicker.categories.animalsAndNature'),
+                                    foods: t('mediaUploader.textEditor.emojiPicker.categories.foodAndDrink'),
+                                    activity: t('mediaUploader.textEditor.emojiPicker.categories.activities'),
+                                    places: t('mediaUploader.textEditor.emojiPicker.categories.travelAndPlaces'),
+                                    objects: t('mediaUploader.textEditor.emojiPicker.categories.objects'),
+                                    symbols: t('mediaUploader.textEditor.emojiPicker.categories.symbols'),
+                                    flags: t('mediaUploader.textEditor.emojiPicker.categories.flags')
+                                  }
+                                }}
                               />
                             </div>
                           </div>
@@ -1188,7 +1208,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="text-xs text-gray-600 dark:text-gray-400">
-                            Text Color
+                            {t('mediaUploader.textEditor.textColor')}
                           </label>
                           <div className="flex gap-2 mt-1 items-center">
                             <input
@@ -1201,16 +1221,16 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                               type="button"
                               className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"
                               onClick={() => setTextColor('#000000')}
-                              title="Set text color to black"
+                              title={t('mediaUploader.textEditor.blackButton')}
                             >
-                              Black
+                              {t('mediaUploader.textEditor.blackButton')}
                             </button>
                           </div>
                         </div>
                         
                         <div>
                           <label className="text-xs text-gray-600 dark:text-gray-400">
-                            Text Size: {textSize}px
+                            {t('mediaUploader.textEditor.textSize', { size: textSize })}
                           </label>
                           <Slider
                             value={[textSize]}
@@ -1226,7 +1246,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       {/* Text rotation slider */}
                       <div className="mt-2">
                         <label className="text-xs text-gray-600 dark:text-gray-400">
-                          Text Rotation: {textRotation}&deg;
+                          {t('mediaUploader.textEditor.textRotation', { rotation: textRotation })}
                         </label>
                         <Slider
                           value={[textRotation]}
@@ -1241,7 +1261,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       {/* Add draggable indicator */}
                       <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
                         <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-                        <span>Click and drag the text on the image to position it</span>
+                        <span>{t('mediaUploader.textEditor.positionHint')}</span>
                       </div>
                     </div>
                   )}
@@ -1250,7 +1270,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     <div className="mb-4">
                       <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium flex items-center">
                         <Sliders className="h-3.5 w-3.5 mr-1.5" />
-                        Apply Filters:
+                        {t('mediaUploader.filters.title')}
                       </p>
                       <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
                         {imageFilters.map((filter) => (
@@ -1285,7 +1305,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                             <RotateCw className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Rotate</span>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.rotate')}</span>
                         </button>
                         <button 
                           className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
@@ -1294,7 +1314,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                             <RotateCcw className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Counter</span>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.counter')}</span>
                         </button>
                         <button 
                           className={cn(
@@ -1309,7 +1329,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           )}>
                             <Crop className="h-5 w-5" />
                           </div>
-                          <span className="text-xs mt-1">Crop</span>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.crop')}</span>
                         </button>
                       </>
                     )}
@@ -1326,7 +1346,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       )}>
                         <Type className="h-5 w-5" />
                       </div>
-                      <span className="text-xs mt-1">Text</span>
+                      <span className="text-xs mt-1">{t('mediaUploader.controls.text')}</span>
                     </button>
                     <button 
                       className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
@@ -1335,7 +1355,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
                         <RefreshCw className="h-5 w-5" />
                       </div>
-                      <span className="text-xs mt-1">Reset</span>
+                      <span className="text-xs mt-1">{t('mediaUploader.controls.reset')}</span>
                     </button>
                     <button 
                       className={`text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center ${isLoading.saving ? 'opacity-70' : ''}`}
@@ -1349,7 +1369,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <Check className="h-5 w-5" />
                         )}
                       </div>
-                      <span className="text-xs mt-1">{isLoading.saving ? 'Saving...' : 'Save'}</span>
+                      <span className="text-xs mt-1">{isLoading.saving ? t('mediaUploader.controls.saving') : t('mediaUploader.controls.save')}</span>
                     </button>
                   </div>
                 </div>
@@ -1360,10 +1380,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   <div className="mx-auto w-24 h-24 mb-4 opacity-30">
                     <img src="/placeholder.svg" alt="No media selected" className="w-full h-full" />
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-400 font-medium mb-2">Media Preview</h3>
+                  <h3 className="text-gray-600 dark:text-gray-400 font-medium mb-2">{t('mediaUploader.preview.noMediaTitle')}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Upload an image or video, or use your camera to capture a photo.
-                    Your media will appear here for editing.
+                    {t('mediaUploader.preview.noMediaDescription')}
                   </p>
                 </div>
               </div>

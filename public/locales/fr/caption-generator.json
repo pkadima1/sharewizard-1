@@ -1,0 +1,224 @@
+{
+  "title": "Générateur de Légendes",
+  "subtitle": "Créez des légendes captivantes pour vos publications sur les réseaux sociaux avec l'assistance de l'IA",
+  "steps": {
+    "uploadMedia": {
+      "title": "Télécharger un Média",
+      "description": "Téléchargez une image ou une vidéo pour générer des légendes"
+    },
+    "selectNiche": {
+      "title": "Sélectionner une Niche",
+      "description": "Choisissez une niche pour votre contenu"
+    },
+    "platform": {
+      "title": "Plateforme",
+      "description": "Sélectionnez la plateforme de réseaux sociaux",
+      "heading": "Sélectionner la Plateforme de Réseaux Sociaux",
+      "subheading": "🎯 Préparez-vous à devenir viral — une plateforme à la fois.",
+      "platformDescription": "Nous adapterons chaque légende pour correspondre à la voix, au format et au rythme de votre plateforme sélectionnée. Choisissez simplement votre préférée !",
+      "smartTipsTitle": "💡 Légendes Intelligentes, Parfaitement Ajustées",
+      "smartTipsDescription": "Nous avons étudié les meilleures pratiques de chaque plateforme — du ton au timing en passant par les limites de texte. Choisissez votre canal, et nous nous occuperons du reste. 🙌",
+      "detailsLabel": "Détails {{platform}} :",
+      "characterLimit": "Limite de caractères : {{limit}}",
+      "bestFor": "Idéal pour : {{purpose}}",
+      "exportOptions": "Options d'exportation faciles disponibles",
+      "selected": "Sélectionné",
+      "quickExport": "Exportation rapide de publication",
+      "instagramTitle": "🚀 Mettons Cette Légende en Ligne !",
+      "instagramMessage": "Instagram préfère un flux de partage différent. Nous avons rendu cela facile : téléchargez simplement votre publication ou copiez et collez votre légende directement dans l'application Instagram. Partage simplifié — en un seul clic.",
+      "instagramButton": "Créer avec Instagram",
+      "instagramFooter": "Instagram ne prend pas en charge le partage direct dans l'application — mais vous avez le contrôle avec ces options rapides !",
+      "tiktokTitle": "📱 Prêt pour la Magie TikTok !",
+      "tiktokMessage": "TikTok adore votre contenu frais ! Téléchargez simplement votre légende optimisée, puis téléchargez-la avec votre vidéo dans l'application TikTok. Votre moment tendance vous attend — faisons-le !",
+      "tiktokButton": "Créer avec TikTok",
+      "tiktokFooter": "Téléchargez votre légende quand elle est prête, pour devenir viral sur TikTok !",
+      "youtubeTitle": "🎬 Mode Créateur de Contenu YouTube",
+      "youtubeMessage": "Parfait pour YouTube ! Copiez votre légende et description optimisées pour le SEO pour les utiliser dans YouTube Studio. Téléchargez directement sur votre chaîne et maximisez le potentiel de découverte de votre vidéo.",
+      "youtubeButton": "Créer pour YouTube",
+      "youtubeFooter": "Boostez votre présence YouTube avec nos légendes professionnelles et optimisées pour le SEO !",
+      "fallbackTitle": "Options de Partage Alternatives",
+      "fallbackMessage": "Pour {{platform}}, nous offrons des options pratiques pour télécharger votre légende ou la copier directement pour la partager sur votre plateforme préférée.",
+      "back": "Retour",
+      "continue": "Continuer",
+      "copyCaption": "Copier la Légende",
+      "downloadAssets": "Télécharger les Ressources"
+    },
+    "goal": {
+      "title": "Objectif",
+      "description": "Définissez votre objectif de contenu"
+    },
+    "tone": {
+      "title": "Ton",
+      "description": "Choisissez le ton de votre légende"
+    },
+    "generatedCaptions": {
+      "title": "Légendes Générées",
+      "description": "Visualisez et modifiez vos légendes"
+    }
+  },
+  "toasts": {
+    "textOnlyEnabled": "Mode de légende texte uniquement activé",
+    "uploadMediaRequired": "Veuillez télécharger un fichier média ou sélectionner le mode texte uniquement pour continuer",
+    "nicheRequired": "Veuillez sélectionner ou saisir une niche pour continuer",
+    "platformRequired": "Veuillez sélectionner une plateforme pour continuer",
+    "goalRequired": "Veuillez sélectionner un objectif de contenu pour continuer",
+    "toneRequired": "Veuillez sélectionner un ton de contenu pour continuer"
+  },
+  "nicheSelector": {
+    "title": "Saisissez votre niche de contenu",
+    "description": "Décrivez votre domaine de contenu, sujet ou secteur d'activité pour aider à générer des légendes pertinentes",
+    "placeholder": "Tapez tout ce à quoi vous pouvez penser dans votre langue (Spécifiez la langue par ex. en français)",
+    "maxCharactersError": "Maximum 100 caractères autorisés",
+    "characterCount": "{{count}}/100 caractères",
+    "orSelectFrom": "Ou sélectionnez rapidement parmi les niches communes",
+    "tip": "💡 Astuce : Être spécifique avec votre niche aide à générer des légendes plus pertinentes et engageantes",
+    "predefinedNiches": {
+      "business": "Affaires",
+      "technology": "Technologie",
+      "artDesign": "Art & Design",
+      "seoMarketing": "SEO & Marketing",
+      "fitness": "Fitness",
+      "foodCooking": "Cuisine & Alimentation",
+      "travel": "Voyage",
+      "education": "Éducation",
+      "fashion": "Mode",
+      "gaming": "Jeux Vidéo",
+      "photography": "Photographie",
+      "entertainment": "Divertissement"
+    }
+  },
+  "wizard": {
+    "stepIndicator": "Étape {{current}} sur {{total}}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "generating": "Génération..."
+  },
+  "mediaUploader": {
+    "welcome": {
+      "title": "Bienvenue, {{name}}",
+      "subtitle": "Téléchargez vos médias ou capturez directement pour créer des légendes engageantes alimentées par l'IA.",
+      "tipsToggle": "Afficher les conseils"
+    },
+    "tips": {
+      "title": "Conseils rapides :",
+      "upload": "Téléchargez des images ou vidéos jusqu'à 50 Mo",
+      "capture": "Capturez des photos directement depuis l'appareil photo de votre appareil",
+      "edit": "Modifiez vos images avec des filtres, du texte et la rotation",
+      "drag": "Faites glisser les superpositions de texte en cliquant et en les déplaçant",
+      "save": "Enregistrez vos modifications pour créer une image finale"
+    },
+    "upload": {
+      "dragDrop": "Glissez-déposez vos médias ici, ou cliquez pour sélectionner",
+      "supportedFormats": "Prend en charge JPG, PNG, GIF, WebP, MP4, WebM (max 50 Mo)",
+      "buttonText": "Télécharger un média : Image ou Vidéo",
+      "or": "ou",
+      "textOnlyOption": "Créer une légende texte uniquement"
+    },
+    "camera": {
+      "error": "Erreur de caméra",
+      "active": "Caméra active - cliquez sur le bouton pour capturer",
+      "close": "Fermer",
+      "dismiss": "Ignorer"
+    },
+    "preview": {
+      "removeMedia": "Supprimer le média",
+      "video": "Vidéo",
+      "cropMode": "Mode recadrage actif",
+      "noMediaTitle": "Aperçu du média",
+      "noMediaDescription": "Téléchargez une image ou une vidéo, ou utilisez votre appareil photo pour capturer une photo. Vos médias apparaîtront ici pour modification."
+    },
+    "textEditor": {
+      "title": "Ajouter une superposition de texte",
+      "placeholder": "Entrez le texte à afficher sur votre image...",
+      "textColor": "Couleur du texte",
+      "textSize": "Taille du texte : {{size}}px",
+      "textRotation": "Rotation du texte : {{rotation}}°",
+      "positionHint": "Cliquez et faites glisser le texte sur l'image pour le positionner",
+      "blackButton": "Noir",
+      "edit": "Modifier",
+      "overlayApplied": "Superposition de texte appliquée : \"{{text}}\"",
+      "videoOverlayNote": "Les superpositions de texte sur les vidéos seront enregistrées avec les métadonnées de la vidéo et affichées pendant la lecture et le partage. Pas besoin de ré-encoder la vidéo.",
+      "emojiPicker": {
+        "buttonTooltip": "Ajouter un emoji",
+        "searchPlaceholder": "Rechercher des emojis...",
+        "categories": {
+          "frequentlyUsed": "Fréquemment utilisés",
+          "smileysAndPeople": "Smileys et personnes",
+          "animalsAndNature": "Animaux et nature",
+          "foodAndDrink": "Nourriture et boissons",
+          "activities": "Activités",
+          "travelAndPlaces": "Voyages et lieux",
+          "objects": "Objets",
+          "symbols": "Symboles",
+          "flags": "Drapeaux"
+        }
+      }
+    },
+    "filters": {
+      "title": "Appliquer des filtres :",
+      "original": "Original",
+      "originalDesc": "Aucun filtre appliqué",
+      "grayscale": "Niveaux de gris",
+      "grayscaleDesc": "Effet noir et blanc",
+      "sepia": "Sépia",
+      "sepiaDesc": "Look vintage chaleureux",
+      "invert": "Inverser",
+      "invertDesc": "Effet négatif",
+      "blur": "Flou",
+      "blurDesc": "Effet de mise au point douce",
+      "brightness": "Luminosité",
+      "brightnessDesc": "Image plus lumineuse",
+      "contrast": "Contraste",
+      "contrastDesc": "Contraste amélioré"
+    },
+    "controls": {
+      "rotate": "Rotation",
+      "counter": "Contre",
+      "crop": "Recadrer",
+      "text": "Texte",
+      "reset": "Réinitialiser",
+      "save": "Enregistrer",
+      "saving": "Enregistrement..."
+    },
+    "toasts": {
+      "invalidFileType": "Type de fichier invalide. Veuillez télécharger des fichiers JPG, PNG, GIF, WebP, MP4, WebM ou MOV.",
+      "fileTooLarge": "Le fichier est trop volumineux. La taille maximale est de 50 Mo.",
+      "uploadSuccess": "Média téléchargé avec succès !",
+      "mediaRemoved": "Média supprimé",
+      "cameraActivated": "Caméra activée avec succès",
+      "cameraDenied": "Accès à la caméra refusé. Veuillez vérifier les autorisations de votre navigateur.",
+      "cameraNotFound": "Aucune caméra détectée sur votre appareil.",
+      "cameraError": "Erreur de caméra : {{error}}",
+      "cameraNotActive": "Caméra non active ou impossible d'accéder aux éléments de la caméra",
+      "photoCaptured": "Photo capturée avec succès !",
+      "captureError": "Échec de la capture de photo : {{error}}",
+      "uploadFirst": "Téléchargez d'abord une image ou une vidéo !",
+      "rotationImageOnly": "La rotation n'est disponible que pour les images",
+      "cropImageOnly": "Le recadrage n'est disponible que pour les images",
+      "rotatedClockwise": "Image tournée de 90° dans le sens horaire",
+      "rotatedCounterClockwise": "Image tournée de 90° dans le sens antihoraire",
+      "cropEnabled": "Mode recadrage activé. Faites glisser pour ajuster la zone de recadrage.",
+      "cropDisabled": "Mode recadrage désactivé",
+      "textEditorActivated": "Éditeur de texte activé. Tapez votre texte et positionnez-le sur le média.",
+      "filterApplied": "Filtre appliqué : {{filter}}",
+      "textOnlyActivated": "Mode texte uniquement activé",
+      "noMediaSelected": "Aucun média sélectionné.",
+      "videoOverlaySaved": "Superposition de texte enregistrée pour la vidéo !",
+      "videoOverlayNote": "Le texte apparaîtra pendant la lecture et le partage",
+      "editsSaved": "Modifications d'image enregistrées avec succès !",
+      "editsSavedWithText": "Modifications enregistrées avec superposition de texte !",
+      "editsSavedWithTextNote": "Le texte apparaîtra dans les téléchargements et les images partagées",
+      "saveError": "Échec de l'enregistrement des modifications : {{error}}"
+    },
+    "errors": {
+      "cameraNotSupported": "L'accès à la caméra n'est pas pris en charge dans ce navigateur",
+      "videoElementNotAvailable": "Élément vidéo non disponible",
+      "videoPlaybackError": "Impossible de démarrer la lecture vidéo",
+      "videoStreamError": "Erreur de chargement du flux vidéo",
+      "canvasContextError": "Impossible d'obtenir le contexte du canevas",
+      "invalidVideoDimensions": "Dimensions vidéo invalides",
+      "imageBlobError": "Échec de la création du blob d'image",
+      "canvasContextCreateError": "Impossible de créer le contexte du canevas"
+    }
+  }
+}

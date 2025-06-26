@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Check, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export interface WizardStep {
@@ -27,7 +28,8 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
   isNextDisabled = false,
   isGenerating = false,
   hideNextButton = false
-}: WizardLayoutProps) => {  return (
+}: WizardLayoutProps) => {
+  const { t } = useTranslation('caption-generator');  return (
     <div className="flex flex-col h-full wizard-card text-adaptive-primary bg-adaptive-primary">
       {/* Progress Steps */}
       <div className="px-4 sm:px-6 md:px-8 py-6 border-b border-adaptive">
@@ -91,7 +93,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
         <div className="md:hidden">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Step {currentStep + 1} of {steps.length}
+              {t('wizard.stepIndicator', { current: currentStep + 1, total: steps.length })}
             </span>
             <span className="text-sm font-medium text-primary dark:text-primary/80">
               {steps[currentStep].title}
@@ -123,7 +125,7 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
           }`}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Previous
+          {t('wizard.previous')}
         </button>
         
         {!hideNextButton && (
@@ -142,11 +144,11 @@ export const WizardLayout: React.FC<WizardLayoutProps> = ({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Generating...
+                {t('wizard.generating')}
               </>
             ) : (
               <>
-                Next
+                {t('wizard.next')}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </>
             )}

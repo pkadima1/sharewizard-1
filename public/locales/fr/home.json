@@ -31,7 +31,7 @@
       "description": "Des légendes de réseaux sociaux aux articles longs, créez du contenu pour toute plateforme."
     },
     "seoOptimization": {
-      "title": "Optimisation SEO & CRO",
+      "title": "Optimisation SEO & GEO",
       "description": "Contenu optimisé pour les moteurs de recherche et taux de conversion pour maximiser votre portée."
     },
     "instantGeneration": {
@@ -56,5 +56,10 @@
     "footer": {
       "created": "Créé avec EngagePerfect"
     }
+  },
+  "carousel": {
+    "title": "Exemples Créés avec EngagePerfect AI",
+    "subtitle": "Découvrez comment notre IA génère du contenu beau et engageant sur toutes les plateformes",
+    "viewGalleryButton": "Voir la Galerie Complète"
   }
 }

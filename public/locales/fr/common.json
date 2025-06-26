@@ -2,13 +2,16 @@
   "nav": {
     "home": "Accueil",
     "dashboard": "Tableau de bord", 
-    "pricing": "Tarifs",
+    "pricing": "Prix",
     "login": "Connexion",
     "signup": "S'inscrire",
     "caption_generator": "Générateur de Légendes",
     "blog_wizard": "Contenu Long-forme",
     "gallery": "Galerie",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "adminDashboard": "Tableau de bord Admin",
+    "logOut": "Se déconnecter"
   },  
   "wizard": {
     "step1": "Télécharger un Média",
@@ -22,6 +25,7 @@
     "next": "Suivant",
     "previous": "Précédent",
     "generate": "Générer des Légendes",
+    "generateShort": "Générer",
     "save": "Enregistrer",
     "reset": "Réinitialiser",
     "loading": "Génération en cours...",
@@ -78,6 +82,34 @@
   "days_remaining_one": "1 jour restant",
   "requests_remaining": "{{count}} requêtes restantes",
   "requests_remaining_one": "1 requête restante",
+  "carousel": {
+    "loading": "Chargement du contenu incroyable...",
+    "noMedia": "Aucune image trouvée dans la galerie.",
+    "viewAll": "Voir la Galerie",
+    "previousButton": "Image précédente",
+    "nextButton": "Image suivante",
+    "goToImage": "Aller à l'image {{number}}",
+    "galleryShowcase": "Vitrine de galerie {{number}}",
+    "addImagesPrompt": "Ajoutez des images à votre galerie pour présenter votre contenu incroyable ici."
+  },
+  "footer": {
+    "tagline": "Créez du contenu engageant et humain pour les réseaux sociaux, blogs et articles en quelques secondes avec notre plateforme alimentée par l'IA",
+    "product": "Produit",
+    "legal": "Légal",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "newsletter": "Abonnez-vous à notre newsletter",
+    "newsletterDesc": "Recevez les dernières nouvelles et mises à jour",
+    "emailPlaceholder": "Votre email",
+    "allRights": "Tous droits réservés."
+  },
+  "support": {
+    "title": "Support EngagePerfect",
+    "subtitle": "Toujours là pour vous aider",
+    "typing": "L'assistant tape...",
+    "placeholder": "Tapez votre message...",
+    "footer": "Alimenté par l'IA • Temps de réponse ~2-3 secondes"
+  },
   "activating": "Activation en cours...",
   "cancel_trial": "Annuler l'essai",
   "manage_plan": "Gérer l'abonnement"

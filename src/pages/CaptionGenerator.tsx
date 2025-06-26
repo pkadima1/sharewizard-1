@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WizardLayout, WizardStep } from '@/components/WizardLayout';
 import MediaUploader from '@/components/MediaUploader';
 import NicheSelector from '@/components/NicheSelector';
@@ -9,6 +10,7 @@ import GeneratedCaptions from '@/components/GeneratedCaptions';
 import { toast } from "sonner";
 
 const CaptionGenerator: React.FC = () => {
+  const { t } = useTranslation('caption-generator');
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -29,28 +31,28 @@ const CaptionGenerator: React.FC = () => {
   }, [previewUrl]);
 
   const steps: WizardStep[] = [{
-    title: "Upload Media",
-    description: "Upload an image or video to generate captions",
+    title: t('steps.uploadMedia.title'),
+    description: t('steps.uploadMedia.description'),
     isCompleted: !!selectedMedia || isTextOnly
   }, {
-    title: "Select Niche",
-    description: "Choose a niche for your content",
+    title: t('steps.selectNiche.title'),
+    description: t('steps.selectNiche.description'),
     isCompleted: !!selectedNiche
   }, {
-    title: "Platform",
-    description: "Select social media platform",
+    title: t('steps.platform.title'),
+    description: t('steps.platform.description'),
     isCompleted: !!selectedPlatform
   }, {
-    title: "Goal",
-    description: "Define your content goal",
+    title: t('steps.goal.title'),
+    description: t('steps.goal.description'),
     isCompleted: !!selectedGoal
   }, {
-    title: "Tone",
-    description: "Choose the tone for your caption",
+    title: t('steps.tone.title'),
+    description: t('steps.tone.description'),
     isCompleted: !!selectedTone
   }, {
-    title: "Generated Captions",
-    description: "View and edit your captions",
+    title: t('steps.generatedCaptions.title'),
+    description: t('steps.generatedCaptions.description'),
     isCompleted: false
   }];
   const handleMediaSelect = (file: File | null) => {
@@ -81,7 +83,7 @@ const CaptionGenerator: React.FC = () => {
     setPreviewUrl(null);
 
     setCurrentStep(prev => prev + 1);
-    toast.success("Text-only caption mode enabled");
+    toast.success(t('toasts.textOnlyEnabled'));
   };
 
   const handleNicheChange = (niche: string) => {
@@ -113,23 +115,23 @@ const CaptionGenerator: React.FC = () => {
 
   const handleNext = () => {
     if (currentStep === 0 && !selectedMedia && !isTextOnly) {
-      toast.error("Please upload a media file or select text-only mode to continue");
+      toast.error(t('toasts.uploadMediaRequired'));
       return;
     }
     if (currentStep === 1 && !selectedNiche) {
-      toast.error("Please select or enter a niche to continue");
+      toast.error(t('toasts.nicheRequired'));
       return;
     }
     if (currentStep === 2 && !selectedPlatform) {
-      toast.error("Please select a platform to continue");
+      toast.error(t('toasts.platformRequired'));
       return;
     }
     if (currentStep === 3 && !selectedGoal) {
-      toast.error("Please select a content goal to continue");
+      toast.error(t('toasts.goalRequired'));
       return;
     }
     if (currentStep === 4 && !selectedTone) {
-      toast.error("Please select a content tone to continue");
+      toast.error(t('toasts.toneRequired'));
       return;
     }
     if (currentStep < steps.length - 1) {
@@ -146,10 +148,10 @@ const CaptionGenerator: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-adaptive-primary">
       <div className="px-4 py-[100px]">
         <h1 className="text-2xl md:text-3xl font-bold text-adaptive-primary text-center">
-          Caption Generator
+          {t('title')}
         </h1>
         <p className="mt-2 text-adaptive-secondary text-center max-w-2xl mx-auto">
-          Create engaging captions for your social media posts with AI assistance
+          {t('subtitle')}
         </p>
       </div>        <div className="container mx-auto flex-1 p-4 md:p-6 max-w-7xl">
         <div className="card-adaptive backdrop-blur-md shadow-md overflow-hidden">

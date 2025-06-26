@@ -259,7 +259,7 @@ export function HomeCarousel() {
               {t('carousel.noMedia', 'No images found in the gallery.')}
             </div>
             <p className="text-slate-400 mb-6 sm:mb-8 text-sm sm:text-base">
-              Add images to your gallery to showcase your amazing content here.
+              {t('carousel.addImagesPrompt', 'Add images to your gallery to showcase your amazing content here.')}
             </p>
             <a 
               href="/gallery"
@@ -341,7 +341,7 @@ export function HomeCarousel() {
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl overflow-hidden">
                       <img
                         src={image}
-                        alt={`Gallery showcase ${index + 1}`}
+                        alt={t('carousel.galleryShowcase', `Gallery showcase ${index + 1}`, { number: index + 1 })}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         style={{ objectFit: 'cover', objectPosition: 'center' }}
                         onError={(e) => {

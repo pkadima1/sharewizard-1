@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSubscriptionCheckout, createFlexCheckout } from '@/lib/stripe';
 import { createEnhancedSubscriptionCheckout, createEnhancedFlexCheckout } from '@/lib/checkoutEnhancements';
@@ -16,6 +17,7 @@ const Pricing: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation('pricing');
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
   }>({});  const handlePurchase = async (plan: string, priceId: string) => {
@@ -56,8 +58,8 @@ const Pricing: React.FC = () => {
     } catch (error: any) {
       console.error('Error creating checkout session:', error);
       toast({
-        title: 'Error',
-        description: `Failed to create checkout: ${error.message}`,
+        title: t('errors.title', 'Error'),
+        description: `${t('errors.checkout')}: ${error.message}`,
         variant: 'destructive'
       });
     } finally {
@@ -87,8 +89,8 @@ const Pricing: React.FC = () => {
     <div className="min-h-screen bg-adaptive-primary text-adaptive-primary">
       <div className="px-4 py-[100px] animate-fade-in">
         <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-50">Simple, Transparent Pricing</h1>
-          <p className="text-lg text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto">Choose the plan that's right for you</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-50">{t('title')}</h1>
+          <p className="text-lg text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto">{t('subtitle')}</p>
           
           {/* Billing cycle switch with yearly highlighted as default */}
           <div className="inline-flex items-center bg-adaptive-tertiary backdrop-blur-sm rounded-full p-1 mb-6 border border-adaptive">
@@ -101,7 +103,7 @@ const Pricing: React.FC = () => {
               )} 
               onClick={() => setBillingCycle('monthly')}
             >
-              Monthly
+              {t('billingCycle.monthly')}
             </button>
             <button 
               className={cn(
@@ -112,12 +114,12 @@ const Pricing: React.FC = () => {
               )} 
               onClick={() => setBillingCycle('yearly')}
             >
-              Yearly
+              {t('billingCycle.yearly')}
             </button>
           </div>
           {billingCycle === 'yearly' && (
             <div className="text-sm text-green-400 font-medium mb-4">
-              Save significantly with our yearly plans!
+              {t('yearlyDiscount')}
             </div>
           )}
         </div>
@@ -128,15 +130,15 @@ const Pricing: React.FC = () => {
             <div className="flex items-center mb-4 md:mb-0">
               <Gift className="h-8 w-8 text-white mr-4" />
               <div>
-                <h3 className="text-xl font-bold text-white">Start with a 5-day Free Trial</h3>
-                <p className="text-white/90">Subscribe to any plan and get 5 free requests to try out all features</p>
+                <h3 className="text-xl font-bold text-white">{t('freeTrialBanner.title')}</h3>
+                <p className="text-white/90">{t('freeTrialBanner.description')}</p>
               </div>
             </div>
             <Button 
               className="bg-white text-violet-700 hover:bg-white/90 px-6 py-5 text-base font-medium shadow-md"
               onClick={freeTrial}
             >
-              Start Your Free Trial
+              {t('freeTrialBanner.button')}
               <ChevronRight className="h-5 w-5 ml-2" />
             </Button>
           </div>
@@ -146,19 +148,19 @@ const Pricing: React.FC = () => {
             <div className="p-6 border-b border-adaptive">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">Free Plan</h3>
+                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">{t('plans.free.title')}</h3>
                   <p className="text-sm text-gray-700 dark:text-gray-200">
-                    🔓 Try it free — no credit card required
+                    {t('plans.free.description')}
                   </p>
                 </div>
               </div>
                 <div className="mt-4">
                 <div className="flex items-baseline">
-                  <span className="text-3xl font-bold text-adaptive-primary">$0</span>
-                  <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">forever</span>
+                  <span className="text-3xl font-bold text-adaptive-primary">{t('plans.free.price')}</span>
+                  <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">{t('plans.free.period')}</span>
                 </div>
                 <div className="text-sm text-adaptive-tertiary font-medium mt-1">
-                  <span className="text-gray-500 dark:text-gray-400">No credit card required</span>
+                  <span className="text-gray-500 dark:text-gray-400">{t('plans.free.noCreditCard')}</span>
                 </div>
               </div>
             </div>
@@ -167,25 +169,25 @@ const Pricing: React.FC = () => {
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">3 free caption requests on signup</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.free.features.requests')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Manual sharing support</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.free.features.sharing')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Post ideas & captions (image-only)</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.free.features.captions')}</span>
                 </li>
                 <li className="flex items-start">
                   <span className="w-5 h-5 text-red-400 mr-2 flex-shrink-0">🚫</span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">No blog generation</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('plans.free.features.noBlog')}</span>
                 </li>
               </ul>
               
               <div className="mb-4 p-3 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
                 <p className="text-xs text-violet-700 dark:text-violet-300">
-                  🟣 Great for exploring EngagePerfect's core features.
+                  {t('plans.free.highlight')}
                 </p>
               </div>
               
@@ -193,10 +195,10 @@ const Pricing: React.FC = () => {
                 className="w-full bg-adaptive-tertiary hover:bg-adaptive-secondary text-adaptive-primary py-6 text-base shadow-lg border border-adaptive" 
                 onClick={freeTrial} 
               >
-                Sign Up Free
+                {t('plans.free.button')}
               </Button>
               <p className="text-xs text-center text-adaptive-tertiary mt-3">
-                <span className="text-gray-500 dark:text-gray-400">No credit card required</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('plans.free.noCreditCard')}</span>
               </p>
             </div>
           </div>          {/* Basic Plan */}
@@ -204,35 +206,35 @@ const Pricing: React.FC = () => {
             <div className="p-6 border-b border-adaptive">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">Basic Plan</h3>
+                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">{t('plans.basic.title')}</h3>
                   <p className="text-sm text-gray-700 dark:text-gray-200">
-                    ⭐ Perfect for casual creators & side hustlers
+                    {t('plans.basic.description')}
                   </p>
                 </div>
               </div>
                 <div className="mt-4">
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold text-adaptive-primary">
-                    {billingCycle === 'monthly' ? '$8' : '$40'}
+                    {billingCycle === 'monthly' ? t('plans.basic.price.monthly') : t('plans.basic.price.yearly')}
                   </span>
                   <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">
-                    {billingCycle === 'monthly' ? '/ month' : '/ year'}
+                    {billingCycle === 'monthly' ? t('plans.basic.period.monthly') : t('plans.basic.period.yearly')}
                   </span>
                 </div>
                 {billingCycle === 'yearly' && (
                   <div className="text-sm text-green-400 font-medium mt-1">
-                    💡 Save 58% with yearly plan!
+                    {t('plans.basic.yearlySaving')}
                   </div>
                 )}
               </div>
                 <div className="mt-4 space-y-2">
                 <div className="inline-flex items-center bg-violet-600/20 px-3 py-1 rounded-full">
                   <Gift className="h-4 w-4 text-violet-400 mr-1" />
-                  <span className="text-xs font-medium text-violet-400">5-DAY FREE TRIAL INCLUDED</span>
+                  <span className="text-xs font-medium text-violet-400">{t('plans.basic.trial')}</span>
                 </div>
                 {billingCycle === 'monthly' && (
                   <div className="inline-flex items-center bg-green-600/20 px-3 py-1 rounded-full ml-2">
-                    <span className="text-xs font-medium text-green-400">Use code PERFECTSTART for 50% off first month</span>
+                    <span className="text-xs font-medium text-green-400">{t('plans.basic.discount')}</span>
                   </div>
                 )}
               </div>
@@ -240,41 +242,41 @@ const Pricing: React.FC = () => {
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">5 free requests during trial</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.basic.features.trialRequests')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
                   <span className="text-sm text-gray-700 dark:text-gray-200">
-                    {billingCycle === 'monthly' ? '70 captions/month' : '900 captions/year'}
+                    {billingCycle === 'monthly' ? t('plans.basic.features.captions.monthly') : t('plans.basic.features.captions.yearly')}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
                   <span className="text-sm text-gray-700 dark:text-gray-200">
-                    {billingCycle === 'monthly' ? '1 SEO blog/month' : '17 SEO blogs/year'} (up to 2000 words)
+                    {billingCycle === 'monthly' ? t('plans.basic.features.blogs.monthly') : t('plans.basic.features.blogs.yearly')} {t('plans.basic.features.blogs.wordLimit')}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Posts with image, video, and carousel support</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.basic.features.mediaSupport')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Custom overlay text and emojis</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.basic.features.customization')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Mobile-friendly caption preview & download</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.basic.features.preview')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Manual sharing to social media</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.basic.features.sharing')}</span>
                 </li>
               </ul>
               
               <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-xs text-blue-700 dark:text-blue-300">
-                  🟣 Includes image-only posts and custom tone support.
+                  {t('plans.basic.highlight')}
                 </p>
               </div>
               
@@ -286,26 +288,26 @@ const Pricing: React.FC = () => {
                 )} 
                 disabled={isLoading[billingCycle === 'monthly' ? 'basicMonth' : 'basicYear']}
               >
-                {isLoading[billingCycle === 'monthly' ? 'basicMonth' : 'basicYear'] ? 'Processing...' : 'Start Free Trial with Basic'}
+                {isLoading[billingCycle === 'monthly' ? 'basicMonth' : 'basicYear'] ? t('plans.basic.processing') : t('plans.basic.button')}
               </Button>
               <p className="text-xs text-center text-adaptive-tertiary mt-3">
-                <span className="text-gray-500 dark:text-gray-400">Subscription begins after 5-day trial. Cancel anytime during trial.</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('plans.basic.terms')}</span>
               </p>
             </div>
           </div>            {/* Premium Plan */}
           <div className="card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20 hover:-translate-y-1 transform scale-105 z-10 rounded-xl">
             <div className="absolute top-0 right-0 left-0">
               <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-medium py-1 text-center rounded-t-lg">
-                Most Popular
+                {t('plans.premium.badge')}
               </div>
             </div>
             
             <div className="p-6 pt-8 border-b border-adaptive">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">Premium Plan</h3>
+                  <h3 className="text-xl font-bold mb-1 text-adaptive-primary">{t('plans.premium.title')}</h3>
                   <p className="text-sm text-gray-700 dark:text-gray-200">
-                    🚀 Built for content creators, marketers & agencies
+                    {t('plans.premium.description')}
                   </p>
                 </div>
                 <Star className="h-5 w-5 text-orange-400" />
@@ -313,15 +315,15 @@ const Pricing: React.FC = () => {
                 <div className="mt-4">
                 <div className="flex items-baseline">
                   <span className="text-3xl font-bold text-adaptive-primary">
-                    {billingCycle === 'monthly' ? '$29' : '$199'}
+                    {billingCycle === 'monthly' ? t('plans.premium.price.monthly') : t('plans.premium.price.yearly')}
                   </span>
                   <span className="text-gray-700 dark:text-gray-200 text-sm ml-2">
-                    {billingCycle === 'monthly' ? '/month' : '/year'}
+                    {billingCycle === 'monthly' ? t('plans.premium.period.monthly') : t('plans.premium.period.yearly')}
                   </span>
                 </div>
                 {billingCycle === 'yearly' && (
                   <div className="text-sm text-green-400 font-medium mt-1">
-                    🔥 Best Value - Save $149/year!
+                    {t('plans.premium.yearlySaving')}
                   </div>
                 )}
               </div>
@@ -332,43 +334,43 @@ const Pricing: React.FC = () => {
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
                   <span className="text-sm text-gray-700 dark:text-gray-200">
-                    {billingCycle === 'monthly' ? '500 captions/month' : '6000 captions/year'} (all media types)
+                    {billingCycle === 'monthly' ? t('plans.premium.features.captions.monthly') : t('plans.premium.features.captions.yearly')} {t('plans.premium.features.captions.note')}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
                   <span className="text-sm text-gray-700 dark:text-gray-200">
-                    {billingCycle === 'monthly' ? '125 long-form blogs/month' : '1500 long-form blogs/year'} (up to 2,500 words)
+                    {billingCycle === 'monthly' ? t('plans.premium.features.blogs.monthly') : t('plans.premium.features.blogs.yearly')} {t('plans.premium.features.blogs.wordLimit')}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Includes SEO blog generator with EEAT & GEO optimization</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.premium.features.seoOptimization')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Instant social media previews</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.premium.features.previews')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Advanced formatting + external source linking</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.premium.features.formatting')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Usage analytics</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.premium.features.analytics')}</span>
                 </li>
                 <li className="flex items-start">
                   <Check className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Priority processing & support</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('plans.premium.features.priority')}</span>
                 </li>
               </ul>
               
               <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                 <p className="text-xs text-orange-700 dark:text-orange-300">
-                  🟣 Ideal for newsletters, landing pages, ecommerce content & more.
+                  {t('plans.premium.highlight')}
                 </p>
                 <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 font-medium">
-                  💡 Note: 1 blog = 4 credits, 1 caption = 1 credit
+                  {t('plans.premium.creditNote')}
                 </p>
               </div>
                 <Button 
@@ -379,118 +381,118 @@ const Pricing: React.FC = () => {
                 )} 
                 disabled={isLoading[billingCycle === 'monthly' ? 'premiumMonth' : 'premiumYear']}
               >
-                {isLoading[billingCycle === 'monthly' ? 'premiumMonth' : 'premiumYear'] ? 'Processing...' : 'Upgrade to Premium'}
+                {isLoading[billingCycle === 'monthly' ? 'premiumMonth' : 'premiumYear'] ? t('plans.premium.processing') : t('plans.premium.button')}
               </Button>
               <p className="text-xs text-center text-adaptive-tertiary mt-3">
-                <span className="text-gray-500 dark:text-gray-400">Subscription starts immediately. Cancel anytime.</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('plans.premium.terms')}</span>
               </p>
             </div>
           </div>
         </div>        {/* FAQ Section */}
         <div className="max-w-3xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">{t('faq.title')}</h2>
             <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">What's included in the free trial?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.trial.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                Basic plans include a 5-day free trial with 5 free requests. You can test all features available in your chosen plan during this period. Your subscription will begin after the trial period unless you cancel. Premium plans start immediately without a trial period.
+                {t('faq.items.trial.answer')}
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-2" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">How does the credit system work?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.credits.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                Our credit system is simple: 1 caption generation = 1 credit, 1 blog generation = 4 credits. This reflects the complexity difference between generating a social media caption vs. a full SEO-optimized blog post with our advanced AI system. Credits are used from your monthly allowance and reset each billing cycle.
+                {t('faq.items.credits.answer')}
               </AccordionContent>
             </AccordionItem>
               <AccordionItem value="item-3" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">What does PERFECTSTART discount code offer?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.discountCode.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                Use the discount code PERFECTSTART to get 50% off your first month on the Basic monthly plan only. This offer is not available for yearly plans or Premium plans. Enter the code at checkout to receive the discount on your first monthly billing cycle.
+                {t('faq.items.discountCode.answer')}
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-4" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">What do SEO, EEAT, and GEO mean?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.terminology.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                <strong>SEO</strong> (Search Engine Optimization) - Techniques to improve your content's visibility in search results. <strong>EEAT</strong> (Experience, Expertise, Authoritativeness, Trustworthiness) - Google's quality guidelines for content evaluation. <strong>GEO</strong> (Generative Engine Optimization) - Tailoring content that sounds, connects, and feels human-like crafted.
+                <div dangerouslySetInnerHTML={{ __html: t('faq.items.terminology.answer') }} />
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-5" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">How do I track my credit usage?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.tracking.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                You can track your credit usage in your account dashboard. Each time you generate content, the appropriate credits are deducted (1 for captions, 4 for blogs). Your remaining credits for the current billing cycle are always visible, and you'll receive notifications when you're running low.
+                {t('faq.items.tracking.answer')}
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-6" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">What's the difference between Basic and Premium plans?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.planDifference.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                Basic plans are perfect for casual users and side hustlers with limited blog generation (17 blogs/year) and include a 5-day free trial. Premium plans are designed for content creators, marketers, and agencies who need high-volume content creation with advanced features like EEAT optimization, priority support, and no trial period for immediate access.
+                {t('faq.items.planDifference.answer')}
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-7" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">Can I change plans later?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.changePlans.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle. Unused credits from your current plan will carry over when upgrading.
+                {t('faq.items.changePlans.answer')}
               </AccordionContent>
             </AccordionItem>
             
             <AccordionItem value="item-8" className="border-b border-gray-700/50">
-              <AccordionTrigger className="text-left text-white py-4">Do you offer refunds?</AccordionTrigger>
+              <AccordionTrigger className="text-left text-white py-4">{t('faq.items.refunds.question')}</AccordionTrigger>
               <AccordionContent className="text-gray-300 pb-4">
-                We offer a 14-day money-back guarantee if you're not satisfied with your subscription. Contact our support team to process your refund.
+                {t('faq.items.refunds.answer')}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         </div>        {/* Plan features section */}
         <div className="max-w-4xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">All Paid Plans Include</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">{t('allPlansInclude.title')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start">
               <Check className="w-5 h-5 text-green-400 mr-3 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-white">AI-generated captions & blogs</h3>
-                <p className="text-sm text-gray-300">Captions (1 credit each) and SEO-optimized blogs (4 credits each)</p>
+                <h3 className="font-medium text-white">{t('allPlansInclude.features.aiGeneration.title')}</h3>
+                <p className="text-sm text-gray-300">{t('allPlansInclude.features.aiGeneration.description')}</p>
               </div>
             </div>
             <div className="flex items-start">
               <Check className="w-5 h-5 text-green-400 mr-3 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-white">Mobile-optimized preview & sharing</h3>
-                <p className="text-sm text-gray-300">Ready-to-use formatting for all platforms</p>
+                <h3 className="font-medium text-white">{t('allPlansInclude.features.mobileOptimized.title')}</h3>
+                <p className="text-sm text-gray-300">{t('allPlansInclude.features.mobileOptimized.description')}</p>
               </div>
             </div>
             <div className="flex items-start">
               <Check className="w-5 h-5 text-green-400 mr-3 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-white">Multi-platform content creation</h3>
-                <p className="text-sm text-gray-300">Optimized for Twitter, LinkedIn, Facebook, Instagram & more</p>
+                <h3 className="font-medium text-white">{t('allPlansInclude.features.multiPlatform.title')}</h3>
+                <p className="text-sm text-gray-300">{t('allPlansInclude.features.multiPlatform.description')}</p>
               </div>
             </div>
             <div className="flex items-start">
               <Check className="w-5 h-5 text-green-400 mr-3 mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-white">Credit-based fair usage</h3>
-                <p className="text-sm text-gray-300">Simple pricing: 1 caption = 1 credit, 1 blog = 4 credits</p>
+                <h3 className="font-medium text-white">{t('allPlansInclude.features.creditBased.title')}</h3>
+                <p className="text-sm text-gray-300">{t('allPlansInclude.features.creditBased.description')}</p>
               </div>
             </div>
           </div>
           
-          <p className="text-center text-sm text-gray-400 mt-6">VAT included in all prices</p>
+          <p className="text-center text-sm text-gray-400 mt-6">{t('allPlansInclude.vatIncluded')}</p>
         </div>
         
         {/* Call to action */}
         <div className="text-center mt-16 mb-10">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-50">Ready to get started?</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-50">{t('cta.title')}</h2>
           <p className="text-adaptive-secondary mb-8 max-w-2xl mx-auto">
-            Join thousands of content creators and businesses who use EngagePerfect AI to create engaging content that resonates with their audience.
+            {t('cta.description')}
           </p>
           <Button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-lg text-lg shadow-lg border border-adaptive" onClick={freeTrial}>
-            Start Your Free Trial Today
+            {t('cta.button')}
             <ChevronRight className="ml-2 h-5 w-5" />
           </Button>
         </div>

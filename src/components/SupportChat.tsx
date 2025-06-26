@@ -16,6 +16,7 @@ import {
   User,
   Loader2
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useChat } from '../contexts/ChatContext';
 
 interface ChatFormData {
@@ -27,6 +28,7 @@ interface SupportChatProps {
 }
 
 const SupportChat: React.FC<SupportChatProps> = ({ className }) => {
+  const { t } = useTranslation();
   // Get chat state and actions from context
   const { 
     isOpen, 
@@ -95,8 +97,8 @@ const SupportChat: React.FC<SupportChatProps> = ({ className }) => {
                 <Bot className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="font-semibold text-sm">EngagePerfect Support</h3>
-                <p className="text-xs text-primary-100">Always here to help</p>
+                <h3 className="font-semibold text-sm">{t('support.title')}</h3>
+                <p className="text-xs text-primary-100">{t('support.subtitle')}</p>
               </div>
             </div>
             <button
@@ -168,7 +170,7 @@ const SupportChat: React.FC<SupportChatProps> = ({ className }) => {
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                         <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">Assistant is typing...</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{t('support.typing')}</span>
                     </div>
                   </div>
                 </div>
@@ -184,7 +186,7 @@ const SupportChat: React.FC<SupportChatProps> = ({ className }) => {
               <input
                 {...register('message', { required: true })}
                 type="text"
-                placeholder="Type your message..."
+                placeholder={t('support.placeholder')}
                 disabled={isSubmitting || isTyping}
                 className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary dark:bg-gray-800 dark:text-white disabled:opacity-50"
                 autoComplete="off"
@@ -205,7 +207,7 @@ const SupportChat: React.FC<SupportChatProps> = ({ className }) => {
             
             {/* Footer */}
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-              Powered by AI • Response time ~2-3 seconds
+              {t('support.footer')}
             </p>
           </div>
         </div>

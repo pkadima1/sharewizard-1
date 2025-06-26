@@ -1,0 +1,173 @@
+{
+  "title": "Prix Simple et Transparent",
+  "subtitle": "Choisissez le plan qui vous convient",
+  "billingCycle": {
+    "monthly": "Mensuel",
+    "yearly": "Annuel"
+  },
+  "yearlyDiscount": "Économisez considérablement avec nos plans annuels !",
+  "freeTrialBanner": {
+    "title": "Commencez avec un Essai Gratuit de 5 Jours",
+    "description": "Abonnez-vous à n'importe quel plan et obtenez 5 requêtes gratuites pour tester toutes les fonctionnalités",
+    "button": "Commencer Votre Essai Gratuit"
+  },
+  "plans": {
+    "free": {
+      "title": "Plan Gratuit",
+      "description": "🔓 Essayez-le gratuitement — aucune carte de crédit requise",
+      "price": "0 €",
+      "period": "pour toujours",
+      "noCreditCard": "Aucune carte de crédit requise",
+      "features": {
+        "requests": "3 requêtes de légendes gratuites à l'inscription",
+        "sharing": "Support de partage manuel",
+        "captions": "Idées de posts et légendes (image uniquement)",
+        "noBlog": "Pas de génération de blog"
+      },
+      "highlight": "🟣 Parfait pour explorer les fonctionnalités principales d'EngagePerfect.",
+      "button": "S'inscrire Gratuitement"
+    },
+    "basic": {
+      "title": "Plan Basic",
+      "description": "⭐ Parfait pour les créateurs occasionnels et les projets parallèles",
+      "price": {
+        "monthly": "8 €",
+        "yearly": "40 €"
+      },
+      "period": {
+        "monthly": "/ mois",
+        "yearly": "/ an"
+      },
+      "yearlySaving": "💡 Économisez 58% avec le plan annuel !",
+      "trial": "ESSAI GRATUIT DE 5 JOURS INCLUS",
+      "discount": "Utilisez le code PERFECTSTART pour 50% de réduction le premier mois",
+      "features": {
+        "trialRequests": "5 requêtes gratuites pendant l'essai",
+        "captions": {
+          "monthly": "70 légendes/mois",
+          "yearly": "900 légendes/an"
+        },
+        "blogs": {
+          "monthly": "1 blog SEO/mois",
+          "yearly": "17 blogs SEO/an",
+          "wordLimit": "(jusqu'à 2000 mots)"
+        },
+        "mediaSupport": "Posts avec support d'image, vidéo et carrousel",
+        "customization": "Texte de superposition personnalisé et émojis",
+        "preview": "Aperçu et téléchargement de légendes optimisés mobile",
+        "sharing": "Partage manuel vers les réseaux sociaux"
+      },
+      "highlight": "🟣 Inclut les posts image uniquement et le support de ton personnalisé.",
+      "button": "Commencer l'Essai Gratuit avec Basic",
+      "processing": "Traitement...",
+      "terms": "L'abonnement commence après l'essai de 5 jours. Annulez à tout moment pendant l'essai."
+    },
+    "premium": {
+      "title": "Plan Premium",
+      "description": "🚀 Conçu pour les créateurs de contenu, marketeurs et agences",
+      "badge": "Le Plus Populaire",
+      "price": {
+        "monthly": "29 €",
+        "yearly": "199 €"
+      },
+      "period": {
+        "monthly": "/mois",
+        "yearly": "/an"
+      },
+      "yearlySaving": "🔥 Meilleure Valeur - Économisez 149 €/an !",
+      "features": {
+        "captions": {
+          "monthly": "500 légendes/mois",
+          "yearly": "6000 légendes/an",
+          "note": "(tous types de médias)"
+        },
+        "blogs": {
+          "monthly": "125 blogs long-forme/mois",
+          "yearly": "1500 blogs long-forme/an",
+          "wordLimit": "(jusqu'à 2 500 mots)"
+        },
+        "seoOptimization": "Inclut le générateur de blog SEO avec optimisation EEAT et GEO",
+        "previews": "Aperçus instantanés des réseaux sociaux",
+        "formatting": "Formatage avancé + liens vers sources externes",
+        "analytics": "Analyses d'utilisation",
+        "priority": "Traitement et support prioritaires"
+      },
+      "highlight": "🟣 Idéal pour les newsletters, pages de destination, contenu e-commerce et plus.",
+      "creditNote": "💡 Note : 1 blog = 4 crédits, 1 légende = 1 crédit",
+      "button": "Passer à Premium",
+      "processing": "Traitement...",
+      "terms": "L'abonnement commence immédiatement. Annulez à tout moment."
+    }
+  },
+  "faq": {
+    "title": "Questions Fréquemment Posées",
+    "items": {
+      "trial": {
+        "question": "Qu'est-ce qui est inclus dans l'essai gratuit ?",
+        "answer": "Les plans Basic incluent un essai gratuit de 5 jours avec 5 requêtes gratuites. Vous pouvez tester toutes les fonctionnalités disponibles dans votre plan choisi pendant cette période. Votre abonnement commencera après la période d'essai sauf si vous annulez. Les plans Premium commencent immédiatement sans période d'essai."
+      },
+      "credits": {
+        "question": "Comment fonctionne le système de crédits ?",
+        "answer": "Notre système de crédits est simple : 1 génération de légende = 1 crédit, 1 génération de blog = 4 crédits. Cela reflète la différence de complexité entre générer une légende de réseau social et un article de blog complet optimisé SEO avec notre système IA avancé. Les crédits sont utilisés à partir de votre allocation mensuelle et se réinitialisent à chaque cycle de facturation."
+      },
+      "discountCode": {
+        "question": "Que propose le code de réduction PERFECTSTART ?",
+        "answer": "Utilisez le code de réduction PERFECTSTART pour obtenir 50% de réduction sur votre premier mois sur le plan Basic mensuel uniquement. Cette offre n'est pas disponible pour les plans annuels ou Premium. Entrez le code au moment du paiement pour recevoir la réduction sur votre premier cycle de facturation mensuel."
+      },
+      "terminology": {
+        "question": "Que signifient SEO, EEAT et GEO ?",
+        "answer": "<strong>SEO</strong> (Optimisation pour les Moteurs de Recherche) - Techniques pour améliorer la visibilité de votre contenu dans les résultats de recherche. <strong>EEAT</strong> (Expérience, Expertise, Autorité, Fiabilité) - Directives de qualité de Google pour l'évaluation du contenu. <strong>GEO</strong> (Optimisation de Moteur Génératif) - Adaptation du contenu qui sonne, connecte et semble créé de manière humaine."
+      },
+      "tracking": {
+        "question": "Comment puis-je suivre mon utilisation de crédits ?",
+        "answer": "Vous pouvez suivre votre utilisation de crédits dans votre tableau de bord de compte. Chaque fois que vous générez du contenu, les crédits appropriés sont déduits (1 pour les légendes, 4 pour les blogs). Vos crédits restants pour le cycle de facturation actuel sont toujours visibles, et vous recevrez des notifications lorsque vous en manquez."
+      },
+      "planDifference": {
+        "question": "Quelle est la différence entre les plans Basic et Premium ?",
+        "answer": "Les plans Basic sont parfaits pour les utilisateurs occasionnels et les projets parallèles avec une génération de blog limitée (17 blogs/an) et incluent un essai gratuit de 5 jours. Les plans Premium sont conçus pour les créateurs de contenu, marketeurs et agences qui ont besoin de création de contenu en grand volume avec des fonctionnalités avancées comme l'optimisation EEAT, le support prioritaire, et aucune période d'essai pour un accès immédiat."
+      },
+      "changePlans": {
+        "question": "Puis-je changer de plan plus tard ?",
+        "answer": "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment. Les changements seront reflétés dans votre prochain cycle de facturation. Les crédits non utilisés de votre plan actuel seront reportés lors de la mise à niveau."
+      },
+      "refunds": {
+        "question": "Offrez-vous des remboursements ?",
+        "answer": "Nous offrons une garantie de remboursement de 14 jours si vous n'êtes pas satisfait de votre abonnement. Contactez notre équipe de support pour traiter votre remboursement."
+      }
+    }
+  },
+  "allPlansInclude": {
+    "title": "Tous les Plans Payants Incluent",
+    "features": {
+      "aiGeneration": {
+        "title": "Légendes et blogs générés par IA",
+        "description": "Légendes (1 crédit chacune) et blogs optimisés SEO (4 crédits chacun)"
+      },
+      "mobileOptimized": {
+        "title": "Aperçu et partage optimisés mobile",
+        "description": "Formatage prêt à utiliser pour toutes les plateformes"
+      },
+      "multiPlatform": {
+        "title": "Création de contenu multi-plateforme",
+        "description": "Optimisé pour Twitter, LinkedIn, Facebook, Instagram et plus"
+      },
+      "creditBased": {
+        "title": "Usage équitable basé sur les crédits",
+        "description": "Prix simple : 1 légende = 1 crédit, 1 blog = 4 crédits"
+      }
+    },
+    "vatIncluded": "TVA incluse dans tous les prix"
+  },
+  "cta": {
+    "title": "Prêt à commencer ?",
+    "description": "Rejoignez des milliers de créateurs de contenu et d'entreprises qui utilisent EngagePerfect AI pour créer du contenu engageant qui résonne avec leur audience.",
+    "button": "Commencer Votre Essai Gratuit Aujourd'hui"
+  },
+  "loading": {
+    "processing": "Traitement..."
+  },
+  "errors": {
+    "title": "Erreur",
+    "checkout": "Échec de la création du paiement"
+  }
+}
