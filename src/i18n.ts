@@ -18,6 +18,15 @@ i18n
     supportedLngs: ['en', 'fr'],
     // Debug mode for development
     debug: import.meta.env.DEV,
+    // Language detector options
+    detection: {
+      // Order of detection methods
+      order: ['path', 'localStorage', 'navigator'],
+      // Where to look in the URL path (index 1 means /:lang/...)
+      lookupFromPathIndex: 1,
+      // Don't cache the detected language in localStorage (we handle this manually)
+      caches: [],
+    },
     // Namespace configuration
     ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator'],
     defaultNS: 'common',

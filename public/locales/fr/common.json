@@ -11,7 +11,9 @@
     "logout": "Déconnexion",
     "profile": "Profil",
     "adminDashboard": "Tableau de bord Admin",
-    "logOut": "Se déconnecter"
+    "logOut": "Se déconnecter",
+    "features": "Fonctionnalités",
+    "blog": "Blog"
   },  
   "wizard": {
     "step1": "Télécharger un Média",

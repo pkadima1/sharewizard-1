@@ -6,6 +6,7 @@ import { LogOut, Menu, X, Bell, User, ChevronDown, Shield } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedPath, useLocalizedNavigate } from '@/utils/routeUtils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,8 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { t } = useTranslation();
+  const { getLocalizedPath } = useLocalizedPath();
+  const navigateLocalized = useLocalizedNavigate();
   // Check if user is admin
   const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
                  currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
@@ -44,7 +47,7 @@ const Navbar: React.FC = () => {
         title: "Logged out",
         description: "You have been successfully logged out",
       });
-      navigate('/login');
+      navigateLocalized('/login');
     } catch (error) {
       toast({
         title: "Error",
@@ -55,6 +58,18 @@ const Navbar: React.FC = () => {
   };
 
   const isActive = (path: string) => {
+    // Extract path without language prefix
+    const pathParts = location.pathname.split('/');
+    const potentialLang = pathParts[1];
+    const supportedLangCodes = ['en', 'fr'];
+    
+    if (potentialLang && supportedLangCodes.includes(potentialLang)) {
+      // Remove language prefix and compare
+      const pathWithoutLang = '/' + pathParts.slice(2).join('/');
+      return pathWithoutLang === path || (path === '/' && pathWithoutLang === '/home');
+    }
+    
+    // Fallback for non-prefixed URLs
     return location.pathname === path;
   };
   return (
@@ -68,7 +83,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to={getLocalizedPath('')} className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/23327aae-0892-407a-a483-66a3aff1f9e7.png" 
                 alt="AI Star" 
@@ -81,7 +96,7 @@ const Navbar: React.FC = () => {
           </div>
             {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">            <Link 
-              to="/" 
+              to={getLocalizedPath('')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/') 
                   ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
@@ -91,7 +106,7 @@ const Navbar: React.FC = () => {
               {t('nav.home')}
             </Link>
             <Link 
-              to="/pricing" 
+              to={getLocalizedPath('pricing')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/pricing') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -100,7 +115,7 @@ const Navbar: React.FC = () => {
             >
               {t('nav.pricing')}
             </Link>            <Link 
-              to="/caption-generator" 
+              to={getLocalizedPath('caption-generator')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/caption-generator') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -110,7 +125,7 @@ const Navbar: React.FC = () => {
               {t('nav.caption_generator')}
             </Link>
             <Link 
-              to="/longform" 
+              to={getLocalizedPath('longform')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/longform') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -120,7 +135,7 @@ const Navbar: React.FC = () => {
               {t('nav.blog_wizard')}
             </Link>
             <Link 
-              to="/gallery" 
+              to={getLocalizedPath('gallery')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/gallery') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -130,7 +145,7 @@ const Navbar: React.FC = () => {
               {t('nav.gallery')}
             </Link>
             <Link 
-              to="/features" 
+              to={getLocalizedPath('features')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/features') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -140,7 +155,7 @@ const Navbar: React.FC = () => {
           {/*  Features*/}
             </Link>
             <Link 
-              to="/blog" 
+              to={getLocalizedPath('blog')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/blog') 
                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -151,14 +166,14 @@ const Navbar: React.FC = () => {
             </Link>
           </nav>
             <div className="flex items-center space-x-4">
-            {/* Language Switcher - Always visible */}
-            <div className="hidden md:flex items-center">
-              <LanguageSwitcher />
-            </div>
             
             {/* Auth Actions */}
             {currentUser ? (
               <div className="flex items-center space-x-3">
+                {/* Language Switcher for authenticated users */}
+                <div className="hidden md:flex items-center">
+                  <LanguageSwitcher />
+                </div>
                 {/* Dashboard link hidden for now */}
                  <Link 
                   to="/dashboard" 
@@ -197,14 +212,14 @@ const Navbar: React.FC = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer flex items-center">
+                      <Link to={getLocalizedPath('profile')} className="cursor-pointer flex items-center">
                         <User className="mr-2 h-4 w-4" />
                         <span>{t('nav.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
                     {/* Dashboard menu item hidden for now */}
                   <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="cursor-pointer flex items-center">
+                      <Link to={getLocalizedPath('dashboard')} className="cursor-pointer flex items-center">
                         <Bell className="mr-2 h-4 w-4" />
                         <span>{t('nav.dashboard')}</span>
                       </Link>
@@ -212,7 +227,7 @@ const Navbar: React.FC = () => {
                     {/* Admin Dashboard link - only visible to admins */}
                     {isAdmin && (
                       <DropdownMenuItem asChild>
-                        <Link to="/admin" className="cursor-pointer flex items-center">
+                        <Link to={getLocalizedPath('admin')} className="cursor-pointer flex items-center">
                           <Shield className="mr-2 h-4 w-4" />
                           <span>{t('nav.adminDashboard')}</span>
                         </Link>
@@ -229,12 +244,12 @@ const Navbar: React.FC = () => {
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <LanguageSwitcher />
                 <Link 
-                  to="/login"
+                  to={getLocalizedPath('login')}
                   className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
                 >
                   {t('nav.login')}
                 </Link>
-                <Link to="/signup">
+                <Link to={getLocalizedPath('signup')}>
                   <Button 
                     className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded-md transition-colors duration-200"
                   >
@@ -257,7 +272,7 @@ const Navbar: React.FC = () => {
           <div className="md:hidden py-2 border-t border-gray-200 dark:border-gray-800 animate-fade-in bg-white dark:bg-gray-900">
             <nav className="flex flex-col space-y-1 px-2 pb-3 pt-2">
               <Link 
-                to="/" 
+                to={getLocalizedPath('')} 
                 className={`px-3 py-2.5 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/') 
                     ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
@@ -265,10 +280,10 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Home
+                {t('nav.home')}
               </Link>
               <Link 
-                to="/pricing" 
+                to={getLocalizedPath('pricing')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/pricing') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -276,9 +291,9 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Pricing
+                {t('nav.pricing')}
               </Link>              <Link 
-                to="/caption-generator" 
+                to={getLocalizedPath('caption-generator')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/caption-generator') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -286,10 +301,10 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Caption Generator
+                {t('nav.caption_generator')}
               </Link>
               <Link 
-                to="/longform" 
+                to={getLocalizedPath('longform')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/longform') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -297,10 +312,10 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Blog Wizard
+                {t('nav.blog_wizard')}
               </Link>
               <Link 
-                to="/gallery" 
+                to={getLocalizedPath('gallery')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/gallery') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -311,7 +326,7 @@ const Navbar: React.FC = () => {
                 {t('nav.gallery')}
               </Link>
               <Link 
-                to="/features" 
+                to={getLocalizedPath('features')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/features') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -319,10 +334,10 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Features
+                {t('nav.features')}
               </Link>
               <Link 
-                to="/blog" 
+                to={getLocalizedPath('blog')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/blog') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -330,13 +345,13 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Blog
+                {t('nav.blog')}
               </Link>
               {currentUser && (
                 <>
                   {/* Dashboard mobile link hidden for now */}
                   <Link 
-                    to="/dashboard" 
+                    to={getLocalizedPath('dashboard')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                       isActive('/dashboard') 
                         ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -344,10 +359,10 @@ const Navbar: React.FC = () => {
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Dashboard
+                    {t('nav.dashboard')}
                   </Link> 
                   <Link 
-                    to="/profile" 
+                    to={getLocalizedPath('profile')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                       isActive('/profile') 
                         ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
@@ -355,7 +370,7 @@ const Navbar: React.FC = () => {
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Profile
+                    {t('nav.profile')}
                   </Link>
                   <button
                     onClick={() => {
@@ -366,7 +381,7 @@ const Navbar: React.FC = () => {
                   >
                     <div className="flex items-center">
                       <LogOut size={18} className="mr-2" />
-                      Log out
+                      {t('nav.logOut')}
                     </div>
                   </button>
                 </>              )}              {/* Language switcher in mobile menu */}

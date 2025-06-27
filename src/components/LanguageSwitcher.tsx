@@ -12,43 +12,41 @@ export default function LanguageSwitcher() {
   // Function to handle language change
   const handleLanguageChange = (languageCode: string) => {
     changeLanguage(languageCode);
-  };  // Use utility function for flag images
+  };
 
   // Get the current language object
   const currentLangObj = supportedLanguages.find(lang => lang.code === currentLanguage);
+  
+  // Flag image mapping for proper flag display
+  const getFlagImage = (code: string) => {
+    return `/img/flags/${code}.png`;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-1 px-2">
+        <Button variant="ghost" className="flex items-center gap-2 px-3">
           <img 
-            src={getLanguageFlag(currentLanguage)} 
-            alt={currentLangObj?.name || currentLanguage} 
-            className="h-4 w-6 rounded-sm object-cover"
-            onError={(e) => {
-              // If image fails to load, hide the image element
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
+            src={getFlagImage(currentLanguage)} 
+            alt={`${currentLangObj?.name} flag`}
+            className="w-4 h-3 object-cover rounded-sm"
           />
-          <span className="ml-1 text-sm font-medium uppercase hidden sm:inline">{currentLanguage}</span>
-          <GlobeIcon className="h-4 w-4 ml-1" />
+          <span className="text-sm font-medium hidden sm:inline">{currentLangObj?.name || currentLanguage.toUpperCase()}</span>
+          <span className="text-sm font-medium sm:hidden">{currentLanguage.toUpperCase()}</span>
+          <GlobeIcon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {supportedLanguages.map((language) => (          <DropdownMenuItem
+        {supportedLanguages.map((language) => (
+          <DropdownMenuItem
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
-            className={`flex items-center gap-2 ${currentLanguage === language.code ? 'bg-accent text-accent-foreground' : ''}`}
+            className={`flex items-center gap-3 ${currentLanguage === language.code ? 'bg-accent text-accent-foreground' : ''}`}
           >
             <img 
-              src={getLanguageFlag(language.code)} 
-              alt={language.name} 
-              className="h-4 w-6 rounded-sm object-cover"
-              onError={(e) => {
-                // If image fails to load, hide the image element
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
+              src={getFlagImage(language.code)} 
+              alt={`${language.name} flag`}
+              className="w-4 h-3 object-cover rounded-sm"
             />
             <span>{language.name}</span>
           </DropdownMenuItem>

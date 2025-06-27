@@ -45,11 +45,115 @@
     },
     "goal": {
       "title": "Goal",
-      "description": "Define your content goal"
+      "description": "Define your content goal",
+      "heading": "What's the Goal of Your Content?",
+      "subheading": "Select the primary goal for your content. AI will generate captions optimized for this purpose.",
+      "goals": {
+        "boostEngagement": {
+          "title": "Boost Engagement",
+          "description": "Increase likes, comments and shares",
+          "bestFor": "Content that encourages interaction",
+          "examples": "Questions, polls, controversial topics"
+        },
+        "growAudience": {
+          "title": "Grow Audience",
+          "description": "Expand your follower base and reach",
+          "bestFor": "Broadly appealing content",
+          "examples": "Trending topics, viral challenges"
+        },
+        "shareKnowledge": {
+          "title": "Share Knowledge",
+          "description": "Educate and provide value",
+          "bestFor": "Educational content that builds authority",
+          "examples": "Tutorials, tips, how-to guides"
+        },
+        "driveSales": {
+          "title": "Drive Sales",
+          "description": "Convert followers into customers",
+          "bestFor": "Promotional content with clear CTAs",
+          "examples": "Product features, special offers, testimonials"
+        },
+        "brandAwareness": {
+          "title": "Brand Awareness",
+          "description": "Increase visibility and recognition",
+          "bestFor": "Content that showcases brand values",
+          "examples": "Brand stories, behind-the-scenes content"
+        },
+        "buildCommunity": {
+          "title": "Build Community",
+          "description": "Foster relationships with followers",
+          "bestFor": "Content that creates belonging",
+          "examples": "User-generated content, community spotlights"
+        }
+      },
+      "selected": "Selected",
+      "goalStrategy": "Goal Strategy",
+      "optimizedFor": "Your captions will be optimized for",
+      "bestForText": "This type of content is best for",
+      "contentExamples": "Content Examples",
+      "tipTitle": "Tip:",
+      "tipText": "Focusing on one primary goal helps create more effective and targeted content. You can always change this for future posts.",
+      "selectGoalAriaLabel": "Select {{goalTitle}} as your content goal"
     },
     "tone": {
       "title": "Tone",
-      "description": "Choose the tone for your caption"
+      "description": "Choose the tone for your caption",
+      "heading": "Choose Your Content's Tone",
+      "subheading": "Select the tone that best fits your brand voice and audience. This influences how your captions will sound.",
+      "generateButton": "Generate Captions",
+      "generating": "Generating Captions...",
+      "selected": "Selected",
+      "detailsTitle": "{{tone}} Tone Details",
+      "bestUsedFor": "Best used for:",
+      "worksWellOn": "Works well on:",
+      "showExample": "Show tone example",
+      "hideExample": "Hide tone example",
+      "tipTitle": "Tip:",
+      "tipText": "Choose a tone that matches how you normally communicate with your audience for the most authentic results.",
+      "tones": {
+        "professional": {
+          "title": "Professional",
+          "description": "Formal and business-like approach",
+          "examples": "Industry expertise, data-driven content, business updates",
+          "platforms": "LinkedIn, corporate blogs, B2B content",
+          "sampleText": "Our latest research reveals industry-leading insights on market trends. Learn how these findings can enhance your business strategy in our detailed analysis."
+        },
+        "casual": {
+          "title": "Casual",
+          "description": "Relaxed and friendly tone",
+          "examples": "Everyday conversation, personal stories, community posts",
+          "platforms": "Instagram, Facebook, personal blogs",
+          "sampleText": "Just hanging out at the beach today! The waves are perfect and I can't get enough of this sunshine. Who else is enjoying the weekend? ☀️🌊"
+        },
+        "humorous": {
+          "title": "Humorous",
+          "description": "Fun and entertaining style",
+          "examples": "Jokes, witty observations, playful content",
+          "platforms": "Twitter, TikTok, Instagram stories",
+          "sampleText": "When your coffee kicks in and suddenly you're ready to conquer the world... or at least your inbox. Anyone else feel like a superhero after caffeine? ☕💪😂"
+        },
+        "inspirational": {
+          "title": "Inspirational",
+          "description": "Motivating and uplifting",
+          "examples": "Success stories, quotes, aspirational content",
+          "platforms": "Instagram, Pinterest, motivational posts",
+          "sampleText": "Every challenge you face is preparing you for something greater. Keep pushing forward—your breakthrough moment is closer than you think. ✨"
+        },
+        "persuasive": {
+          "title": "Persuasive",
+          "description": "Convincing and compelling",
+          "examples": "Calls to action, product promotions, advocacy",
+          "platforms": "Landing pages, sales emails, promotional content",
+          "sampleText": "Don't miss this opportunity to transform your results. With our proven method, you'll see immediate improvements. Take action today while this offer lasts."
+        },
+        "educational": {
+          "title": "Educational",
+          "description": "Informative and instructive",
+          "examples": "How-to guides, tutorials, informative content",
+          "platforms": "YouTube, Medium, educational platforms",
+          "sampleText": "Did you know that honeybees communicate through dance? The 'waggle dance' indicates direction and distance to food sources, demonstrating their remarkable intelligence."
+        }
+      }
     },
     "generatedCaptions": {
       "title": "Generated Captions",

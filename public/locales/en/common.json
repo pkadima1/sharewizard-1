@@ -11,7 +11,9 @@
     "logout": "Logout",
     "profile": "Profile",
     "adminDashboard": "Admin Dashboard",
-    "logOut": "Log out"
+    "logOut": "Log out",
+    "features": "Features",
+    "blog": "Blog"
   },
   "wizard": {
     "step1": "Upload Media",

@@ -57,7 +57,7 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
       updatedCaptions[selectedCaption] = editingCaption;
       setCaptions(updatedCaptions);
       setIsEditing(false);
-      toast.success("Caption updated successfully!");
+      toast.success("Légende mise à jour avec succès !");
     }
   };
 
@@ -76,13 +76,13 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
         />
       ) : (        <div className="bg-gray-50 dark:bg-gray-800/90 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="font-medium text-gray-900 dark:text-white">Edit Caption</h3>
+            <h3 className="font-medium text-gray-900 dark:text-white">Modifier la Légende</h3>
             <div className="flex gap-2">
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8"
-                title="Edit"
+                title="Modifier"
                 onClick={handleEditCaption}
               >
                 <Edit className="h-4 w-4" />
@@ -91,7 +91,7 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8"
-                title="Share"
+                title="Partager"
                 onClick={onShareClick}
                 disabled={isSharing}
               >
@@ -105,7 +105,7 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8"
-                title="Download"
+                title="Télécharger"
                 onClick={onDownloadClick}
                 disabled={isDownloading}
               >
@@ -118,18 +118,18 @@ const CaptionEditor: React.FC<CaptionEditorProps> = ({
             </div>
           </div>            {!isTextOnly && mediaType !== 'video' && (
             <div className="mt-4 flex items-center justify-end">
-              <div className="flex items-center space-x-2">                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Caption below</span>
+              <div className="flex items-center space-x-2">                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Légende en bas</span>
                 <Switch 
                   checked={captionOverlayMode === 'overlay'}
                   onCheckedChange={() => onCaptionOverlayModeChange(captionOverlayMode === 'overlay' ? 'below' : 'overlay')}
                   className="data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-500"
                 />
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Caption overlay</span>
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Légende superposée</span>
               </div>
             </div>
           )}
             <div className="mt-4">
-            <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-50">Caption Text</h3>
+            <h3 className="font-semibold mb-2 text-gray-900 dark:text-gray-50">Texte de la Légende</h3>
             <div className="p-3 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm">
               <h4 className="font-medium text-gray-900 dark:text-white">{stripMarkdownFormatting(captions[selectedCaption]?.title)}</h4>
               <p className="mt-2 text-sm whitespace-pre-line text-gray-800 dark:text-gray-200">{stripMarkdownFormatting(captions[selectedCaption]?.caption)}</p>

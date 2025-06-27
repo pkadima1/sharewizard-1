@@ -1,5 +1,5 @@
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -18,13 +18,60 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Gallery from "./pages/Gallery";
+import { useLanguage } from "./contexts/LanguageContext";
 
 // Lazy-loaded test components (only in development)
 const TestLongformGeneration = lazy(() => 
   import('./components/tests/TestLongformGeneration')
 );
 
-const RouterConfig = () => {  return (
+// Component to handle language URL detection and redirection
+const LanguageRouteHandler: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { lang } = useParams<{ lang: string }>();
+  const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const supportedLangCodes = supportedLanguages.map(l => l.code);
+    
+    // If there's a language in the URL and it's supported
+    if (lang && supportedLangCodes.includes(lang)) {
+      // If the URL language is different from the current language, update it
+      if (lang !== currentLanguage) {
+        changeLanguage(lang);
+      }
+    } else if (lang && !supportedLangCodes.includes(lang)) {
+      // If the language in URL is not supported, redirect to current language
+      const newPath = location.pathname.replace(`/${lang}`, `/${currentLanguage}`);
+      navigate(newPath, { replace: true });
+    }
+  }, [lang, currentLanguage, changeLanguage, supportedLanguages, navigate, location.pathname]);
+
+  return <>{children}</>;
+};
+
+// Component to redirect root paths to language-prefixed paths
+const RootRedirect: React.FC = () => {
+  const { currentLanguage } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // For the root path, redirect to language-prefixed home
+    if (location.pathname === '/') {
+      navigate(`/${currentLanguage}/home`, { replace: true });
+    } else {
+      // For other paths, just add the language prefix
+      navigate(`/${currentLanguage}${location.pathname}`, { replace: true });
+    }
+  }, [currentLanguage, navigate, location.pathname]);
+
+  return null;
+};
+
+const RouterConfig = () => {  
+  return (
     <ErrorBoundary>
       <div className="flex flex-col min-h-screen">
         <ErrorBoundary>
@@ -33,38 +80,64 @@ const RouterConfig = () => {  return (
         <main className="flex-grow main-container">
           <ErrorBoundary>            
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/caption-generator" element={<CaptionGenerator />} />
-              <Route path="/terms" element={<TermsAndConditions />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/preview-repost" element={<PreviewRepost />} />
-              <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
-              <Route path="/gallery" element={<Gallery />} />
+              {/* Root redirects - redirect paths without language prefix */}
+              <Route path="/" element={<RootRedirect />} />
+              <Route path="/profile" element={<RootRedirect />} />
+              <Route path="/login" element={<RootRedirect />} />
+              <Route path="/signup" element={<RootRedirect />} />
+              <Route path="/forgot-password" element={<RootRedirect />} />
+              <Route path="/dashboard" element={<RootRedirect />} />
+              <Route path="/pricing" element={<RootRedirect />} />
+              <Route path="/caption-generator" element={<RootRedirect />} />
+              <Route path="/terms" element={<RootRedirect />} />
+              <Route path="/privacy" element={<RootRedirect />} />
+              <Route path="/preview-repost" element={<RootRedirect />} />
+              <Route path="/longform" element={<RootRedirect />} />
+              <Route path="/gallery" element={<RootRedirect />} />
+              <Route path="/admin" element={<RootRedirect />} />
               
-              {/* Admin routes */}
-              <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+              {/* Language-prefixed routes */}
+              <Route path="/:lang/*" element={
+                <LanguageRouteHandler>
+                  <Routes>
+                    <Route path="/home" element={<Index />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/caption-generator" element={<CaptionGenerator />} />
+                    <Route path="/terms" element={<TermsAndConditions />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/preview-repost" element={<PreviewRepost />} />
+                    <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    
+                    {/* Admin routes */}
+                    <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+                    
+                    {/* Development-only testing routes */}
+                    {import.meta.env.DEV && (
+                      <Route 
+                        path="/test-longform" 
+                        element={
+                          <ErrorBoundary>
+                            <Suspense fallback={<div className="p-8 text-center">Loading test component...</div>}>
+                              <TestLongformGeneration />
+                            </Suspense>
+                          </ErrorBoundary>
+                        } 
+                      />
+                    )}
+                    
+                    {/* Nested route catch-all for unknown pages */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </LanguageRouteHandler>
+              } />
               
-              {/* Development-only testing routes */}
-              {import.meta.env.DEV && (
-                <Route 
-                  path="/test-longform" 
-                  element={
-                    <ErrorBoundary>
-                      <Suspense fallback={<div className="p-8 text-center">Loading test component...</div>}>
-                        <TestLongformGeneration />
-                      </Suspense>
-                    </ErrorBoundary>
-                  } 
-                />
-              )}
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Global catch-all for completely unknown routes */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ErrorBoundary>

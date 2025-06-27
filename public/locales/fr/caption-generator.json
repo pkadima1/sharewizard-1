@@ -45,11 +45,115 @@
     },
     "goal": {
       "title": "Objectif",
-      "description": "Définissez votre objectif de contenu"
+      "description": "Définissez votre objectif de contenu",
+      "heading": "Quel est l'Objectif de Votre Contenu ?",
+      "subheading": "Sélectionnez l'objectif principal de votre contenu. L'IA générera des légendes optimisées pour cette finalité.",
+      "goals": {
+        "boostEngagement": {
+          "title": "Booster l'Engagement",
+          "description": "Augmenter les likes, commentaires et partages",
+          "bestFor": "Contenu qui encourage l'interaction",
+          "examples": "Questions, sondages, sujets controversés"
+        },
+        "growAudience": {
+          "title": "Développer l'Audience",
+          "description": "Élargir votre base d'abonnés et votre portée",
+          "bestFor": "Contenu largement attrayant",
+          "examples": "Sujets tendance, défis viraux"
+        },
+        "shareKnowledge": {
+          "title": "Partager des Connaissances",
+          "description": "Éduquer et apporter de la valeur",
+          "bestFor": "Contenu éducatif qui établit l'autorité",
+          "examples": "Tutoriels, conseils, guides pratiques"
+        },
+        "driveSales": {
+          "title": "Stimuler les Ventes",
+          "description": "Convertir les abonnés en clients",
+          "bestFor": "Contenu promotionnel avec des CTA clairs",
+          "examples": "Caractéristiques produits, offres spéciales, témoignages"
+        },
+        "brandAwareness": {
+          "title": "Notoriété de Marque",
+          "description": "Augmenter la visibilité et la reconnaissance",
+          "bestFor": "Contenu qui met en valeur les valeurs de la marque",
+          "examples": "Histoires de marque, contenu en coulisses"
+        },
+        "buildCommunity": {
+          "title": "Construire une Communauté",
+          "description": "Favoriser les relations avec les abonnés",
+          "bestFor": "Contenu qui crée un sentiment d'appartenance",
+          "examples": "Contenu généré par les utilisateurs, mises en avant de la communauté"
+        }
+      },
+      "selected": "Sélectionné",
+      "goalStrategy": "Stratégie d'Objectif",
+      "optimizedFor": "Vos légendes seront optimisées pour",
+      "bestForText": "Ce type de contenu est idéal pour",
+      "contentExamples": "Exemples de Contenu",
+      "tipTitle": "Conseil :",
+      "tipText": "Se concentrer sur un objectif principal aide à créer un contenu plus efficace et ciblé. Vous pouvez toujours changer cela pour de futures publications.",
+      "selectGoalAriaLabel": "Sélectionner {{goalTitle}} comme objectif de votre contenu"
     },
     "tone": {
       "title": "Ton",
-      "description": "Choisissez le ton de votre légende"
+      "description": "Choisissez le ton de votre légende",
+      "heading": "Choisissez le Ton de Votre Contenu",
+      "subheading": "Sélectionnez le ton qui correspond le mieux à la voix de votre marque et à votre audience. Cela influence le style de vos légendes.",
+      "generateButton": "Générer les Légendes",
+      "generating": "Génération des Légendes...",
+      "selected": "Sélectionné",
+      "detailsTitle": "Détails du Ton {{tone}}",
+      "bestUsedFor": "Idéal pour :",
+      "worksWellOn": "Fonctionne bien sur :",
+      "showExample": "Voir un exemple de ton",
+      "hideExample": "Masquer l'exemple de ton",
+      "tipTitle": "Astuce :",
+      "tipText": "Choisissez un ton qui correspond à votre façon habituelle de communiquer avec votre audience pour des résultats plus authentiques.",
+      "tones": {
+        "professional": {
+          "title": "Professionnel",
+          "description": "Approche formelle et commerciale",
+          "examples": "Expertise sectorielle, contenu basé sur les données, actualités business",
+          "platforms": "LinkedIn, blogs d'entreprise, contenu B2B",
+          "sampleText": "Nos dernières recherches révèlent des insights de pointe sur les tendances du marché. Découvrez comment ces découvertes peuvent améliorer votre stratégie commerciale dans notre analyse détaillée."
+        },
+        "casual": {
+          "title": "Décontracté",
+          "description": "Ton détendu et amical",
+          "examples": "Conversation quotidienne, histoires personnelles, publications communautaires",
+          "platforms": "Instagram, Facebook, blogs personnels",
+          "sampleText": "Je traîne à la plage aujourd'hui ! Les vagues sont parfaites et je ne me lasse pas de ce soleil. Qui d'autre profite du week-end ? ☀️🌊"
+        },
+        "humorous": {
+          "title": "Humoristique",
+          "description": "Style amusant et divertissant",
+          "examples": "Blagues, observations spirituelles, contenu ludique",
+          "platforms": "Twitter, TikTok, Instagram stories",
+          "sampleText": "Quand ton café fait effet et que soudain tu es prêt à conquérir le monde... ou au moins ta boîte mail. Quelqu'un d'autre se sent comme un super-héros après la caféine ? ☕💪😂"
+        },
+        "inspirational": {
+          "title": "Inspirant",
+          "description": "Motivant et édifiant",
+          "examples": "Histoires de réussite, citations, contenu aspirationnel",
+          "platforms": "Instagram, Pinterest, publications motivantes",
+          "sampleText": "Chaque défi que vous affrontez vous prépare à quelque chose de plus grand. Continuez à avancer—votre moment de révélation est plus proche que vous ne le pensez. ✨"
+        },
+        "persuasive": {
+          "title": "Persuasif",
+          "description": "Convaincant et captivant",
+          "examples": "Appels à l'action, promotions de produits, plaidoyer",
+          "platforms": "Pages de destination, emails de vente, contenu promotionnel",
+          "sampleText": "Ne manquez pas cette opportunité de transformer vos résultats. Avec notre méthode éprouvée, vous verrez des améliorations immédiates. Agissez dès aujourd'hui tant que cette offre dure."
+        },
+        "educational": {
+          "title": "Éducatif",
+          "description": "Informatif et instructif",
+          "examples": "Guides pratiques, tutoriels, contenu informatif",
+          "platforms": "YouTube, Medium, plateformes éducatives",
+          "sampleText": "Saviez-vous que les abeilles communiquent par la danse ? La 'danse frétillante' indique la direction et la distance vers les sources de nourriture, démontrant leur intelligence remarquable."
+        }
+      }
     },
     "generatedCaptions": {
       "title": "Légendes Générées",

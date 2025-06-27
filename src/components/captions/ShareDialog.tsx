@@ -51,12 +51,12 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
       }
       
       await navigator.share(shareData);
-      toast.success("Shared successfully!");
+      toast.success("Partagé avec succès !");
       onClose();
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error("Error sharing:", error);
-        toast.error("Sharing failed. Please try again.");
+        toast.error("Échec du partage. Veuillez réessayer.");
       }
     }
   };
@@ -65,10 +65,10 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Caption copied to clipboard!");
+      toast.success("Légende copiée dans le presse-papiers !");
     } catch (error) {
       console.error("Clipboard error:", error);
-      toast.error("Couldn't copy to clipboard");
+      toast.error("Impossible de copier dans le presse-papiers");
     }
   };
   
@@ -76,14 +76,14 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share Content</DialogTitle>
+          <DialogTitle>Partager le Contenu</DialogTitle>
         </DialogHeader>
         
         {isProcessing ? (
           <div className="flex flex-col items-center justify-center py-6">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-            <p>Preparing your content for sharing...</p>
-            <p className="text-sm text-gray-500 mt-2">This may take a moment, especially for videos</p>
+            <p>Préparation de votre contenu pour le partage...</p>
+            <p className="text-sm text-gray-500 mt-2">Cela peut prendre un moment, surtout pour les vidéos</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -95,12 +95,12 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
               {canShare && (
                 <Button onClick={handleShare} className="w-full bg-blue-600 hover:bg-blue-700">
                   <Share className="mr-2 h-4 w-4" />
-                  Share Now
+                  Partager Maintenant
                 </Button>
               )}
               
               <Button onClick={copyToClipboard} variant="outline" className="w-full">
-                Copy Caption Text
+                Copier le Texte de la Légende
               </Button>
               
               {file && (
@@ -119,7 +119,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
                   className="w-full"
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Download File
+                  Télécharger le Fichier
                 </Button>
               )}
             </div>
@@ -129,7 +129,7 @@ const ShareDialog: React.FC<ShareDialogProps> = ({
         <DialogFooter className="sm:justify-between">
           <Button variant="ghost" onClick={onClose}>
             <X className="h-4 w-4 mr-2" />
-            Close
+            Fermer
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -42,7 +42,7 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
     <div className="p-6 space-y-4">
       <div>
         <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-gray-300">
-          Title
+          Titre
         </label>
         <Input 
           value={editingCaption?.title || ''} 
@@ -52,7 +52,7 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
       </div>
       <div>
         <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-gray-300">
-          Caption
+          Légende
         </label>
         <Textarea 
           value={editingCaption?.caption || ''} 
@@ -62,7 +62,7 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
       </div>
       <div>
         <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-gray-300">
-          Call to action
+          Appel à l'action
         </label>
         <Input 
           value={editingCaption?.cta || ''} 
@@ -72,7 +72,7 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
       </div>
       <div>
         <label className="text-sm font-medium block mb-1 text-gray-700 dark:text-gray-300">
-          Hashtags (comma separated)
+          Hashtags (séparés par des virgules)
         </label>
         <Input 
           value={editingCaption?.hashtags.join(', ') || ''} 
@@ -85,10 +85,10 @@ const CaptionEditForm: React.FC<CaptionEditFormProps> = ({
       </div>
       <div className="flex justify-end gap-2 pt-2">
         <Button variant="outline" size="sm" onClick={onCancel} className="gap-1">
-          <X className="h-4 w-4" /> Cancel
+          <X className="h-4 w-4" /> Annuler
         </Button>
         <Button size="sm" onClick={onSave} className="gap-1">
-          <Check className="h-4 w-4" /> Save Changes
+          <Check className="h-4 w-4" /> Enregistrer les Modifications
         </Button>
       </div>
     </div>
