@@ -228,6 +228,325 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
             content: 'Recommendation and summary',
             estimatedWords: Math.floor(remainingWords * 0.1)
           });
+          break;
+
+        case 'how-to-steps':
+          outline.push({
+            id: '1',
+            title: `How to ${topic || keywordText}: Step-by-Step Guide`,
+            type: 'heading',
+            content: 'Complete tutorial title',
+            estimatedWords: 10
+          });
+
+          outline.push({
+            id: '2',
+            title: 'Introduction',
+            type: 'paragraph',
+            content: 'Overview and what readers will learn',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: '3',
+            title: 'Prerequisites',
+            type: 'list',
+            content: 'What you need before starting',
+            estimatedWords: Math.floor(remainingWords * 0.1)
+          });
+
+          // Steps
+          for (let i = 1; i <= 5; i++) {
+            outline.push({
+              id: `step-${i}`,
+              title: `Step ${i}: ${keywordText} Implementation`,
+              type: 'heading',
+              content: `Detailed action step with clear instructions`,
+              estimatedWords: Math.floor(remainingWords * 0.12)
+            });
+
+            if (includeImages && i % 2 === 0) {
+              outline.push({
+                id: `step-img-${i}`,
+                title: `Step ${i} Visual Guide`,
+                type: 'image',
+                content: 'Screenshot or diagram showing the step',
+                estimatedWords: 0,
+                imageCount: 1
+              });
+            }
+          }
+
+          outline.push({
+            id: 'conclusion',
+            title: 'Conclusion & Tips',
+            type: 'paragraph',
+            content: 'Summary and best practices',
+            estimatedWords: Math.floor(remainingWords * 0.1)
+          });
+          break;
+
+        case 'faq-qa':
+          outline.push({
+            id: '1',
+            title: `${topic || keywordText}: Frequently Asked Questions`,
+            type: 'heading',
+            content: 'FAQ page title',
+            estimatedWords: 10
+          });
+
+          outline.push({
+            id: '2',
+            title: 'Introduction',
+            type: 'paragraph',
+            content: 'Topic overview and scope',
+            estimatedWords: Math.floor(remainingWords * 0.12)
+          });
+
+          // FAQ items
+          const faqQuestions = [
+            'What is the most important thing to know?',
+            'How do I get started?',
+            'What are the common mistakes to avoid?',
+            'How long does it typically take?',
+            'What are the costs involved?'
+          ];
+
+          faqQuestions.forEach((question, index) => {
+            outline.push({
+              id: `faq-${index + 1}`,
+              title: `Q${index + 1}: ${question.replace('it', keywordText)}`,
+              type: 'heading',
+              content: 'Detailed answer with examples',
+              estimatedWords: Math.floor(remainingWords * 0.15)
+            });
+          });
+
+          outline.push({
+            id: 'conclusion',
+            title: 'Still Have Questions?',
+            type: 'cta',
+            content: 'Contact information or next steps',
+            estimatedWords: Math.floor(remainingWords * 0.05)
+          });
+          break;
+
+        case 'comparison-vs':
+          outline.push({
+            id: '1',
+            title: `${keywordText} Comparison: Option A vs Option B`,
+            type: 'heading',
+            content: 'Head-to-head comparison title',
+            estimatedWords: 12
+          });
+
+          outline.push({
+            id: '2',
+            title: 'Introduction',
+            type: 'paragraph',
+            content: 'Context and what\'s being compared',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: '3',
+            title: 'Option A Overview',
+            type: 'heading',
+            content: 'Detailed look at first option',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          outline.push({
+            id: '4',
+            title: 'Option B Overview',
+            type: 'heading',
+            content: 'Detailed look at second option',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          if (includeImages) {
+            outline.push({
+              id: 'comparison-table-img',
+              title: 'Side-by-side Comparison Table',
+              type: 'image',
+              content: 'Visual comparison chart or table',
+              estimatedWords: 0,
+              imageCount: 1
+            });
+          }
+
+          outline.push({
+            id: '5',
+            title: 'Feature Comparison',
+            type: 'list',
+            content: 'Direct feature-by-feature analysis',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          outline.push({
+            id: '6',
+            title: 'Pros and Cons',
+            type: 'list',
+            content: 'Advantages and disadvantages of each',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: 'recommendation',
+            title: 'Our Recommendation',
+            type: 'paragraph',
+            content: 'Which option to choose when',
+            estimatedWords: Math.floor(remainingWords * 0.1)
+          });
+          break;
+
+        case 'review-analysis':
+          outline.push({
+            id: '1',
+            title: `${topic || keywordText} Review: In-Depth Analysis`,
+            type: 'heading',
+            content: 'Comprehensive review title',
+            estimatedWords: 10
+          });
+
+          outline.push({
+            id: '2',
+            title: 'Introduction',
+            type: 'paragraph',
+            content: 'What\'s being reviewed and why',
+            estimatedWords: Math.floor(remainingWords * 0.12)
+          });
+
+          outline.push({
+            id: '3',
+            title: 'Key Features',
+            type: 'list',
+            content: 'Main features and capabilities',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          if (includeImages) {
+            outline.push({
+              id: 'features-img',
+              title: 'Feature Screenshot',
+              type: 'image',
+              content: 'Visual showing key features',
+              estimatedWords: 0,
+              imageCount: 1
+            });
+          }
+
+          outline.push({
+            id: '4',
+            title: 'What We Liked (Pros)',
+            type: 'list',
+            content: 'Positive aspects and strengths',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: '5',
+            title: 'What Could Be Better (Cons)',
+            type: 'list',
+            content: 'Limitations and areas for improvement',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: '6',
+            title: 'Performance Analysis',
+            type: 'paragraph',
+            content: 'How it performs in real-world use',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: 'verdict',
+            title: 'Final Verdict',
+            type: 'paragraph',
+            content: 'Overall rating and recommendation',
+            estimatedWords: Math.floor(remainingWords * 0.08)
+          });
+          break;
+
+        case 'case-study-detailed':
+          outline.push({
+            id: '1',
+            title: `${topic || keywordText} Case Study: Real Results`,
+            type: 'heading',
+            content: 'Case study title with outcome focus',
+            estimatedWords: 12
+          });
+
+          outline.push({
+            id: '2',
+            title: 'Executive Summary',
+            type: 'paragraph',
+            content: 'Quick overview of the case study',
+            estimatedWords: Math.floor(remainingWords * 0.1)
+          });
+
+          outline.push({
+            id: '3',
+            title: 'Background',
+            type: 'paragraph',
+            content: 'Context and initial situation',
+            estimatedWords: Math.floor(remainingWords * 0.15)
+          });
+
+          outline.push({
+            id: '4',
+            title: 'The Challenge',
+            type: 'paragraph',
+            content: 'Problems that needed to be solved',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          if (includeImages) {
+            outline.push({
+              id: 'challenge-img',
+              title: 'Challenge Visualization',
+              type: 'image',
+              content: 'Chart or diagram showing the problem',
+              estimatedWords: 0,
+              imageCount: 1
+            });
+          }
+
+          outline.push({
+            id: '5',
+            title: 'Our Solution',
+            type: 'paragraph',
+            content: 'Approach and implementation strategy',
+            estimatedWords: Math.floor(remainingWords * 0.25)
+          });
+
+          outline.push({
+            id: '6',
+            title: 'Results & Metrics',
+            type: 'list',
+            content: 'Quantifiable outcomes and improvements',
+            estimatedWords: Math.floor(remainingWords * 0.2)
+          });
+
+          if (includeImages) {
+            outline.push({
+              id: 'results-img',
+              title: 'Results Dashboard',
+              type: 'image',
+              content: 'Charts showing before/after metrics',
+              estimatedWords: 0,
+              imageCount: 1
+            });
+          }
+
+          outline.push({
+            id: '7',
+            title: 'Key Takeaways',
+            type: 'list',
+            content: 'Lessons learned and actionable insights',
+            estimatedWords: Math.floor(remainingWords * 0.1)
+          });
           break;        default: // article
           outline.push({
             id: '1',
@@ -287,15 +606,23 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
     const toneExamples: Record<string, string> = {
       professional: `In today's competitive ${industry || 'business'} landscape, understanding ${keywordText} has become essential for ${audience || 'professionals'}. This comprehensive approach will help you implement effective strategies that drive measurable results.`,
       
-      casual: `Let's be honest - ${keywordText} doesn't have to be complicated! Whether you're just starting out or looking to level up your ${industry || 'game'}, I've got some practical tips that actually work in the real world.`,
+      casual: `So here's the thing about ${keywordText} - it's way more straightforward than most people make it out to be. Whether you're just getting started or looking to level up, I've got some practical insights that actually work in the real world.`,
       
-      authoritative: `As industry experts have consistently demonstrated, ${keywordText} represents a critical component in ${industry || 'modern business'} strategy. Our research-backed methodology provides ${audience || 'organizations'} with proven frameworks for success.`,
+      authoritative: `Industry leaders consistently recognize ${keywordText} as a critical success factor in ${industry || 'modern business'} strategy. Our research-backed methodology provides ${audience || 'organizations'} with proven frameworks for achieving sustainable outcomes.`,
       
       friendly: `Hey there! Ready to dive into the world of ${keywordText}? I'm excited to share some amazing insights that'll help you succeed in ${industry || 'your field'}. Let's make this journey fun and rewarding!`,
       
       conversational: `You know what's interesting about ${keywordText}? Most ${audience || 'people'} think it's way more complicated than it actually is. Today, I want to show you how simple and effective it can be when you know the right approach.`,
       
-      educational: `To understand ${keywordText} effectively, we must first examine its fundamental principles and applications within ${industry || 'the field'}. This systematic approach ensures comprehensive knowledge transfer for ${audience || 'learners'}.`
+      educational: `To understand ${keywordText} effectively, we must first examine its fundamental principles and applications within ${industry || 'the field'}. This systematic approach ensures comprehensive knowledge transfer for ${audience || 'learners'}.`,
+      
+      informative: `${keywordText} represents a multifaceted concept within ${industry || 'the industry'}, encompassing various methodologies and applications. This analysis examines the key components, benefits, and implementation considerations based on current research and industry standards.`,
+      
+      inspirational: `Every breakthrough in ${keywordText} starts with a single step toward transformation. Today, you have the opportunity to unlock your potential and achieve remarkable results in ${industry || 'your field'}. The journey begins with understanding these fundamental principles.`,
+      
+      humorous: `Let's be honest - ${keywordText} has about as much natural excitement as watching paint dry on a rainy Tuesday. But stick with me here, because I promise to make this surprisingly entertaining and maybe even useful for your ${industry || 'work'}.`,
+      
+      empathetic: `I understand that approaching ${keywordText} can feel overwhelming, especially in the complex world of ${industry || 'business'}. It's completely normal to have questions and concerns. Let's work through this together, taking it one step at a time at your own pace.`
     };
 
     return toneExamples[contentTone] || toneExamples.professional;
@@ -577,11 +904,15 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
             <p className="text-sm text-blue-800 dark:text-blue-200 break-words">
               Your content will be written in a <strong>{contentTone}</strong> tone, 
               {contentTone === 'professional' && ' maintaining a formal, business-appropriate style with industry expertise.'}
-              {contentTone === 'casual' && ' using relaxed, conversational language that feels approachable and friendly.'}
-              {contentTone === 'authoritative' && ' demonstrating expertise and credibility through confident, research-backed statements.'}
+              {contentTone === 'casual' && ' using relaxed, conversational language like talking to a friend over coffee.'}
+              {contentTone === 'authoritative' && ' demonstrating strong leadership voice with confidence and credibility through research-backed statements.'}
               {contentTone === 'friendly' && ' creating a warm, welcoming atmosphere that builds connection with readers.'}
               {contentTone === 'conversational' && ' engaging readers as if you\'re speaking directly to them in a natural dialogue.'}
               {contentTone === 'educational' && ' focusing on clear instruction and knowledge transfer with systematic explanations.'}
+              {contentTone === 'informative' && ' providing objective, balanced information in an encyclopedic style perfect for factual content.'}
+              {contentTone === 'inspirational' && ' motivating and uplifting readers with encouraging language ideal for coaching and wellness content.'}
+              {contentTone === 'humorous' && ' incorporating light wit and humor to make content engaging and entertaining.'}
+              {contentTone === 'empathetic' && ' using warm, understanding language perfect for sensitive topics like health and mental wellness.'}
             </p>
           </Card>
         )}

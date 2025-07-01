@@ -1,0 +1,1239 @@
+{
+  "wizard": {
+    "title": "Long-Form Content Wizard",
+    "progress": {
+      "title": "Content Wizard Progress",
+      "step": "Step {{current}} of {{total}}",
+      "complete": "{{percent}}% Complete",
+      "remaining": "{{time}} min remaining",
+      "completed": "{{completed}} of {{total}} steps completed",
+      "current": "Current: {{name}}",
+      "optional": "(Optional)"
+    },
+    "steps": {
+      "whatWho": {
+        "name": "What & Who",
+        "description": "Define your topic and target audience"
+      },
+      "mediaVisuals": {
+        "name": "Media & Visuals",
+        "description": "Upload and manage your visual content"
+      },
+      "seoKeywords": {
+        "name": "SEO & Keywords", 
+        "description": "Optimize with smart keyword suggestions"
+      },
+      "structureTone": {
+        "name": "Structure & Tone",
+        "description": "Create your content blueprint"
+      },
+      "generationSettings": {
+        "name": "Generation Settings",
+        "description": "Configure length, format, and CTA"
+      },
+      "reviewGenerate": {
+        "name": "Review & Generate",
+        "description": "Final preview and content generation"
+      }
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "skip": "Skip Step",
+      "generate": "Generate Content",
+      "saveNow": "Save Now",
+      "shortcuts": "Shortcuts"
+    },
+    "draft": {
+      "available": "Draft Available",
+      "foundSaved": "You have a saved draft from {{time}}. Would you like to restore it?",
+      "restore": "Restore Draft",
+      "dismiss": "Dismiss",
+      "restored": "Draft Restored",
+      "restoredDesc": "Your saved progress has been restored.",
+      "saved": "Progress Saved",
+      "savedDesc": "Your current progress has been saved.",
+      "notSaved": "Not saved",
+      "savedTime": "Saved {{time}}"
+    },
+    "status": {
+      "completed": "Completed",
+      "skipped": "Skipped",
+      "needsAttention": "Needs attention"
+    },
+    "validation": {
+      "pleaseComplete": "Please complete the following:"
+    },
+    "errors": {
+      "fixFollowing": "Please fix the following issues:",
+      "completeRequired": "Please complete the following:",
+      "beforeProceed": "Please fix the following errors before proceeding:",
+      "allRequired": "Please complete all required fields before generating content.",
+      "unknownStep": "Unknown step"
+    },
+    "keyboard": {
+      "title": "Keyboard Shortcuts",
+      "nextStep": "Proceed to next step",
+      "prevStep": "Go back to previous step", 
+      "manualSave": "Manual save draft",
+      "navigate": "Navigate through form",
+      "showHelp": "Show/hide this help",
+      "tip": "Tip: Use keyboard shortcuts to navigate quickly through the wizard"
+    }
+  },
+  "step1": {
+    "title": "What & Who",
+    "subtitle": "Define your topic and target audience to create focused, engaging content",
+    "topic": {
+      "title": "What will you write about?",
+      "subtitle": "Define your content focus",
+      "tooltip": "Be specific about your main topic. This helps generate more targeted content.",
+      "label": "Content Topic *",
+      "placeholder": "e.g., 'How to improve email marketing open rates for small businesses' or 'The best productivity tools for remote teams'",
+      "characters": "{{count}} characters",
+      "getIdeas": "Get Ideas"
+    },
+    "audience": {
+      "title": "Who are you writing for?",
+      "subtitle": "Define your target audience",
+      "tooltip": "Understanding your audience helps tailor the content tone and complexity.",
+      "industryLabel": "Industry (optional)",
+      "industryPlaceholder": "Select your industry for better suggestions",
+      "customIndustryLabel": "Specify your industry",
+      "customIndustryPlaceholder": "e.g., Renewable Energy, Pet Care, Gaming, Crypto, SaaS...",
+      "customIndustryHint": "Be specific to get better topic suggestions tailored to your industry",
+      "audienceLabel": "Target Audience *",
+      "audiencePlaceholder": "e.g., 'Small business owners looking to improve their marketing' or 'Remote workers seeking productivity tips'",
+      "suggestedAudiences": "Suggested Audiences for {{industry}}:",
+      "selectAudience": "Select"
+    },
+    "industries": {
+      "marketing": "Marketing & Advertising",
+      "health": "Health & Wellness", 
+      "technology": "Technology & Software",
+      "finance": "Finance & Investment",
+      "education": "Education & Learning",
+      "coaching": "Life & Business Coaching",
+      "ecommerce": "E-commerce & Retail",
+      "food": "Food & Beverage",
+      "realEstate": "Real Estate",
+      "travel": "Travel & Tourism",
+      "other": "Other Industry"
+    },
+    "audienceTypes": {
+      "smallBusiness": "Small Business Owners",
+      "marketingPros": "Marketing Professionals", 
+      "entrepreneurs": "Entrepreneurs",
+      "students": "Students",
+      "generalPublic": "General Public",
+      "healthcare": "Healthcare Providers",
+      "patients": "Patients",
+      "fitness": "Fitness Enthusiasts",
+      "techEnthusiasts": "Tech Enthusiasts",
+      "developers": "Software Developers",
+      "itPros": "IT Professionals",
+      "businessLeaders": "Business Leaders",
+      "investors": "Investors",
+      "financialPlanners": "Financial Planners",
+      "youngPros": "Young Professionals",
+      "educators": "Educators",
+      "parents": "Parents",
+      "professionals": "Professionals",
+      "careerChangers": "Career Changers",
+      "personalDev": "Personal Development Seekers",
+      "onlineSellers": "Online Sellers",
+      "retailManagers": "Retail Managers",
+      "consumers": "Consumers",
+      "dropshippers": "Dropshippers",
+      "foodEnthusiasts": "Food Enthusiasts",
+      "restaurantOwners": "Restaurant Owners",
+      "homeCooks": "Home Cooks",
+      "healthConscious": "Health-Conscious Consumers",
+      "homeBuyers": "Home Buyers",
+      "realEstateAgents": "Real Estate Agents",
+      "renters": "Renters",
+      "travelers": "Travelers",
+      "travelAgents": "Travel Agents",
+      "localBusinesses": "Local Businesses",
+      "adventureSeekers": "Adventure Seekers",
+      "generalAudience": "General Audience",
+      "enthusiasts": "Enthusiasts"
+    },
+    "qualityLabels": {
+      "excellent": "Excellent topic length!",
+      "good": "Good topic!",
+      "addMoreDetails": "Add more details",
+      "excellentBadge": "Excellent",
+      "goodBadge": "Good",
+      "needsWork": "Needs work",
+      "greatAudience": "Great audience definition!",
+      "goodAudience": "Good audience!",
+      "addMoreAudience": "Add more audience details",
+      "detailed": "Detailed",
+      "addMore": "Add more"
+    },
+    "completion": {
+      "stepCompletion": "Step 1 Completion: {{score}}%",
+      "readyToProceed": "✅ Ready to proceed",
+      "almostThere": "⚡ Almost there!",
+      "keepFilling": "📝 Keep filling details",
+      "customIndustry": "Custom industry: {{industry}}",
+      "specifyCustom": "Please specify your custom industry",
+      "selected": "Selected: {{industry}}"
+    },
+    "suggestions": {
+      "smartTopicSuggestions": "Smart Topic Suggestions"
+    },
+    "validation": {
+      "topicTooShort": "Topic must be more than 10 characters long",
+      "industryRequired": "Industry must be selected",
+      "customIndustryRequired": "Custom industry must be specified when \"Other\" is selected",
+      "audienceRequired": "Target audience must be specified",
+      "keywordsRequired": "At least one keyword must be selected for SEO optimization"
+    }
+  },
+  "step2": {
+    "title": "Media & Visuals",
+    "subtitle": "Upload images and videos to enhance your content",
+    "settings": {
+      "title": "Visual Content Settings",
+      "includeImagesLabel": "Include Image Suggestions",
+      "includeImagesDesc": "Generate suggestions for relevant images to include in your content",
+      "uploadTitle": "Upload Media Files (Optional)",
+      "placementGuideTitle": "Media Placement Guide",
+      "placementGuide": {
+        "header": "Main image at the top of content",
+        "section": "Supporting visuals for content sections",
+        "inline": "Placed within the text flow",
+        "end": "Placed at the conclusion of content"
+      }
+    },
+    "upload": {
+      "title": "Upload Media Files",
+      "dragDrop": "Drop files here or click to upload",
+      "supported": "Supports images and videos up to {{size}} each",
+      "maxFiles": "Maximum {{count}} files",
+      "uploading": "Uploading files...",
+      "selectFiles": "Select Files"
+    },
+    "files": {
+      "title": "Uploaded Files",
+      "count": "{{current}} / {{max}} files",
+      "noFiles": "No files uploaded yet",
+      "noFilesDesc": "Upload some media to enhance your content",
+      "placement": "Placement",
+      "caption": "Caption",
+      "captionPlaceholder": "Add a caption..."
+    },
+    "placements": {
+      "header": "Header",
+      "section_1": "Section 1",
+      "section_2": "Section 2", 
+      "inline": "Inline",
+      "end": "End",
+      "inlineWithText": "In-line with text",
+      "headerImage": "Header image",
+      "imageGallery": "Image gallery",
+      "sidebar": "Sidebar"
+    },
+    "errors": {
+      "tooManyFiles": "Too many files",
+      "maxFilesMsg": "You can upload a maximum of {{count}} files.",
+      "invalidFiles": "Invalid files",
+      "invalidFilesDesc": "The following files were skipped: {{files}}",
+      "fileTooLarge": "too large",
+      "unsupportedType": "invalid type",
+      "authRequired": "Authentication required",
+      "authRequiredDesc": "Please sign in to upload files.",
+      "uploadFailed": "Upload failed",
+      "uploadFailedDesc": "Some files could not be uploaded. Please try again.",
+      "invalidFileType": "Invalid file type",
+      "invalidFileTypeDesc": "Please upload only images (PNG, JPG, GIF) or videos (MP4, MOV).",
+      "fileTooLargeTitle": "File too large",
+      "fileTooLargeDesc": "Please reduce the file size or choose a different file. Max size: {{maxSize}}MB.",
+      "processingError": "Processing error",
+      "processingErrorDesc": "There was an error processing your file. Please try again.",
+      "draftRestored": "Draft restored"
+    },
+    "success": {
+      "uploadSuccess": "Upload successful",
+      "uploadSuccessDesc": "{{count}} file(s) uploaded successfully.",
+      "draftRestored": "Draft Restored",
+      "draftRestoredDesc": "Your saved media settings have been restored.",
+      "progressSaved": "Progress Saved",
+      "progressSavedDesc": "Your media settings have been saved.",
+      "uploadComplete": "Upload complete"
+    },
+    "draft": {
+      "foundSaved": "Found saved draft from {{time}}",
+      "unknownTime": "unknown time",
+      "restore": "Restore",
+      "dismiss": "Dismiss"
+    },
+    "quality": {
+      "excellent": "Excellent media setup",
+      "good": "Good media collection",
+      "suggestions": {
+        "enableImages": "Enable image suggestions for enhanced content",
+        "uploadFiles": "Upload media files to include in your content",
+        "uploadImages": "Upload some images to make your content more engaging",
+        "addCaptions": "Add captions to your images for better accessibility",
+        "variedPlacements": "Use varied image placements for better flow"
+      },
+      "statusEnabled": "images enabled",
+      "statusDisabled": "images disabled"
+    },
+    "actions": {
+      "saveProgress": "Save Progress",
+      "autoSaved": "Auto-saved {{time}}",
+      "draftSavedAuto": "Draft Saved",
+      "progressSavedDesc": "Your progress has been automatically saved.",
+      "saveFailed": "Save Failed",
+      "saveFailedDesc": "Unable to save draft. Please check your storage settings.",
+      "draftRestored": "Draft Restored",
+      "draftRestoredDesc": "Draft from {{date}} has been restored."
+    }
+  },
+  "step3": {
+    "title": "SEO Keywords & Optimized Title",
+    "subtitle": "Select keywords and get AI-suggested titles optimized for search engines with real-time SEO analysis.",
+    "seoScore": {
+      "title": "Real-time SEO Score",
+      "scoreLabel": "{{score}}/100",
+      "factors": {
+        "keywordCount": "Keyword Count",
+        "titleOptimization": "Title Optimization",
+        "keywordDiversity": "Keyword Diversity",
+        "contentRelevance": "Content Relevance"
+      },
+      "points": "{{score}}pts"
+    },
+    "seoImpact": {
+      "title": "SEO Impact Preview",
+      "metrics": {
+        "searchVisibility": "Search Visibility",
+        "clickThroughRate": "Click-Through Rate",
+        "longTailTraffic": "Long-tail Traffic"
+      },
+      "descriptions": {
+        "searchVisibility": "Increased chance of appearing in search results",
+        "clickThroughRate": "More compelling titles attract more clicks",
+        "longTailTraffic": "Long-tail keywords capture specific search intent"
+      }
+    },
+    "titleSuggestions": {
+      "title": "SEO-Optimized Title Suggestions",
+      "regenerate": "Regenerate",
+      "noKeywords": "Select at least one keyword to generate title suggestions.",
+      "loading": "Crafting SEO-optimized titles...",
+      "customize": "Customize selected title",
+      "placeholder": "Edit your selected title...",
+      "recommendation": "💡 {{recommendation}}",
+      "chars": "{{length}} chars",
+      "optimalChars": "{{length}}/60 chars"
+    },
+    "titleAnalysis": {
+      "recommendations": {
+        "perfectLength": "Perfect length for SEO!",
+        "addWords": "Consider adding more descriptive words",
+        "shortenTitle": "Consider shortening for better SEO"
+      }
+    },
+    "titleImprovement": {
+      "title": "Title Improvement Suggestions",
+      "useThis": "Use This",
+      "suggestions": {
+        "length": "Complete {{keyword}} Guide",
+        "lengthReason": "Increase title length for better SEO (currently too short)",
+        "shortenReason": "Shorten title for better search display (currently too long)",
+        "keywordReason": "Place primary keyword at the beginning for better SEO",
+        "powerWordReason": "Add power words to increase click-through rates"
+      },
+      "powerWords": ["Ultimate", "Complete", "Essential", "Proven", "Expert"]
+    },
+    "keywordDensity": {
+      "title": "Keyword Density Analysis",
+      "occurrences": "{{count}} occurrence",
+      "occurrences_plural": "{{count}} occurrences",
+      "missing": "Consider including in title",
+      "good": "Good keyword placement",
+      "recommendation": "Recommendation: Include 1-2 primary keywords in your title for optimal SEO impact."
+    },
+    "titleTemplates": {
+      "ultimate": "The Ultimate Guide to {{keyword}} for {{audience}}",
+      "boost": "How to Boost Your {{industry}} Results with {{keywords}}",
+      "secret": "{{keyword}}: The Secret Ingredient for {{industry}} Success",
+      "strategies": "{{number}} {{keyword}} Strategies That Transform Your {{industry}} Approach",
+      "essential": "Why {{keyword}} is Essential for {{audience}} in {{year}}",
+      "leveraging": "{{topic}}: Leveraging the Power of {{keyword}}"
+    },
+    "defaults": {
+      "content": "Content",
+      "business": "Business", 
+      "professionals": "Professionals"
+    },
+    "keywords": {
+      "title": "Target Keywords",
+      "tooltip": "Keywords help your content rank better in search results and reach the right audience.",
+      "label": "Keywords (comma-separated)",
+      "placeholder": "e.g., email marketing, small business, open rates, marketing automation",
+      "suggestions": "Suggested Keywords:",
+      "add": "Add"
+    },
+    "optimizedTitle": {
+      "title": "Optimized Title",
+      "tooltip": "A well-crafted title improves click-through rates and SEO performance.",
+      "label": "SEO-Optimized Title",
+      "placeholder": "e.g., '7 Proven Strategies to Double Your Email Open Rates in 2024'",
+      "generateButton": "Generate Title Ideas",
+      "suggestions": "Title Suggestions:"
+    },
+    "quality": {
+      "excellent": "Excellent SEO optimization",
+      "good": "Good keyword targeting",
+      "suggestions": {
+        "addKeywords": "Add 3-5 relevant keywords for better SEO",
+        "optimizeTitle": "Create an engaging, keyword-rich title",
+        "useNumbers": "Consider using numbers in your title for better engagement"
+      }
+    }
+  },
+  "smartKeywordGenerator": {
+    "title": "Smart Keyword Generator",
+    "version": "v2.0",
+    "subtitle": "AI-powered keyword intelligence with clustering, intent analysis & gap detection",
+    "aiDisclaimer": {
+      "title": "AI-Estimated Data:",
+      "text": "All keyword metrics (search volume, difficulty, CPC) are AI-generated estimates. Future versions will integrate real data from Google Keyword Planner and other APIs."
+    },
+    "indicators": {
+      "enhancedAi": "Enhanced AI",
+      "clusters": "Clusters",
+      "intentAnalysis": "Intent Analysis"
+    },
+    "buttons": {
+      "regenerate": "Regenerate",
+      "analyzing": "Analyzing...",
+      "addKeyword": "Add Keyword",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "exportKeywords": "Export Keywords",
+      "importKeywords": "Import Keywords",
+      "analyzeGaps": "Analyze Gaps"
+    },
+    "filters": {
+      "keywordType": "Keyword Type",
+      "searchIntent": "Search Intent",
+      "difficulty": "Difficulty",
+      "searchVolume": "Search Volume",
+      "allTypes": "All Types",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "longTail": "Long-tail",
+      "allIntents": "All Intents",
+      "informational": "Informational",
+      "commercial": "Commercial",
+      "transactional": "Transactional",
+      "navigational": "Navigational",
+      "allDifficulties": "All Difficulties",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "minVolume": "Min Volume",
+      "maxVolume": "Max Volume",
+      "showClusters": "Show Clusters"
+    },
+    "metrics": {
+      "searchVolume": "Search Volume",
+      "difficulty": "Difficulty",
+      "cpc": "CPC",
+      "competition": "Competition",
+      "trend": "Trend",
+      "volume": "Volume",
+      "difficultyLabel": "Difficulty",
+      "priority": "Priority",
+      "trafficPotential": "Traffic Potential",
+      "relevance": "Relevance"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "intents": {
+      "informational": "Info",
+      "commercial": "Commercial",
+      "transactional": "Buy",
+      "navigational": "Navigate",
+      "label": "Intent"
+    },
+    "clustering": {
+      "title": "Keyword Clusters",
+      "cluster": "Cluster {{number}}",
+      "keywords": "{{count}} keywords",
+      "expand": "Expand",
+      "collapse": "Collapse"
+    },
+    "contentGaps": {
+      "title": "Content Gap Analysis",
+      "subtitle": "Opportunities based on competitor analysis",
+      "noGaps": "No significant content gaps detected",
+      "analyzing": "Analyzing content gaps...",
+      "opportunity": "Opportunity",
+      "priority": "Priority",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "missingOpportunities": "Missing Opportunities",
+      "recommendations": "Recommendations"
+    },
+    "search": {
+      "placeholder": "Search keywords...",
+      "noResults": "No keywords match your search",
+      "enterTopic": "Enter a topic to see intelligent keyword suggestions"
+    },
+    "customKeyword": {
+      "placeholder": "Add a custom keyword for analysis...",
+      "add": "Add"
+    },
+    "selection": {
+      "selected": "{{selected}} of {{max}} keywords selected",
+      "maxReached": "Maximum {{max}} keywords reached",
+      "selectedKeywords": "Selected Keywords",
+      "clearAll": "Clear All",
+      "avgVolume": "Avg. Volume"
+    },
+    "messages": {
+      "keywordsGenerated": "Generated {{count}} keywords",
+      "keywordAdded": "Keyword added successfully",
+      "keywordRemoved": "Keyword removed",
+      "maxKeywordsReached": "Maximum number of keywords reached",
+      "exportSuccess": "Keywords exported successfully",
+      "importSuccess": "Keywords imported successfully",
+      "analysisComplete": "Gap analysis complete",
+      "enhancedKeywordsGenerated": "Generated {{count}} enhanced keywords with {{clusters}} clusters!",
+      "clusterKeywordsAdded": "Added {{theme}} cluster keywords!",
+      "keywordsExported": "Keywords exported as {{format}}!",
+      "customKeywordAdded": "Custom keyword added with enhanced analysis!",
+      "generationFailed": "Failed to generate keywords. Please try again."
+    },
+    "empty": {
+      "title": "No keywords generated yet",
+      "subtitle": "Enter a topic to see intelligent keyword suggestions",
+      "cta": "Click \"Regenerate\" to create enhanced keyword analysis"
+    },
+    "analytics": {
+      "title": "Selection Analytics",
+      "keywords": "Keywords",
+      "totalVolume": "Total Volume",
+      "avgCpc": "Avg. CPC",
+      "rankingChance": "Ranking Chance",
+      "trafficPotential": "Traffic Potential",
+      "intentMix": "Intent Mix",
+      "commercial": "Commercial"
+    },
+    "export": {
+      "title": "Export Options",
+      "csv": "CSV",
+      "seo": "SEO"
+    },
+    "seasonality": {
+      "title": "Seasonality",
+      "stable": "Stable",
+      "seasonal": "Seasonal",
+      "trending": "Trending"
+    },
+    "units": {
+      "month": "/month",
+      "percent": "%"
+    },
+    "loadingSteps": {
+      "analyzing": "Analyzing keywords with AI intelligence...",
+      "searchIntent": "Search intent",
+      "competitionAnalysis": "Competition analysis",
+      "clustering": "Clustering"
+    },
+    "csvHeaders": {
+      "keyword": "Keyword",
+      "type": "Type",
+      "difficulty": "Difficulty",
+      "monthlySearches": "Monthly Searches",
+      "competition": "Competition",
+      "searchIntent": "Search Intent",
+      "cpc": "CPC",
+      "rankingProbability": "Ranking Probability"
+    },
+    "keywordCard": {
+      "competition": "Competition:",
+      "cpc": "CPC:",
+      "ranking": "Ranking:",
+      "seoAnalysis": "SEO Analysis"
+    },
+    "sectionTitles": {
+      "keywordClusters": "Keyword Clusters",
+      "contentGapAnalysis": "Content Gap Analysis"
+    },
+    "timeframes": {
+      "easy": "1-3 months",
+      "medium": "3-6 months",
+      "hard": "6-12 months"
+    },
+    "userJourney": {
+      "awareness": "Awareness",
+      "consideration": "Consideration", 
+      "decision": "Decision"
+    },
+    "contentTypes": {
+      "blog": "Blog",
+      "product": "Product",
+      "guide": "Guide",
+      "comparison": "Comparison"
+    }
+  },
+  "step4": {
+    "title": "Structure & Tone",
+    "subtitle": "Define how your content will be organized and what tone it should have",
+    "tone": {
+      "title": "Content Tone",
+      "tooltip": "The tone affects how your message is perceived by your audience.",
+      "label": "Select Content Tone *",
+      "options": {
+        "friendly": "Friendly",
+        "professional": "Professional", 
+        "thoughtProvoking": "Thought-Provoking",
+        "expert": "Expert",
+        "persuasive": "Persuasive",
+        "informative": "Informative / Neutral",
+        "casual": "Casual / Conversational",
+        "authoritative": "Authoritative / Confident", 
+        "inspirational": "Inspirational / Motivational",
+        "humorous": "Humorous / Witty",
+        "empathetic": "Empathetic"
+      }
+    },
+    "structure": {
+      "title": "Content Structure",
+      "tooltip": "A clear structure helps readers follow your content and improves engagement.",
+      "label": "Content Structure Format *",
+      "options": {
+        "introPointsCta": "Intro + 3 Main Points + CTA",
+        "problemSolutionCta": "Problem → Solution → Call to Action", 
+        "storyFactsLessons": "Story + Facts + Lessons",
+        "listicle": "Listicle (e.g. 5 ways to...)",
+        "custom": "Custom outline"
+      }
+    },
+    "customOutline": {
+      "title": "Custom Content Outline",
+      "label": "Outline/Structure Notes",
+      "placeholder": "Describe your preferred content structure, main points to cover, or any specific flow you want..."
+    },
+    "contentType": {
+      "title": "Content Type",
+      "tooltip": "The content type helps tailor the writing style and structure.",
+      "label": "Content Type",
+      "options": {
+        "blogArticle": "Blog Article",
+        "newsletter": "Newsletter",
+        "caseStudy": "Case Study", 
+        "guide": "Guide",
+        "thoughtPiece": "Thought Piece"
+      }
+    },
+    "quality": {
+      "excellent": "Perfect content structure",
+      "good": "Good structure foundation",
+      "suggestions": {
+        "selectTone": "Select a tone that matches your audience",
+        "chooseStructure": "Pick a structure format for better organization",
+        "addOutline": "Add custom outline notes for more specific guidance"
+      }
+    }
+  },
+  "step5": {
+    "title": "Generation Settings",
+    "subtitle": "Configure how your content will be generated and formatted",
+    "wordCount": {
+      "title": "Content Length",
+      "tooltip": "Longer content typically performs better for SEO, but should match your audience's preferences.",
+      "label": "Target Word Count",
+      "words": "{{count}} words"
+    },
+    "format": {
+      "title": "Output Format", 
+      "tooltip": "Choose the format that best fits your publishing platform.",
+      "label": "Output Format",
+      "options": {
+        "markdown": "Markdown",
+        "html": "HTML",
+        "plainText": "Plain Text"
+      }
+    },
+    "cta": {
+      "title": "Call to Action",
+      "tooltip": "A strong CTA encourages readers to take the next step.",
+      "label": "Call to Action Type",
+      "options": {
+        "subscribe": "Subscribe",
+        "bookCall": "Book a Call",
+        "download": "Download Freebie",
+        "visitWebsite": "Visit Website",
+        "none": "None"
+      }
+    },
+    "advanced": {
+      "title": "Advanced Options",
+      "includeStats": {
+        "label": "Include statistics and data",
+        "tooltip": "Adds credibility and authority to your content"
+      },
+      "plagiarismCheck": {
+        "label": "Run plagiarism check",
+        "tooltip": "Ensures your content is original and unique"
+      }
+    },
+    "quality": {
+      "excellent": "Optimal generation settings",
+      "good": "Good configuration",
+      "suggestions": {
+        "adjustLength": "Consider your audience's reading preferences for word count",
+        "addCta": "Add a call-to-action to drive engagement",
+        "enableStats": "Include statistics for more authoritative content"
+      }
+    }
+  },
+  "step6": {
+    "title": "Review & Generate",
+    "subtitle": "Review your settings and generate your long-form content",
+    "summary": {
+      "title": "Content Summary",
+      "topic": "Topic",
+      "audience": "Audience", 
+      "industry": "Industry",
+      "keywords": "Keywords",
+      "tone": "Tone",
+      "structure": "Structure",
+      "wordCount": "Word Count",
+      "format": "Format",
+      "cta": "Call to Action",
+      "mediaFiles": "Media Files"
+    },
+    "edit": {
+      "button": "Edit",
+      "tooltip": "Click to go back and edit this section"
+    },
+    "generate": {
+      "button": "Generate Content",
+      "processing": "Generating your content...",
+      "step1": "Analyzing your requirements...",
+      "step2": "Creating content outline...", 
+      "step3": "Writing your content...",
+      "step4": "Optimizing and finalizing...",
+      "success": "Content generated successfully!",
+      "error": "Generation failed. Please try again."
+    },
+    "validation": {
+      "missingTopic": "Content topic is required",
+      "missingAudience": "Target audience is required", 
+      "missingTone": "Content tone must be selected",
+      "missingStructure": "Content structure must be selected"
+    }
+  },
+  "smartComponents": {
+    "topicEngine": {
+      "title": "Topic Suggestions",
+      "description": "AI-generated topic ideas based on your content focus",
+      "disclaimer": "These are AI-generated suggestions and metrics for demonstration purposes.",
+      "templates": {
+        "howTo": {
+          "description": "Step-by-step guides"
+        },
+        "ultimateGuide": {
+          "description": "Comprehensive guides"
+        },
+        "waysTo": {
+          "description": "List-based content"
+        },
+        "bestPractices": {
+          "description": "Industry standards"
+        },
+        "caseStudy": {
+          "description": "Real-world examples"
+        },
+        "trending": {
+          "description": "Current hot topics"
+        },
+        "comparison": {
+          "description": "Product/service comparisons"
+        }
+      },
+      "buttons": {
+        "newTopics": "New Topics",
+        "newTopicsTooltip": "Clear history and generate fresh suggestions",
+        "refresh": "Refresh",
+        "generating": "Generating...",
+        "select": "Select",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "remove": "Remove"
+      },
+      "loading": {
+        "title": "Generating topic suggestions...",
+        "description": "Analyzing your content focus to create personalized suggestions"
+      },
+      "competition": {
+        "label": "competition",
+        "low": "low",
+        "medium": "medium", 
+        "high": "high"
+      },
+      "metrics": {
+        "views": "views",
+        "match": "match"
+      },
+      "messages": {
+        "suggestionsGenerated": "🎯 Generated {{count}} fresh topic suggestions!",
+        "generationFailed": "Failed to generate topics. Please try again.",
+        "topicSelected": "Selected: {{topic}}...",
+        "addedToFavorites": "Added to favorites",
+        "removedFromFavorites": "Removed from favorites",
+        "copiedToClipboard": "Topic copied to clipboard!",
+        "copyFailed": "Failed to copy topic"
+      },
+      "noSuggestions": {
+        "tryRefresh": "No suggestions available. Try clicking \"Refresh\" to generate more topics.",
+        "selectContext": "Select an industry and audience to see smart topic suggestions."
+      },
+      "favorites": {
+        "title": "Favorited Topics ({{count}})",
+        "clearAll": "Clear All"
+      },
+      "fallbacks": {
+        "industries": "Industries",
+        "professionals": "Professionals",
+        "anyIndustry": "Any Industry",
+        "professional": "Professional",
+        "companies": "Companies",
+        "experts": "Experts",
+        "yourField": "Your Field",
+        "industryTrends": "Industry Trends",
+        "industry": "Industry",
+        "anyField": "Any Field",
+        "theirIndustry": "Their Industry"
+      },
+      "reasons": {
+        "transformativeImpact": "Explores transformative impact of {{topic}}",
+        "comprehensiveResource": "Comprehensive resource combining your topic with target context",
+        "currentYearStrategy": "Current year strategy focused on your topic",
+        "skillFocused": "Skill-focused approach to {{topic}}",
+        "problemFocused": "Problem-focused angle highlighting common pitfalls",
+        "forwardLooking": "Forward-looking perspective on {{topic}}",
+        "financialPerspective": "Financial perspective on {{topic}} within {{industry}}",
+        "caseStudies": "Case studies and proven methods in {{industry}}",
+        "leadershipInsights": "Leadership insights on {{topic}} in {{industry}}",
+        "regulatoryPerspective": "Regulatory perspective on {{topic}} for {{industry}}",
+        "businessValue": "Business value analysis of {{topic}} in {{industry}}",
+        "audienceSpecific": "Specifically designed for {{audience}} with {{topic}} focus",
+        "trendCapitalizes": "Capitalizes on trending aspects of {{topic}}",
+        "highQuality": "High-quality content suggestion based on available context"
+      },
+      "debug": {
+        "topicSelected": "Topic selected:",
+        "errorGenerating": "Error generating topics:",
+        "helpEngagement": "Help engagement:"
+      }
+    },
+    "qualityIndicator": {
+      "title": "Content Quality Score",
+      "description": "Real-time analysis of your content setup",
+      "score": "{{score}}/100",
+      "excellent": "Excellent",
+      "good": "Good",
+      "poor": "Poor",
+      "needsImprovement": "Needs Improvement",
+      "factors": {
+        "topicClarity": "Topic Clarity",
+        "audienceAlignment": "Audience Alignment",
+        "seoOptimization": "SEO Optimization",
+        "contentStructure": "Content Structure"
+      },
+      "tips": {
+        "hasActionWords": "✓ Contains engaging action words",
+        "addActionWords": "Consider adding action words like \"How to\", \"Ultimate Guide\", or \"Best Ways\".",
+        "hasNumbers": "✓ Includes specific numbers for engagement",
+        "addNumbers": "Consider adding specific numbers (e.g., \"5 Ways\", \"10 Tips\").",
+        "hasPowerWords": "✓ Contains engaging power words",
+        "addPowerWords": "Consider adding power words like \"Ultimate\", \"Essential\", or \"Proven\".",
+        "hasSpecificBenefit": "✓ Promises clear benefits",
+        "addSpecificBenefit": "Include specific benefits (increase, improve, save, etc.).",
+        "topicTooShort": "Topic is too short. Aim for at least 10 characters.",
+        "topicTooLong": "Topic is too long. Keep it under 120 characters.",
+        "goodTopicLength": "✓ Good topic length",
+        "goodSeoLength": "✓ Good length for SEO",
+        "goodKeywordSpecificity": "✓ Good keyword specificity",
+        "goodKeywordDiversity": "✓ Good keyword diversity",
+        "addMoreDescriptive": "Add more descriptive words for clarity.",
+        "addMoreKeywords": "Add more keywords. Aim for 3-7 keywords.",
+        "addMoreLongTail": "Add more long-tail keywords (3+ words) for better targeting.",
+        "makeMoreConcise": "Consider making the topic more concise.",
+        "reduceKeywords": "Consider reducing keywords. 3-7 is optimal for focus.",
+        "clearDescriptive": "✓ Clear and descriptive",
+        "alignsWithSuggestions": "✓ Aligns with suggested topics",
+        "perfectSeoLength": "✓ Perfect SEO length",
+        "multipleKeywords": "✓ Contains multiple keywords",
+        "properCapitalization": "✓ Proper title capitalization",
+        "optimalKeywordCount": "✓ Optimal number of keywords",
+        "longTailKeywords": "✓ Includes long-tail keywords",
+        "commercialIntent": "✓ Includes commercial intent keywords",
+        "titleTooShort": "Title is too short for SEO. Aim for 50-60 characters.",
+        "titleTooLong": "Title may be truncated in search results. Keep under 60 characters.",
+        "keywordsTooShort": "Keywords are too short. Use more specific phrases.",
+        "keywordsTooLong": "Keywords might be too long. Aim for 2-4 words each.",
+        "increaseKeywordDiversity": "Increase keyword diversity to cover more search terms.",
+        "addAtLeastThree": "Add at least 3 keywords for SEO optimization.",
+        "useProperCase": "Use proper title case capitalization.",
+        "enterToSee": "Enter a {{type}} to see quality assessment"
+      }
+    },
+    "contextualHelp": {
+      "title": "Need Help?",
+      "description": "Get tips and guidance for each step",
+      "showTips": "Show Tips",
+      "hideTips": "Hide Tips"
+    }
+  },
+  "common": {
+    "draftSaved": "Draft saved",
+    "progressSaved": "Your progress has been saved.",
+    "draftSavedAuto": "Draft Saved",
+    "progressSavedAuto": "Your progress has been automatically saved.",
+    "time": {
+      "never": "Never",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} minute ago",
+      "minutesAgo_other": "{{count}} minutes ago",
+      "hoursAgo": "{{count}} hour ago",
+      "hoursAgo_other": "{{count}} hours ago"
+    }
+  },
+  "contextualHelp": {
+    "estimatedTime": "Estimated time: {{time}}",
+    "quickTips": "Quick Tips", 
+    "learnMore": "Learn More",
+    "videoTutorials": "Video Tutorials",
+    "tutorial": "Tutorial",
+    "showLess": "Show less",
+    "showMore": "Show {{count}} more tips",
+    "stillStuck": "Still stuck?",
+    "contactSupport": "Contact Support",
+    "supportAlert": "Support feature would open here. For now, please email support@example.com",
+    "goodExamples": "Good Examples",
+    "avoidThese": "Avoid These",
+    "helpEngagement": "Help Engagement:",
+    "sectionsViewed": "• Sections viewed: {{count}}",
+    "videosClicked": "• Videos clicked: {{count}}",
+    "supportContacted": "• Support contacted: {{contacted}}",
+    "yes": "Yes",
+    "no": "No",
+    "steps": {
+      "0": {
+        "title": "Define Topic & Target Audience",
+        "tips": [
+          "Be specific about your topic - avoid broad, generic subjects",
+          "Clearly define your target audience demographics and interests", 
+          "Consider your audience's pain points and what value you can provide"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Topic Definition Best Practices",
+            "content": "A well-defined topic guides the entire content creation process. It should be clear, specific, and aligned with your audience's interests.",
+            "examples": {
+              "good": [
+                "10 Email Marketing Strategies for E-commerce",
+                "How to Style Wide-Leg Jeans for Different Body Types", 
+                "React vs Vue: Performance Comparison 2024"
+              ],
+              "bad": [
+                "Marketing",
+                "Fashion", 
+                "Programming"
+              ]
+            }
+          },
+          {
+            "title": "Defining Your Target Audience",
+            "content": "Understanding your audience is crucial for creating content that resonates. Consider their age, interests, challenges, and preferred communication style.",
+            "examples": {
+              "good": [
+                "Tech-savvy millennials interested in productivity apps",
+                "Small business owners struggling with social media marketing",
+                "Fitness enthusiasts looking for home workout routines"
+              ],
+              "bad": [
+                "Everyone",
+                "People who like technology",
+                "Social media users"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "How to Choose Winning Content Topics"
+          },
+          {
+            "title": "Audience Research Masterclass"
+          }
+        ],
+        "estimatedTime": "3-5 minutes"
+      },
+      "1": {
+        "title": "Upload Media & Visual Content",
+        "tips": [
+          "Upload high-quality images (min 800x600px) for better content suggestions",
+          "Choose images that directly relate to your topic",
+          "Enable image suggestions to enhance your content with relevant visuals"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Choosing the Right Images",
+            "content": "Images should be relevant, high-quality, and properly sized. They help our AI understand your content context and generate more accurate suggestions.",
+            "examples": {
+              "good": [
+                "Product photos for product reviews",
+                "Infographics for data-driven posts",
+                "Behind-the-scenes photos for personal content"
+              ],
+              "bad": [
+                "Blurry or low-resolution images",
+                "Stock photos unrelated to your topic",
+                "Images with watermarks or copyright issues"
+              ]
+            }
+          },
+          {
+            "title": "Visual Content Strategy",
+            "content": "Visual elements enhance engagement and comprehension. They should support your content narrative and provide additional value.",
+            "examples": {
+              "good": [
+                "Screenshots for tutorials",
+                "Charts for data visualization",
+                "Before/after photos for transformations"
+              ],
+              "bad": [
+                "Decorative images without purpose",
+                "Overwhelming number of visuals",
+                "Poor quality or irrelevant images"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "Visual Content Best Practices"
+          }
+        ],
+        "estimatedTime": "2-4 minutes"
+      },
+      "2": {
+        "title": "SEO Keywords & Title Optimization",
+        "tips": [
+          "Include your primary keyword in the title naturally",
+          "Use long-tail keywords for better targeting",
+          "Keep titles under 60 characters for SEO"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Keyword Research Fundamentals",
+            "content": "Effective keywords balance search volume with competition. Focus on terms your audience actually searches for.",
+            "examples": {
+              "good": [
+                "how to meal prep for weight loss",
+                "best project management tools 2024",
+                "beginner yoga poses for back pain"
+              ],
+              "bad": [
+                "food",
+                "tools", 
+                "exercise"
+              ]
+            }
+          },
+          {
+            "title": "SEO Title Optimization",
+            "content": "Great titles are compelling to humans while being optimized for search engines. They should clearly indicate what value the content provides.",
+            "examples": {
+              "good": [
+                "7 Proven Email Subject Lines That Boost Open Rates",
+                "Complete Guide to Remote Work Productivity in 2024",
+                "Why Your Content Marketing Isn't Working (And How to Fix It)"
+              ],
+              "bad": [
+                "Email Tips",
+                "Work From Home",
+                "Marketing Problems"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "SEO Title Writing Secrets"
+          },
+          {
+            "title": "Keyword Research Tools Tutorial"
+          }
+        ],
+        "estimatedTime": "4-6 minutes"
+      },
+      "3": {
+        "title": "Content Structure & Tone",
+        "tips": [
+          "Match your tone to your audience and brand personality",
+          "Use clear section headings for better readability",
+          "Include a strong call-to-action that aligns with your goals"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Content Structure Types",
+            "content": "Different content types work better for different goals. Choose a structure that serves your content purpose.",
+            "examples": {
+              "good": [
+                "Problem-Solution-CTA for service businesses",
+                "How-to steps for educational content",
+                "Story-Lesson-Application for thought leadership"
+              ],
+              "bad": [
+                "Random thoughts without structure",
+                "Multiple CTAs competing for attention",
+                "No clear beginning, middle, or end"
+              ]
+            }
+          },
+          {
+            "title": "Tone & Voice Guidelines",
+            "content": "Your content tone should reflect your brand personality while being appropriate for your audience and topic.",
+            "examples": {
+              "good": [
+                "Professional but approachable for B2B content",
+                "Casual and encouraging for fitness content",
+                "Authoritative but accessible for educational content"
+              ],
+              "bad": [
+                "Overly formal for lifestyle content",
+                "Too casual for legal advice",
+                "Inconsistent tone throughout the piece"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "Content Structure Frameworks"
+          }
+        ],
+        "estimatedTime": "3-4 minutes"
+      },
+      "4": {
+        "title": "Generation Settings",
+        "tips": [
+          "SEO-optimal content is typically 1200-1800 words",
+          "Enable plagiarism checking for professional content",
+          "Choose output format based on your publishing platform"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Word Count Optimization",
+            "content": "Content length should match your topic depth and audience expectations. Longer isn't always better.",
+            "examples": {
+              "good": [
+                "1500+ words for comprehensive guides",
+                "800-1200 words for how-to articles",
+                "300-600 words for quick tips"
+              ],
+              "bad": [
+                "5000 words for simple concepts",
+                "200 words for complex topics",
+                "Padding content just to hit word count"
+              ]
+            }
+          },
+          {
+            "title": "Format Selection Guide",
+            "content": "Choose the output format that best fits your publishing workflow and platform requirements.",
+            "examples": {
+              "good": [
+                "Markdown for GitHub/developer blogs",
+                "HTML for direct web publishing",
+                "Google Docs for collaborative editing"
+              ],
+              "bad": [
+                "Wrong format for your platform",
+                "Format that requires conversion",
+                "Format that loses important styling"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "Content Length Best Practices"
+          }
+        ],
+        "estimatedTime": "2-3 minutes"
+      },
+      "5": {
+        "title": "Review & Generate",
+        "tips": [
+          "Review all sections for completeness before generating",
+          "Higher SEO scores typically lead to better content performance",
+          "Use Quick Edit to make final adjustments"
+        ],
+        "learnMoreSections": [
+          {
+            "title": "Pre-Generation Checklist",
+            "content": "A final review ensures your content will meet your goals and audience needs.",
+            "examples": {
+              "good": [
+                "All required fields completed",
+                "Keywords naturally integrated",
+                "Clear value proposition",
+                "Appropriate tone selected"
+              ],
+              "bad": [
+                "Missing key information",
+                "Keyword stuffing",
+                "Unclear objectives",
+                "Mismatched tone and audience"
+              ]
+            }
+          },
+          {
+            "title": "Understanding SEO Scores",
+            "content": "Our SEO scoring considers multiple factors including keyword usage, content structure, and readability.",
+            "examples": {
+              "good": [
+                "90+ score indicates excellent optimization",
+                "Strong keyword strategy",
+                "Clear content structure",
+                "Appropriate reading level"
+              ],
+              "bad": [
+                "Low scores often mean missing keywords",
+                "Poor content structure",
+                "Unclear value proposition",
+                "Mismatched audience level"
+              ]
+            }
+          }
+        ],
+        "videos": [
+          {
+            "title": "Content Review Process"
+          }
+        ],
+        "estimatedTime": "1-2 minutes"
+      }
+    }
+  }
+}

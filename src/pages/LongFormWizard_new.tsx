@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,52 +61,79 @@ const CTA_TYPE_OPTIONS = [
   { value: 'none', label: 'None' }
 ];
 
-// Define the steps of our wizard with metadata
-const WIZARD_STEPS = [
-  { 
-    name: 'Media & Topic', 
-    optional: false, 
-    estimatedTime: 3,
-    description: 'Upload media and define your topic'
-  },
-  { 
-    name: 'Industry & Audience', 
-    optional: false, 
-    estimatedTime: 2,
-    description: 'Select industry and target audience'
-  },
-  { 
-    name: 'Keywords & Title', 
-    optional: false, 
-    estimatedTime: 4,
-    description: 'Define keywords and optimize title'
-  },
-  { 
-    name: 'Structure & Tone', 
-    optional: false, 
-    estimatedTime: 3,
-    description: 'Set content structure and tone'
-  },
-  { 
-    name: 'Generation Settings', 
-    optional: true, 
-    estimatedTime: 2,
-    description: 'Configure generation preferences'
-  },
-  { 
-    name: 'Review & Generate', 
-    optional: false, 
-    estimatedTime: 1,
-    description: 'Review and generate your content'
-  }
-];
-
 // Progress persistence keys
 const PROGRESS_STORAGE_KEY = 'longform-wizard-progress';
 const COMPLETED_STEPS_KEY = 'longform-wizard-completed';
 const SKIPPED_STEPS_KEY = 'longform-wizard-skipped';
 
 const LongFormWizard = () => {
+  const { t } = useTranslation('longform');
+  
+  // Helper function to format last saved time with proper translation context
+  // Import the translation function directly from the common namespace
+  const { t: tCommon } = useTranslation('common');
+  
+  const formatSavedTime = (lastSaved: Date | null): string => {
+    if (!lastSaved) return tCommon('time.never');
+    
+    const now = new Date();
+    const diffMs = now.getTime() - lastSaved.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    
+    if (diffMinutes < 1) {
+      return tCommon('time.justNow');
+    } else if (diffMinutes < 60) {
+      // Let i18next handle pluralization automatically
+      return tCommon('time.minutesAgo', { count: diffMinutes });
+    } else if (diffHours < 24) {
+      // Let i18next handle pluralization automatically
+      return tCommon('time.hoursAgo', { count: diffHours });
+    } else {
+      return lastSaved.toLocaleDateString();
+    }
+  };
+  
+  // Define the steps of our wizard with metadata using translations
+  const WIZARD_STEPS = [
+    { 
+      name: t('wizard.steps.whatWho.name'), 
+      optional: false, 
+      estimatedTime: 3,
+      description: t('wizard.steps.whatWho.description')
+    },
+    { 
+      name: t('wizard.steps.mediaVisuals.name'), 
+      optional: false, 
+      estimatedTime: 2,
+      description: t('wizard.steps.mediaVisuals.description')
+    },
+    { 
+      name: t('wizard.steps.seoKeywords.name'), 
+      optional: false, 
+      estimatedTime: 4,
+      description: t('wizard.steps.seoKeywords.description')
+    },
+    { 
+      name: t('wizard.steps.structureTone.name'), 
+      optional: false, 
+      estimatedTime: 3,
+      description: t('wizard.steps.structureTone.description')
+    },
+    { 
+      name: t('wizard.steps.generationSettings.name'), 
+      optional: true, 
+      estimatedTime: 2,
+      description: t('wizard.steps.generationSettings.description')
+    },
+    { 
+      name: t('wizard.steps.reviewGenerate.name'), 
+      optional: false, 
+      estimatedTime: 1,
+      description: t('wizard.steps.reviewGenerate.description')
+    }
+  ];
+  
   // Load saved progress
   const loadSavedProgress = () => {
     try {
@@ -152,7 +180,7 @@ const LongFormWizard = () => {
 
   const navigate = useNavigate();
   const { suggestedKeywords, suggestedStructure, suggestedTone, isLoading } = useSmartSuggestions(formData);
-  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData);
+  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData, t);
   
   // Auto-save functionality
   const { hasSavedDraft, lastSaved, restoreDraft, clearDraft, saveNow } = useAutoSave(formData, {
@@ -225,7 +253,7 @@ const LongFormWizard = () => {
     } else {
       const errors = getStepErrors(currentStep);
       const errorMessages = errors.map(error => error.message).join('\n');
-      alert(`Please fix the following errors before proceeding:\n\n${errorMessages}`);
+      alert(t('wizard.errors.beforeProceed') + '\n\n' + errorMessages);
       return;
     }
 
@@ -315,7 +343,7 @@ const LongFormWizard = () => {
         );
       
       default:
-        return <div>Unknown step</div>;
+        return <div>{t('wizard.errors.unknownStep')}</div>;
     }
   };
 
@@ -328,10 +356,10 @@ const LongFormWizard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-blue-800 dark:text-blue-400">
-                  Draft Available
+                  {t('wizard.draft.available')}
                 </h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  You have a saved draft from {formatLastSaved(lastSaved)}. Would you like to restore it?
+                  {t('wizard.draft.foundSaved', { time: formatSavedTime(lastSaved) })}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -341,7 +369,7 @@ const LongFormWizard = () => {
                   onClick={handleRestoreDraft}
                   className="text-blue-700 border-blue-300 hover:bg-blue-100 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900"
                 >
-                  Restore Draft
+                  {t('wizard.draft.restore')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -349,7 +377,7 @@ const LongFormWizard = () => {
                   onClick={handleClearDraft}
                   className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
                 >
-                  Dismiss
+                  {t('wizard.draft.dismiss')}
                 </Button>
               </div>
             </div>
@@ -362,15 +390,15 @@ const LongFormWizard = () => {
             {/* Progress Overview */}
             <div className="flex justify-between items-center mb-4">
               <div className="space-y-1">
-                <h3 className="text-sm font-medium">Content Wizard Progress</h3>
+                <h3 className="text-sm font-medium">{t('wizard.progress.title')}</h3>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span>Step {currentStep + 1} of {WIZARD_STEPS.length}</span>
+                  <span>{t('wizard.progress.step', { current: currentStep + 1, total: WIZARD_STEPS.length })}</span>
                   <span>•</span>
-                  <span>{Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100)}% Complete</span>
+                  <span>{t('wizard.progress.complete', { percent: Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100) })}</span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {getEstimatedTimeRemaining()} min remaining
+                    {t('wizard.progress.remaining', { time: getEstimatedTimeRemaining() })}
                   </span>
                 </div>
               </div>
@@ -380,7 +408,7 @@ const LongFormWizard = () => {
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full ${hasSavedDraft ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                   <span>
-                    {lastSaved ? `Saved ${formatLastSaved(lastSaved)}` : 'Not saved'}
+                    {lastSaved ? formatSavedTime(lastSaved) : t('wizard.draft.notSaved')}
                   </span>
                 </div>
                 <Button
@@ -389,7 +417,7 @@ const LongFormWizard = () => {
                   onClick={saveNow}
                   className="text-xs h-6 px-2 py-0"
                 >
-                  Save Now
+                  {t('wizard.navigation.saveNow')}
                 </Button>
               </div>
             </div>
@@ -451,7 +479,7 @@ const LongFormWizard = () => {
                             {/* Optional Badge */}
                             {step.optional && (
                               <Badge variant="outline" className="text-xs px-1 py-0 h-4">
-                                Optional
+                                {t('wizard.progress.optional')}
                               </Badge>
                             )}
                           </div>
@@ -461,10 +489,10 @@ const LongFormWizard = () => {
                         <div className="text-center">
                           <p className="font-medium">{step.name}</p>
                           <p className="text-xs text-muted-foreground">{step.description}</p>
-                          <p className="text-xs">Estimated: {step.estimatedTime} min</p>
-                          {isCompleted && <p className="text-xs text-green-600">✓ Completed</p>}
-                          {isSkipped && <p className="text-xs text-amber-600">⏭ Skipped</p>}
-                          {hasError && <p className="text-xs text-red-600">⚠ Needs attention</p>}
+                          <p className="text-xs">{t('contextualHelp.estimatedTime', { time: `${step.estimatedTime} min` })}</p>
+                          {isCompleted && <p className="text-xs text-green-600">✓ {t('wizard.status.completed')}</p>}
+                          {isSkipped && <p className="text-xs text-amber-600">⏭ {t('wizard.status.skipped')}</p>}
+                          {hasError && <p className="text-xs text-red-600">⚠ {t('wizard.status.needsAttention')}</p>}
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -484,10 +512,10 @@ const LongFormWizard = () => {
             {/* Current Step Info */}
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>
-                Current: {WIZARD_STEPS[currentStep].name}
-                {WIZARD_STEPS[currentStep].optional && " (Optional)"}
+                {t('wizard.progress.current', { name: WIZARD_STEPS[currentStep].name })}
+                {WIZARD_STEPS[currentStep].optional && ` ${t('wizard.progress.optional')}`}
               </span>
-              <span>{completedSteps.length} of {WIZARD_STEPS.length} steps completed</span>
+              <span>{t('wizard.progress.completed', { completed: completedSteps.length, total: WIZARD_STEPS.length })}</span>
             </div>
           </div>
 
@@ -502,7 +530,7 @@ const LongFormWizard = () => {
               disabled={currentStep === 0}
               className="flex items-center gap-2"
             >
-              ← Previous
+              ← {t('wizard.navigation.previous')}
             </Button>
             
             <div className="flex gap-2">
@@ -514,7 +542,7 @@ const LongFormWizard = () => {
                   className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
                 >
                   <SkipForward className="h-4 w-4" />
-                  Skip Step
+                  {t('wizard.navigation.skip')}
                 </Button>
               )}
               
@@ -524,7 +552,7 @@ const LongFormWizard = () => {
                   disabled={!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional}
                   className="flex items-center gap-2"
                 >
-                  Next →
+                  {t('wizard.navigation.next')} →
                 </Button>
               ) : (
                 <Button 
@@ -533,7 +561,7 @@ const LongFormWizard = () => {
                   className="flex items-center gap-2"
                 >
                   <Info className="h-4 w-4" />
-                  Generate Content
+                  {t('wizard.navigation.generate')}
                 </Button>
               )}
             </div>
@@ -546,7 +574,7 @@ const LongFormWizard = () => {
                 <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
-                    Please complete the following:
+                    {t('wizard.validation.pleaseComplete')}
                   </h4>
                   <ul className="text-sm text-red-700 dark:text-red-300 mt-1 space-y-1">
                     {getStepErrors(currentStep).map((error, index) => (

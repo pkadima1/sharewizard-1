@@ -152,6 +152,27 @@
           "examples": "How-to guides, tutorials, informative content",
           "platforms": "YouTube, Medium, educational platforms",
           "sampleText": "Did you know that honeybees communicate through dance? The 'waggle dance' indicates direction and distance to food sources, demonstrating their remarkable intelligence."
+        },
+        "informative": {
+          "title": "Informative / Neutral",
+          "description": "Objective, balanced tone for encyclopedic or factual content",
+          "examples": "Research findings, factual reports, neutral analysis",
+          "platforms": "Wikipedia-style content, news articles, academic platforms",
+          "sampleText": "The global renewable energy market reached $1.1 trillion in 2023, representing a 9.7% increase from the previous year. Solar and wind energy accounted for 73% of new capacity additions."
+        },
+        "authoritative": {
+          "title": "Authoritative / Confident",
+          "description": "Strong leadership voice, often used in white papers or B2B blogs",
+          "examples": "Industry leadership, expert opinions, strategic insights",
+          "platforms": "LinkedIn thought leadership, business publications, executive content",
+          "sampleText": "Industry leaders recognize that organizations implementing these frameworks achieve 40% better results. The evidence is clear: strategic adoption is no longer optional but essential for competitive advantage."
+        },
+        "empathetic": {
+          "title": "Empathetic",
+          "description": "Warm, understanding tone for sensitive topics (health, mental wellness)",
+          "examples": "Mental health support, healthcare content, sensitive discussions",
+          "platforms": "Healthcare platforms, wellness blogs, support communities",
+          "sampleText": "I understand this journey can feel overwhelming, and that's completely normal. Every step forward, no matter how small, is progress worth celebrating. You're not alone in this."
         }
       }
     },

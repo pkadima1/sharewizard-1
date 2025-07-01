@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CheckCircle, AlertCircle, XCircle, Info, TrendingUp, Target } from 'lucide-react';
@@ -24,19 +25,21 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
   suggestions = [],
   className = ''
 }) => {
+  const { t } = useTranslation('longform');
+  
   // Topic quality assessment - MOVED BEFORE THE useMemo CALL TO FIX THE REFERENCE ERROR
   const assessTopicQuality = (topic: string, tips: string[], suggestions: string[]): number => {
     let score = 0;
 
     // Length check (10-120 characters is optimal)
     if (topic.length < 10) {
-      tips.push('Topic is too short. Aim for at least 10 characters.');
+      tips.push(t('smartComponents.qualityIndicator.tips.topicTooShort'));
     } else if (topic.length > 120) {
-      tips.push('Topic is too long. Keep it under 120 characters.');
+      tips.push(t('smartComponents.qualityIndicator.tips.topicTooLong'));
       score += 10;
     } else if (topic.length >= 20 && topic.length <= 80) {
       score += 30;
-      tips.push('✓ Good topic length');
+      tips.push(t('smartComponents.qualityIndicator.tips.goodTopicLength'));
     } else {
       score += 20;
     }
@@ -44,12 +47,12 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     // Clarity and structure check
     const words = topic.split(/\s+/).filter(word => word.length > 0);
     if (words.length < 3) {
-      tips.push('Add more descriptive words for clarity.');
+      tips.push(t('smartComponents.qualityIndicator.tips.addMoreDescriptive'));
     } else if (words.length >= 4 && words.length <= 12) {
       score += 25;
-      tips.push('✓ Clear and descriptive');
+      tips.push(t('smartComponents.qualityIndicator.tips.clearDescriptive'));
     } else if (words.length > 12) {
-      tips.push('Consider making the topic more concise.');
+      tips.push(t('smartComponents.qualityIndicator.tips.makeMoreConcise'));
       score += 15;
     } else {
       score += 20;
@@ -59,18 +62,18 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     const hasActionWords = /\b(how to|guide|tips|ways|steps|ultimate|best|top|complete)\b/i.test(topic);
     if (hasActionWords) {
       score += 20;
-      tips.push('✓ Contains engaging action words');
+      tips.push(t('smartComponents.qualityIndicator.tips.hasActionWords'));
     } else {
-      tips.push('Consider adding action words like "How to", "Ultimate Guide", or "Best Ways".');
+      tips.push(t('smartComponents.qualityIndicator.tips.addActionWords'));
     }
 
     // Specificity check
     const hasNumbers = /\b\d+\b/.test(topic);
     if (hasNumbers) {
       score += 15;
-      tips.push('✓ Includes specific numbers for engagement');
+      tips.push(t('smartComponents.qualityIndicator.tips.hasNumbers'));
     } else {
-      tips.push('Consider adding specific numbers (e.g., "5 Ways", "10 Tips").');
+      tips.push(t('smartComponents.qualityIndicator.tips.addNumbers'));
     }
 
     // Relevance to suggestions
@@ -81,7 +84,7 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
       );
       if (isRelevantToSuggestions) {
         score += 10;
-        tips.push('✓ Aligns with suggested topics');
+        tips.push(t('smartComponents.qualityIndicator.tips.alignsWithSuggestions'));
       }
     }
 
@@ -94,41 +97,41 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
 
     // SEO-optimal length (50-60 characters)
     if (title.length < 30) {
-      tips.push('Title is too short for SEO. Aim for 50-60 characters.');
+      tips.push(t('smartComponents.qualityIndicator.tips.titleTooShort'));
     } else if (title.length > 70) {
-      tips.push('Title may be truncated in search results. Keep under 60 characters.');
+      tips.push(t('smartComponents.qualityIndicator.tips.titleTooLong'));
       score += 15;
     } else if (title.length >= 50 && title.length <= 60) {
       score += 35;
-      tips.push('✓ Perfect SEO length');
+      tips.push(t('smartComponents.qualityIndicator.tips.perfectSeoLength'));
     } else {
       score += 25;
-      tips.push('✓ Good length for SEO');
+      tips.push(t('smartComponents.qualityIndicator.tips.goodSeoLength'));
     }
 
     // Keyword placement (front-loading)
     const words = title.split(/\s+/).filter(word => word.length > 0);
     if (words.length >= 3) {
       score += 20;
-      tips.push('✓ Contains multiple keywords');
+      tips.push(t('smartComponents.qualityIndicator.tips.multipleKeywords'));
     }
 
     // Power words and emotional triggers
     const powerWords = /\b(ultimate|complete|essential|proven|powerful|secret|amazing|incredible|breakthrough)\b/i;
     if (powerWords.test(title)) {
       score += 20;
-      tips.push('✓ Contains engaging power words');
+      tips.push(t('smartComponents.qualityIndicator.tips.hasPowerWords'));
     } else {
-      tips.push('Consider adding power words like "Ultimate", "Essential", or "Proven".');
+      tips.push(t('smartComponents.qualityIndicator.tips.addPowerWords'));
     }
 
     // Clarity and readability
     const hasSpecificBenefit = /\b(increase|improve|boost|reduce|save|learn|master|discover)\b/i.test(title);
     if (hasSpecificBenefit) {
       score += 15;
-      tips.push('✓ Promises clear benefits');
+      tips.push(t('smartComponents.qualityIndicator.tips.hasSpecificBenefit'));
     } else {
-      tips.push('Include specific benefits (increase, improve, save, etc.).');
+      tips.push(t('smartComponents.qualityIndicator.tips.addSpecificBenefit'));
     }
 
     // Capitalization check
@@ -139,9 +142,9 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     
     if (isProperlyCapitalized) {
       score += 10;
-      tips.push('✓ Proper title capitalization');
+      tips.push(t('smartComponents.qualityIndicator.tips.properCapitalization'));
     } else {
-      tips.push('Use proper title case capitalization.');
+      tips.push(t('smartComponents.qualityIndicator.tips.useProperCase'));
     }
 
     return Math.min(score, 100);
@@ -161,28 +164,28 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
 
     // Quantity check (3-7 keywords is optimal)
     if (keywords.length === 0) {
-      tips.push('Add at least 3 keywords for SEO optimization.');
+      tips.push(t('smartComponents.qualityIndicator.tips.addAtLeastThree'));
       return 0;
     } else if (keywords.length < 3) {
-      tips.push('Add more keywords. Aim for 3-7 keywords.');
+      tips.push(t('smartComponents.qualityIndicator.tips.addMoreKeywords'));
       score += 20;
     } else if (keywords.length >= 3 && keywords.length <= 7) {
       score += 35;
-      tips.push('✓ Optimal number of keywords');
+      tips.push(t('smartComponents.qualityIndicator.tips.optimalKeywordCount'));
     } else {
-      tips.push('Consider reducing keywords. 3-7 is optimal for focus.');
+      tips.push(t('smartComponents.qualityIndicator.tips.reduceKeywords'));
       score += 25;
     }
 
     // Keyword length and specificity
     const avgLength = keywords.reduce((sum, kw) => sum + kw.length, 0) / keywords.length;
     if (avgLength < 3) {
-      tips.push('Keywords are too short. Use more specific phrases.');
+      tips.push(t('smartComponents.qualityIndicator.tips.keywordsTooShort'));
     } else if (avgLength >= 4 && avgLength <= 15) {
       score += 25;
-      tips.push('✓ Good keyword specificity');
+      tips.push(t('smartComponents.qualityIndicator.tips.goodKeywordSpecificity'));
     } else if (avgLength > 15) {
-      tips.push('Keywords might be too long. Aim for 2-4 words each.');
+      tips.push(t('smartComponents.qualityIndicator.tips.keywordsTooLong'));
       score += 15;
     }
 
@@ -190,9 +193,9 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     const longTailCount = keywords.filter(kw => kw.split(' ').length >= 3).length;
     if (longTailCount >= 2) {
       score += 20;
-      tips.push('✓ Includes long-tail keywords');
+      tips.push(t('smartComponents.qualityIndicator.tips.longTailKeywords'));
     } else {
-      tips.push('Add more long-tail keywords (3+ words) for better targeting.');
+      tips.push(t('smartComponents.qualityIndicator.tips.addMoreLongTail'));
     }
 
     // Keyword diversity
@@ -205,9 +208,9 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     
     if (uniqueWords.size >= keywords.length * 1.5) {
       score += 15;
-      tips.push('✓ Good keyword diversity');
+      tips.push(t('smartComponents.qualityIndicator.tips.goodKeywordDiversity'));
     } else {
-      tips.push('Increase keyword diversity to cover more search terms.');
+      tips.push(t('smartComponents.qualityIndicator.tips.increaseKeywordDiversity'));
     }
 
     // Commercial intent detection
@@ -215,7 +218,7 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
     const hasCommercialIntent = keywords.some(kw => commercialWords.test(kw));
     if (hasCommercialIntent) {
       score += 5;
-      tips.push('✓ Includes commercial intent keywords');
+      tips.push(t('smartComponents.qualityIndicator.tips.commercialIntent'));
     }
 
     return Math.min(score, 100);
@@ -229,7 +232,7 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
         level: 'poor',
         color: 'red',
         icon: <XCircle className="w-3 h-3" />,
-        tips: [`Enter a ${type} to see quality assessment`]
+        tips: [t('smartComponents.qualityIndicator.tips.enterToSee', { type })]
       };
     }
 
@@ -288,9 +291,9 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
   // Format quality level for display
   const getQualityLabel = (level: string, score: number) => {
     const labels = {
-      poor: 'Poor',
-      good: 'Good',
-      excellent: 'Excellent'
+      poor: t('smartComponents.qualityIndicator.poor'),
+      good: t('smartComponents.qualityIndicator.good'),
+      excellent: t('smartComponents.qualityIndicator.excellent')
     };
     return `${labels[level as keyof typeof labels]} (${score}%)`;
   };
@@ -304,7 +307,7 @@ const QualityIndicator: React.FC<QualityIndicatorProps> = ({
             className={`inline-flex items-center gap-1 text-xs cursor-help ${className}`}
           >
             {qualityAssessment.icon}
-            <span className="capitalize">{qualityAssessment.level}</span>
+            <span className="capitalize">{t(`smartComponents.qualityIndicator.${qualityAssessment.level}`)}</span>
           </Badge>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-sm">

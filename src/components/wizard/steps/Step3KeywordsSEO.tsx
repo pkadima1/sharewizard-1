@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,7 +22,13 @@ import {
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import SmartKeywordGenerator from '@/components/wizard/smart/SmartKeywordGenerator';
 
-const Step3KeywordsSEO = ({ formData, updateFormData }) => {
+interface Step3Props {
+  formData: any;
+  updateFormData: (key: string, value: any) => void;
+}
+
+const Step3KeywordsSEO: React.FC<Step3Props> = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
   const [selectedKeywords, setSelectedKeywords] = useState(formData.keywords || []);
   const [suggestedTitles, setSuggestedTitles] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState(formData.optimizedTitle || '');
@@ -38,12 +45,12 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
       const keywordCount = selectedKeywords.length;
       if (keywordCount >= 3) {
         score += 30;
-        factors.push({ factor: 'Keyword Count', score: 30, status: 'good' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordCount'), score: 30, status: 'good' });
       } else if (keywordCount >= 1) {
         score += 15;
-        factors.push({ factor: 'Keyword Count', score: 15, status: 'warning' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordCount'), score: 15, status: 'warning' });
       } else {
-        factors.push({ factor: 'Keyword Count', score: 0, status: 'error' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordCount'), score: 0, status: 'error' });
       }
 
       // Title optimization (0-25 points)
@@ -55,15 +62,15 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
 
         if (titleLength >= 50 && titleLength <= 60 && hasKeyword) {
           score += 25;
-          factors.push({ factor: 'Title Optimization', score: 25, status: 'good' });
+          factors.push({ factor: t('step3.seoScore.factors.titleOptimization'), score: 25, status: 'good' });
         } else if ((titleLength >= 45 && titleLength <= 65) || hasKeyword) {
           score += 15;
-          factors.push({ factor: 'Title Optimization', score: 15, status: 'warning' });
+          factors.push({ factor: t('step3.seoScore.factors.titleOptimization'), score: 15, status: 'warning' });
         } else {
-          factors.push({ factor: 'Title Optimization', score: 0, status: 'error' });
+          factors.push({ factor: t('step3.seoScore.factors.titleOptimization'), score: 0, status: 'error' });
         }
       } else {
-        factors.push({ factor: 'Title Optimization', score: 0, status: 'error' });
+        factors.push({ factor: t('step3.seoScore.factors.titleOptimization'), score: 0, status: 'error' });
       }
 
       // Keyword diversity (0-20 points)
@@ -72,12 +79,12 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
       
       if (primaryKeywords.length >= 1 && longTailKeywords.length >= 1) {
         score += 20;
-        factors.push({ factor: 'Keyword Diversity', score: 20, status: 'good' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordDiversity'), score: 20, status: 'good' });
       } else if (primaryKeywords.length >= 1 || longTailKeywords.length >= 1) {
         score += 10;
-        factors.push({ factor: 'Keyword Diversity', score: 10, status: 'warning' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordDiversity'), score: 10, status: 'warning' });
       } else {
-        factors.push({ factor: 'Keyword Diversity', score: 0, status: 'error' });
+        factors.push({ factor: t('step3.seoScore.factors.keywordDiversity'), score: 0, status: 'error' });
       }
 
       // Content relevance (0-25 points) - based on topic matching
@@ -88,12 +95,12 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
       
       if (keywordRelevance && topicWords.length > 0) {
         score += 25;
-        factors.push({ factor: 'Content Relevance', score: 25, status: 'good' });
+        factors.push({ factor: t('step3.seoScore.factors.contentRelevance'), score: 25, status: 'good' });
       } else if (topicWords.length > 0) {
         score += 10;
-        factors.push({ factor: 'Content Relevance', score: 10, status: 'warning' });
+        factors.push({ factor: t('step3.seoScore.factors.contentRelevance'), score: 10, status: 'warning' });
       } else {
-        factors.push({ factor: 'Content Relevance', score: 0, status: 'error' });
+        factors.push({ factor: t('step3.seoScore.factors.contentRelevance'), score: 0, status: 'error' });
       }
 
       return { score: Math.min(score, 100), factors };
@@ -136,10 +143,10 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
         acceptable,
         status: optimal ? 'optimal' : acceptable ? 'acceptable' : 'needs-improvement',
         recommendation: optimal 
-          ? 'Perfect length for SEO!'
+          ? t('step3.titleAnalysis.recommendations.perfectLength')
           : length < 45 
-            ? 'Consider adding more descriptive words'
-            : 'Consider shortening for better SEO'
+            ? t('step3.titleAnalysis.recommendations.addWords')
+            : t('step3.titleAnalysis.recommendations.shortenTitle')
       };
     };
 
@@ -160,22 +167,22 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
     
     if (selectedKeywords.length > 0) {
       impacts.push({
-        metric: 'Search Visibility',
+        metric: t('step3.seoImpact.metrics.searchVisibility'),
         improvement: `+${Math.min(selectedKeywords.length * 15, 60)}%`,
-        description: 'Increased chance of appearing in search results'
+        description: t('step3.seoImpact.descriptions.searchVisibility')
       });
       
       impacts.push({
-        metric: 'Click-Through Rate',
+        metric: t('step3.seoImpact.metrics.clickThroughRate'),
         improvement: `+${Math.min(selectedKeywords.length * 8, 35)}%`,
-        description: 'More compelling titles attract more clicks'
+        description: t('step3.seoImpact.descriptions.clickThroughRate')
       });
       
       if (selectedKeywords.some(kw => kw.split(' ').length > 2)) {
         impacts.push({
-          metric: 'Long-tail Traffic',
+          metric: t('step3.seoImpact.metrics.longTailTraffic'),
           improvement: '+25%',
-          description: 'Long-tail keywords capture specific search intent'
+          description: t('step3.seoImpact.descriptions.longTailTraffic')
         });
       }
     }
@@ -194,15 +201,15 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
     if (currentTitle.length < 50) {
       suggestions.push({
         type: 'length',
-        suggestion: `${currentTitle} - Complete ${mainKeyword} Guide`,
-        reason: 'Increase title length for better SEO (currently too short)'
+        suggestion: `${currentTitle} - ${t('step3.titleImprovement.suggestions.length', { keyword: mainKeyword })}`,
+        reason: t('step3.titleImprovement.suggestions.lengthReason')
       });
     } else if (currentTitle.length > 60) {
       const shortened = currentTitle.substring(0, 57) + '...';
       suggestions.push({
         type: 'length',
         suggestion: shortened,
-        reason: 'Shorten title for better search display (currently too long)'
+        reason: t('step3.titleImprovement.suggestions.shortenReason')
       });
     }
     
@@ -211,13 +218,13 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
       suggestions.push({
         type: 'keyword',
         suggestion: `${mainKeyword}: ${currentTitle}`,
-        reason: 'Place primary keyword at the beginning for better SEO'
+        reason: t('step3.titleImprovement.suggestions.keywordReason')
       });
     }
     
     // Add power words
-    const powerWords = ['Ultimate', 'Complete', 'Essential', 'Proven', 'Expert'];
-    const hasNoPowerWords = !powerWords.some(word => 
+    const powerWords = t('step3.titleImprovement.powerWords', { returnObjects: true }) as string[];
+    const hasNoPowerWords = !Array.isArray(powerWords) || !powerWords.some(word => 
       currentTitle.toLowerCase().includes(word.toLowerCase())
     );
     
@@ -225,7 +232,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
       suggestions.push({
         type: 'engagement',
         suggestion: `The Ultimate ${currentTitle}`,
-        reason: 'Add power words to increase click-through rates'
+        reason: t('step3.titleImprovement.suggestions.powerWordReason')
       });
     }
     
@@ -270,17 +277,17 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
     
     // Simulate API delay
     setTimeout(() => {
-      const topic = formData.topic || 'Content';
-      const industry = formData.industry || 'Business';
-      const audience = formData.audience || 'Professionals';
+      const topic = formData.topic || t('step3.defaults.content');
+      const industry = formData.industry || t('step3.defaults.business');
+      const audience = formData.audience || t('step3.defaults.professionals');
       
       // Template patterns for titles
       const titleTemplates = [
-        `The Ultimate Guide to ${keywordsToUse[0]} for ${audience}`,
-        `How to Boost Your ${industry} Results with ${keywordsToUse.slice(0, 2).join(' & ')}`,
-        `${keywordsToUse[0].charAt(0).toUpperCase() + keywordsToUse[0].slice(1)}: The Secret Ingredient for ${industry} Success`,
-        `${Math.floor(Math.random() * 10) + 5} ${keywordsToUse[0]} Strategies That Transform Your ${industry} Approach`,
-        `Why ${keywordsToUse[0]} is Essential for ${audience} in ${new Date().getFullYear()}`
+        t('step3.titleTemplates.ultimate', { keyword: keywordsToUse[0], audience }),
+        t('step3.titleTemplates.boost', { industry, keywords: keywordsToUse.slice(0, 2).join(' & ') }),
+        t('step3.titleTemplates.secret', { keyword: keywordsToUse[0].charAt(0).toUpperCase() + keywordsToUse[0].slice(1), industry }),
+        t('step3.titleTemplates.strategies', { number: Math.floor(Math.random() * 10) + 5, keyword: keywordsToUse[0], industry }),
+        t('step3.titleTemplates.essential', { keyword: keywordsToUse[0], audience, year: new Date().getFullYear() })
       ];
       
       // Use the topic if it looks like a title (capitalized words, longer phrase)
@@ -289,7 +296,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
         // Extract a keyword if possible
         const keyword = keywordsToUse[0] || '';
         if (keyword && !topic.toLowerCase().includes(keyword.toLowerCase())) {
-          topicBasedTitle = `${topic}: Leveraging the Power of ${keyword}`;
+          topicBasedTitle = t('step3.titleTemplates.leveraging', { topic, keyword });
         } else {
           topicBasedTitle = topic;
         }
@@ -310,9 +317,9 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
     <TooltipProvider>
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold">SEO Keywords & Optimized Title</h2>
+          <h2 className="text-2xl font-bold">{t('step3.title')}</h2>
           <p className="text-muted-foreground">
-            Select keywords and get AI-suggested titles optimized for search engines with real-time SEO analysis.
+            {t('step3.subtitle')}
           </p>
         </div>
 
@@ -322,7 +329,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                <h3 className="font-semibold text-green-900 dark:text-green-100">Real-time SEO Score</h3>
+                <h3 className="font-semibold text-green-900 dark:text-green-100">{t('step3.seoScore.title')}</h3>
               </div>
               <Badge 
                 variant={seoAnalysis.score >= 80 ? 'default' : seoAnalysis.score >= 60 ? 'secondary' : 'destructive'}
@@ -346,7 +353,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                   )}
                   <span className="font-medium">{factor.factor}</span>
                   <span className={factor.status === 'good' ? 'text-green-600' : factor.status === 'warning' ? 'text-yellow-600' : 'text-red-600'}>
-                    {factor.score}pts
+                    {t('step3.seoScore.points', { score: factor.score })}
                   </span>
                 </div>
               ))}
@@ -370,7 +377,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
             <Card className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Eye className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold">SEO Impact Preview</h3>
+                <h3 className="text-lg font-semibold">{t('step3.seoImpact.title')}</h3>
               </div>
               <div className="grid gap-3">
                 {seoImpact.map((impact, index) => (
@@ -391,7 +398,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
           {/* Title Suggestions Card */}
           <Card className="p-4 space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">SEO-Optimized Title Suggestions</h3>
+              <h3 className="text-lg font-semibold">{t('step3.titleSuggestions.title')}</h3>
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -400,18 +407,18 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                 className="flex items-center gap-1"
               >
                 <RefreshCw className={`h-4 w-4 ${isLoadingTitles ? 'animate-spin' : ''}`} />
-                Regenerate
+                {t('step3.titleSuggestions.regenerate')}
               </Button>
             </div>
             
             {selectedKeywords.length === 0 ? (
               <div className="py-8 text-center">
-                <p className="text-muted-foreground">Select at least one keyword to generate title suggestions.</p>
+                <p className="text-muted-foreground">{t('step3.titleSuggestions.noKeywords')}</p>
               </div>
             ) : isLoadingTitles ? (
               <div className="py-8 flex justify-center">
                 <div className="animate-pulse text-center">
-                  <p className="text-muted-foreground">Crafting SEO-optimized titles...</p>
+                  <p className="text-muted-foreground">{t('step3.titleSuggestions.loading')}</p>
                 </div>
               </div>
             ) : suggestedTitles.length > 0 ? (
@@ -434,7 +441,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                                 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                                 : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                           }`}>
-                            {title.length} chars
+                            {t('step3.titleSuggestions.chars', { length: title.length })}
                           </span>
                         </div>
                       </div>
@@ -446,11 +453,9 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                       />
                     </div>
                   ))}
-                </RadioGroup>
-                
-                <div className="pt-2">
+                </RadioGroup>                  <div className="pt-2">
                   <div className="flex items-center justify-between mb-1">
-                    <Label htmlFor="custom-title" className="block">Customize selected title</Label>
+                    <Label htmlFor="custom-title" className="block">{t('step3.titleSuggestions.customize')}</Label>
                     {selectedTitle && (
                       <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-1 rounded ${
@@ -460,7 +465,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                               ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                               : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                         }`}>
-                          {seoAnalysis.titleAnalysis.length}/60 chars
+                          {t('step3.titleSuggestions.optimalChars', { length: seoAnalysis.titleAnalysis.length })}
                         </span>
                         <QualityIndicator 
                           input={selectedTitle}
@@ -472,14 +477,14 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                   </div>
                   <Input
                     id="custom-title"
-                    placeholder="Edit your selected title..."
+                    placeholder={t('step3.titleSuggestions.placeholder')}
                     value={selectedTitle}
                     onChange={(e) => setSelectedTitle(e.target.value)}
                     className="w-full"
                   />
                   {seoAnalysis.titleAnalysis.recommendation && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      💡 {seoAnalysis.titleAnalysis.recommendation}
+                      {t('step3.titleSuggestions.recommendation', { recommendation: seoAnalysis.titleAnalysis.recommendation })}
                     </p>
                   )}
                 </div>
@@ -492,7 +497,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
             <Card className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="h-5 w-5 text-yellow-500" />
-                <h3 className="text-lg font-semibold">Title Improvement Suggestions</h3>
+                <h3 className="text-lg font-semibold">{t('step3.titleImprovement.title')}</h3>
               </div>
               <div className="space-y-3">
                 {titleSuggestions.map((suggestion, index) => (
@@ -512,7 +517,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                         onClick={() => setSelectedTitle(suggestion.suggestion)}
                         className="text-xs"
                       >
-                        Use This
+                        {t('step3.titleImprovement.useThis')}
                       </Button>
                     </div>
                   </div>
@@ -526,7 +531,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
             <Card className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <BarChart3 className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold">Keyword Density Analysis</h3>
+                <h3 className="text-lg font-semibold">{t('step3.keywordDensity.title')}</h3>
               </div>
               <div className="space-y-2">
                 {seoAnalysis.keywordDensity.map((item, index) => (
@@ -541,10 +546,10 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
                     </div>
                     <div className="text-right">
                       <span className="text-sm font-medium">
-                        {item.occurrences} occurrence{item.occurrences !== 1 ? 's' : ''}
+                        {t('step3.keywordDensity.occurrences', { count: item.occurrences })}
                       </span>
                       <p className="text-xs text-muted-foreground">
-                        {item.status === 'missing' ? 'Consider including in title' : 'Good keyword placement'}
+                        {item.status === 'missing' ? t('step3.keywordDensity.missing') : t('step3.keywordDensity.good')}
                       </p>
                     </div>
                   </div>
@@ -552,7 +557,7 @@ const Step3KeywordsSEO = ({ formData, updateFormData }) => {
               </div>
               <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
                 <p className="text-sm text-blue-800 dark:text-blue-200">
-                  <strong>Recommendation:</strong> Include 1-2 primary keywords in your title for optimal SEO impact.
+                  <strong>{t('step3.keywordDensity.recommendation')}</strong>
                 </p>
               </div>
             </Card>

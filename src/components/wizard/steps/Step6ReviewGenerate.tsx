@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { functions } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Info, 
   CheckCircle2, 
@@ -125,7 +126,14 @@ interface GenerateLongformResponse {
   }
 }
 
-const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep }) => {
+interface Step6Props {
+  formData: any;
+  updateFormData: (key: string, value: any) => void;
+  onGenerate: () => void;
+  onEditStep: (stepNumber: number) => void;
+}
+
+const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, onGenerate, onEditStep }) => {
   const [selectedExportFormats, setSelectedExportFormats] = useState(['markdown']);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
@@ -137,6 +145,7 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
   const [generationStage, setGenerationStage] = useState<'outline' | 'content' | 'complete' | null>(null);
   
   const navigate = useNavigate();
+  const { currentUser, userProfile } = useAuth();
 
   // Create the callable function
   const generateLongformContentFunction = httpsCallable<
@@ -454,6 +463,36 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
 
   // Handle the generation process
   const handleGenerate = async () => {
+    // Check authentication first
+    if (!currentUser) {
+      toast.error("Please log in to generate content", {
+        description: "You need to be logged in to use the content generator."
+      });
+      navigate('/login');
+      return;
+    }
+
+    // Check if user profile is loaded and has sufficient requests
+    if (!userProfile) {
+      toast.error("Loading user profile...", {
+        description: "Please wait while we load your account information."
+      });
+      return;
+    }
+
+    // Check request limits - Long-form content requires 4 credits
+    const requestsRemaining = (userProfile.requests_limit || 0) - (userProfile.requests_used || 0);
+    if (requestsRemaining < 4) {
+      toast.error("Insufficient credits for long-form content", {
+        description: `Long-form content requires 4 credits. You have ${requestsRemaining} credits remaining. Please upgrade your plan to continue.`,
+        action: {
+          label: "Upgrade Plan",
+          onClick: () => navigate('/pricing')
+        }
+      });
+      return;
+    }
+
     if (completionChecklist.requiredCompleted < completionChecklist.requiredCount) {
       toast.error("Please complete all required items before generating content.");
       return;
@@ -466,7 +505,9 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
       setIsGenerating(true);
       setGenerationError(null);
       setGenerationProgress(10);
-      setGenerationStage('outline');      // Prepare the data for the function call
+      setGenerationStage('outline');
+
+      // Prepare the data for the function call
       const functionData = {
         topic: formData.topic,
         audience: formData.audience,
@@ -488,7 +529,9 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
         mediaCaptions: (formData.mediaFiles || []).map(file => file.metadata?.mediaCaption || ''),
         mediaAnalysis: (formData.mediaFiles || []).map(file => file.metadata?.aiAnalysis || ''),
         mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto' // auto, manual, or semantic
-      };// Update progress based on typical function execution timeline
+      };
+
+      // Update progress based on typical function execution timeline
       progressUpdateInterval = setInterval(() => {
         setGenerationProgress(prev => {
           // Outline generation typically takes ~30% of the total time
@@ -518,15 +561,17 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
         if (progressUpdateInterval) clearInterval(progressUpdateInterval);
         if (contentGenerationInterval) clearInterval(contentGenerationInterval);
         
-        // Handle success
-        if (result.data) {
+        // Handle success - Only show success if we actually have content
+        if (result.data && result.data.content) {
           setGenerationResult(result.data);
           setGenerationProgress(100);
           setGenerationStage('complete');
           
-          // Store the result in Firestore (this is handled by the function)
-          toast.success("Content generated successfully!");
-            // Navigate to the dashboard longform tab
+          toast.success("Long-form content generated successfully!", {
+            description: `Generated ${result.data.metadata?.actualWordCount || formData.wordCount} words of high-quality content. Used 4 credits.`
+          });
+
+          // Navigate to the dashboard longform tab
           setTimeout(() => {
             navigate('/dashboard?tab=longform', { 
               state: { 
@@ -535,8 +580,13 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
               } 
             });
           }, 2000);
+        } else {
+          // Handle case where function succeeded but no content was returned
+          throw new Error("Content generation completed but no content was returned. This may be due to insufficient credits or a processing error.");
         }
-      }, 1500);        } catch (error: any) {
+      }, 1500);
+
+    } catch (error: any) {
       if (progressUpdateInterval) clearInterval(progressUpdateInterval);
       if (contentGenerationInterval) clearInterval(contentGenerationInterval);
       
@@ -544,6 +594,7 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
       
       // Enhanced error handling with specific messages for common errors
       let errorMessage = "An unexpected error occurred during content generation. Please try again.";
+      let errorAction = null;
       
       if (error.code) {
         // Handle Firebase error codes
@@ -555,14 +606,30 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
             errorMessage = "The generation process took too long. Try reducing the word count or simplifying your request.";
             break;
           case 'functions/resource-exhausted':
-            errorMessage = "You've reached your content generation limit. Please upgrade your plan to continue.";
+            errorMessage = "You've reached your content generation limit or don't have enough credits.";
+            errorAction = {
+              label: "Upgrade Plan",
+              onClick: () => navigate('/pricing')
+            };
             break;
           case 'functions/unauthenticated':
           case 'functions/permission-denied':
             errorMessage = "You don't have permission to generate content. Please log in again or contact support.";
+            errorAction = {
+              label: "Log In",
+              onClick: () => navigate('/login')
+            };
             break;
           case 'functions/internal':
-            errorMessage = `Content generation failed due to an internal error: ${error.message}. Please try again or contact support if this persists.`;
+            if (error.message && error.message.includes('insufficient credits')) {
+              errorMessage = "Insufficient credits to generate long-form content. You need 4 credits for this operation.";
+              errorAction = {
+                label: "Upgrade Plan",
+                onClick: () => navigate('/pricing')
+              };
+            } else {
+              errorMessage = `Content generation failed due to an internal error: ${error.message}. Please try again or contact support if this persists.`;
+            }
             break;
           case 'functions/invalid-argument':
             errorMessage = `Invalid input provided: ${error.message}. Please check your inputs and try again.`;
@@ -573,14 +640,24 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
         }
       } else if (error.message) {
         // Handle non-Firebase errors
-        errorMessage = `Generation failed: ${error.message}`;
+        if (error.message.includes('insufficient credits') || error.message.includes('not enough credits')) {
+          errorMessage = "Insufficient credits to generate long-form content. You need 4 credits per generation.";
+          errorAction = {
+            label: "Upgrade Plan",
+            onClick: () => navigate('/pricing')
+          };
+        } else {
+          errorMessage = `Generation failed: ${error.message}`;
+        }
       }
-        setGenerationError(errorMessage);
+
+      setGenerationError(errorMessage);
       setIsGenerating(false);
-      toast.error("Failed to generate content", {
-        description: errorMessage
+      
+      toast.error("Failed to generate long-form content", {
+        description: errorMessage,
+        action: errorAction
       });
-      console.error("Generation error:", error);
     }
   };
 
@@ -1050,22 +1127,60 @@ const Step6ReviewGenerate = ({ formData, updateFormData, onGenerate, onEditStep 
               <Button
                 size="lg"
                 onClick={handleGenerate}
-                disabled={completionChecklist.requiredCompleted < completionChecklist.requiredCount}
+                disabled={
+                  !currentUser || 
+                  !userProfile || 
+                  (completionChecklist.requiredCompleted < completionChecklist.requiredCount) ||
+                  ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4
+                }
                 className="w-full h-12 text-base"
               >
                 <Zap className="h-5 w-5 mr-2" />
-                Generate Content ({generationCost.credits} Credits)
+                {!currentUser ? "Please Log In" :
+                 !userProfile ? "Loading..." :
+                 ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4 ? "Insufficient Credits (Need 4)" :
+                 completionChecklist.requiredCompleted < completionChecklist.requiredCount ? "Complete Required Items" :
+                 `Generate Content (4 Credits)`}
               </Button>
 
-              {completionChecklist.requiredCompleted < completionChecklist.requiredCount && (
+              {!currentUser && (
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  Please log in to generate content.
+                </p>
+              )}
+              
+              {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4 && (
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    Insufficient credits: You have {((userProfile.requests_limit || 0) - (userProfile.requests_used || 0))} credits, but need 4 for long-form content.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => navigate('/pricing')}
+                    className="text-xs"
+                  >
+                    Upgrade Plan
+                  </Button>
+                </div>
+              )}
+
+              {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) >= 4 && completionChecklist.requiredCompleted < completionChecklist.requiredCount && (
                 <p className="text-sm text-red-600 dark:text-red-400">
                   Please complete all required items before generating content.
                 </p>
               )}
               
-              <p className="text-xs text-muted-foreground">
-                Content will be generated in {selectedExportFormats.length} format{selectedExportFormats.length > 1 ? 's' : ''}: {selectedExportFormats.join(', ')}
-              </p>
+              {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) >= 4 && completionChecklist.requiredCompleted >= completionChecklist.requiredCount && (
+                <div className="text-center space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    Content will be generated in {selectedExportFormats.length} format{selectedExportFormats.length > 1 ? 's' : ''}: {selectedExportFormats.join(', ')}
+                  </p>
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    ✓ You have {((userProfile.requests_limit || 0) - (userProfile.requests_used || 0))} credits available
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
         )}

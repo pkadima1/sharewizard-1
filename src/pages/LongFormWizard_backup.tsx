@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -104,6 +105,8 @@ const PROGRESS_STORAGE_KEY = 'longform-wizard-progress';
 const COMPLETED_STEPS_KEY = 'longform-wizard-completed';
 
 const LongFormWizard = () => {
+  const { t } = useTranslation('longform');
+  
   // Load saved progress
   const loadSavedProgress = () => {
     try {
@@ -145,7 +148,7 @@ const LongFormWizard = () => {
   });
   const navigate = useNavigate();
   const { suggestedKeywords, suggestedStructure, suggestedTone, isLoading } = useSmartSuggestions(formData);
-  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData);
+  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData, t);
   
   // Auto-save functionality
   const { hasSavedDraft, lastSaved, lastSavedFormatted, restoreDraft, clearDraft, saveNow } = useAutoSave(formData, {
@@ -474,8 +477,8 @@ const LongFormWizard = () => {
             <span>{completedSteps.length} of {WIZARD_STEPS.length} steps completed</span>
           </div>
           </div>
-        </div>
-          {/* Step Content */}
+        
+        {/* Step Content */}
         <div className="min-h-[400px]">
           {renderStepContent()}
           
@@ -506,7 +509,7 @@ const LongFormWizard = () => {
           >
             Previous
           </Button>
-            {currentStep < WIZARD_STEPS.length - 1 ? (
+          {currentStep < WIZARD_STEPS.length - 1 ? (
             <Button 
               onClick={handleNext}
               disabled={!isStepValid(currentStep)}

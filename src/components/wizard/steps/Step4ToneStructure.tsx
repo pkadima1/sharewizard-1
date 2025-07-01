@@ -5,7 +5,8 @@
  * word count estimates, and CTA previews. Two-column layout with real-time preview.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
@@ -35,52 +36,18 @@ import {
 } from 'lucide-react';
 import ContentPreview from '@/components/wizard/smart/ContentPreview';
 
-// Content tone options with examples
-const TONE_OPTIONS = [
-  { 
-    value: 'friendly', 
-    label: 'Friendly', 
-    description: 'Approachable and conversational',
-    example: "Hey there! Let's talk about something that could completely change how you approach...",
-    color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-  },
-  { 
-    value: 'professional', 
-    label: 'Professional', 
-    description: 'Formal and authoritative',
-    example: "Studies indicate that strategic implementation of these methodologies can significantly...",
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-  },
-  { 
-    value: 'thought-provoking', 
-    label: 'Thought-Provoking', 
-    description: 'Challenging and reflective',
-    example: "What if everything you thought you knew about this topic was fundamentally flawed?",
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-  },
-  { 
-    value: 'expert', 
-    label: 'Expert', 
-    description: 'Technical and detailed',
-    example: "The implementation leverages advanced algorithms and established frameworks to optimize...",
-    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-  },
-  { 
-    value: 'persuasive', 
-    label: 'Persuasive', 
-    description: 'Compelling and influential',
-    example: "You're just three steps away from achieving results that others can only dream of...",
-    color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-  }
-];
-
 // Content type options
 const CONTENT_TYPE_OPTIONS = [
   { value: 'blog-article', label: 'Blog Article' },
   { value: 'newsletter', label: 'Newsletter' },
   { value: 'case-study', label: 'Case Study' },
   { value: 'guide', label: 'Guide' },
-  { value: 'thought-piece', label: 'Thought Piece' }
+  { value: 'thought-piece', label: 'Thought Piece' },
+  { value: 'how-to-steps', label: 'How-To / Step-by-Step' },
+  { value: 'faq-qa', label: 'FAQ / Q&A' },
+  { value: 'comparison-vs', label: 'Comparison / vs.' },
+  { value: 'review-analysis', label: 'Review / Analysis' },
+  { value: 'case-study-detailed', label: 'Case Study (Detailed)' }
 ];
 
 // Structure format options with word count estimates
@@ -128,6 +95,67 @@ const STRUCTURE_FORMAT_OPTIONS = [
       { name: 'Point 3', words: 140, description: 'Third item' },
       { name: 'Point 4', words: 140, description: 'Fourth item' },
       { name: 'Point 5', words: 140, description: 'Fifth item' }
+    ]
+  },
+  { 
+    value: 'how-to-steps', 
+    label: 'How-To / Step-by-Step',
+    sections: [
+      { name: 'Introduction', words: 150, description: 'Overview and what readers will learn' },
+      { name: 'Prerequisites', words: 100, description: 'What you need before starting' },
+      { name: 'Step 1', words: 150, description: 'First action step' },
+      { name: 'Step 2', words: 150, description: 'Second action step' },
+      { name: 'Step 3', words: 150, description: 'Third action step' },
+      { name: 'Additional Steps', words: 200, description: 'More steps as needed' },
+      { name: 'Conclusion & Tips', words: 100, description: 'Summary and best practices' }
+    ]
+  },
+  { 
+    value: 'faq-qa', 
+    label: 'FAQ / Q&A',
+    sections: [
+      { name: 'Introduction', words: 120, description: 'Topic overview' },
+      { name: 'Question 1 + Answer', words: 150, description: 'Most common question' },
+      { name: 'Question 2 + Answer', words: 150, description: 'Second most common question' },
+      { name: 'Question 3 + Answer', words: 150, description: 'Third most common question' },
+      { name: 'Additional Q&As', words: 180, description: 'More questions as needed' },
+      { name: 'Conclusion', words: 50, description: 'Summary and next steps' }
+    ]
+  },
+  { 
+    value: 'comparison-vs', 
+    label: 'Comparison / vs.',
+    sections: [
+      { name: 'Introduction', words: 150, description: 'Context and what\'s being compared' },
+      { name: 'Option A Overview', words: 200, description: 'First option details' },
+      { name: 'Option B Overview', words: 200, description: 'Second option details' },
+      { name: 'Side-by-side Comparison', words: 250, description: 'Direct feature comparison' },
+      { name: 'Pros and Cons', words: 150, description: 'Advantages and disadvantages' },
+      { name: 'Recommendation', words: 100, description: 'Which option to choose when' }
+    ]
+  },
+  { 
+    value: 'review-analysis', 
+    label: 'Review / Analysis',
+    sections: [
+      { name: 'Introduction', words: 120, description: 'What\'s being reviewed' },
+      { name: 'Key Features', words: 200, description: 'Main features and capabilities' },
+      { name: 'Pros', words: 150, description: 'What works well' },
+      { name: 'Cons', words: 150, description: 'Limitations and drawbacks' },
+      { name: 'Performance Analysis', words: 150, description: 'How it performs in practice' },
+      { name: 'Final Verdict', words: 80, description: 'Overall recommendation' }
+    ]
+  },
+  { 
+    value: 'case-study-detailed', 
+    label: 'Case Study',
+    sections: [
+      { name: 'Introduction', words: 100, description: 'Case study overview' },
+      { name: 'Background', words: 150, description: 'Context and situation' },
+      { name: 'Challenge', words: 200, description: 'The problem that needed solving' },
+      { name: 'Solution', words: 250, description: 'Approach and implementation' },
+      { name: 'Results', words: 200, description: 'Outcomes and metrics' },
+      { name: 'Lessons Learned', words: 100, description: 'Key takeaways and insights' }
     ]
   },
   { 
@@ -179,12 +207,98 @@ const CTA_TYPE_OPTIONS = [
 ];
 
 const Step4ToneStructure = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
+  
   // State for UI interactions
   const [showStructureNotes, setShowStructureNotes] = useState(
     formData.structureFormat === 'custom' || !!formData.structureNotes
   );
   const [expandedSections, setExpandedSections] = useState(new Set(['tone', 'structure']));
   const [showToneExample, setShowToneExample] = useState(false);
+
+  // Get translated tone options
+  const getToneOptions = useMemo(() => {
+    return [
+      { 
+        value: 'friendly', 
+        label: t('step4.tone.options.friendly', 'Friendly'), 
+        description: t('step4.tone.examples.friendly.description', 'Approachable and conversational'),
+        example: t('step4.tone.examples.friendly.example', "Hey there! Let's talk about something that could completely change how you approach..."),
+        color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      },
+      { 
+        value: 'professional', 
+        label: t('step4.tone.options.professional', 'Professional'), 
+        description: t('step4.tone.examples.professional.description', 'Formal and authoritative'),
+        example: t('step4.tone.examples.professional.example', "Studies indicate that strategic implementation of these methodologies can significantly..."),
+        color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      },
+      { 
+        value: 'thought-provoking', 
+        label: t('step4.tone.options.thoughtProvoking', 'Thought-Provoking'), 
+        description: t('step4.tone.examples.thoughtProvoking.description', 'Challenging and reflective'),
+        example: t('step4.tone.examples.thoughtProvoking.example', "What if everything you thought you knew about this topic was fundamentally flawed?"),
+        color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      },
+      { 
+        value: 'expert', 
+        label: t('step4.tone.options.expert', 'Expert'), 
+        description: t('step4.tone.examples.expert.description', 'Technical and detailed'),
+        example: t('step4.tone.examples.expert.example', "The implementation leverages advanced algorithms and established frameworks to optimize..."),
+        color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      },
+      { 
+        value: 'persuasive', 
+        label: t('step4.tone.options.persuasive', 'Persuasive'), 
+        description: t('step4.tone.examples.persuasive.description', 'Compelling and influential'),
+        example: t('step4.tone.examples.persuasive.example', "You're just three steps away from achieving results that others can only dream of..."),
+        color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      },
+      { 
+        value: 'informative', 
+        label: t('step4.tone.options.informative', 'Informative / Neutral'), 
+        description: t('step4.tone.examples.informative.description', 'Objective, balanced tone for encyclopedic or factual content'),
+        example: t('step4.tone.examples.informative.example', "This comprehensive overview examines the key factors, providing balanced analysis of the available data and methodologies..."),
+        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+      },
+      { 
+        value: 'casual', 
+        label: t('step4.tone.options.casual', 'Casual / Conversational'), 
+        description: t('step4.tone.examples.casual.description', 'More relaxed than friendly, like talking to a friend over coffee'),
+        example: t('step4.tone.examples.casual.example', "So here's the thing about this topic - it's way more straightforward than most people make it out to be..."),
+        color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
+      },
+      { 
+        value: 'authoritative', 
+        label: t('step4.tone.options.authoritative', 'Authoritative / Confident'), 
+        description: t('step4.tone.examples.authoritative.description', 'Strong leadership voice, often used in white papers or B2B blogs'),
+        example: t('step4.tone.examples.authoritative.example', "Industry leaders recognize this as the definitive approach to achieving sustainable, measurable outcomes..."),
+        color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
+      },
+      { 
+        value: 'inspirational', 
+        label: t('step4.tone.options.inspirational', 'Inspirational / Motivational'), 
+        description: t('step4.tone.examples.inspirational.description', 'Ideal for coaching, leadership, wellness content'),
+        example: t('step4.tone.examples.inspirational.example', "Every breakthrough starts with a single step. Today, you have the opportunity to transform your approach and unlock your true potential..."),
+        color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+      },
+      { 
+        value: 'humorous', 
+        label: t('step4.tone.options.humorous', 'Humorous / Witty'), 
+        description: t('step4.tone.examples.humorous.description', 'Lightens content; great for social posts or creative brands'),
+        example: t('step4.tone.examples.humorous.example', "Let's face it - this topic has about as much excitement as watching paint dry. But stick with me, because I promise to make this surprisingly entertaining..."),
+        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      },
+      { 
+        value: 'empathetic', 
+        label: t('step4.tone.options.empathetic', 'Empathetic'), 
+        description: t('step4.tone.examples.empathetic.description', 'Warm, understanding tone for sensitive topics (health, mental wellness)'),
+        example: t('step4.tone.examples.empathetic.example', "I understand this can feel overwhelming, and it's completely normal to have these concerns. Let's work through this together, at your own pace..."),
+        color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200'
+      }
+    ];
+  }, [t]);
+
   // Initialize from formData
   useEffect(() => {
     // Set default values for any missing fields
@@ -222,7 +336,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
 
   // Get selected tone details
   const getSelectedTone = () => {
-    return TONE_OPTIONS.find(t => t.value === formData.contentTone) || TONE_OPTIONS[1];
+    return getToneOptions.find(t => t.value === formData.contentTone) || getToneOptions[1];
   };
 
   // Get selected structure details
@@ -297,9 +411,9 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     <TooltipProvider>
       <div className="space-y-6 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-2xl font-bold">Content Structure & Tone</h2>
+          <h2 className="text-2xl font-bold">{t('step4.title', 'Content Structure & Tone')}</h2>
           <p className="text-muted-foreground">
-            Define how your blog content should be structured and the tone it should have.
+            {t('step4.subtitle', 'Define how your blog content should be structured and the tone it should have.')}
           </p>
         </div>
 
@@ -313,7 +427,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <Quote className="h-4 w-4" />
-                    Content Tone
+                    {t('step4.tone.title', 'Content Tone')}
                   </h3>
                   <Button
                     variant="ghost"
@@ -333,7 +447,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                       <SelectValue placeholder="Select a tone" />
                     </SelectTrigger>
                     <SelectContent>
-                      {TONE_OPTIONS.map((tone) => (
+                      {getToneOptions.map((tone) => (
                         <SelectItem key={tone.value} value={tone.value}>
                           <div className="flex items-center gap-2">
                             <span>{tone.label}</span>
@@ -368,7 +482,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
 
                 {/* Content Type */}
                 <div className="space-y-2 pt-2 border-t">
-                  <Label className="text-sm font-medium">Content Type</Label>
+                  <Label className="text-sm font-medium">{t('step4.contentType.title', 'Content Type')}</Label>
                   <Select
                     value={formData.contentType}
                     onValueChange={(value) => updateFormData('contentType', value)}

@@ -65,6 +65,38 @@ const CONTENT_TONES = [
     hoverBgColor: 'hover:shadow-lg hover:shadow-green-500/20',
     emoji: '📚',
     priority: 6,
+  },
+  {
+    id: 'informative',
+    icon: BookOpen,
+    bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
+    hoverBgColor: 'hover:shadow-lg hover:shadow-gray-500/20',
+    emoji: '📊',
+    priority: 7,
+  },
+  {
+    id: 'casual',
+    icon: MessageSquare,
+    bgColor: 'bg-gradient-to-r from-teal-400 to-teal-500',
+    hoverBgColor: 'hover:shadow-lg hover:shadow-teal-500/20',
+    emoji: '☕',
+    priority: 8,
+  },
+  {
+    id: 'authoritative',
+    icon: Briefcase,
+    bgColor: 'bg-gradient-to-r from-indigo-500 to-indigo-600',
+    hoverBgColor: 'hover:shadow-lg hover:shadow-indigo-500/20',
+    emoji: '🎓',
+    priority: 9,
+  },
+  {
+    id: 'empathetic',
+    icon: Smile,
+    bgColor: 'bg-gradient-to-r from-emerald-400 to-emerald-500',
+    hoverBgColor: 'hover:shadow-lg hover:shadow-emerald-500/20',
+    emoji: '🤗',
+    priority: 10,
   }
 ];
 

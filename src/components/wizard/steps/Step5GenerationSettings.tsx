@@ -64,6 +64,36 @@ const CONTENT_TYPE_CONFIGS = {
     readingLevel: 'Advanced',
     avgGenerationTime: 3.0,
     description: 'Thought pieces balance depth with readability'
+  },
+  'how-to-steps': {
+    optimalRange: [1200, 2000],
+    readingLevel: 'Beginner',
+    avgGenerationTime: 4.0,
+    description: 'Step-by-step guides need clear, actionable instructions'
+  },
+  'faq-qa': {
+    optimalRange: [800, 1500],
+    readingLevel: 'Beginner',
+    avgGenerationTime: 3.0,
+    description: 'FAQs should provide concise, helpful answers'
+  },
+  'comparison-vs': {
+    optimalRange: [1500, 2200],
+    readingLevel: 'Intermediate',
+    avgGenerationTime: 4.5,
+    description: 'Comparisons require thorough analysis of options'
+  },
+  'review-analysis': {
+    optimalRange: [1200, 1800],
+    readingLevel: 'Intermediate',
+    avgGenerationTime: 4.0,
+    description: 'Reviews need balanced evaluation and detailed analysis'
+  },
+  'case-study-detailed': {
+    optimalRange: [1800, 2800],
+    readingLevel: 'Advanced',
+    avgGenerationTime: 5.5,
+    description: 'Detailed case studies require comprehensive storytelling'
   }
 };
 
@@ -111,7 +141,12 @@ const READING_LEVELS = {
   }
 };
 
-const Step5GenerationSettings = ({ formData, updateFormData }) => {
+interface Step5Props {
+  formData: any;
+  updateFormData: (key: string, value: any) => void;
+}
+
+const Step5GenerationSettings: React.FC<Step5Props> = ({ formData, updateFormData }) => {
   // Initialize default values
   useEffect(() => {
     if (!formData.outputFormat) updateFormData('outputFormat', 'markdown');

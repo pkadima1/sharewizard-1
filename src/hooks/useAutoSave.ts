@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 
 interface AutoSaveOptions {
@@ -6,6 +7,7 @@ interface AutoSaveOptions {
   debounceMs?: number; // debounce delay for form changes (default: 2000ms)
   autoSaveIntervalMs?: number; // auto-save interval (default: 30000ms)
   showToast?: boolean; // whether to show toast notifications (default: true)
+  translationNamespace?: string; // i18n namespace for translations (default: 'longform')
 }
 
 interface AutoSaveResult<T> {
@@ -31,10 +33,14 @@ export function useAutoSave<T = any>(
     key,
     debounceMs = 2000,
     autoSaveIntervalMs = 30000,
-    showToast = true
+    showToast = true,
+    translationNamespace = 'longform'
   } = options;
 
   const { toast } = useToast();
+  const { t } = useTranslation(translationNamespace);
+  // Also get the translation function for the common namespace
+  const { t: tCommon } = useTranslation('common');
   const [hasSavedDraft, setHasSavedDraft] = useState<boolean>(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [lastSavedFormatted, setLastSavedFormatted] = useState<string | null>(null);
@@ -76,8 +82,8 @@ export function useAutoSave<T = any>(
       
       if (showNotification && showToast) {
         toast({
-          title: "Draft Saved",
-          description: "Your progress has been automatically saved.",
+          title: t('step2.actions.draftSavedAuto'),
+          description: t('step2.actions.progressSavedDesc'),
           duration: 2000,
         });
       }
@@ -85,8 +91,8 @@ export function useAutoSave<T = any>(
       console.error('Failed to save draft:', error);
       if (showToast) {
         toast({
-          title: "Save Failed",
-          description: "Unable to save draft. Please check your storage settings.",
+          title: t('step2.actions.saveFailed'),
+          description: t('step2.actions.saveFailedDesc'),
           variant: "destructive",
           duration: 3000,
         });
@@ -118,8 +124,10 @@ export function useAutoSave<T = any>(
         if (parsed.data) {
           if (showToast) {
             toast({
-              title: "Draft Restored",
-              description: `Draft from ${new Date(parsed.timestamp).toLocaleString()} has been restored.`,
+              title: t('step2.actions.draftRestored'),
+              description: t('step2.actions.draftRestoredDesc', { 
+                date: new Date(parsed.timestamp).toLocaleString() 
+              }),
               duration: 3000,
             });
           }
@@ -204,11 +212,11 @@ export function useAutoSave<T = any>(
   // Update the formatted string whenever lastSaved changes
   useEffect(() => {
     if (lastSaved) {
-      setLastSavedFormatted(lastSaved.toLocaleString());
+      setLastSavedFormatted(formatLastSaved(lastSaved, tCommon));
     } else {
       setLastSavedFormatted(null);
     }
-  }, [lastSaved]);
+  }, [lastSaved, tCommon]);
 
   // Cleanup timers on unmount
   useEffect(() => {
@@ -256,8 +264,8 @@ export function getDraftInfo(key: string): { exists: boolean; timestamp: Date | 
 }
 
 // Helper function to format last saved time
-export function formatLastSaved(lastSaved: Date | null): string {
-  if (!lastSaved) return 'Never';
+export function formatLastSaved(lastSaved: Date | null, t?: (key: string, options?: any) => string): string {
+  if (!lastSaved) return t ? t('time.never') : 'Never';
   
   const now = new Date();
   const diffMs = now.getTime() - lastSaved.getTime();
@@ -265,11 +273,21 @@ export function formatLastSaved(lastSaved: Date | null): string {
   const diffHours = Math.floor(diffMinutes / 60);
   
   if (diffMinutes < 1) {
-    return 'Just now';
+    return t ? t('time.justNow') : 'Just now';
   } else if (diffMinutes < 60) {
-    return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+    if (t) {
+      // Let i18next handle pluralization automatically
+      return t('time.minutesAgo', { count: diffMinutes });
+    } else {
+      return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+    }
   } else if (diffHours < 24) {
-    return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    if (t) {
+      // Let i18next handle pluralization automatically
+      return t('time.hoursAgo', { count: diffHours });
+    } else {
+      return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    }
   } else {
     return lastSaved.toLocaleDateString();
   }

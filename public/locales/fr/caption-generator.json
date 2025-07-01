@@ -152,6 +152,27 @@
           "examples": "Guides pratiques, tutoriels, contenu informatif",
           "platforms": "YouTube, Medium, plateformes éducatives",
           "sampleText": "Saviez-vous que les abeilles communiquent par la danse ? La 'danse frétillante' indique la direction et la distance vers les sources de nourriture, démontrant leur intelligence remarquable."
+        },
+        "informative": {
+          "title": "Informatif / Neutre",
+          "description": "Ton objectif et équilibré pour le contenu encyclopédique ou factuel",
+          "examples": "Résultats de recherche, rapports factuels, analyses neutres",
+          "platforms": "Contenu style Wikipédia, articles de presse, plateformes académiques",
+          "sampleText": "Le marché mondial des énergies renouvelables a atteint 1,1 billion de dollars en 2023, soit une augmentation de 9,7 % par rapport à l'année précédente. L'énergie solaire et éolienne représentait 73 % des nouvelles capacités ajoutées."
+        },
+        "authoritative": {
+          "title": "Autoritaire / Confiant",
+          "description": "Voix de leadership forte, souvent utilisée dans les livres blancs ou blogs B2B",
+          "examples": "Leadership industriel, opinions d'experts, perspectives stratégiques",
+          "platforms": "Leadership LinkedIn, publications commerciales, contenu exécutif",
+          "sampleText": "Les leaders de l'industrie reconnaissent que les organisations mettant en œuvre ces cadres obtiennent 40 % de meilleurs résultats. Les preuves sont claires : l'adoption stratégique n'est plus optionnelle mais essentielle pour l'avantage concurrentiel."
+        },
+        "empathetic": {
+          "title": "Empathique",
+          "description": "Ton chaleureux et compréhensif pour les sujets sensibles (santé, bien-être mental)",
+          "examples": "Soutien en santé mentale, contenu de soins de santé, discussions sensibles",
+          "platforms": "Plateformes de santé, blogs de bien-être, communautés de soutien",
+          "sampleText": "Je comprends que ce parcours peut sembler accablant, et c'est tout à fait normal. Chaque pas en avant, aussi petit soit-il, est un progrès qui mérite d'être célébré. Vous n'êtes pas seul dans cette démarche."
         }
       }
     },

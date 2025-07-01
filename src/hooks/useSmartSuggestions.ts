@@ -216,8 +216,36 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
         id: 'tutorial',
         name: 'Step-by-Step Guide',
         description: 'Clear steps with detailed instructions for achieving a specific outcome',
-        template: 'step-by-step',
+        template: 'how-to-step-by-step',
         suitableFor: ['tutorial', 'guide', 'how-to']
+      },
+      {
+        id: 'faq',
+        name: 'FAQ / Q&A Format',
+        description: 'Question and answer format for addressing common concerns',
+        template: 'faq-qa',
+        suitableFor: ['guide', 'support', 'educational']
+      },
+      {
+        id: 'comparison',
+        name: 'Comparison Analysis',
+        description: 'Side-by-side analysis of different options or alternatives',
+        template: 'comparison-vs',
+        suitableFor: ['review', 'analysis', 'guide']
+      },
+      {
+        id: 'review',
+        name: 'Review / Analysis',
+        description: 'Comprehensive evaluation with pros, cons, and final verdict',
+        template: 'review-analysis',
+        suitableFor: ['review', 'evaluation', 'analysis']
+      },
+      {
+        id: 'case-study',
+        name: 'Case Study',
+        description: 'Real-world example showing challenge, solution, and results',
+        template: 'case-study',
+        suitableFor: ['case-study', 'success-story', 'business']
       }
     ];
     
@@ -228,13 +256,25 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
     });
     
     if (matchingStructures.length > 0) {
-      // Find the best match
+      // Find the best match based on content type
       if (contentType.includes('tutorial') || contentType.includes('guide')) {
         return structures.find(s => s.id === 'tutorial') || matchingStructures[0];
       } 
       
       if (contentType.includes('case-study')) {
-        return structures.find(s => s.id === 'problem-solution') || matchingStructures[0];
+        return structures.find(s => s.id === 'case-study') || matchingStructures[0];
+      }
+
+      if (contentType.includes('review') || contentType.includes('analysis')) {
+        return structures.find(s => s.id === 'review') || matchingStructures[0];
+      }
+
+      if (contentType.includes('comparison') || (formData.topic && (formData.topic.toLowerCase().includes('vs') || formData.topic.toLowerCase().includes('versus')))) {
+        return structures.find(s => s.id === 'comparison') || matchingStructures[0];
+      }
+
+      if ((formData.topic && (formData.topic.toLowerCase().includes('faq') || formData.topic.toLowerCase().includes('questions')))) {
+        return structures.find(s => s.id === 'faq') || matchingStructures[0];
       }
       
       if (industry === 'marketing' || industry === 'business') {
@@ -252,8 +292,9 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
     const contentType = formData.contentType?.toLowerCase() || '';
     const audience = formData.audience?.toLowerCase() || '';
     const industry = formData.industry?.toLowerCase() || '';
+    const topic = formData.topic?.toLowerCase() || '';
     
-    // Define tone options
+    // Define tone options with all new tones
     const tones = [
       {
         id: 'professional',
@@ -268,22 +309,46 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
         reason: 'Relaxed and friendly tone for more approachable content'
       },
       {
-        id: 'humorous',
-        value: 'humorous',
-        confidence: 60,
-        reason: 'Fun and entertaining style that engages readers'
+        id: 'informative',
+        value: 'informative',
+        confidence: 85,
+        reason: 'Objective and balanced for factual, encyclopedic content'
+      },
+      {
+        id: 'authoritative',
+        value: 'authoritative',
+        confidence: 85,
+        reason: 'Strong leadership voice for white papers and B2B content'
       },
       {
         id: 'inspirational',
         value: 'inspirational',
         confidence: 70,
-        reason: 'Motivating and uplifting tone that inspires action'
+        reason: 'Motivating and uplifting tone ideal for coaching content'
       },
       {
-        id: 'educational',
-        value: 'educational',
+        id: 'humorous',
+        value: 'humorous',
+        confidence: 60,
+        reason: 'Fun and entertaining style great for social posts'
+      },
+      {
+        id: 'empathetic',
+        value: 'empathetic',
+        confidence: 80,
+        reason: 'Warm and understanding for sensitive topics'
+      },
+      {
+        id: 'friendly',
+        value: 'friendly',
         confidence: 75,
-        reason: 'Informative and instructive tone for teaching concepts'
+        reason: 'Approachable and conversational tone'
+      },
+      {
+        id: 'expert',
+        value: 'expert',
+        confidence: 85,
+        reason: 'Technical and detailed for specialized content'
       },
       {
         id: 'persuasive',
@@ -292,17 +357,30 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
         reason: 'Convincing and compelling tone that drives decisions'
       },
       {
-        id: 'authoritative',
-        value: 'expert',
-        confidence: 85,
-        reason: 'Conveys authority and expertise in the subject matter'
+        id: 'thought-provoking',
+        value: 'thought-provoking',
+        confidence: 65,
+        reason: 'Challenging and reflective for deep insights'
       }
     ];
+    
+    // Topic-based tone suggestions
+    if (topic.includes('health') || topic.includes('mental') || topic.includes('wellness')) {
+      return tones.find(t => t.id === 'empathetic') || tones[0];
+    }
+    
+    if (topic.includes('faq') || topic.includes('guide') || topic.includes('tutorial')) {
+      return tones.find(t => t.id === 'informative') || tones[0];
+    }
+
+    if (topic.includes('review') || topic.includes('comparison')) {
+      return tones.find(t => t.id === 'authoritative') || tones[0];
+    }
     
     // Match audience to appropriate tone
     if (audience) {
       if (audience.includes('beginners') || audience.includes('students')) {
-        return tones.find(t => t.id === 'educational') || tones[0];
+        return tones.find(t => t.id === 'friendly') || tones[0];
       }
       
       if (audience.includes('professionals') || audience.includes('executives')) {
@@ -316,43 +394,59 @@ export function useSmartSuggestions(formData: FormData): SmartSuggestionResult {
       if (audience.includes('entrepreneurs') || audience.includes('small business')) {
         return tones.find(t => t.id === 'inspirational') || tones[0];
       }
+
+      if (audience.includes('tech') || audience.includes('developers')) {
+        return tones.find(t => t.id === 'informative') || tones[0];
+      }
     }
     
     // Match industry to appropriate tone
     if (industry) {
-      if (industry.includes('finance') || industry.includes('legal')) {
-        return tones.find(t => t.id === 'professional') || tones[0];
+      if (industry.includes('finance') || industry.includes('legal') || industry.includes('consulting')) {
+        return tones.find(t => t.id === 'authoritative') || tones[0];
       }
       
-      if (industry.includes('health') || industry.includes('education')) {
-        return tones.find(t => t.id === 'educational') || tones[0];
+      if (industry.includes('health') || industry.includes('mental health') || industry.includes('counseling')) {
+        return tones.find(t => t.id === 'empathetic') || tones[0];
       }
       
-      if (industry.includes('entertainment') || industry.includes('gaming')) {
+      if (industry.includes('education') || industry.includes('training')) {
+        return tones.find(t => t.id === 'informative') || tones[0];
+      }
+      
+      if (industry.includes('entertainment') || industry.includes('gaming') || industry.includes('creative')) {
         return tones.find(t => t.id === 'humorous') || tones[0];
       }
       
-      if (industry.includes('coaching') || industry.includes('fitness')) {
+      if (industry.includes('coaching') || industry.includes('fitness') || industry.includes('wellness')) {
         return tones.find(t => t.id === 'inspirational') || tones[0];
       }
       
-      if (industry.includes('marketing') || industry.includes('e-commerce')) {
+      if (industry.includes('marketing') || industry.includes('e-commerce') || industry.includes('sales')) {
         return tones.find(t => t.id === 'persuasive') || tones[0];
+      }
+
+      if (industry.includes('technology') || industry.includes('software') || industry.includes('saas')) {
+        return tones.find(t => t.id === 'professional') || tones[0];
       }
     }
     
     // Match content type to appropriate tone
     if (contentType) {
-      if (contentType.includes('tutorial') || contentType.includes('guide')) {
-        return tones.find(t => t.id === 'educational') || tones[0];
+      if (contentType.includes('tutorial') || contentType.includes('guide') || contentType.includes('faq')) {
+        return tones.find(t => t.id === 'informative') || tones[0];
       }
       
-      if (contentType.includes('case-study')) {
+      if (contentType.includes('case-study') || contentType.includes('review')) {
         return tones.find(t => t.id === 'authoritative') || tones[0];
       }
       
       if (contentType.includes('thought-piece')) {
-        return tones.find(t => t.id === 'persuasive') || tones[0];
+        return tones.find(t => t.id === 'thought-provoking') || tones[0];
+      }
+
+      if (contentType.includes('newsletter')) {
+        return tones.find(t => t.id === 'friendly') || tones[0];
       }
     }
     
