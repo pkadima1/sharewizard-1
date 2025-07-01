@@ -597,6 +597,9 @@
       "title": "Content Tone",
       "tooltip": "The tone affects how your message is perceived by your audience.",
       "label": "Select Content Tone *",
+      "placeholder": "Select a tone",
+      "example": "Example",
+      "writingSample": "WRITING SAMPLE",
       "options": {
         "friendly": "Friendly",
         "professional": "Professional", 
@@ -612,15 +615,195 @@
       }
     },
     "structure": {
-      "title": "Content Structure",
+      "title": "Structure Format",
       "tooltip": "A clear structure helps readers follow your content and improves engagement.",
       "label": "Content Structure Format *",
+      "placeholder": "Select structure format",
+      "flow": "Flow",
+      "structureBreakdown": "STRUCTURE BREAKDOWN",
+      "totalWords": "total words",
+      "structureAnalysis": "Structure Analysis",
+      "sectionsCount": "Sections",
+      "avgPerSection": "Avg per section",
+      "readingTime": "Reading time",
+      "minutes": "min",
+      "seoPotential": "SEO potential",
+      "structureNotes": "Structure Notes",
+      "notesPlaceholder": "e.g. Include an introduction, 3 key sections, and a conclusion with call to action",
+      "addCustomNotes": "Add Custom Structure Notes",
+      "includeStats": {
+        "label": "Include Statistics & Data",
+        "description": "Add relevant statistics and data to support your points."
+      },
       "options": {
-        "introPointsCta": "Intro + 3 Main Points + CTA",
-        "problemSolutionCta": "Problem → Solution → Call to Action", 
-        "storyFactsLessons": "Story + Facts + Lessons",
-        "listicle": "Listicle (e.g. 5 ways to...)",
-        "custom": "Custom outline"
+        "introPointsCta": {
+          "label": "Intro + 3 Main Points + CTA",
+          "useCase": "General blog posts, thought leadership", 
+          "flow": "Hook → Point 1 → Point 2 → Point 3 → Action"
+        },
+        "problemSolutionCta": {
+          "label": "Problem → Solution → Call to Action",
+          "useCase": "Sales content, service explanations",
+          "flow": "Problem → Impact → Solution → Steps → Action"
+        },
+        "howToSteps": {
+          "label": "How-To / Step-by-Step",
+          "useCase": "Tutorials, process guides, actionable posts",
+          "flow": "Intro → Prerequisites → Step 1 → Step 2 → Step 3 → Tips"
+        },
+        "faqQa": {
+          "label": "FAQ / Q&A Format",
+          "useCase": "SEO pages, product explanations, service overviews",
+          "flow": "Intro → Q1+A → Q2+A → Q3+A → More Q&As → Conclusion"
+        },
+        "comparisonVs": {
+          "label": "Comparison / vs.",
+          "useCase": "Product comparisons, software alternatives, decision-making content",
+          "flow": "Intro → Option A → Option B → Side-by-Side → Pros/Cons → Recommendation"
+        },
+        "reviewAnalysis": {
+          "label": "Review / Analysis",
+          "useCase": "Product reviews, service evaluations",
+          "flow": "Intro → Features → Pros → Cons → Performance → Verdict"
+        },
+        "caseStudyDetailed": {
+          "label": "Case Study",
+          "useCase": "Showcasing client success stories",
+          "flow": "Intro → Background → Challenge → Solution → Results → Lessons"
+        },
+        "storyFactsLessons": {
+          "label": "Story + Facts + Lessons",
+          "useCase": "Engaging storytelling with data backing",
+          "flow": "Story → Facts → Analysis → Lessons → Application"
+        },
+        "listicle": {
+          "label": "Listicle (e.g. 5 ways to...)",
+          "useCase": "Social media friendly, quick consumption",
+          "flow": "Intro → Point 1 → Point 2 → Point 3 → Point 4 → Point 5"
+        },
+        "custom": {
+          "label": "Custom outline",
+          "useCase": "Unique content structures",
+          "flow": "Define your own flow"
+        }
+      },
+      "categories": {
+        "classic": "Classic",
+        "business": "Business",
+        "tutorial": "Tutorial",
+        "support": "Support",
+        "analysis": "Analysis", 
+        "narrative": "Narrative",
+        "advanced": "Advanced"
+      },
+      "difficulty": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "seoScore": {
+        "veryHigh": "Very High",
+        "high": "High",
+        "medium": "Medium",
+        "variable": "Variable"
+      },
+      "sections": {
+        "introduction": "Introduction",
+        "introductionDesc": "Hook and overview",
+        "mainPoint1": "Main Point 1",
+        "mainPoint1Desc": "First key concept",
+        "mainPoint2": "Main Point 2", 
+        "mainPoint2Desc": "Second key concept",
+        "mainPoint3": "Main Point 3",
+        "mainPoint3Desc": "Third key concept",
+        "callToAction": "Call to Action",
+        "callToActionDesc": "Clear next step",
+        "problemIdentification": "Problem Identification",
+        "problemIdentificationDesc": "Define the challenge",
+        "impactConsequences": "Impact & Consequences",
+        "impactConsequencesDesc": "Why it matters",
+        "solutionOverview": "Solution Overview",
+        "solutionOverviewDesc": "Your approach",
+        "implementationSteps": "Implementation Steps", 
+        "implementationStepsDesc": "How to apply",
+        "howToIntroDesc": "Overview and what readers will learn",
+        "prerequisites": "Prerequisites",
+        "prerequisitesDesc": "What you need before starting",
+        "step1": "Step 1",
+        "step1Desc": "First action step",
+        "step2": "Step 2",
+        "step2Desc": "Second action step",
+        "step3": "Step 3",
+        "step3Desc": "Third action step",
+        "additionalSteps": "Additional Steps",
+        "additionalStepsDesc": "More steps as needed",
+        "conclusionTips": "Conclusion & Tips",
+        "conclusionTipsDesc": "Summary and best practices",
+        "topicOverviewDesc": "Topic overview",
+        "question1Answer": "Question 1 + Answer",
+        "question1AnswerDesc": "Most common question",
+        "question2Answer": "Question 2 + Answer",
+        "question2AnswerDesc": "Second most common question",
+        "question3Answer": "Question 3 + Answer",
+        "question3AnswerDesc": "Third most common question",
+        "additionalQAs": "Additional Q&As",
+        "additionalQAsDesc": "More questions as needed",
+        "conclusion": "Conclusion",
+        "conclusionDesc": "Summary and next steps",
+        "comparisonIntroDesc": "Context and what's being compared",
+        "optionAOverview": "Option A Overview",
+        "optionAOverviewDesc": "First option details",
+        "optionBOverview": "Option B Overview",
+        "optionBOverviewDesc": "Second option details",
+        "sideBySideComparison": "Side-by-side Comparison",
+        "sideBySideComparisonDesc": "Direct feature comparison",
+        "prosAndCons": "Pros and Cons",
+        "prosAndConsDesc": "Advantages and disadvantages",
+        "recommendation": "Recommendation",
+        "recommendationDesc": "Which option to choose when",
+        "reviewIntroDesc": "What's being reviewed",
+        "keyFeatures": "Key Features",
+        "keyFeaturesDesc": "Main features and capabilities",
+        "pros": "Pros",
+        "prosDesc": "What works well",
+        "cons": "Cons",
+        "consDesc": "Limitations and drawbacks",
+        "performanceAnalysis": "Performance Analysis",
+        "performanceAnalysisDesc": "How it performs in practice",
+        "finalVerdict": "Final Verdict",
+        "finalVerdictDesc": "Overall recommendation",
+        "caseStudyOverviewDesc": "Case study overview",
+        "background": "Background",
+        "backgroundDesc": "Context and situation",
+        "challenge": "Challenge",
+        "challengeDesc": "The problem that needed solving",
+        "solution": "Solution",
+        "solutionDesc": "Approach and implementation",
+        "results": "Results",
+        "resultsDesc": "Outcomes and metrics",
+        "lessonsLearned": "Lessons Learned",
+        "lessonsLearnedDesc": "Key takeaways and insights",
+        "openingStory": "Opening Story",
+        "openingStoryDesc": "Engaging narrative",
+        "keyFactsData": "Key Facts & Data",
+        "keyFactsDataDesc": "Supporting evidence",
+        "analysis": "Analysis",
+        "analysisDesc": "What it means",
+        "application": "Application",
+        "applicationDesc": "How to use",
+        "listOverviewDesc": "List overview",
+        "point1": "Point 1",
+        "point1Desc": "First item",
+        "point2": "Point 2",
+        "point2Desc": "Second item",
+        "point3": "Point 3",
+        "point3Desc": "Third item",
+        "point4": "Point 4",
+        "point4Desc": "Fourth item",
+        "point5": "Point 5",
+        "point5Desc": "Fifth item",
+        "customStructure": "Custom Structure",
+        "customStructureDesc": "Define your own sections"
       }
     },
     "customOutline": {
@@ -632,12 +815,91 @@
       "title": "Content Type",
       "tooltip": "The content type helps tailor the writing style and structure.",
       "label": "Content Type",
+      "placeholder": "Select content type",
       "options": {
         "blogArticle": "Blog Article",
         "newsletter": "Newsletter",
         "caseStudy": "Case Study", 
         "guide": "Guide",
-        "thoughtPiece": "Thought Piece"
+        "thoughtPiece": "Thought Piece",
+        "howToSteps": "How-To / Step-by-Step",
+        "faqQa": "FAQ / Q&A",
+        "comparisonVs": "Comparison / vs.",
+        "reviewAnalysis": "Review / Analysis",
+        "caseStudyDetailed": "Case Study (Detailed)"
+      }
+    },
+    "cta": {
+      "title": "Call to Action",
+      "placeholder": "Select CTA type",
+      "ctaPreview": "CTA PREVIEW",
+      "options": {
+        "subscribe": "Subscribe",
+        "bookCall": "Book a Call",
+        "download": "Download Freebie",
+        "visitWebsite": "Visit Website",
+        "none": "None"
+      },
+      "previews": {
+        "subscribe": "Ready to get more insights like this? Subscribe to our newsletter for weekly tips delivered straight to your inbox.",
+        "bookCall": "Want to dive deeper? Book a free 30-minute consultation to discuss your specific needs and goals.",
+        "download": "Take action today! Download our free resource guide with templates and checklists to get started.",
+        "visitWebsite": "Learn more about our solutions and see how we can help you achieve your goals.",
+        "none": "Content ends with a strong conclusion without a specific call to action."
+      },
+      "buttons": {
+        "subscribeNow": "Subscribe Now",
+        "scheduleCall": "Schedule Call",
+        "downloadGuide": "Download Free Guide",
+        "visitWebsite": "Visit Our Website"
+      }
+    },
+    "wordCount": {
+      "title": "Content Length",
+      "label": "Word Count",
+      "seoRange": "1200-1800 (SEO Optimal)",
+      "contentLengthImpact": "Content Length Impact",
+      "impactText": "For {{contentType}} content with a {{tone}} tone,",
+      "estimatedReading": "Estimated reading time: {{minutes}} minutes",
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Too Short",
+        "veryLong": "Very Long",
+        "wordCount": "{{count}} words"
+      },
+      "recommendations": {
+        "seoIdeal": " this length is ideal for SEO and reader engagement.",
+        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
+        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
+        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+      }
+    },
+    "preview": {
+      "title": "Content Preview",
+      "livePreview": "Live Preview"
+    },
+    "tips": {
+      "title": "Smart Structure Selection Guide",
+      "recommendation": "Recommendation for {{contentType}}:",
+      "yourContent": "your content",
+      "seoImpact": {
+        "title": "SEO Impact",
+        "description": "How-To and FAQ formats typically rank highest in search results. Tutorial content with step-by-step instructions receives more engagement and better SERP features."
+      },
+      "structureFlow": {
+        "title": "Structure Flow", 
+        "description": "Each format shows its content flow for easy visualization. The difficulty rating helps you choose based on your writing experience and time constraints."
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "description": "Use comparison structures for decision-making content, case studies for showcasing results, and FAQ formats for addressing common user questions."
+      },
+      "recommendations": {
+        "guide": "How-To/Step-by-Step structure works best for guides - high SEO value and user engagement.",
+        "blogArticle": "Intro + 3 Main Points or Problem→Solution structures are ideal for blog articles.",
+        "caseStudy": "Case Study structure is perfect - tells a complete story from challenge to results.",
+        "newsletter": "Story + Facts + Lessons keeps newsletter readers engaged with narrative flow.",
+        "default": "Choose based on your goal: How-To for tutorials, FAQ for SEO, Comparison for decision-making content."
       }
     },
     "quality": {

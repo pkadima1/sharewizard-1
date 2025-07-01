@@ -133,5 +133,11 @@
   "requests_remaining_one": "1 request remaining",
   "activating": "Activating...",
   "cancel_trial": "Cancel Trial",
-  "manage_plan": "Manage Plan"
+  "manage_plan": "Manage Plan",
+  "show": "Show",
+  "hide": "Hide",
+  "required": "Required",
+  "optional": "Optional",
+  "words": "words",
+  "wordsShort": "w"
 }

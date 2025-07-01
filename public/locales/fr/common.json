@@ -120,5 +120,11 @@
   },
   "activating": "Activation en cours...",
   "cancel_trial": "Annuler l'essai",
-  "manage_plan": "Gérer l'abonnement"
+  "manage_plan": "Gérer l'abonnement",
+  "show": "Afficher",
+  "hide": "Masquer",
+  "required": "Requis",
+  "optional": "Optionnel",
+  "words": "mots",
+  "wordsShort": "m"
 }

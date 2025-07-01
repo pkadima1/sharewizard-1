@@ -597,6 +597,9 @@
       "title": "Ton du Contenu",
       "tooltip": "Le ton affecte la façon dont votre message est perçu par votre audience.",
       "label": "Sélectionner le Ton du Contenu *",
+      "placeholder": "Sélectionner un ton",
+      "example": "Exemple",
+      "writingSample": "ÉCHANTILLON D'ÉCRITURE",
       "options": {
         "friendly": "Amical",
         "professional": "Professionnel", 
@@ -669,15 +672,195 @@
       }
     },
     "structure": {
-      "title": "Structure du Contenu",
+      "title": "Format de Structure",
       "tooltip": "Une structure claire aide les lecteurs à suivre votre contenu et améliore l'engagement.",
       "label": "Format de Structure du Contenu *",
+      "placeholder": "Sélectionner le format de structure",
+      "flow": "Flux",
+      "structureBreakdown": "RÉPARTITION DE LA STRUCTURE",
+      "totalWords": "mots au total",
+      "structureAnalysis": "Analyse de Structure",
+      "sectionsCount": "Sections",
+      "avgPerSection": "Moy. par section",
+      "readingTime": "Temps de lecture",
+      "minutes": "min",
+      "seoPotential": "Potentiel SEO",
+      "structureNotes": "Notes de Structure",
+      "notesPlaceholder": "ex. Inclure une introduction, 3 sections clés, et une conclusion avec appel à l'action",
+      "addCustomNotes": "Ajouter des Notes de Structure Personnalisées",
+      "includeStats": {
+        "label": "Inclure des Statistiques et Données",
+        "description": "Ajouter des statistiques et données pertinentes pour appuyer vos points."
+      },
       "options": {
-        "introPointsCta": "Intro + 3 Points Principaux + Appel à l'Action",
-        "problemSolutionCta": "Problème → Solution → Appel à l'Action", 
-        "storyFactsLessons": "Histoire + Faits + Leçons",
-        "listicle": "Liste d'articles (ex. 5 façons de...)",
-        "custom": "Plan personnalisé"
+        "introPointsCta": {
+          "label": "Intro + 3 Points Principaux + Appel à l'Action",
+          "useCase": "Articles de blog généraux, leadership d'opinion", 
+          "flow": "Accroche → Point 1 → Point 2 → Point 3 → Action"
+        },
+        "problemSolutionCta": {
+          "label": "Problème → Solution → Appel à l'Action",
+          "useCase": "Contenu de vente, explications de services",
+          "flow": "Problème → Impact → Solution → Étapes → Action"
+        },
+        "howToSteps": {
+          "label": "Comment Faire / Étape par Étape",
+          "useCase": "Tutoriels, guides de processus, articles pratiques",
+          "flow": "Intro → Prérequis → Étape 1 → Étape 2 → Étape 3 → Conseils"
+        },
+        "faqQa": {
+          "label": "FAQ / Format Q&R",
+          "useCase": "Pages SEO, explications de produits, aperçus de services",
+          "flow": "Intro → Q1+R → Q2+R → Q3+R → Plus de Q&R → Conclusion"
+        },
+        "comparisonVs": {
+          "label": "Comparaison / vs.",
+          "useCase": "Comparaisons de produits, alternatives logicielles, contenu d'aide à la décision",
+          "flow": "Intro → Option A → Option B → Côte à côte → Avantages/Inconvénients → Recommandation"
+        },
+        "reviewAnalysis": {
+          "label": "Revue / Analyse",
+          "useCase": "Avis de produits, évaluations de services",
+          "flow": "Intro → Fonctionnalités → Avantages → Inconvénients → Performance → Verdict"
+        },
+        "caseStudyDetailed": {
+          "label": "Étude de Cas",
+          "useCase": "Présenter des histoires de succès clients",
+          "flow": "Intro → Contexte → Défi → Solution → Résultats → Leçons"
+        },
+        "storyFactsLessons": {
+          "label": "Histoire + Faits + Leçons",
+          "useCase": "Narration engageante avec support de données",
+          "flow": "Histoire → Faits → Analyse → Leçons → Application"
+        },
+        "listicle": {
+          "label": "Liste d'articles (ex. 5 façons de...)",
+          "useCase": "Compatible médias sociaux, consommation rapide",
+          "flow": "Intro → Point 1 → Point 2 → Point 3 → Point 4 → Point 5"
+        },
+        "custom": {
+          "label": "Plan personnalisé",
+          "useCase": "Structures de contenu uniques",
+          "flow": "Définissez votre propre flux"
+        }
+      },
+      "categories": {
+        "classic": "Classique",
+        "business": "Affaires",
+        "tutorial": "Tutoriel",
+        "support": "Support",
+        "analysis": "Analyse", 
+        "narrative": "Narratif",
+        "advanced": "Avancé"
+      },
+      "difficulty": {
+        "easy": "Facile",
+        "medium": "Moyen",
+        "hard": "Difficile"
+      },
+      "seoScore": {
+        "veryHigh": "Très Élevé",
+        "high": "Élevé",
+        "medium": "Moyen",
+        "variable": "Variable"
+      },
+      "sections": {
+        "introduction": "Introduction",
+        "introductionDesc": "Accroche et aperçu",
+        "mainPoint1": "Point Principal 1",
+        "mainPoint1Desc": "Premier concept clé",
+        "mainPoint2": "Point Principal 2", 
+        "mainPoint2Desc": "Deuxième concept clé",
+        "mainPoint3": "Point Principal 3",
+        "mainPoint3Desc": "Troisième concept clé",
+        "callToAction": "Appel à l'Action",
+        "callToActionDesc": "Prochaine étape claire",
+        "problemIdentification": "Identification du Problème",
+        "problemIdentificationDesc": "Définir le défi",
+        "impactConsequences": "Impact et Conséquences",
+        "impactConsequencesDesc": "Pourquoi c'est important",
+        "solutionOverview": "Aperçu de la Solution",
+        "solutionOverviewDesc": "Votre approche",
+        "implementationSteps": "Étapes d'Implémentation", 
+        "implementationStepsDesc": "Comment appliquer",
+        "howToIntroDesc": "Aperçu et ce que les lecteurs vont apprendre",
+        "prerequisites": "Prérequis",
+        "prerequisitesDesc": "Ce dont vous avez besoin avant de commencer",
+        "step1": "Étape 1",
+        "step1Desc": "Première étape d'action",
+        "step2": "Étape 2",
+        "step2Desc": "Deuxième étape d'action",
+        "step3": "Étape 3",
+        "step3Desc": "Troisième étape d'action",
+        "additionalSteps": "Étapes Supplémentaires",
+        "additionalStepsDesc": "Plus d'étapes au besoin",
+        "conclusionTips": "Conclusion et Conseils",
+        "conclusionTipsDesc": "Résumé et meilleures pratiques",
+        "topicOverviewDesc": "Aperçu du sujet",
+        "question1Answer": "Question 1 + Réponse",
+        "question1AnswerDesc": "Question la plus courante",
+        "question2Answer": "Question 2 + Réponse",
+        "question2AnswerDesc": "Deuxième question la plus courante",
+        "question3Answer": "Question 3 + Réponse",
+        "question3AnswerDesc": "Troisième question la plus courante",
+        "additionalQAs": "Q&R Supplémentaires",
+        "additionalQAsDesc": "Plus de questions au besoin",
+        "conclusion": "Conclusion",
+        "conclusionDesc": "Résumé et prochaines étapes",
+        "comparisonIntroDesc": "Contexte et ce qui est comparé",
+        "optionAOverview": "Aperçu Option A",
+        "optionAOverviewDesc": "Détails de la première option",
+        "optionBOverview": "Aperçu Option B",
+        "optionBOverviewDesc": "Détails de la deuxième option",
+        "sideBySideComparison": "Comparaison Côte à Côte",
+        "sideBySideComparisonDesc": "Comparaison directe des fonctionnalités",
+        "prosAndCons": "Avantages et Inconvénients",
+        "prosAndConsDesc": "Avantages et désavantages",
+        "recommendation": "Recommandation",
+        "recommendationDesc": "Quelle option choisir quand",
+        "reviewIntroDesc": "Ce qui est évalué",
+        "keyFeatures": "Fonctionnalités Clés",
+        "keyFeaturesDesc": "Principales fonctionnalités et capacités",
+        "pros": "Avantages",
+        "prosDesc": "Ce qui fonctionne bien",
+        "cons": "Inconvénients",
+        "consDesc": "Limitations et défauts",
+        "performanceAnalysis": "Analyse de Performance",
+        "performanceAnalysisDesc": "Comment cela fonctionne en pratique",
+        "finalVerdict": "Verdict Final",
+        "finalVerdictDesc": "Recommandation globale",
+        "caseStudyOverviewDesc": "Aperçu de l'étude de cas",
+        "background": "Contexte",
+        "backgroundDesc": "Contexte et situation",
+        "challenge": "Défi",
+        "challengeDesc": "Le problème qui nécessitait une solution",
+        "solution": "Solution",
+        "solutionDesc": "Approche et implémentation",
+        "results": "Résultats",
+        "resultsDesc": "Résultats et métriques",
+        "lessonsLearned": "Leçons Apprises",
+        "lessonsLearnedDesc": "Points clés et insights",
+        "openingStory": "Histoire d'Ouverture",
+        "openingStoryDesc": "Récit engageant",
+        "keyFactsData": "Faits et Données Clés",
+        "keyFactsDataDesc": "Preuves de support",
+        "analysis": "Analyse",
+        "analysisDesc": "Ce que cela signifie",
+        "application": "Application",
+        "applicationDesc": "Comment utiliser",
+        "listOverviewDesc": "Aperçu de la liste",
+        "point1": "Point 1",
+        "point1Desc": "Premier élément",
+        "point2": "Point 2",
+        "point2Desc": "Deuxième élément",
+        "point3": "Point 3",
+        "point3Desc": "Troisième élément",
+        "point4": "Point 4",
+        "point4Desc": "Quatrième élément",
+        "point5": "Point 5",
+        "point5Desc": "Cinquième élément",
+        "customStructure": "Structure Personnalisée",
+        "customStructureDesc": "Définissez vos propres sections"
       }
     },
     "customOutline": {
@@ -689,12 +872,91 @@
       "title": "Type de Contenu",
       "tooltip": "Le type de contenu aide à adapter le style d'écriture et la structure.",
       "label": "Type de Contenu",
+      "placeholder": "Sélectionner le type de contenu",
       "options": {
         "blogArticle": "Article de Blog",
         "newsletter": "Newsletter",
         "caseStudy": "Étude de Cas", 
         "guide": "Guide",
-        "thoughtPiece": "Article de Réflexion"
+        "thoughtPiece": "Article de Réflexion",
+        "howToSteps": "Comment-Faire / Étape-par-Étape",
+        "faqQa": "FAQ / Q&R",
+        "comparisonVs": "Comparaison / vs.",
+        "reviewAnalysis": "Revue / Analyse",
+        "caseStudyDetailed": "Étude de Cas (Détaillée)"
+      }
+    },
+    "cta": {
+      "title": "Appel à l'Action",
+      "placeholder": "Sélectionner le type d'appel à l'action",
+      "ctaPreview": "APERÇU DE L'APPEL À L'ACTION",
+      "options": {
+        "subscribe": "S'abonner",
+        "bookCall": "Réserver un Appel",
+        "download": "Télécharger Gratuitement",
+        "visitWebsite": "Visiter le Site Web",
+        "none": "Aucun"
+      },
+      "previews": {
+        "subscribe": "Prêt à recevoir plus d'insights comme celui-ci ? Abonnez-vous à notre newsletter pour des conseils hebdomadaires livrés directement dans votre boîte de réception.",
+        "bookCall": "Envie d'approfondir ? Réservez une consultation gratuite de 30 minutes pour discuter de vos besoins et objectifs spécifiques.",
+        "download": "Passez à l'action aujourd'hui ! Téléchargez notre guide de ressources gratuit avec des modèles et des listes de contrôle pour commencer.",
+        "visitWebsite": "Apprenez-en plus sur nos solutions et voyez comment nous pouvons vous aider à atteindre vos objectifs.",
+        "none": "Le contenu se termine par une conclusion forte sans appel à l'action spécifique."
+      },
+      "buttons": {
+        "subscribeNow": "S'abonner Maintenant",
+        "scheduleCall": "Planifier un Appel",
+        "downloadGuide": "Télécharger le Guide Gratuit",
+        "visitWebsite": "Visiter Notre Site Web"
+      }
+    },
+    "wordCount": {
+      "title": "Longueur du Contenu",
+      "label": "Nombre de Mots",
+      "seoRange": "1200-1800 (SEO Optimal)",
+      "contentLengthImpact": "Impact de la Longueur du Contenu",
+      "impactText": "Pour un contenu {{contentType}} avec un ton {{tone}},",
+      "estimatedReading": "Temps de lecture estimé : {{minutes}} minutes",
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Trop Court",
+        "veryLong": "Très Long",
+        "wordCount": "{{count}} mots"
+      },
+      "recommendations": {
+        "seoIdeal": " cette longueur est idéale pour le SEO et l'engagement des lecteurs.",
+        "optimal": " une longueur de {{min}}-{{max}} mots est recommandée pour des résultats optimaux.",
+        "tooShort": " considérez ajouter plus de contenu. Au moins {{min}} mots sont recommandés.",
+        "tooLong": " votre contenu pourrait être trop long pour un engagement optimal. Considérez le diviser en plusieurs parties."
+      }
+    },
+    "preview": {
+      "title": "Aperçu du Contenu",
+      "livePreview": "Aperçu en Direct"
+    },
+    "tips": {
+      "title": "Guide de Sélection de Structure Intelligente",
+      "recommendation": "Recommandation pour {{contentType}} :",
+      "yourContent": "votre contenu",
+      "seoImpact": {
+        "title": "Impact SEO",
+        "description": "Les formats Comment-Faire et FAQ se classent généralement le mieux dans les résultats de recherche. Le contenu tutoriel avec des instructions étape par étape reçoit plus d'engagement et de meilleures fonctionnalités SERP."
+      },
+      "structureFlow": {
+        "title": "Flux de Structure",
+        "description": "Chaque format montre son flux de contenu pour une visualisation facile. La note de difficulté vous aide à choisir en fonction de votre expérience d'écriture et de vos contraintes de temps."
+      },
+      "bestPractices": {
+        "title": "Meilleures Pratiques",
+        "description": "Utilisez des structures de comparaison pour le contenu de prise de décision, des études de cas pour présenter les résultats, et des formats FAQ pour répondre aux questions courantes des utilisateurs."
+      },
+      "recommendations": {
+        "guide": "La structure Comment-Faire/Étape-par-Étape fonctionne mieux pour les guides - haute valeur SEO et engagement utilisateur.",
+        "blogArticle": "Les structures Intro + 3 Points Principaux ou Problème→Solution sont idéales pour les articles de blog.",
+        "caseStudy": "La structure Étude de Cas est parfaite - raconte une histoire complète du défi aux résultats.",
+        "newsletter": "Histoire + Faits + Leçons maintient l'engagement des lecteurs de newsletter avec un flux narratif.",
+        "default": "Choisissez selon votre objectif : Comment-Faire pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu de prise de décision."
       }
     },
     "quality": {
