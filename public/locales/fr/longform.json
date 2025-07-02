@@ -1,4 +1,13 @@
 {
+  "fields": {
+    "topic": "Sujet",
+    "audience": "Public Cible",
+    "keywords": "Mots-clés",
+    "contentType": "Type de Contenu",
+    "contentTone": "Ton du Contenu",
+    "industry": "Secteur",
+    "structureFormat": "Format de Structure"
+  },
   "wizard": {
     "title": "Assistant de Contenu Long",
     "progress": {
@@ -616,58 +625,47 @@
       "examples": {
         "friendly": {
           "description": "Approchable et conversationnel",
-          "example": "Salut ! Parlons de quelque chose qui pourrait complètement changer votre approche...",
-          "bestFor": "Contenu communautaire, publications personnelles, engagement social"
+          "example": "Salut ! Parlons de quelque chose qui pourrait complètement changer votre approche..."
         },
         "professional": {
           "description": "Formel et autoritaire",
-          "example": "Les études indiquent que l'implémentation stratégique de ces méthodologies peut considérablement...",
-          "bestFor": "Contenu B2B, blogs d'entreprise, communication formelle"
+          "example": "Les études indiquent que l'implémentation stratégique de ces méthodologies peut considérablement..."
         },
         "thoughtProvoking": {
           "description": "Provocateur et réflexif",
-          "example": "Et si tout ce que vous pensiez savoir sur ce sujet était fondamentalement erroné ?",
-          "bestFor": "Leadership d'opinion, articles de réflexion, contenu analytique"
+          "example": "Et si tout ce que vous pensiez savoir sur ce sujet était fondamentalement erroné ?"
         },
         "expert": {
           "description": "Technique et détaillé",
-          "example": "L'implémentation exploite des algorithmes avancés et des cadres établis pour optimiser...",
-          "bestFor": "Contenu technique, guides experts, documentation spécialisée"
+          "example": "L'implémentation exploite des algorithmes avancés et des cadres établis pour optimiser..."
         },
         "persuasive": {
           "description": "Convaincant et influent",
-          "example": "Vous n'êtes qu'à trois étapes d'obtenir des résultats dont les autres ne peuvent que rêver...",
-          "bestFor": "Pages de vente, appels à l'action, contenu promotionnel"
+          "example": "Vous n'êtes qu'à trois étapes d'obtenir des résultats dont les autres ne peuvent que rêver..."
         },
         "informative": {
           "description": "Objectif et équilibré pour le contenu encyclopédique ou factuel",
-          "example": "Cette analyse complète examine les facteurs clés, fournissant une analyse équilibrée des données et méthodologies disponibles...",
-          "bestFor": "Articles de recherche, rapports factuels, contenu éducatif neutre"
+          "example": "Cette analyse complète examine les facteurs clés, fournissant une analyse équilibrée des données et méthodologies disponibles..."
         },
         "casual": {
           "description": "Plus détendu qu'amical, comme parler à un ami autour d'un café",
-          "example": "Alors voilà le truc avec ce sujet - c'est beaucoup plus simple que la plupart des gens ne le pensent...",
-          "bestFor": "Blogs personnels, médias sociaux, contenu conversationnel"
+          "example": "Alors voilà le truc avec ce sujet - c'est beaucoup plus simple que la plupart des gens ne le pensent..."
         },
         "authoritative": {
           "description": "Voix de leadership forte, souvent utilisée dans les livres blancs ou blogs B2B",
-          "example": "Les leaders de l'industrie reconnaissent ceci comme l'approche définitive pour atteindre des résultats durables et mesurables...",
-          "bestFor": "Leadership LinkedIn, publications d'affaires, contenu exécutif"
+          "example": "Les leaders de l'industrie reconnaissent ceci comme l'approche définitive pour atteindre des résultats durables et mesurables..."
         },
         "inspirational": {
           "description": "Idéal pour le coaching, le leadership, le contenu bien-être",
-          "example": "Chaque percée commence par un seul pas. Aujourd'hui, vous avez l'opportunité de transformer votre approche et débloquer votre vrai potentiel...",
-          "bestFor": "Coaching, motivation, contenu de développement personnel"
+          "example": "Chaque percée commence par un seul pas. Aujourd'hui, vous avez l'opportunité de transformer votre approche et débloquer votre vrai potentiel..."
         },
         "humorous": {
           "description": "Allège le contenu ; parfait pour les publications sociales ou marques créatives",
-          "example": "Soyons honnêtes - ce sujet a autant d'excitation naturelle que regarder de la peinture sécher un mardi pluvieux. Mais restez avec moi...",
-          "bestFor": "Médias sociaux, contenu divertissant, marques créatives"
+          "example": "Soyons honnêtes - ce sujet a autant d'excitation naturelle que regarder de la peinture sécher. Mais restez avec moi, car je promets de rendre cela étonnamment divertissant..."
         },
         "empathetic": {
           "description": "Ton chaleureux et compréhensif pour les sujets sensibles (santé, bien-être mental)",
-          "example": "Je comprends que cela peut sembler accablant, et c'est complètement normal d'avoir ces préoccupations. Travaillons ensemble à votre rythme...",
-          "bestFor": "Contenu de santé, bien-être mental, sujets sensibles"
+          "example": "Je comprends que cela peut sembler accablant, et c'est complètement normal d'avoir ces préoccupations. Travaillons ensemble à votre rythme..."
         }
       }
     },
@@ -680,6 +678,7 @@
       "structureBreakdown": "RÉPARTITION DE LA STRUCTURE",
       "totalWords": "mots au total",
       "structureAnalysis": "Analyse de Structure",
+      "analysisTitle": "Analyse de Structure",
       "sectionsCount": "Sections",
       "avgPerSection": "Moy. par section",
       "readingTime": "Temps de lecture",
@@ -860,7 +859,17 @@
         "point5": "Point 5",
         "point5Desc": "Cinquième élément",
         "customStructure": "Structure Personnalisée",
-        "customStructureDesc": "Définissez vos propres sections"
+        "customStructureDesc": "Définissez vos propres sections",
+        "understandingTopic": "Comprendre {{keywordText}} : Un guide complet",
+        "understandingTopicDesc": "Titre principal de l'article",
+        "backgroundOfTopic": "Contexte de {{keywordText}}",
+        "backgroundOfTopicDesc": "Explication détaillée du contexte",
+        "keyConceptsOfTopic": "Concepts clés de {{keywordText}}",
+        "keyConceptsOfTopicDesc": "Explication détaillée des concepts clés",
+        "implementationOfTopic": "Mise en œuvre de {{keywordText}}",
+        "implementationOfTopicDesc": "Explication détaillée de la mise en œuvre",
+        "bestPracticesOfTopic": "Meilleures pratiques de {{keywordText}}",
+        "bestPracticesOfTopicDesc": "Explication détaillée des meilleures pratiques"
       }
     },
     "customOutline": {
@@ -873,6 +882,10 @@
       "tooltip": "Le type de contenu aide à adapter le style d'écriture et la structure.",
       "label": "Type de Contenu",
       "placeholder": "Sélectionner le type de contenu",
+      "insights": "Insights",
+      "recommendedTones": "Meilleurs tons",
+      "idealLength": "Longueur idéale",
+      "anyTone": "Tout ton",
       "options": {
         "blogArticle": "Article de Blog",
         "newsletter": "Newsletter",
@@ -884,6 +897,18 @@
         "comparisonVs": "Comparaison / vs.",
         "reviewAnalysis": "Revue / Analyse",
         "caseStudyDetailed": "Étude de Cas (Détaillée)"
+      },
+      "descriptions": {
+        "blogArticle": "Contenu de blog polyvalent",
+        "newsletter": "Contenu de newsletter par email",
+        "caseStudy": "Études de cas commerciales détaillées",
+        "guide": "Guides pratiques complets",
+        "thoughtPiece": "Opinions et perspectives sectorielles",
+        "howToSteps": "Contenu tutoriel et instructionnel",
+        "faqQa": "Format questions et réponses",
+        "comparisonVs": "Comparaisons de produits ou services",
+        "reviewAnalysis": "Avis de produits ou services",
+        "caseStudyDetailed": "Analyse d'étude de cas approfondie"
       }
     },
     "cta": {
@@ -915,25 +940,102 @@
       "title": "Longueur du Contenu",
       "label": "Nombre de Mots",
       "seoRange": "1200-1800 (SEO Optimal)",
-      "contentLengthImpact": "Impact de la Longueur du Contenu",
-      "impactText": "Pour un contenu {{contentType}} avec un ton {{tone}},",
-      "estimatedReading": "Temps de lecture estimé : {{minutes}} minutes",
-      "status": {
-        "seoOptimal": "SEO Optimal",
-        "tooShort": "Trop Court",
-        "veryLong": "Très Long",
-        "wordCount": "{{count}} mots"
+      "seoOptimalRange": "1200-1800 (SEO Optimal)",
+      "impactTitle": "Impact de la Longueur du Contenu",
+      "readingTime": "Temps de lecture estimé",
+      "recommendation": {
+        "prefix": "Pour un contenu",
+        "withTone": "avec un ton",
+        "ideal": " cette longueur est idéale pour le SEO et l'engagement des lecteurs.",
+        "optimal": " une longueur de {{min}}-{{max}} mots est recommandée pour des résultats optimaux.",
+        "tooShort": " considérez ajouter plus de contenu. Au moins {{min}} mots sont recommandés.",
+        "tooLong": " votre contenu pourrait être trop long pour un engagement optimal. Considérez le diviser en plusieurs parties."
       },
       "recommendations": {
         "seoIdeal": " cette longueur est idéale pour le SEO et l'engagement des lecteurs.",
         "optimal": " une longueur de {{min}}-{{max}} mots est recommandée pour des résultats optimaux.",
         "tooShort": " considérez ajouter plus de contenu. Au moins {{min}} mots sont recommandés.",
         "tooLong": " votre contenu pourrait être trop long pour un engagement optimal. Considérez le diviser en plusieurs parties."
+      },
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Trop Court",
+        "veryLong": "Très Long",
+        "wordCount": "{{count}} mots"
       }
     },
     "preview": {
       "title": "Aperçu du Contenu",
-      "livePreview": "Aperçu en Direct"
+      "description": "Voyez comment votre contenu apparaîtra et s'organisera",
+      "live": "Aperçu en Temps Réel",
+      "contentOutline": "Plan du Contenu",
+      "contentSample": "Exemple de Contenu",
+      "images": "Images",
+      "minRead": "min de lecture",
+      "estReadingTime": "Temps de lecture estimé",
+      "featuredImage": "L'image principale apparaîtra ici",
+      "sectionContent": {
+        "heading": "Titre principal avec placement du mot-clé primaire",
+        "paragraph": "Captiver les lecteurs avec une introduction convaincante",
+        "list": "Explication détaillée avec exemples",
+        "image": "Représentation visuelle ou diagramme",
+        "quote": "Citation ou témoignage à l'appui",
+        "cta": "Quoi faire après la lecture"
+      },
+      "sectionType": {
+        "heading": "Titre",
+        "paragraph": "Paragraphe",
+        "list": "Liste",
+        "image": "Image",
+        "quote": "Citation",
+        "cta": "Appel à l'Action"
+      },
+      "desktopView": "Vue Bureau",
+      "mobileView": "Vue Mobile",
+      "sampleTitle": "Comprendre {{keywordText}} : Un guide complet",
+      "sampleIntro": "Dans le paysage professionnel concurrentiel d'aujourd'hui, comprendre votre sujet est devenu essentiel pour les professionnels. Cette approche complète vous aidera à mettre en œuvre des stratégies efficaces qui produisent des résultats mesurables.",
+      "sampleSectionTitle": "Section clé",
+      "sampleSectionDesc": "Cette section approfondira les aspects spécifiques de {{keywordText}}, en fournissant des idées concrètes et des exemples pratiques que {{audience}} peut mettre en œuvre immédiatement dans leur {{industry}}.",
+      "sampleBenefit1": "Avantage ou idée clé #1",
+      "sampleBenefit2": "Avantage ou idée clé #2",
+      "sampleBenefit3": "Avantage ou idée clé #3",
+      "sampleCtaTitle": "Prochaines étapes",
+      "sampleCtaDesc": "Prêt à mettre en œuvre ces stratégies {{keywordText}} ? Commencez par la première recommandation et suivez vos progrès.",
+      "defaultAudience": "lecteurs",
+      "defaultIndustry": "travail",
+      "tonePreviewTitle": "Aperçu du ton {{contentTone}}",
+      "tonePreviewDesc": "Votre contenu sera rédigé dans un ton <strong>{{contentTone}}</strong>, {{toneExplanation}}",
+      "toneExplanation": {
+        "professional": "en maintenant un style formel, adapté au monde des affaires, avec une expertise sectorielle.",
+        "casual": "en utilisant un langage détendu et conversationnel, comme si vous parliez à un ami autour d'un café.",
+        "authoritative": "en démontrant une voix de leader forte avec confiance et crédibilité grâce à des affirmations étayées par la recherche.",
+        "friendly": "en créant une atmosphère chaleureuse et accueillante qui favorise la connexion avec les lecteurs.",
+        "conversational": "en engageant les lecteurs comme si vous leur parliez directement dans un dialogue naturel.",
+        "educational": "en se concentrant sur une instruction claire et un transfert de connaissances avec des explications systématiques.",
+        "informative": "en fournissant des informations objectives et équilibrées dans un style encyclopédique parfait pour le contenu factuel.",
+        "inspirational": "en motivant et en encourageant les lecteurs avec un langage positif, idéal pour le coaching et le bien-être.",
+        "humorous": "en incorporant de l'humour léger pour rendre le contenu engageant et divertissant.",
+        "empathetic": "en utilisant un langage chaleureux et compréhensif, parfait pour les sujets sensibles comme la santé et le bien-être mental."
+      },
+      "sections": "Sections"
+    },
+    "guide": {
+      "title": "Guide de Sélection de Structure Intelligente",
+      "seoImpact": "Impact SEO",
+      "seoText": "Les formats How-To et FAQ se classent généralement le mieux dans les résultats de recherche. Le contenu tutoriel avec des instructions étape par étape reçoit plus d'engagement et de meilleures fonctionnalités SERP.",
+      "structureFlow": "Flux de Structure",
+      "structureText": "Chaque format montre son flux de contenu pour une visualisation facile. Le niveau de difficulté vous aide à choisir en fonction de votre expérience d'écriture et de vos contraintes de temps.",
+      "bestPractices": "Meilleures Pratiques",
+      "bestPracticesText": "Utilisez les structures de comparaison pour le contenu d'aide à la décision, les études de cas pour présenter les résultats, et les formats FAQ pour répondre aux questions communes des utilisateurs."
+    },
+    "recommendation": {
+      "title": "Recommandation pour",
+      "yourContent": "votre contenu",
+      "guide": "La structure How-To/Étape par Étape fonctionne le mieux pour les guides - haute valeur SEO et engagement utilisateur.",
+      "blogArticle": "Les structures Intro + 3 Points Principaux ou Problème→Solution sont idéales pour les articles de blog.",
+      "caseStudy": "La structure Étude de Cas est parfaite - raconte une histoire complète du défi aux résultats.",
+      "newsletter": "Histoire + Faits + Leçons maintient l'engagement des lecteurs de newsletter avec un flux narratif.",
+      "default": "Choisissez selon votre objectif: How-To pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu d'aide à la décision."
     },
     "tips": {
       "title": "Guide de Sélection de Structure Intelligente",
@@ -1055,6 +1157,7 @@
       "missingTopic": "Le sujet du contenu est requis",
       "missingAudience": "Le public cible est requis", 
       "missingTone": "Le ton du contenu doit être sélectionné",
+      "missingContentType": "Le type de contenu doit être sélectionné",
       "missingStructure": "La structure du contenu doit être sélectionnée"
     }
   },
@@ -1554,5 +1657,10 @@
         "estimatedTime": "1-2 minutes"
       }
     }
-  }
+  },
+  "words": "mots",
+  "wordsShort": "mots",
+  "minRead": "min de lecture",
+  "estReadingTime": "Temps de lecture estimé",
+  "bestTones": "Meilleurs tons"
 }

@@ -47,11 +47,11 @@ import {
 } from 'lucide-react';
 import ContentPreview from '@/components/wizard/smart/ContentPreview';
 
-// Content type options (now handled by getContentTypeOptions useMemo hook)
 
-// Structure format options (now handled by getStructureFormatOptions useMemo hook)
 
-// CTA type options (now handled by getCtaTypeOptions useMemo hook)
+
+
+
 
 const Step4ToneStructure = ({ formData, updateFormData }) => {
   const { t } = useTranslation('longform');
@@ -149,56 +149,95 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
   // Get translated content type options
   const getContentTypeOptions = useMemo(() => {
     return [
-      { value: 'blog-article', label: t('step4.contentType.options.blogArticle', 'Blog Article') },
-      { value: 'newsletter', label: t('step4.contentType.options.newsletter', 'Newsletter') },
-      { value: 'case-study', label: t('step4.contentType.options.caseStudy', 'Case Study') },
-      { value: 'guide', label: t('step4.contentType.options.guide', 'Guide') },
-      { value: 'thought-piece', label: t('step4.contentType.options.thoughtPiece', 'Thought Piece') },
-      { value: 'how-to-steps', label: t('step4.contentType.options.howToSteps', 'How-To / Step-by-Step') },
-      { value: 'faq-qa', label: t('step4.contentType.options.faqQa', 'FAQ / Q&A') },
-      { value: 'comparison-vs', label: t('step4.contentType.options.comparisonVs', 'Comparison / vs.') },
-      { value: 'review-analysis', label: t('step4.contentType.options.reviewAnalysis', 'Review / Analysis') },
-      { value: 'case-study-detailed', label: t('step4.contentType.options.caseStudyDetailed', 'Case Study (Detailed)') }
-    ];
-  }, [t]);
-
-  // Get translated CTA type options
-  const getCtaTypeOptions = useMemo(() => {
-    return [
       { 
-        value: 'subscribe', 
-        label: t('step4.cta.options.subscribe', 'Subscribe'), 
-        icon: Mail,
-        preview: t('step4.cta.previews.subscribe', 'Ready to get more insights like this? Subscribe to our newsletter for weekly tips delivered straight to your inbox.'),
-        buttonText: t('step4.cta.buttons.subscribeNow', 'Subscribe Now')
+        value: 'blog-article', 
+        label: t('step4.contentType.options.blogArticle', 'Blog Article'),
+        icon: '📝',
+        description: t('step4.contentType.descriptions.blogArticle', 'Versatile blog content'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1200, 1800],
+        recommendedTones: ['professional', 'friendly', 'informative']
       },
       { 
-        value: 'book-call', 
-        label: t('step4.cta.options.bookCall', 'Book a Call'), 
-        icon: Phone,
-        preview: t('step4.cta.previews.bookCall', 'Want to dive deeper? Book a free 30-minute consultation to discuss your specific needs and goals.'),
-        buttonText: t('step4.cta.buttons.scheduleCall', 'Schedule Call')
+        value: 'newsletter', 
+        label: t('step4.contentType.options.newsletter', 'Newsletter'),
+        icon: '📧',
+        description: t('step4.contentType.descriptions.newsletter', 'Email newsletter content'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [800, 1200],
+        recommendedTones: ['friendly', 'casual', 'informative']
       },
       { 
-        value: 'download', 
-        label: t('step4.cta.options.download', 'Download Freebie'), 
-        icon: Download,
-        preview: t('step4.cta.previews.download', 'Take action today! Download our free resource guide with templates and checklists to get started.'),
-        buttonText: t('step4.cta.buttons.downloadGuide', 'Download Free Guide')
+        value: 'case-study', 
+        label: t('step4.contentType.options.caseStudy', 'Case Study'),
+        icon: '📊',
+        description: t('step4.contentType.descriptions.caseStudy', 'Detailed business case studies'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1500, 2500],
+        recommendedTones: ['professional', 'authoritative', 'expert']
       },
       { 
-        value: 'visit-website', 
-        label: t('step4.cta.options.visitWebsite', 'Visit Website'), 
-        icon: Globe,
-        preview: t('step4.cta.previews.visitWebsite', 'Learn more about our solutions and see how we can help you achieve your goals.'),
-        buttonText: t('step4.cta.buttons.visitWebsite', 'Visit Our Website')
+        value: 'guide', 
+        label: t('step4.contentType.options.guide', 'Guide'),
+        icon: '📚',
+        description: t('step4.contentType.descriptions.guide', 'Comprehensive how-to guides'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [2000, 3000],
+        recommendedTones: ['expert', 'professional', 'informative']
       },
       { 
-        value: 'none', 
-        label: t('step4.cta.options.none', 'None'), 
-        icon: ExternalLink,
-        preview: t('step4.cta.previews.none', 'Content ends with a strong conclusion without a specific call to action.'),
-        buttonText: ""
+        value: 'thought-piece', 
+        label: t('step4.contentType.options.thoughtPiece', 'Thought Piece'),
+        icon: '💭',
+        description: t('step4.contentType.descriptions.thoughtPiece', 'Industry opinions and perspectives'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [1000, 1500],
+        recommendedTones: ['thought-provoking', 'authoritative', 'professional']
+      },
+      { 
+        value: 'how-to-steps', 
+        label: t('step4.contentType.options.howToSteps', 'How-To / Step-by-Step'),
+        icon: '🔢',
+        description: t('step4.contentType.descriptions.howToSteps', 'Tutorial and instructional content'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [1200, 2000],
+        recommendedTones: ['friendly', 'expert', 'informative']
+      },
+      { 
+        value: 'faq-qa', 
+        label: t('step4.contentType.options.faqQa', 'FAQ / Q&A'),
+        icon: '❓',
+        description: t('step4.contentType.descriptions.faqQa', 'Question and answer format'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [800, 1500],
+        recommendedTones: ['informative', 'professional', 'helpful']
+      },
+      { 
+        value: 'comparison-vs', 
+        label: t('step4.contentType.options.comparisonVs', 'Comparison / vs.'),
+        icon: '⚖️',
+        description: t('step4.contentType.descriptions.comparisonVs', 'Product or service comparisons'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1200, 2000],
+        recommendedTones: ['informative', 'professional', 'expert']
+      },
+      { 
+        value: 'review-analysis', 
+        label: t('step4.contentType.options.reviewAnalysis', 'Review / Analysis'),
+        icon: '⭐',
+        description: t('step4.contentType.descriptions.reviewAnalysis', 'Product or service reviews'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1000, 1800],
+        recommendedTones: ['expert', 'professional', 'informative']
+      },
+      { 
+        value: 'case-study-detailed', 
+        label: t('step4.contentType.options.caseStudyDetailed', 'Case Study (Detailed)'),
+        icon: '📈',
+        description: t('step4.contentType.descriptions.caseStudyDetailed', 'In-depth case study analysis'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [2000, 3500],
+        recommendedTones: ['professional', 'authoritative', 'expert']
       }
     ];
   }, [t]);
@@ -239,7 +278,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
           { name: t('step4.structure.sections.impactConsequences', 'Impact & Consequences'), words: 150, description: t('step4.structure.sections.impactConsequencesDesc', 'Why it matters') },
           { name: t('step4.structure.sections.solutionOverview', 'Solution Overview'), words: 250, description: t('step4.structure.sections.solutionOverviewDesc', 'Your approach') },
           { name: t('step4.structure.sections.implementationSteps', 'Implementation Steps'), words: 150, description: t('step4.structure.sections.implementationStepsDesc', 'How to apply') },
-          { name: t('step4.structure.sections.callToAction', 'Call to Action'), words: 50, description: t('step4.structure.sections.callToActionDesc', 'Next steps') }
+          { name: t('step4.structure.sections.callToAction', 'Call to Action'), words: 50, description: t('step4.structure.sections.callToActionDesc', 'Clear next step') }
         ]
       },
       { 
@@ -352,7 +391,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
           { name: t('step4.structure.sections.openingStory', 'Opening Story'), words: 200, description: t('step4.structure.sections.openingStoryDesc', 'Engaging narrative') },
           { name: t('step4.structure.sections.keyFactsData', 'Key Facts & Data'), words: 200, description: t('step4.structure.sections.keyFactsDataDesc', 'Supporting evidence') },
           { name: t('step4.structure.sections.analysis', 'Analysis'), words: 200, description: t('step4.structure.sections.analysisDesc', 'What it means') },
-          { name: t('step4.structure.sections.lessonsLearned', 'Lessons Learned'), words: 150, description: t('step4.structure.sections.lessonsLearnedDesc', 'Takeaways') },
+          { name: t('step4.structure.sections.lessonsLearned', 'Lessons Learned'), words: 150, description: t('step4.structure.sections.lessonsLearnedDesc', 'Key takeaways and insights') },
           { name: t('step4.structure.sections.application', 'Application'), words: 50, description: t('step4.structure.sections.applicationDesc', 'How to use') }
         ]
       },
@@ -388,6 +427,47 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
         sections: [
           { name: t('step4.structure.sections.customStructure', 'Custom Structure'), words: 800, description: t('step4.structure.sections.customStructureDesc', 'Define your own sections') }
         ]
+      }
+    ];
+  }, [t]);
+
+  // Get translated CTA type options
+  const getCtaTypeOptions = useMemo(() => {
+    return [
+      { 
+        value: 'subscribe', 
+        label: t('step4.cta.options.subscribe', 'Subscribe'),
+        icon: Mail,
+        preview: t('step4.cta.previews.subscribe', 'Ready to get more insights like this? Subscribe to our newsletter for weekly tips delivered straight to your inbox.'),
+        buttonText: t('step4.cta.buttons.subscribeNow', 'Subscribe Now')
+      },
+      { 
+        value: 'book-call', 
+        label: t('step4.cta.options.bookCall', 'Book a Call'),
+        icon: Phone,
+        preview: t('step4.cta.previews.bookCall', 'Want to dive deeper? Book a free 30-minute consultation to discuss your specific needs and goals.'),
+        buttonText: t('step4.cta.buttons.scheduleCall', 'Schedule Call')
+      },
+      { 
+        value: 'download', 
+        label: t('step4.cta.options.download', 'Download Freebie'),
+        icon: Download,
+        preview: t('step4.cta.previews.download', 'Take action today! Download our free resource guide with templates and checklists to get started.'),
+        buttonText: t('step4.cta.buttons.downloadGuide', 'Download Free Guide')
+      },
+      { 
+        value: 'visit-website', 
+        label: t('step4.cta.options.visitWebsite', 'Visit Website'),
+        icon: Globe,
+        preview: t('step4.cta.previews.visitWebsite', 'Learn more about our solutions and see how we can help you achieve your goals.'),
+        buttonText: t('step4.cta.buttons.visitWebsite', 'Visit Our Website')
+      },
+      { 
+        value: 'none', 
+        label: t('step4.cta.options.none', 'None'),
+        icon: ExternalLink,
+        preview: t('step4.cta.previews.none', 'Content ends with a strong conclusion without a specific call to action.'),
+        buttonText: ""
       }
     ];
   }, [t]);
@@ -440,6 +520,11 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
   // Get selected CTA details
   const getSelectedCTA = () => {
     return getCtaTypeOptions.find(c => c.value === formData.ctaType) || getCtaTypeOptions[4];
+  };
+
+  // Get selected content type details
+  const getSelectedContentType = () => {
+    return getContentTypeOptions.find(ct => ct.value === formData.contentType) || getContentTypeOptions[0];
   };
 
   // Get SEO score styling
@@ -501,9 +586,9 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     if (currentCount >= 1200 && currentCount <= 1800) {
       return t('step4.wordCount.recommendations.seoIdeal', ' this length is ideal for SEO and reader engagement.');
     } else if (currentCount >= min && currentCount <= max) {
-      return t('step4.wordCount.recommendations.optimal', ' a length of {{min}}-{{max}} words is recommended for optimal results.', { min, max });
+      return t('step4.wordCount.recommendations.optimal', ` a length of ${min}-${max} words is recommended for optimal results.`, { min, max });
     } else if (currentCount < min) {
-      return t('step4.wordCount.recommendations.tooShort', ' consider adding more content. At least {{min}} words is recommended.', { min });
+      return t('step4.wordCount.recommendations.tooShort', ` consider adding more content. At least ${min} words is recommended.`, { min });
     } else {
       return t('step4.wordCount.recommendations.tooLong', ' your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces.');
     }
@@ -533,7 +618,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     } else if (currentCount > max) {
       return { status: 'warning', message: t('step4.wordCount.status.veryLong', 'Very Long') };
     } else {
-      return { status: 'normal', message: t('step4.wordCount.status.wordCount', '{{count}} words', { count: currentCount }) };
+      return { status: 'normal', message: `${currentCount} ${t('common.words', 'words')}` };
     }
   };
   return (
@@ -563,7 +648,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     size="sm"
                     onClick={() => setShowToneExample(!showToneExample)}
                   >
-                    {showToneExample ? t('common.hide', 'Hide') : t('common.show', 'Show')} {t('step4.tone.example', 'Example')}
+                    {showToneExample ? t('common.hide', 'Masquer') : t('common.show', 'Afficher')} {t('step4.tone.example', 'Exemple')}
                   </Button>
                 </div>
 
@@ -573,7 +658,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={(value) => updateFormData('contentTone', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('step4.tone.placeholder', 'Select a tone')} />
+                      <SelectValue placeholder={t('step4.tone.placeholder', 'Sélectionnez un ton')} />
                     </SelectTrigger>
                     <SelectContent>
                       {getToneOptions.map((tone) => (
@@ -601,7 +686,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 {showToneExample && (
                   <div className="p-3 border rounded-md bg-background">
                     <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                      {t('step4.tone.writingSample', 'WRITING SAMPLE')}
+                      {t('step4.tone.writingSample', 'ÉCHANTILLON D\'ÉCRITURE')}
                     </Label>
                     <p className="text-sm italic">
                       "{getSelectedTone().example}"
@@ -617,16 +702,58 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={(value) => updateFormData('contentType', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('step4.contentType.placeholder', 'Select content type')} />
+                      <SelectValue placeholder={t('step4.contentType.placeholder', 'Sélectionnez le type de contenu')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {getContentTypeOptions.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
+                      {getContentTypeOptions.map((contentType) => {
+                        return (
+                          <SelectItem key={contentType.value} value={contentType.value}>
+                            <div className="flex items-center gap-3 py-1">
+                              <span className="text-lg">{contentType.icon}</span>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">{contentType.label}</span>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={`text-xs ${getSEOScoreStyle(contentType.seoScore)}`}
+                                  >
+                                    {contentType.seoScore} SEO
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {contentType.description}
+                                </p>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
+                  
+                  {/* Content Type Insights */}
+                  {formData.contentType && (
+                    <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-md border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">{getSelectedContentType().icon}</span>
+                        <span className="text-sm font-medium">{getSelectedContentType().label} {t('step4.contentType.insights', 'Insights')}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <span className="font-medium text-blue-600">{t('step4.contentType.recommendedTones', 'Best tones')}:</span>
+                          <p className="text-muted-foreground">
+                            {getSelectedContentType().recommendedTones?.slice(0, 2).join(', ') || t('step4.contentType.anyTone', 'Any tone')}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-green-600">{t('step4.contentType.idealLength', 'Ideal length')}:</span>
+                          <p className="text-muted-foreground">
+                            {getSelectedContentType().idealLength?.[0]}-{getSelectedContentType().idealLength?.[1]} {t('common.words', 'words')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
@@ -637,14 +764,14 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-purple-600" />
-                    {t('step4.wordCount.title', 'Content Length')}
+                    {t('step4.wordCount.title', 'Longueur du Contenu')}
                   </h3>
                   
                   {/* Word Count Status Badge */}
                   {getWordCountStatus().status === 'optimal' ? (
                     <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3" />
-                      {getWordCountStatus().message}
+                      {t('step4.wordCount.status.seoOptimal', 'SEO Optimal')}
                     </Badge>
                   ) : getWordCountStatus().status === 'warning' ? (
                     <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 flex items-center gap-1">
@@ -654,7 +781,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   ) : (
                     <Badge variant="outline" className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {getWordCountStatus().message}
+                      {formData.wordCount || 800} {t('common.words', 'mots')}
                     </Badge>
                   )}
                 </div>
@@ -663,7 +790,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <Label htmlFor="word-count" className="text-sm font-medium flex items-center gap-1.5">
-                      <span>{t('step4.wordCount.label', 'Word Count')}:</span> 
+                      <span>{t('step4.wordCount.label', 'Nombre de mots')}:</span> 
                       <span className="font-bold text-purple-700 dark:text-purple-300">
                         {formData.wordCount || 800}
                       </span>
@@ -694,7 +821,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>300</span>
-                    <span className="font-medium text-green-600">{t('step4.wordCount.seoRange', '1200-1800 (SEO Optimal)')}</span>
+                    <span className="font-medium text-green-600">{t('step4.wordCount.seoOptimalRange', '1200-1800 (SEO Optimal)')}</span>
                     <span>3000</span>
                   </div>
                 </div>
@@ -704,23 +831,18 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   <div className="flex items-center gap-2">
                     <Info className="h-4 w-4 text-purple-600" />
                     <h4 className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                      {t('step4.wordCount.contentLengthImpact', 'Content Length Impact')}
+                      {t('step4.wordCount.impactTitle', 'Impact de la Longueur du Contenu')}
                     </h4>
                   </div>
                   <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
-                    {t('step4.wordCount.impactText', 'For {{contentType}} content with a {{tone}} tone,', { 
-                      contentType: formData.contentType || 'blog-article', 
-                      tone: formData.contentTone || 'professional' 
-                    })}
+                    {t('step4.wordCount.recommendation.prefix', 'Pour un contenu')} {formData.contentType || 'blog-article'} {t('step4.wordCount.recommendation.withTone', 'avec un ton')} {formData.contentTone || 'professional'}, 
                     {getContentLengthRecommendation()}
                   </p>
                   
                   {/* Reading Time Estimate */}
                   <div className="flex items-center gap-2 mt-2 text-xs text-purple-600 dark:text-purple-400">
                     <Clock className="h-3 w-3" />
-                    <span>{t('step4.wordCount.estimatedReading', 'Estimated reading time: {{minutes}} minutes', { 
-                      minutes: Math.ceil((formData.wordCount || 800) / 200) 
-                    })}</span>
+                    <span>{t('step4.wordCount.readingTime', 'Temps de lecture estimé')}: {Math.ceil((formData.wordCount || 800) / 200)} {t('common.minutes', 'minutes')}</span>
                   </div>
                 </div>
               </div>
@@ -731,11 +853,11 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    {t('step4.structure.title', 'Structure Format')}
+                    {t('step4.structure.title', 'Format de Structure')}
                   </h3>
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {calculateTotalWords()} {t('common.wordsShort', 'words')}
+                    {calculateTotalWords()} {t('common.words', 'mots')}
                   </Badge>
                 </div>
 
@@ -745,7 +867,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={handleStructureFormatChange}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('step4.structure.placeholder', 'Select structure format')} />
+                      <SelectValue placeholder={t('step4.structure.placeholder', 'Sélectionnez le format de structure')} />
                     </SelectTrigger>
                     <SelectContent 
                       className="max-h-[280px] min-w-[320px] overflow-y-auto"
@@ -777,7 +899,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                                   </div>
                                 </div>
                                 <div className="text-xs text-muted-foreground truncate">
-                                  {format.category} • {format.sections.reduce((total, section) => total + section.words, 0)} {t('common.wordsShort', 'words')}
+                                  {format.category} • {format.sections.reduce((total, section) => total + section.words, 0)} {t('common.words', 'mots')}
                                 </div>
                               </div>
                             </div>
@@ -813,7 +935,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                         </div>
                       </div>
                       <div className="bg-white/50 dark:bg-gray-900/50 p-2 rounded border text-xs font-mono text-muted-foreground">
-                        <strong>{t('step4.structure.flow', 'Flow')}:</strong> {getSelectedStructure().flow}
+                        <strong>{t('step4.structure.flow', 'Flux')}:</strong> {getSelectedStructure().flow}
                       </div>
                     </div>
                   </div>
@@ -823,12 +945,12 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="space-y-2 p-3 bg-muted/30 rounded-md">
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium text-muted-foreground">
-                      {t('step4.structure.structureBreakdown', 'STRUCTURE BREAKDOWN')}
+                      {t('step4.structure.breakdown', 'DÉCOMPOSITION DE LA STRUCTURE')}
                     </Label>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {calculateTotalWords()} {t('step4.structure.totalWords', 'total words')}
+                        {calculateTotalWords()} {t('step4.structure.totalWords', 'mots au total')}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -884,7 +1006,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                             </div>
                             <div className="flex items-center gap-2">
                               <Badge variant="secondary" className="text-xs font-mono">
-                                {section.words}w
+                                {section.words}{t('common.wordsShort', 'm')}
                               </Badge>
                               <Badge variant="outline" className="text-xs text-muted-foreground">
                                 {Math.round((section.words / calculateTotalWords()) * 100)}%
@@ -898,23 +1020,23 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                       <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-lg border border-blue-100 dark:border-blue-800">
                         <div className="flex items-center gap-2 mb-2">
                           <Award className="h-4 w-4 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">{t('step4.structure.analysis', 'Structure Analysis')}</span>
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">{t('step4.structure.analysisTitle', 'Analyse de Structure')}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-xs">
                           <div>
-                            <span className="text-muted-foreground">{t('step4.structure.sections', 'Sections')}:</span>
+                            <span className="text-muted-foreground">{t('step4.structure.sectionsCount', 'Sections')}:</span>
                             <span className="ml-1 font-medium">{getSelectedStructure().sections.length}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t('step4.structure.avgPerSection', 'Avg per section')}:</span>
-                            <span className="ml-1 font-medium">{Math.round(calculateTotalWords() / getSelectedStructure().sections.length)}{t('common.wordsShort', 'w')}</span>
+                            <span className="text-muted-foreground">{t('step4.structure.avgPerSection', 'Moy. par section')}:</span>
+                            <span className="ml-1 font-medium">{Math.round(calculateTotalWords() / getSelectedStructure().sections.length)}{t('common.wordsShort', 'm')}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t('step4.structure.readingTime', 'Reading time')}:</span>
-                            <span className="ml-1 font-medium">{Math.ceil(calculateTotalWords() / 200)} {t('step4.structure.minutes', 'min')}</span>
+                            <span className="text-muted-foreground">{t('step4.structure.readingTime', 'Temps de lecture')}:</span>
+                            <span className="ml-1 font-medium">{Math.ceil(calculateTotalWords() / 200)} min</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t('step4.structure.seoPotential', 'SEO potential')}:</span>
+                            <span className="text-muted-foreground">{t('step4.structure.seoPotential', 'Potentiel SEO')}:</span>
                             <Badge 
                               variant="outline" 
                               className={`ml-1 text-xs ${getSEOScoreStyle(getSelectedStructure().seoScore)}`}
@@ -928,29 +1050,16 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   )}
                 </div>
 
-                {/* Statistics Toggle */}
-                <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md">
-                  <div>
-                    <Label className="text-sm font-medium">{t('step4.structure.includeStats.label', 'Include Statistics & Data')}</Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t('step4.structure.includeStats.description', 'Add relevant statistics and data to support your points.')}
-                    </p>
-                  </div>
-                  <Switch
-                    checked={formData.includeStats}
-                    onCheckedChange={(checked) => updateFormData('includeStats', checked)}
-                    className="data-[state=checked]:bg-blue-500"
-                  />
-                </div>
+
 
                 {/* Custom Structure Notes */}
                 {(formData.structureFormat === 'custom' || showStructureNotes) && (
                   <div className="space-y-2 pt-2 border-t">
                     <Label className="text-sm font-medium">
-                      {t('step4.structure.structureNotes', 'Structure Notes')} {formData.structureFormat === 'custom' ? `(${t('common.required', 'Required')})` : `(${t('common.optional', 'Optional')})`}
+                      {t('step4.structure.notes', 'Notes de Structure')} {formData.structureFormat === 'custom' ? `(${t('common.required', 'Requis')})` : `(${t('common.optional', 'Optionnel')})`}
                     </Label>
                     <Textarea
-                      placeholder={t('step4.structure.notesPlaceholder', 'e.g. Include an introduction, 3 key sections, and a conclusion with call to action')}
+                      placeholder={t('step4.structure.notesPlaceholder', 'ex. Inclure une introduction, 3 sections clés, et une conclusion avec appel à l\'action')}
                       value={formData.structureNotes || ''}
                       onChange={(e) => updateFormData('structureNotes', e.target.value)}
                       rows={4}
@@ -966,7 +1075,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onClick={() => setShowStructureNotes(true)}
                     className="w-full"
                   >
-                    {t('step4.structure.addCustomNotes', 'Add Custom Structure Notes')}
+                    {t('step4.structure.addCustomNotes', 'Ajouter des Notes de Structure Personnalisées')}
                   </Button>
                 )}
               </div>
@@ -977,7 +1086,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               <div className="space-y-4">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  {t('step4.cta.title', 'Call to Action')}
+                  {t('step4.cta.title', 'Appel à l\'Action')}
                 </h3>
 
                 <div className="space-y-2">
@@ -986,7 +1095,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={(value) => updateFormData('ctaType', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder={t('step4.cta.placeholder', 'Select CTA type')} />
+                      <SelectValue placeholder={t('step4.cta.placeholder', 'Sélectionnez le type d\'appel à l\'action')} />
                     </SelectTrigger>
                     <SelectContent>
                       {getCtaTypeOptions.map((cta) => {
@@ -1028,11 +1137,11 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Hash className="h-4 w-4" />
-                  {t('step4.preview.title', 'Content Preview')}
+                  {t('step4.preview.title', 'Aperçu du Contenu')}
                 </h3>
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3" />
-                  {t('step4.preview.livePreview', 'Live Preview')}
+                  {t('step4.preview.live', 'Aperçu en Temps Réel')}
                 </Badge>
               </div>
               
@@ -1054,22 +1163,22 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-100 dark:border-blue-900 rounded-md">
           <h3 className="font-medium text-blue-800 dark:text-blue-400 flex items-center gap-2 mb-2">
             <Info className="h-4 w-4" />
-            <span>{t('step4.tips.title', 'Smart Structure Selection Guide')}</span>
+            <span>{t('step4.guide.title', 'Guide de Sélection de Structure Intelligente')}</span>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <p className="text-blue-700 dark:text-blue-300">
-                <strong>{t('step4.tips.seoImpact.title', 'SEO Impact')}:</strong> {t('step4.tips.seoImpact.description', 'How-To and FAQ formats typically rank highest in search results. Tutorial content with step-by-step instructions receives more engagement and better SERP features.')}
+                <strong>{t('step4.guide.seoImpact', 'Impact SEO')}:</strong> {t('step4.guide.seoText', 'Les formats How-To et FAQ se classent généralement le mieux dans les résultats de recherche. Le contenu tutoriel avec des instructions étape par étape reçoit plus d\'engagement et de meilleures fonctionnalités SERP.')}
               </p>
             </div>
             <div>
               <p className="text-purple-700 dark:text-purple-300">
-                <strong>{t('step4.tips.structureFlow.title', 'Structure Flow')}:</strong> {t('step4.tips.structureFlow.description', 'Each format shows its content flow for easy visualization. The difficulty rating helps you choose based on your writing experience and time constraints.')}
+                <strong>{t('step4.guide.structureFlow', 'Flux de Structure')}:</strong> {t('step4.guide.structureText', 'Chaque format montre son flux de contenu pour une visualisation facile. Le niveau de difficulté vous aide à choisir en fonction de votre expérience d\'écriture et de vos contraintes de temps.')}
               </p>
             </div>
             <div>
               <p className="text-green-700 dark:text-green-300">
-                <strong>{t('step4.tips.bestPractices.title', 'Best Practices')}:</strong> {t('step4.tips.bestPractices.description', 'Use comparison structures for decision-making content, case studies for showcasing results, and FAQ formats for addressing common user questions.')}
+                <strong>{t('step4.guide.bestPractices', 'Meilleures Pratiques')}:</strong> {t('step4.guide.bestPracticesText', 'Utilisez les structures de comparaison pour le contenu d\'aide à la décision, les études de cas pour présenter les résultats, et les formats FAQ pour répondre aux questions communes des utilisateurs.')}
               </p>
             </div>
           </div>
@@ -1077,14 +1186,14 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
           {/* Quick recommendations based on content type */}
           <div className="mt-4 p-3 bg-white/50 dark:bg-gray-900/50 rounded border">
             <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
-              💡 {t('step4.tips.recommendation', 'Recommendation for {{contentType}}:', { contentType: formData.contentType || t('step4.tips.yourContent', 'your content') })}
+              💡 {t('step4.recommendation.title', 'Recommandation pour')} {formData.contentType || t('step4.recommendation.yourContent', 'votre contenu')}:
             </h4>
             <p className="text-xs text-muted-foreground">
-              {formData.contentType === 'guide' && t('step4.tips.recommendations.guide', 'How-To/Step-by-Step structure works best for guides - high SEO value and user engagement.')}
-              {formData.contentType === 'blog-article' && t('step4.tips.recommendations.blogArticle', 'Intro + 3 Main Points or Problem→Solution structures are ideal for blog articles.')}
-              {formData.contentType === 'case-study' && t('step4.tips.recommendations.caseStudy', 'Case Study structure is perfect - tells a complete story from challenge to results.')}
-              {formData.contentType === 'newsletter' && t('step4.tips.recommendations.newsletter', 'Story + Facts + Lessons keeps newsletter readers engaged with narrative flow.')}
-              {(!formData.contentType || formData.contentType === 'thought-piece') && t('step4.tips.recommendations.default', 'Choose based on your goal: How-To for tutorials, FAQ for SEO, Comparison for decision-making content.')}
+              {formData.contentType === 'guide' && t('step4.recommendation.guide', 'La structure How-To/Étape par Étape fonctionne le mieux pour les guides - haute valeur SEO et engagement utilisateur.')}
+              {formData.contentType === 'blog-article' && t('step4.recommendation.blogArticle', 'Les structures Intro + 3 Points Principaux ou Problème→Solution sont idéales pour les articles de blog.')}
+              {formData.contentType === 'case-study' && t('step4.recommendation.caseStudy', 'La structure Étude de Cas est parfaite - raconte une histoire complète du défi aux résultats.')}
+              {formData.contentType === 'newsletter' && t('step4.recommendation.newsletter', 'Histoire + Faits + Leçons maintient l\'engagement des lecteurs de newsletter avec un flux narratif.')}
+              {(!formData.contentType || formData.contentType === 'thought-piece') && t('step4.recommendation.default', 'Choisissez selon votre objectif: How-To pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu d\'aide à la décision.')}
             </p>
           </div>
         </div>

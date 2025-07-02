@@ -110,7 +110,7 @@ export function useWizardValidation(formData: FormData, t: (key: string) => stri
     if (!formData.contentType || formData.contentType.trim().length === 0) {
       errors.push({
         field: 'contentType',
-        message: 'Content type must be selected'
+        message: t('step6.validation.missingContentType')
       });
     }
     
@@ -118,7 +118,7 @@ export function useWizardValidation(formData: FormData, t: (key: string) => stri
     if (!formData.contentTone || formData.contentTone.trim().length === 0) {
       errors.push({
         field: 'contentTone',
-        message: 'Content tone must be selected'
+        message: t('step6.validation.missingTone')
       });
     }
     
@@ -215,7 +215,18 @@ export function useWizardValidation(formData: FormData, t: (key: string) => stri
 }
 
 // Helper function to get user-friendly error messages
-export function getFieldDisplayName(field: string): string {
+export function getFieldDisplayName(field: string, t?: (key: string) => string): string {
+  // If translation function is provided, use it
+  if (t) {
+    const translationKey = `fields.${field}`;
+    const translated = t(translationKey);
+    // Only use the translation if it's not the same as the key (which indicates no translation found)
+    if (translated !== translationKey) {
+      return translated;
+    }
+  }
+  
+  // Fallback to hardcoded English
   const fieldNames: Record<string, string> = {
     topic: 'Topic',
     audience: 'Target Audience',

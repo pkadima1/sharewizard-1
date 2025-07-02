@@ -1,4 +1,13 @@
 {
+  "fields": {
+    "topic": "Topic",
+    "audience": "Target Audience",
+    "keywords": "Keywords",
+    "contentType": "Content Type",
+    "contentTone": "Content Tone",
+    "industry": "Industry",
+    "structureFormat": "Structure Format"
+  },
   "wizard": {
     "title": "Long-Form Content Wizard",
     "progress": {
@@ -623,6 +632,7 @@
       "structureBreakdown": "STRUCTURE BREAKDOWN",
       "totalWords": "total words",
       "structureAnalysis": "Structure Analysis",
+      "analysisTitle": "Structure Analysis",
       "sectionsCount": "Sections",
       "avgPerSection": "Avg per section",
       "readingTime": "Reading time",
@@ -803,7 +813,17 @@
         "point5": "Point 5",
         "point5Desc": "Fifth item",
         "customStructure": "Custom Structure",
-        "customStructureDesc": "Define your own sections"
+        "customStructureDesc": "Define your own sections",
+        "understandingTopic": "Understanding {{keywordText}}: A Comprehensive Guide",
+        "understandingTopicDesc": "Main article title",
+        "backgroundOfTopic": "Background of {{keywordText}}",
+        "backgroundOfTopicDesc": "Detailed explanation of the background",
+        "keyConceptsOfTopic": "Key Concepts of {{keywordText}}",
+        "keyConceptsOfTopicDesc": "Detailed explanation of the key concepts",
+        "implementationOfTopic": "Implementation of {{keywordText}}",
+        "implementationOfTopicDesc": "Detailed explanation of the implementation",
+        "bestPracticesOfTopic": "Best Practices of {{keywordText}}",
+        "bestPracticesOfTopicDesc": "Detailed explanation of the best practices"
       }
     },
     "customOutline": {
@@ -816,6 +836,10 @@
       "tooltip": "The content type helps tailor the writing style and structure.",
       "label": "Content Type",
       "placeholder": "Select content type",
+      "insights": "Insights",
+      "recommendedTones": "Best tones",
+      "idealLength": "Ideal length",
+      "anyTone": "Any tone",
       "options": {
         "blogArticle": "Blog Article",
         "newsletter": "Newsletter",
@@ -827,6 +851,18 @@
         "comparisonVs": "Comparison / vs.",
         "reviewAnalysis": "Review / Analysis",
         "caseStudyDetailed": "Case Study (Detailed)"
+      },
+      "descriptions": {
+        "blogArticle": "Versatile blog content",
+        "newsletter": "Email newsletter content",
+        "caseStudy": "Detailed business case studies",
+        "guide": "Comprehensive how-to guides",
+        "thoughtPiece": "Industry opinions and perspectives",
+        "howToSteps": "Tutorial and instructional content",
+        "faqQa": "Question and answer format",
+        "comparisonVs": "Product or service comparisons",
+        "reviewAnalysis": "Product or service reviews",
+        "caseStudyDetailed": "In-depth case study analysis"
       }
     },
     "cta": {
@@ -858,25 +894,98 @@
       "title": "Content Length",
       "label": "Word Count",
       "seoRange": "1200-1800 (SEO Optimal)",
-      "contentLengthImpact": "Content Length Impact",
-      "impactText": "For {{contentType}} content with a {{tone}} tone,",
-      "estimatedReading": "Estimated reading time: {{minutes}} minutes",
-      "status": {
-        "seoOptimal": "SEO Optimal",
-        "tooShort": "Too Short",
-        "veryLong": "Very Long",
-        "wordCount": "{{count}} words"
+      "seoOptimalRange": "1200-1800 (SEO Optimal)",
+      "impactTitle": "Content Length Impact",
+      "readingTime": "Estimated reading time",
+      "recommendation": {
+        "prefix": "For",
+        "withTone": "content with a",
+        "ideal": " this length is ideal for SEO and reader engagement.",
+        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
+        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
+        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
       },
       "recommendations": {
         "seoIdeal": " this length is ideal for SEO and reader engagement.",
         "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
         "tooShort": " consider adding more content. At least {{min}} words is recommended.",
         "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+      },
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Too Short",
+        "veryLong": "Very Long",
+        "wordCount": "{{count}} words"
       }
     },
     "preview": {
       "title": "Content Preview",
-      "livePreview": "Live Preview"
+      "description": "See how your content will look and flow",
+      "live": "Live Preview",
+      "contentOutline": "Content Outline",
+      "images": "Images",
+      "minRead": "min read",
+      "estReadingTime": "Est. reading time",
+      "sectionContent": {
+        "heading": "Main title with primary keyword placement",
+        "paragraph": "Hook readers with a compelling opening",
+        "list": "Detailed explanation with examples",
+        "image": "Visual representation or diagram",
+        "quote": "Supporting quote or testimony",
+        "cta": "What to do after reading"
+      },
+      "sectionType": {
+        "heading": "Heading",
+        "paragraph": "Paragraph",
+        "list": "List",
+        "image": "Image",
+        "quote": "Quote",
+        "cta": "Call to Action",
+        "mainTitle": "Main article title"
+      },
+      "sampleTitle": "Understanding {{keywordText}}: A Comprehensive Guide",
+      "sampleIntro": "In today's competitive business landscape, understanding your topic has become essential for professionals. This comprehensive approach will help you implement effective strategies that drive measurable results.",
+      "sampleSectionTitle": "Key Section",
+      "sampleSectionDesc": "This section will dive deeper into the specific aspects of {{keywordText}}, providing actionable insights and practical examples that {{audience}} can implement immediately in their {{industry}}.",
+      "sampleBenefit1": "Key benefit or insight #1",
+      "sampleBenefit2": "Key benefit or insight #2",
+      "sampleBenefit3": "Key benefit or insight #3",
+      "sampleCtaTitle": "Next Steps",
+      "sampleCtaDesc": "Ready to implement these {{keywordText}} strategies? Start with the first recommendation and track your progress.",
+      "defaultAudience": "readers",
+      "defaultIndustry": "work",
+      "tonePreviewTitle": "{{contentTone}} Tone Preview",
+      "tonePreviewDesc": "Your content will be written in a <strong>{{contentTone}}</strong> tone, {{toneExplanation}}",
+      "toneExplanation": {
+        "professional": "maintaining a formal, business-appropriate style with industry expertise.",
+        "casual": "using relaxed, conversational language like talking to a friend over coffee.",
+        "authoritative": "demonstrating strong leadership voice with confidence and credibility through research-backed statements.",
+        "friendly": "creating a warm, welcoming atmosphere that builds connection with readers.",
+        "conversational": "engaging readers as if you're speaking directly to them in a natural dialogue.",
+        "educational": "focusing on clear instruction and knowledge transfer with systematic explanations.",
+        "informative": "providing objective, balanced information in an encyclopedic style perfect for factual content.",
+        "inspirational": "motivating and uplifting readers with encouraging language ideal for coaching and wellness content.",
+        "humorous": "incorporating light wit and humor to make content engaging and entertaining.",
+        "empathetic": "using warm, understanding language perfect for sensitive topics like health and mental wellness."
+      }
+    },
+    "guide": {
+      "title": "Smart Structure Selection Guide",
+      "seoImpact": "SEO Impact",
+      "seoText": "How-To and FAQ formats typically rank highest in search results. Tutorial content with step-by-step instructions receives more engagement and better SERP features.",
+      "structureFlow": "Structure Flow",
+      "structureText": "Each format shows its content flow for easy visualization. The difficulty rating helps you choose based on your writing experience and time constraints.",
+      "bestPractices": "Best Practices",
+      "bestPracticesText": "Use comparison structures for decision-making content, case studies for showcasing results, and FAQ formats for addressing common user questions."
+    },
+    "recommendation": {
+      "title": "Recommendation for",
+      "yourContent": "your content",
+      "guide": "How-To/Step-by-Step structure works best for guides - high SEO value and user engagement.",
+      "blogArticle": "Intro + 3 Main Points or Problem→Solution structures are ideal for blog articles.",
+      "caseStudy": "Case Study structure is perfect - tells a complete story from challenge to results.",
+      "newsletter": "Story + Facts + Lessons keeps newsletter readers engaged with narrative flow.",
+      "default": "Choose based on your goal: How-To for tutorials, FAQ for SEO, Comparison for decision-making content."
     },
     "tips": {
       "title": "Smart Structure Selection Guide",
@@ -919,7 +1028,30 @@
       "title": "Content Length",
       "tooltip": "Longer content typically performs better for SEO, but should match your audience's preferences.",
       "label": "Target Word Count",
-      "words": "{{count}} words"
+      "words": "{{count}} words",
+      "wordsShort": "words",
+      "minRead": "min read",
+      "estReadingTime": "Est. reading time",
+      "recommendation": {
+        "prefix": "For",
+        "withTone": "content with a",
+        "ideal": " this length is ideal for SEO and reader engagement.",
+        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
+        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
+        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+      },
+      "recommendations": {
+        "seoIdeal": " this length is ideal for SEO and reader engagement.",
+        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
+        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
+        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+      },
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Too Short",
+        "veryLong": "Very Long",
+        "wordCount": "{{count}} words"
+      }
     },
     "format": {
       "title": "Output Format", 

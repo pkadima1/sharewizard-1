@@ -139,5 +139,6 @@
   "required": "Required",
   "optional": "Optional",
   "words": "words",
-  "wordsShort": "w"
+  "wordsShort": "w",
+  "seo": "SEO"
 }

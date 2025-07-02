@@ -126,5 +126,6 @@
   "required": "Requis",
   "optional": "Optionnel",
   "words": "mots",
-  "wordsShort": "m"
+  "wordsShort": "m",
+  "seo": "SEO"
 }
