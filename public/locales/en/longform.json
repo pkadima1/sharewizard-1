@@ -630,6 +630,7 @@
       "placeholder": "Select structure format",
       "flow": "Flow",
       "structureBreakdown": "STRUCTURE BREAKDOWN",
+      "breakdown": "STRUCTURE BREAKDOWN",
       "totalWords": "total words",
       "structureAnalysis": "Structure Analysis",
       "analysisTitle": "Structure Analysis",
@@ -1023,115 +1024,265 @@
   },
   "step5": {
     "title": "Generation Settings",
-    "subtitle": "Configure how your content will be generated and formatted",
-    "wordCount": {
-      "title": "Content Length",
-      "tooltip": "Longer content typically performs better for SEO, but should match your audience's preferences.",
-      "label": "Target Word Count",
-      "words": "{{count}} words",
-      "wordsShort": "words",
-      "minRead": "min read",
-      "estReadingTime": "Est. reading time",
-      "recommendation": {
-        "prefix": "For",
-        "withTone": "content with a",
-        "ideal": " this length is ideal for SEO and reader engagement.",
-        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
-        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
-        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+    "subtitle": "Customize your content generation with smart recommendations",
+    "contentSummary": {
+      "title": "Content Summary",
+      "contentType": "Content Type:",
+      "wordCount": "Word Count:",
+      "readingLevel": "Reading Level:",
+      "detailsTitle": "Content Details",
+      "details": "Guides and thorough step-by-step coverage"
+    },
+    "outputFormat": {
+      "title": "Output Format",
+      "markdown": {
+        "desc": "Perfect for developers and technical content",
+        "cleanFormatting": "Clean formatting",
+        "githubCompatible": "GitHub compatible",
+        "easyToEdit": "Easy to edit"
       },
-      "recommendations": {
-        "seoIdeal": " this length is ideal for SEO and reader engagement.",
-        "optimal": " a length of {{min}}-{{max}} words is recommended for optimal results.",
-        "tooShort": " consider adding more content. At least {{min}} words is recommended.",
-        "tooLong": " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces."
+      "html": {
+        "desc": "Ready for web publishing",
+        "webReady": "Web-ready",
+        "seoOptimized": "SEO optimized",
+        "styledOutput": "Styled output"
       },
-      "status": {
-        "seoOptimal": "SEO Optimal",
-        "tooShort": "Too Short",
-        "veryLong": "Very Long",
-        "wordCount": "{{count}} words"
+      "gdocs": {
+        "desc": "Collaborative editing and sharing",
+        "teamCollab": "Team collaboration",
+        "commentSystem": "Comment system",
+        "versionHistory": "Version history"
       }
     },
-    "format": {
-      "title": "Output Format", 
-      "tooltip": "Choose the format that best fits your publishing platform.",
-      "label": "Output Format",
-      "options": {
-        "markdown": "Markdown",
-        "html": "HTML",
-        "plainText": "Plain Text"
-      }
-    },
-    "cta": {
-      "title": "Call to Action",
-      "tooltip": "A strong CTA encourages readers to take the next step.",
-      "label": "Call to Action Type",
-      "options": {
-        "subscribe": "Subscribe",
-        "bookCall": "Book a Call",
-        "download": "Download Freebie",
-        "visitWebsite": "Visit Website",
-        "none": "None"
-      }
-    },
-    "advanced": {
+    "advancedOptions": {
       "title": "Advanced Options",
-      "includeStats": {
-        "label": "Include statistics and data",
-        "tooltip": "Adds credibility and authority to your content"
-      },
-      "plagiarismCheck": {
-        "label": "Run plagiarism check",
-        "tooltip": "Ensures your content is original and unique"
-      }
+      "plagiarismCheck": "Plagiarism Check",
+      "plagiarismCheckDesc": "Verify content originality and detect potential issues",
+      "includeImages": "Include Image Suggestions",
+      "includeImagesDesc": "AI will suggest relevant images and visual elements"
     },
-    "quality": {
-      "excellent": "Optimal generation settings",
-      "good": "Good configuration",
-      "suggestions": {
-        "adjustLength": "Consider your audience's reading preferences for word count",
-        "addCta": "Add a call-to-action to drive engagement",
-        "enableStats": "Include statistics for more authoritative content"
-      }
+    "summary": {
+      "title": "Smart Recommendations Summary",
+      "optimizationStatus": "Optimization Status",
+      "seoOptimization": "SEO Optimization:",
+      "contentLength": "Content Length:",
+      "readingLevel": "Reading Level:",
+      "generationSettings": "Generation Settings:",
+      "estimatedTime": "Estimated Time:",
+      "outputFormat": "Output Format:",
+      "qualityChecks": "Quality Checks:"
+    },
+    "status": {
+      "contentOptimal": "Good Length for Content Type",
+      "tooShort": "Content Length: On the shorter side",
+      "tooLong": "Content Length: On the longer side",
+      "seoOptimal": "SEO Optimal Length",
+      "good": "Good",
+      "optimal": "Optimal"
+    },
+    "estimatedTime": {
+      "basedOn": "Based on content complexity, word count, and additional features"
+    },
+    "generationDetails": {
+      "title": "Generation Details",
+      "readingLevel": "Reading Level",
+      "estimatedTime": "Estimated Generation Time",
+      "featuresTitle": "Generation Features",
+      "imageSuggestions": "Image suggestions {{status}}",
+      "stats": "Statistics & data {{status}}",
+      "seoOptimization": "SEO optimization {{status}}"
     }
   },
   "step6": {
     "title": "Review & Generate",
-    "subtitle": "Review your settings and generate your long-form content",
-    "summary": {
-      "title": "Content Summary",
-      "topic": "Topic",
-      "audience": "Audience", 
-      "industry": "Industry",
-      "keywords": "Keywords",
-      "tone": "Tone",
-      "structure": "Structure",
-      "wordCount": "Word Count",
-      "format": "Format",
-      "cta": "Call to Action",
-      "mediaFiles": "Media Files"
+    "subtitle": "Review your content settings, check optimization scores, and generate your content",
+    "seoScore": { "title": "SEO Score", "grade": "Grade {{grade}}", "points": "{{points}}/100 points across {{factors}} factors" },
+    "completion": { "title": "Completion", "badge": "{{completed}}/{{total}}", "required": "Required", "requiredItems": "{{completed}}/{{total}} required items complete" },
+    "publishReady": { "title": "Publish Ready", "grade": "{{grade}}", "overall": "Overall readiness for publication" },
+    "completionChecklist": { "title": "Content Completion Checklist", "required": "Required", "edit_button": "Edit" },
+    "seoScoreBreakdown": { "title": "SEO Score Breakdown", "improve_button": "Improve" },
+    "generationCost": { "title": "Generation Cost & Settings", "creditsRequired": "{{credits}} Credits Required", "estimatedTime": "Estimated generation time: {{minutes}} minutes", "includedFeatures": "Included Features:" },
+    "exportSettings": { "title": "Export Settings", "selectFormats": "Select Export Formats:" },
+    "shareDraft": { "title": "Share Draft", "desc": "Share your content settings with team members or collaborators before generating.", "generateLink": "Generate Share Link", "email": "Email", "shareableLink": "Shareable Link:", "copied": "Copied", "copy": "Copy", "twitter": "Twitter", "facebook": "Facebook" },
+    "publishReadinessAnalysis": { "title": "Publish Readiness Analysis" },
+    "checklist": { "topic": "Topic defined", "industryAudience": "Industry & Audience selected", "keywords": "Keywords added", "title": "SEO title optimized", "structure": "Content structure defined", "tone": "Content tone selected", "wordCount": "Word count configured", "format": "Output format selected", "media": "Media preferences set", "qualityChecks": "Quality checks enabled" },
+    "seoFactors": { "seoTitle": "SEO-Optimized Title", "targetKeywords": "Target Keywords", "contentLength": "Content Length", "structure": "Content Structure", "readability": "Readability", "media": "Media Integration", "meta": "Meta Optimization", "status": { "good": "Good", "needsWork": "Needs work", "couldImprove": "Could improve" }, "improve": "Improve", "defined": "Structure defined", "noStructure": "No structure selected", "toneSelected": "Tone selected for target audience", "noTone": "No tone specified", "imagesSuggested": "Images will be suggested", "noMedia": "No media integration", "metaDefined": "Industry and audience defined", "missingMeta": "Missing meta information", "keywordsSelected": "{{count}} keywords selected", "words": "{{count}} words (optimal: 1200-1800)", "titleOptimized": "Title is properly optimized", "titleNeedsOptimization": "Title needs optimization" },
+    "export": {
+      "markdown": "Markdown (.md)",
+      "markdown.desc": "Perfect for developers and version control",
+      "html": "HTML (.html)",
+      "html.desc": "Ready for web publishing",
+      "docx": "Microsoft Word (.docx)",
+      "docx.desc": "Professional document format",
+      "pdf": "PDF (.pdf)",
+      "pdf.desc": "Professional presentation format",
+      "gdocs": "Google Docs",
+      "gdocs.desc": "Collaborative editing and sharing",
+      "feature": {
+        "cleanFormatting": "Clean formatting",
+        "platformAgnostic": "Platform agnostic",
+        "easyEditing": "Easy editing",
+        "webReady": "Web-ready",
+        "seoMetaTags": "SEO meta tags",
+        "styledOutput": "Styled output",
+        "richFormatting": "Rich formatting",
+        "commentsSupport": "Comments support",
+        "trackChanges": "Track changes",
+        "printReady": "Print ready",
+        "universalCompatibility": "Universal compatibility",
+        "fixedLayout": "Fixed layout",
+        "realTimeCollab": "Real-time collaboration",
+        "commentSystem": "Comment system",
+        "cloudStorage": "Cloud storage"
+      }
     },
-    "edit": {
-      "button": "Edit",
-      "tooltip": "Click to go back and edit this section"
+    "publishReadiness": { "contentCompleteness": "Content Completeness", "seoOptimization": "SEO Optimization", "technicalSetup": "Technical Setup", "qualityAssurance": "Quality Assurance", "engagementFeatures": "Engagement Features", "requiredItems": "{{completed}}/{{total}} required items complete", "seoScore": "SEO score: {{score}}%", "exportConfigured": "Export formats and settings configured", "plagiarismEnabled": "Plagiarism checking enabled", "basicChecks": "Basic quality checks", "images": "Images", "noImages": "No images", "ctaIncluded": "CTA included", "noCta": "No CTA" },
+    "button": { "edit": "Edit", "improve": "Improve" },
+    "seo_score_factor": {
+      "title": "SEO-Optimized Title",
+      "keywords": "Target Keywords",
+      "word_count": "Content Length",
+      "structure": "Content Structure",
+      "readability": "Readability",
+      "media_integration": "Media Integration",
+      "meta_optimization": "Meta Optimization"
     },
-    "generate": {
-      "button": "Generate Content",
-      "processing": "Generating your content...",
-      "step1": "Analyzing your requirements...",
-      "step2": "Creating content outline...", 
-      "step3": "Writing your content...",
-      "step4": "Optimizing and finalizing...",
-      "success": "Content generated successfully!",
-      "error": "Generation failed. Please try again."
+    "seo_score_description": {
+      "title_optimized": "Title is properly optimized",
+      "title_needs_optimization": "Title needs optimization",
+      "keywords": "{{count}} keywords selected",
+      "word_count": "{{count}} words (optimal: 1200-1800)",
+      "structure": "{{structure}}",
+      "structure_defined": "Structure defined",
+      "structure_no_structure": "No structure selected",
+      "readability": "{{tone}}",
+      "tone_selected": "Tone selected for target audience",
+      "tone_not_specified": "No tone specified",
+      "media_integration_images_suggested": "Images will be suggested",
+      "media_integration_no_media": "No media integration",
+      "meta_optimization_industry_audience_defined": "Industry and audience defined",
+      "meta_optimization_missing_meta": "Missing meta information"
     },
-    "validation": {
-      "missingTopic": "Content topic is required",
-      "missingAudience": "Target audience is required", 
-      "missingTone": "Content tone must be selected",
-      "missingStructure": "Content structure must be selected"
-    }
+    "completion_checklist": {
+      "topic": "Topic defined",
+      "industry_audience": "Industry & Audience selected",
+      "keywords": "Keywords added",
+      "title": "SEO title optimized",
+      "structure": "Content structure defined",
+      "tone": "Content tone selected",
+      "word_count": "Word count configured",
+      "format": "Output format selected",
+      "media": "Media preferences set",
+      "quality_checks": "Quality checks enabled"
+    },
+    "publish_readiness_factor": {
+      "content_completeness": "Content Completeness",
+      "seo_optimization": "SEO Optimization",
+      "technical_setup": "Technical Setup",
+      "quality_assurance": "Quality Assurance",
+      "engagement_features": "Engagement Features"
+    },
+    "publish_readiness_description": {
+      "content_completeness": "{{completed}}/{{total}} required items complete",
+      "seo_optimization": "SEO score: {{score}}%",
+      "technical_setup": "Export formats and settings configured",
+      "quality_assurance_plagiarism_enabled": "Plagiarism checking enabled",
+      "quality_assurance_basic_checks": "Basic quality checks",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "No images",
+      "cta_included": "CTA included",
+      "no_cta": "No CTA"
+    },
+    "grade": {
+      "A": "Grade A",
+      "B": "Grade B",
+      "C": "Grade C",
+      "D": "Grade D",
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "needs_work": "Needs Work"
+    },
+    "generationCost": {
+      "basicContent": "Basic content generation",
+      "standardFormatting": "Standard formatting",
+      "enhancedContent": "Enhanced content",
+      "imageSuggestions": "Image suggestions",
+      "seoOptimization": "SEO optimization",
+      "advancedContent": "Advanced content",
+      "researchIntegration": "Research integration",
+      "plagiarismCheck": "Plagiarism check",
+      "multipleFormats": "Multiple formats"
+    },
+    "review_generate_title": "Review & Generate",
+    "review_generate_description": "Review your content settings, check optimization scores, and generate your content.",
+    "completion_checklist_title": "Content Completion Checklist",
+    "completion_checklist_required": "Required",
+    "completion_checklist_edit_button": "Edit",
+    "seo_score_title": "SEO Score",
+    "seo_score_grade": "Grade {{grade}}",
+    "seo_score_total_points": "{{total}}/100 points across {{factors}} factors",
+    "completion_title": "Completion",
+    "completion_required_items": "{{completed}}/{{total}} required items complete",
+    "publish_readiness_title": "Publish Ready",
+    "publish_readiness_description": "Overall readiness for publication",
+    "publish_readiness_description_details": {
+      "content_completeness": "{{completed}}/{{total}} required items complete",
+      "seo_optimization": "SEO score: {{score}}%",
+      "technical_setup": "Export formats and settings configured",
+      "quality_assurance_plagiarism_enabled": "Plagiarism checking enabled",
+      "quality_assurance_basic_checks": "Basic quality checks",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "No images",
+      "cta_included": "CTA included",
+      "no_cta": "No CTA"
+    },
+    "seo_score_breakdown_title": "SEO Score Breakdown",
+    "seo_score_breakdown_improve_button": "Improve",
+    "generation_settings_title": "Generation Cost & Settings",
+    "generation_cost_credits": "{{credits}} Credits Required",
+    "generation_estimated_time": "Estimated generation time: {{time}} minutes",
+    "generation_included_features": "Included Features:",
+    "export_settings_title": "Export Settings",
+    "export_formats_label": "Select Export Formats:",
+    "share_draft_title": "Share Draft",
+    "share_draft_description": "Share your content settings with team members or collaborators before generating.",
+    "generate_share_link_button": "Generate Share Link",
+    "email_button": "Email",
+    "shareable_link_label": "Shareable Link:",
+    "copy_link_copied": "Copied",
+    "copy_link_button": "Copy",
+    "twitter_button": "Twitter",
+    "facebook_button": "Facebook",
+    "publish_readiness_analysis_title": "Publish Readiness Analysis",
+    "generating_content_title": "Generating Your Content",
+    "generating_outline_description": "Creating a smart content outline...",
+    "generating_content_description": "Generating human-like content...",
+    "finalizing_content_description": "Finalizing content...",
+    "generating_outline_explanation": "Using Gemini AI to create a sophisticated content outline with smart structure",
+    "generating_content_explanation": "Using GPT to turn the outline into engaging, audience-optimized content",
+    "finalizing_content_explanation": "Applying final formatting, quality checks, and SEO optimization",
+    "outline_badge": "Outline",
+    "content_badge": "Content",
+    "finalize_badge": "Finalize",
+    "generation_time_explanation": "This process takes about {{time}} minutes. Please do not close this window.",
+    "generation_failed_title": "Generation Failed",
+    "retry_generation_button": "Retry Generation",
+    "ready_to_generate_title": "Ready to Generate Your Content?",
+    "ready_to_generate_description": "Your content will be generated with the current settings. This process will take about {{time}} minutes.",
+    "generate_button_login_text": "Please log in",
+    "generate_button_loading_text": "Loading...",
+    "generate_button_insufficient_credits_text": "Insufficient credits (Need 4)",
+    "generate_button_complete_required_items_text": "Complete required items",
+    "generate_button_generate_text": "Generate Content (4 Credits)",
+    "generate_button_login_prompt": "Please log in to generate content.",
+    "generate_button_insufficient_credits_prompt": "Insufficient credits: You have {{remaining}} credits, but {{credits}} are needed for long-form content.",
+    "generate_button_upgrade_plan_button": "Upgrade Plan",
+    "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
+    "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
+    "generate_button_credits_available": "You have {{credits}} credits available"
   },
   "smartComponents": {
     "topicEngine": {
@@ -1628,6 +1779,74 @@
         ],
         "estimatedTime": "1-2 minutes"
       }
-    }
+    },
+    "review_generate_title": "Review & Generate",
+    "review_generate_description": "Review your content settings, check optimization scores, and generate your content",
+    "completion_checklist_title": "Content Completion Checklist",
+    "completion_checklist_required": "Required",
+    "completion_checklist_edit_button": "Edit",
+    "seo_score_title": "SEO Score",
+    "seo_score_grade": "Grade {{grade}}",
+    "seo_score_total_points": "{{total}}/100 points across {{factors}} factors",
+    "completion_title": "Completion",
+    "completion_required_items": "{{completed}}/{{total}} required items complete",
+    "publish_readiness_title": "Publish Ready",
+    "publish_readiness_description": "Overall readiness for publication",
+    "publish_readiness_description_details": {
+      "content_completeness": "{{completed}}/{{total}} required items complete",
+      "seo_optimization": "SEO score: {{score}}%",
+      "technical_setup": "Export formats and settings configured",
+      "quality_assurance_plagiarism_enabled": "Plagiarism checking enabled",
+      "quality_assurance_basic_checks": "Basic quality checks",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "No images",
+      "cta_included": "CTA included",
+      "no_cta": "No CTA"
+    },
+    "seo_score_breakdown_title": "SEO Score Breakdown",
+    "seo_score_breakdown_improve_button": "Improve",
+    "generation_settings_title": "Generation Cost & Settings",
+    "generation_cost_credits": "{{credits}} Credits Required",
+    "generation_estimated_time": "Estimated generation time: {{time}} minutes",
+    "generation_included_features": "Included Features:",
+    "export_settings_title": "Export Settings",
+    "export_formats_label": "Select Export Formats:",
+    "share_draft_title": "Share Draft",
+    "share_draft_description": "Share your content settings with team members or collaborators before generating.",
+    "generate_share_link_button": "Generate Share Link",
+    "email_button": "Email",
+    "shareable_link_label": "Shareable Link:",
+    "copy_link_copied": "Copied",
+    "copy_link_button": "Copy",
+    "twitter_button": "Twitter",
+    "facebook_button": "Facebook",
+    "publish_readiness_analysis_title": "Publish Readiness Analysis",
+    "generating_content_title": "Generating Your Content",
+    "generating_outline_description": "Creating intelligent content outline...",
+    "generating_content_description": "Generating human-like content...",
+    "finalizing_content_description": "Finalizing content...",
+    "generating_outline_explanation": "Using Gemini AI to create a sophisticated content outline with intelligent structure",
+    "generating_content_explanation": "Using GPT to transform the outline into engaging, human-like content optimized for your audience",
+    "finalizing_content_explanation": "Applying final formatting, quality checks, and SEO optimization",
+    "outline_badge": "Outline",
+    "content_badge": "Content",
+    "finalize_badge": "Finalize",
+    "generation_time_explanation": "This process takes approximately {{time}} minutes. Please don't close this window.",
+    "generation_failed_title": "Generation Failed",
+    "retry_generation_button": "Retry Generation",
+    "ready_to_generate_title": "Ready to Generate Your Content?",
+    "ready_to_generate_description": "Your content will be generated with the current settings. This process will take approximately {{time}} minutes.",
+    "generate_button_login_text": "Please Log In",
+    "generate_button_loading_text": "Loading...",
+    "generate_button_insufficient_credits_text": "Insufficient Credits (Need 4)",
+    "generate_button_complete_required_items_text": "Complete Required Items",
+    "generate_button_generate_text": "Generate Content (4 Credits)",
+    "generate_button_login_prompt": "Please log in to generate content.",
+    "generate_button_insufficient_credits_prompt": "Insufficient credits: You have {{remaining}} credits, but need {{credits}} for long-form content.",
+    "generate_button_upgrade_plan_button": "Upgrade Plan",
+    "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
+    "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
+    "generate_button_credits_available": "You have {{credits}} credits available"
   }
 }

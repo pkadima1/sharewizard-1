@@ -51,6 +51,7 @@ import {
   Loader2,
   RefreshCw
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // SEO scoring weights
 const SEO_WEIGHTS = {
@@ -61,52 +62,6 @@ const SEO_WEIGHTS = {
   readability: 10,
   mediaIncluded: 10,
   metaOptimization: 5
-};
-
-// Export format options
-const EXPORT_FORMAT_OPTIONS = [
-  {
-    value: 'markdown',
-    label: 'Markdown (.md)',
-    icon: FileText,
-    description: 'Perfect for developers and version control',
-    features: ['Clean formatting', 'Platform agnostic', 'Easy editing']
-  },
-  {
-    value: 'html',
-    label: 'HTML (.html)',
-    icon: ExternalLink,
-    description: 'Ready for web publishing',
-    features: ['Web-ready', 'SEO meta tags', 'Styled output']
-  },
-  {
-    value: 'docx',
-    label: 'Microsoft Word (.docx)',
-    icon: FileText,
-    description: 'Professional document format',
-    features: ['Rich formatting', 'Comments support', 'Track changes']
-  },
-  {
-    value: 'pdf',
-    label: 'PDF (.pdf)',
-    icon: Download,
-    description: 'Professional presentation format',
-    features: ['Print ready', 'Universal compatibility', 'Fixed layout']
-  },
-  {
-    value: 'gdocs',
-    label: 'Google Docs',
-    icon: Link,
-    description: 'Collaborative editing and sharing',
-    features: ['Real-time collaboration', 'Comment system', 'Cloud storage']
-  }
-];
-
-// Generation cost tiers based on features
-const GENERATION_COSTS = {
-  basic: { credits: 5, features: ['Basic content generation', 'Standard formatting'] },
-  standard: { credits: 8, features: ['Enhanced content', 'Image suggestions', 'SEO optimization'] },
-  premium: { credits: 12, features: ['Advanced content', 'Research integration', 'Plagiarism check', 'Multiple formats'] }
 };
 
 // Define the interface for the function response
@@ -134,6 +89,7 @@ interface Step6Props {
 }
 
 const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, onGenerate, onEditStep }) => {
+  const { t } = useTranslation('longform');
   const [selectedExportFormats, setSelectedExportFormats] = useState(['markdown']);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
@@ -170,22 +126,22 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       (formData.optimizedTitle.length >= 50 && formData.optimizedTitle.length <= 60 ? 20 : 15) : 0;
     totalScore += titleScore;
     factors.push({
-      factor: 'SEO-Optimized Title',
+      factor: t('step6.seo_score_factor.title'),
       score: titleScore,
       maxScore: SEO_WEIGHTS.title,
       status: titleScore >= 15 ? 'good' : 'needs-work',
-      description: titleScore >= 15 ? 'Title is properly optimized' : 'Title needs optimization'
+      description: titleScore >= 15 ? t('step6.seo_score_description.title_optimized') : t('step6.seo_score_description.title_needs_optimization')
     });
 
     // Keywords (25 points)
     const keywordScore = formData.keywords?.length >= 3 ? 25 : (formData.keywords?.length || 0) * 8;
     totalScore += keywordScore;
     factors.push({
-      factor: 'Target Keywords',
+      factor: t('step6.seo_score_factor.keywords'),
       score: keywordScore,
       maxScore: SEO_WEIGHTS.keywords,
       status: keywordScore >= 20 ? 'good' : 'needs-work',
-      description: `${formData.keywords?.length || 0} keywords selected`
+      description: t('step6.seo_score_description.keywords', { count: formData.keywords?.length || 0 })
     });
 
     // Word count (15 points)
@@ -194,55 +150,55 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                           wordCount >= 800 ? 10 : 5;
     totalScore += wordCountScore;
     factors.push({
-      factor: 'Content Length',
+      factor: t('step6.seo_score_factor.word_count'),
       score: wordCountScore,
       maxScore: SEO_WEIGHTS.wordCount,
       status: wordCountScore >= 12 ? 'good' : 'needs-work',
-      description: `${wordCount} words (optimal: 1200-1800)`
+      description: t('step6.seo_score_description.word_count', { count: wordCount })
     });
 
     // Structure (15 points)
     const structureScore = formData.structureFormat ? 15 : 0;
     totalScore += structureScore;
     factors.push({
-      factor: 'Content Structure',
+      factor: t('step6.seo_score_factor.structure'),
       score: structureScore,
       maxScore: SEO_WEIGHTS.structure,
       status: structureScore > 0 ? 'good' : 'needs-work',
-      description: formData.structureFormat ? 'Structure defined' : 'No structure selected'
+      description: t('step6.seo_score_description.structure', { structure: formData.structureFormat ? t('step6.seo_score_description.structure_defined') : t('step6.seo_score_description.structure_no_structure') })
     });
 
     // Readability (10 points)
     const readabilityScore = formData.contentTone ? 10 : 0;
     totalScore += readabilityScore;
     factors.push({
-      factor: 'Readability',
+      factor: t('step6.seo_score_factor.readability'),
       score: readabilityScore,
       maxScore: SEO_WEIGHTS.readability,
       status: readabilityScore > 0 ? 'good' : 'needs-work',
-      description: formData.contentTone ? 'Tone selected for target audience' : 'No tone specified'
+      description: t('step6.seo_score_description.readability', { tone: formData.contentTone ? t('step6.seo_score_description.tone_selected') : t('step6.seo_score_description.tone_not_specified') })
     });
 
     // Media inclusion (10 points)
     const mediaScore = formData.includeImages ? 10 : 0;
     totalScore += mediaScore;
     factors.push({
-      factor: 'Media Integration',
+      factor: t('step6.seo_score_factor.media_integration'),
       score: mediaScore,
       maxScore: SEO_WEIGHTS.mediaIncluded,
       status: mediaScore > 0 ? 'good' : 'could-improve',
-      description: formData.includeImages ? 'Images will be suggested' : 'No media integration'
+      description: formData.includeImages ? t('step6.seo_score_description.media_integration_images_suggested') : t('step6.seo_score_description.media_integration_no_media')
     });
 
     // Meta optimization (5 points)
     const metaScore = (formData.industry && formData.audience) ? 5 : 0;
     totalScore += metaScore;
     factors.push({
-      factor: 'Meta Optimization',
+      factor: t('step6.seo_score_factor.meta_optimization'),
       score: metaScore,
       maxScore: SEO_WEIGHTS.metaOptimization,
       status: metaScore > 0 ? 'good' : 'needs-work',
-      description: metaScore > 0 ? 'Industry and audience defined' : 'Missing meta information'
+      description: metaScore > 0 ? t('step6.seo_score_description.meta_optimization_industry_audience_defined') : t('step6.seo_score_description.meta_optimization_missing_meta')
     });
 
     return {
@@ -258,69 +214,69 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     const items = [
       {
         id: 'topic',
-        label: 'Topic defined',
+        label: t('step6.completion_checklist.topic'),
         completed: !!formData.topic,
         required: true,
         editStep: 0
       },
       {
         id: 'industry-audience',
-        label: 'Industry & Audience selected',
+        label: t('step6.completion_checklist.industry_audience'),
         completed: !!(formData.industry && formData.audience),
         required: true,
         editStep: 1
       },
       {
         id: 'keywords',
-        label: 'Keywords added',
+        label: t('step6.completion_checklist.keywords'),
         completed: !!(formData.keywords?.length >= 2),
         required: true,
         editStep: 2
       },
       {
         id: 'title',
-        label: 'SEO title optimized',
+        label: t('step6.completion_checklist.title'),
         completed: !!formData.optimizedTitle,
         required: true,
         editStep: 2
       },
       {
         id: 'structure',
-        label: 'Content structure defined',
+        label: t('step6.completion_checklist.structure'),
         completed: !!formData.structureFormat,
         required: true,
         editStep: 3
       },
       {
         id: 'tone',
-        label: 'Content tone selected',
+        label: t('step6.completion_checklist.tone'),
         completed: !!formData.contentTone,
         required: true,
         editStep: 3
       },      {
         id: 'word-count',
-        label: 'Word count configured',
+        label: t('step6.completion_checklist.word_count'),
         completed: !!(formData.wordCount && formData.wordCount >= 500),
         required: false,
         editStep: 3
       },
       {
         id: 'format',
-        label: 'Output format selected',
+        label: t('step6.completion_checklist.format'),
         completed: !!formData.outputFormat,
         required: false,
         editStep: 4
       },
       {
         id: 'media',
-        label: 'Media preferences set',
+        label: t('step6.completion_checklist.media'),
         completed: formData.includeImages !== undefined,
         required: false,
         editStep: 4
       },
       {
         id: 'quality-checks',
-        label: 'Quality checks enabled',
+        label: t('step6.completion_checklist.quality_checks'),
         completed: formData.plagiarismCheck !== false,
         required: false,
         editStep: 4
@@ -349,13 +305,13 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     const hasMultipleFormats = selectedExportFormats.length > 1;
 
     if (hasAdvancedFeatures || hasMultipleFormats) {
-      return GENERATION_COSTS.premium;
+      return { credits: 12, features: [t('step6.generationCost.advancedContent'), t('step6.generationCost.researchIntegration'), t('step6.generationCost.plagiarismCheck'), t('step6.generationCost.multipleFormats')] };
     } else if (hasMediaFeatures) {
-      return GENERATION_COSTS.standard;
+      return { credits: 8, features: [t('step6.generationCost.enhancedContent'), t('step6.generationCost.imageSuggestions'), t('step6.generationCost.seoOptimization')] };
     } else {
-      return GENERATION_COSTS.basic;
+      return { credits: 5, features: [t('step6.generationCost.basicContent'), t('step6.generationCost.standardFormatting')] };
     }
-  }, [formData, selectedExportFormats]);
+  }, [formData, selectedExportFormats, t]);
 
   // Calculate publish-readiness score
   const publishReadinessScore = useMemo(() => {
@@ -366,50 +322,50 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     const contentComplete = completionChecklist.requiredPercentage;
     score += (contentComplete / 100) * 30;
     factors.push({
-      factor: 'Content Completeness',
+      factor: t('step6.publish_readiness_factor.content_completeness'),
       score: Math.round((contentComplete / 100) * 30),
       maxScore: 30,
-      description: `${completionChecklist.requiredCompleted}/${completionChecklist.requiredCount} required items complete`
+      description: t('step6.publish_readiness_description.content_completeness', { completed: completionChecklist.requiredCompleted, total: completionChecklist.requiredCount })
     });
 
     // SEO optimization (25%)
     const seoOptimization = (seoScore.total / 100) * 25;
     score += seoOptimization;
     factors.push({
-      factor: 'SEO Optimization',
+      factor: t('step6.publish_readiness_factor.seo_optimization'),
       score: Math.round(seoOptimization),
       maxScore: 25,
-      description: `SEO score: ${seoScore.percentage}%`
+      description: t('step6.publish_readiness_description.seo_optimization', { score: seoScore.percentage })
     });
 
     // Technical setup (20%)
     const technicalSetup = (formData.outputFormat && selectedExportFormats.length > 0) ? 20 : 10;
     score += technicalSetup;
     factors.push({
-      factor: 'Technical Setup',
+      factor: t('step6.publish_readiness_factor.technical_setup'),
       score: technicalSetup,
       maxScore: 20,
-      description: 'Export formats and settings configured'
+      description: t('step6.publish_readiness_description.technical_setup')
     });
 
     // Quality assurance (15%)
     const qualityAssurance = formData.plagiarismCheck ? 15 : 5;
     score += qualityAssurance;
     factors.push({
-      factor: 'Quality Assurance',
+      factor: t('step6.publish_readiness_factor.quality_assurance'),
       score: qualityAssurance,
       maxScore: 15,
-      description: formData.plagiarismCheck ? 'Plagiarism checking enabled' : 'Basic quality checks'
+      description: formData.plagiarismCheck ? t('step6.publish_readiness_description.quality_assurance_plagiarism_enabled') : t('step6.publish_readiness_description.quality_assurance_basic_checks')
     });
 
     // Engagement features (10%)
     const engagementFeatures = (formData.includeImages ? 5 : 0) + (formData.ctaType && formData.ctaType !== 'none' ? 5 : 0);
     score += engagementFeatures;
     factors.push({
-      factor: 'Engagement Features',
+      factor: t('step6.publish_readiness_factor.engagement_features'),
       score: engagementFeatures,
       maxScore: 10,
-      description: `${formData.includeImages ? 'Images' : 'No images'}, ${formData.ctaType && formData.ctaType !== 'none' ? 'CTA included' : 'No CTA'}`
+      description: t('step6.publish_readiness_description.engagement_features', { images: formData.includeImages ? t('step6.publish_readiness_description.images_included') : t('step6.publish_readiness_description.no_images'), cta: formData.ctaType && formData.ctaType !== 'none' ? t('step6.publish_readiness_description.cta_included') : t('step6.publish_readiness_description.no_cta') })
     });
 
     return {
@@ -417,7 +373,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       factors,
       grade: score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : score >= 55 ? 'Fair' : 'Needs Work'
     };
-  }, [formData, seoScore, completionChecklist, selectedExportFormats]);
+  }, [formData, seoScore, completionChecklist, selectedExportFormats, t]);
 
   // Handle export format selection
   const handleExportFormatToggle = (format) => {
@@ -465,8 +421,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
   const handleGenerate = async () => {
     // Check authentication first
     if (!currentUser) {
-      toast.error("Please log in to generate content", {
-        description: "You need to be logged in to use the content generator."
+      toast.error(t('step6.generation_login_error'), {
+        description: t('step6.generation_login_description')
       });
       navigate('/login');
       return;
@@ -474,8 +430,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
 
     // Check if user profile is loaded and has sufficient requests
     if (!userProfile) {
-      toast.error("Loading user profile...", {
-        description: "Please wait while we load your account information."
+      toast.error(t('step6.loading_profile_error'), {
+        description: t('step6.loading_profile_description')
       });
       return;
     }
@@ -483,10 +439,10 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     // Check request limits - Long-form content requires 4 credits
     const requestsRemaining = (userProfile.requests_limit || 0) - (userProfile.requests_used || 0);
     if (requestsRemaining < 4) {
-      toast.error("Insufficient credits for long-form content", {
-        description: `Long-form content requires 4 credits. You have ${requestsRemaining} credits remaining. Please upgrade your plan to continue.`,
+      toast.error(t('step6.insufficient_credits_error'), {
+        description: t('step6.insufficient_credits_description', { credits: 4, remaining: requestsRemaining }),
         action: {
-          label: "Upgrade Plan",
+          label: t('step6.upgrade_plan_action'),
           onClick: () => navigate('/pricing')
         }
       });
@@ -494,7 +450,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     }
 
     if (completionChecklist.requiredCompleted < completionChecklist.requiredCount) {
-      toast.error("Please complete all required items before generating content.");
+      toast.error(t('step6.complete_required_items_error'));
       return;
     }
     
@@ -567,8 +523,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
           setGenerationProgress(100);
           setGenerationStage('complete');
           
-          toast.success("Long-form content generated successfully!", {
-            description: `Generated ${result.data.metadata?.actualWordCount || formData.wordCount} words of high-quality content. Used 4 credits.`
+          toast.success(t('step6.generation_success'), {
+            description: t('step6.generation_success_description', { wordCount: result.data.metadata?.actualWordCount || formData.wordCount })
           });
 
           // Navigate to the dashboard longform tab
@@ -593,46 +549,46 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       console.error("Generation error:", error);
       
       // Enhanced error handling with specific messages for common errors
-      let errorMessage = "An unexpected error occurred during content generation. Please try again.";
+      let errorMessage = t('step6.generation_unexpected_error');
       let errorAction = null;
       
       if (error.code) {
         // Handle Firebase error codes
         switch (error.code) {
           case 'functions/cancelled':
-            errorMessage = "The generation process was cancelled. Please try again.";
+            errorMessage = t('step6.generation_cancelled_error');
             break;
           case 'functions/deadline-exceeded':
-            errorMessage = "The generation process took too long. Try reducing the word count or simplifying your request.";
+            errorMessage = t('step6.generation_deadline_exceeded_error');
             break;
           case 'functions/resource-exhausted':
-            errorMessage = "You've reached your content generation limit or don't have enough credits.";
+            errorMessage = t('step6.generation_resource_exhausted_error');
             errorAction = {
-              label: "Upgrade Plan",
+              label: t('step6.upgrade_plan_action'),
               onClick: () => navigate('/pricing')
             };
             break;
           case 'functions/unauthenticated':
           case 'functions/permission-denied':
-            errorMessage = "You don't have permission to generate content. Please log in again or contact support.";
+            errorMessage = t('step6.generation_permission_denied_error');
             errorAction = {
-              label: "Log In",
+              label: t('step6.log_in_action'),
               onClick: () => navigate('/login')
             };
             break;
           case 'functions/internal':
             if (error.message && error.message.includes('insufficient credits')) {
-              errorMessage = "Insufficient credits to generate long-form content. You need 4 credits for this operation.";
+              errorMessage = t('step6.generation_insufficient_credits_error');
               errorAction = {
-                label: "Upgrade Plan",
+                label: t('step6.upgrade_plan_action'),
                 onClick: () => navigate('/pricing')
               };
             } else {
-              errorMessage = `Content generation failed due to an internal error: ${error.message}. Please try again or contact support if this persists.`;
+              errorMessage = t('step6.generation_internal_error', { message: error.message });
             }
             break;
           case 'functions/invalid-argument':
-            errorMessage = `Invalid input provided: ${error.message}. Please check your inputs and try again.`;
+            errorMessage = t('step6.generation_invalid_argument_error', { message: error.message });
             break;
           default:
             // Use the error message from Firebase if available
@@ -641,20 +597,20 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       } else if (error.message) {
         // Handle non-Firebase errors
         if (error.message.includes('insufficient credits') || error.message.includes('not enough credits')) {
-          errorMessage = "Insufficient credits to generate long-form content. You need 4 credits per generation.";
+          errorMessage = t('step6.generation_insufficient_credits_per_generation_error');
           errorAction = {
-            label: "Upgrade Plan",
+            label: t('step6.upgrade_plan_action'),
             onClick: () => navigate('/pricing')
           };
         } else {
-          errorMessage = `Generation failed: ${error.message}`;
+          errorMessage = t('step6.generation_failed', { message: error.message });
         }
       }
 
       setGenerationError(errorMessage);
       setIsGenerating(false);
       
-      toast.error("Failed to generate long-form content", {
+      toast.error(t('step6.generation_failed_error'), {
         description: errorMessage,
         action: errorAction
       });
@@ -672,13 +628,59 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     onEditStep(field.editStep);
   };
 
+  // Export format options (translation-aware)
+  const EXPORT_FORMAT_OPTIONS = useMemo(() => [
+    {
+      value: 'markdown',
+      label: t('step6.export.markdown'),
+      icon: FileText,
+      description: t('step6.export.markdown.desc'),
+      features: [t('step6.export.feature.cleanFormatting'), t('step6.export.feature.platformAgnostic'), t('step6.export.feature.easyEditing')]
+    },
+    {
+      value: 'html',
+      label: t('step6.export.html'),
+      icon: ExternalLink,
+      description: t('step6.export.html.desc'),
+      features: [t('step6.export.feature.webReady'), t('step6.export.feature.seoMetaTags'), t('step6.export.feature.styledOutput')]
+    },
+    {
+      value: 'docx',
+      label: t('step6.export.docx'),
+      icon: FileText,
+      description: t('step6.export.docx.desc'),
+      features: [t('step6.export.feature.richFormatting'), t('step6.export.feature.commentsSupport'), t('step6.export.feature.trackChanges')]
+    },
+    {
+      value: 'pdf',
+      label: t('step6.export.pdf'),
+      icon: Download,
+      description: t('step6.export.pdf.desc'),
+      features: [t('step6.export.feature.printReady'), t('step6.export.feature.universalCompatibility'), t('step6.export.feature.fixedLayout')]
+    },
+    {
+      value: 'gdocs',
+      label: t('step6.export.gdocs'),
+      icon: Link,
+      description: t('step6.export.gdocs.desc'),
+      features: [t('step6.export.feature.realTimeCollab'), t('step6.export.feature.commentSystem'), t('step6.export.feature.cloudStorage')]
+    }
+  ], [t]);
+
+  // Generation cost tiers based on features (translation-aware)
+  const GENERATION_COSTS = useMemo(() => ({
+    basic: { credits: 5, features: [t('step6.generationCost.basicContent'), t('step6.generationCost.standardFormatting')] },
+    standard: { credits: 8, features: [t('step6.generationCost.enhancedContent'), t('step6.generationCost.imageSuggestions'), t('step6.generationCost.seoOptimization')] },
+    premium: { credits: 12, features: [t('step6.generationCost.advancedContent'), t('step6.generationCost.researchIntegration'), t('step6.generationCost.plagiarismCheck'), t('step6.generationCost.multipleFormats')] }
+  }), [t]);
+
   return (
     <TooltipProvider>
       <div className="space-y-6 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-2xl font-bold">Review & Generate</h2>
+          <h2 className="text-2xl font-bold">{t('step6.review_generate_title')}</h2>
           <p className="text-muted-foreground">
-            Review your content settings, check optimization scores, and generate your content
+            {t('step6.review_generate_description')}
           </p>
         </div>
 
@@ -689,7 +691,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
-                SEO Score
+                {t('step6.seo_score_title')}
               </h3>
               <Badge className={`${
                 seoScore.grade === 'A' ? 'bg-green-100 text-green-800' :
@@ -697,7 +699,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 seoScore.grade === 'C' ? 'bg-yellow-100 text-yellow-800' :
                 'bg-red-100 text-red-800'
               }`}>
-                Grade {seoScore.grade}
+                {t('step6.seo_score_grade', { grade: seoScore.grade })}
               </Badge>
             </div>
             <div className="space-y-2">
@@ -707,7 +709,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
               </div>
               <Progress value={seoScore.percentage} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {seoScore.total}/100 points across {seoScore.factors.length} factors
+                {t('step6.seo_score_total_points', { total: seoScore.total, factors: seoScore.factors.length })}
               </p>
             </div>
           </Card>
@@ -717,7 +719,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
-                Completion
+                {t('step6.completion_title')}
               </h3>
               <Badge variant="outline">
                 {completionChecklist.completedCount}/{completionChecklist.totalCount}
@@ -730,7 +732,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
               </div>
               <Progress value={completionChecklist.percentage} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {completionChecklist.requiredCompleted}/{completionChecklist.requiredCount} required items complete
+                {t('step6.completion_required_items', { completed: completionChecklist.requiredCompleted, total: completionChecklist.requiredCount })}
               </p>
             </div>
           </Card>
@@ -740,7 +742,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold flex items-center gap-2">
                 <Award className="h-4 w-4" />
-                Publish Ready
+                {t('step6.publish_readiness_title')}
               </h3>
               <Badge className={`${
                 publishReadinessScore.grade === 'Excellent' ? 'bg-green-100 text-green-800' :
@@ -758,7 +760,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
               </div>
               <Progress value={publishReadinessScore.total} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                Overall readiness for publication
+                {t('step6.publish_readiness_description')}
               </p>
             </div>
           </Card>
@@ -771,7 +773,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <Card className="p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <CheckCircle2 className="h-4 w-4" />
-                Content Completion Checklist
+                {t('step6.completion_checklist_title')}
               </h3>
               
               <div className="space-y-3">
@@ -790,7 +792,9 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                           {item.label}
                         </span>
                         {item.required && (
-                          <Badge variant="outline" className="ml-2 text-xs">Required</Badge>
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {t('step6.completion_checklist_required')}
+                          </Badge>
                         )}
                       </div>
                     </div>
@@ -802,7 +806,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                         className="flex items-center gap-1"
                       >
                         <Edit3 className="h-3 w-3" />
-                        Edit
+                        {t('step6.completion_checklist_edit_button')}
                       </Button>
                     )}
                   </div>
@@ -814,7 +818,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <Card className="p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <TrendingUp className="h-4 w-4" />
-                SEO Score Breakdown
+                {t('step6.seo_score_breakdown_title')}
               </h3>
               
               <div className="space-y-3">
@@ -835,7 +839,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                       <span>{factor.description}</span>
                       {factor.status !== 'good' && (
                         <Button variant="ghost" size="sm" className="h-6 text-xs">
-                          Improve
+                          {t('step6.seo_score_breakdown_improve_button')}
                         </Button>
                       )}
                     </div>
@@ -852,17 +856,17 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <Card className="p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <Coins className="h-4 w-4" />
-                Generation Cost & Settings
+                {t('step6.generation_settings_title')}
               </h3>
               
               <div className="space-y-4">
                 <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 p-3 rounded-md">
                   <div>
                     <p className="font-medium">
-                      {generationCost.credits} Credits Required
+                      {t('step6.generation_cost_credits', { credits: generationCost.credits })}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Estimated generation time: {estimatedTime} minutes
+                      {t('step6.generation_estimated_time', { time: estimatedTime })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -872,7 +876,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Included Features:</Label>
+                  <Label className="text-sm font-medium">{t('step6.generation_included_features')}</Label>
                   <div className="space-y-1">
                     {generationCost.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2 text-sm">
@@ -889,12 +893,12 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <Card className="p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <Download className="h-4 w-4" />
-                Export Settings
+                {t('step6.export_settings_title')}
               </h3>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Select Export Formats:</Label>
+                  <Label className="text-sm font-medium">{t('step6.export_formats_label')}</Label>
                   <div className="grid gap-2">
                     {EXPORT_FORMAT_OPTIONS.map((format) => (
                       <div
@@ -936,12 +940,12 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
             <Card className="p-4">
               <h3 className="font-semibold flex items-center gap-2 mb-4">
                 <Share2 className="h-4 w-4" />
-                Share Draft
+                {t('step6.share_draft_title')}
               </h3>
               
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  Share your content settings with team members or collaborators before generating.
+                  {t('step6.share_draft_description')}
                 </p>
                 
                 <div className="flex gap-2">
@@ -952,7 +956,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                     className="flex items-center gap-2"
                   >
                     <Link className="h-4 w-4" />
-                    Generate Share Link
+                    {t('step6.generate_share_link_button')}
                   </Button>
                   <Button
                     variant="outline"
@@ -960,13 +964,13 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                     className="flex items-center gap-2"
                   >
                     <Mail className="h-4 w-4" />
-                    Email
+                    {t('step6.email_button')}
                   </Button>
                 </div>
 
                 {shareModalOpen && (
                   <div className="p-3 bg-muted/50 rounded-md space-y-2">
-                    <Label className="text-xs font-medium">Shareable Link:</Label>
+                    <Label className="text-xs font-medium">{t('step6.shareable_link_label')}</Label>
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -982,12 +986,12 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                         {copied ? (
                           <>
                             <CheckCircle2 className="h-3 w-3" />
-                            Copied
+                            {t('step6.copy_link_copied')}
                           </>
                         ) : (
                           <>
                             <Copy className="h-3 w-3" />
-                            Copy
+                            {t('step6.copy_link_button')}
                           </>
                         )}
                       </Button>
@@ -995,11 +999,11 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                     <div className="flex gap-2 pt-2">
                       <Button size="sm" variant="outline" className="flex items-center gap-1">
                         <Twitter className="h-3 w-3" />
-                        Twitter
+                        {t('step6.twitter_button')}
                       </Button>
                       <Button size="sm" variant="outline" className="flex items-center gap-1">
                         <Facebook className="h-3 w-3" />
-                        Facebook
+                        {t('step6.facebook_button')}
                       </Button>
                     </div>
                   </div>
@@ -1013,7 +1017,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         <Card className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 border border-purple-200 dark:border-purple-800">
           <h3 className="font-semibold flex items-center gap-2 mb-3">
             <Award className="h-4 w-4" />
-            Publish Readiness Analysis
+            {t('step6.publish_readiness_analysis_title')}
           </h3>
           
           <div className="grid gap-4 md:grid-cols-2">
@@ -1052,7 +1056,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         {isGenerating && !generationError && (
           <Card className="p-6 text-center">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Generating Your Content</h3>
+              <h3 className="text-lg font-semibold">{t('step6.generating_content_title')}</h3>
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
                   <Loader2 className="h-8 w-8 text-primary animate-spin" />
@@ -1062,10 +1066,10 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                   <div className="flex justify-between text-sm">
                     <span>
                       {generationStage === 'outline' 
-                        ? 'Creating intelligent content outline...' 
+                        ? t('step6.generating_outline_description') 
                         : generationStage === 'content'
-                          ? 'Generating human-like content...'
-                          : 'Finalizing content...'}
+                          ? t('step6.generating_content_description')
+                          : t('step6.finalizing_content_description')}
                     </span>
                     <span>{generationProgress}%</span>
                   </div>
@@ -1073,20 +1077,26 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 </div>
                   <p className="text-sm text-muted-foreground">
                   {generationStage === 'outline' 
-                    ? 'Using Gemini AI to create a sophisticated content outline with intelligent structure' 
+                    ? t('step6.generating_outline_explanation') 
                     : generationStage === 'content'
-                      ? 'Using GPT to transform the outline into engaging, human-like content optimized for your audience'
-                      : 'Applying final formatting, quality checks, and SEO optimization'}
+                      ? t('step6.generating_content_explanation')
+                      : t('step6.finalizing_content_explanation')}
                 </p>
                 
                 <div className="flex justify-center gap-2 mt-2">
-                  <Badge variant={generationStage === 'outline' ? 'default' : 'outline'}>Outline</Badge>
-                  <Badge variant={generationStage === 'content' ? 'default' : 'outline'}>Content</Badge>
-                  <Badge variant={generationStage === 'complete' ? 'default' : 'outline'}>Finalize</Badge>
+                  <Badge variant={generationStage === 'outline' ? 'default' : 'outline'}>
+                    {t('step6.outline_badge')}
+                  </Badge>
+                  <Badge variant={generationStage === 'content' ? 'default' : 'outline'}>
+                    {t('step6.content_badge')}
+                  </Badge>
+                  <Badge variant={generationStage === 'complete' ? 'default' : 'outline'}>
+                    {t('step6.finalize_badge')}
+                  </Badge>
                 </div>
                 
                 <p className="text-xs text-muted-foreground">
-                  This process takes approximately {estimatedTime} minutes. Please don't close this window.
+                  {t('step6.generation_time_explanation', { time: estimatedTime })}
                 </p>
               </div>
             </div>
@@ -1097,7 +1107,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         {generationError && (
           <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Generation Failed</AlertTitle>
+            <AlertTitle>{t('step6.generation_failed_title')}</AlertTitle>
             <AlertDescription>
               {generationError}
               <Button 
@@ -1107,7 +1117,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 className="mt-2 flex items-center gap-1"
               >
                 <RefreshCw className="h-3 w-3" />
-                Retry Generation
+                {t('step6.retry_generation_button')}
               </Button>
             </AlertDescription>
           </Alert>
@@ -1118,9 +1128,9 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
           <Card className="p-6 text-center">
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold">Ready to Generate Your Content?</h3>
+                <h3 className="text-lg font-semibold">{t('step6.ready_to_generate_title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Your content will be generated with the current settings. This process will take approximately {estimatedTime} minutes.
+                  {t('step6.ready_to_generate_description', { time: estimatedTime })}
                 </p>
               </div>
               
@@ -1136,23 +1146,23 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 className="w-full h-12 text-base"
               >
                 <Zap className="h-5 w-5 mr-2" />
-                {!currentUser ? "Please Log In" :
-                 !userProfile ? "Loading..." :
-                 ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4 ? "Insufficient Credits (Need 4)" :
-                 completionChecklist.requiredCompleted < completionChecklist.requiredCount ? "Complete Required Items" :
-                 `Generate Content (4 Credits)`}
+                {!currentUser ? t('step6.generate_button_login_text') :
+                 !userProfile ? t('step6.generate_button_loading_text') :
+                 ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4 ? t('step6.generate_button_insufficient_credits_text') :
+                 completionChecklist.requiredCompleted < completionChecklist.requiredCount ? t('step6.generate_button_complete_required_items_text') :
+                 t('step6.generate_button_generate_text')}
               </Button>
 
               {!currentUser && (
                 <p className="text-sm text-amber-600 dark:text-amber-400">
-                  Please log in to generate content.
+                  {t('step6.generate_button_login_prompt')}
                 </p>
               )}
               
               {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) < 4 && (
                 <div className="text-center space-y-2">
                   <p className="text-sm text-red-600 dark:text-red-400">
-                    Insufficient credits: You have {((userProfile.requests_limit || 0) - (userProfile.requests_used || 0))} credits, but need 4 for long-form content.
+                    {t('step6.generate_button_insufficient_credits_prompt', { credits: 4, remaining: ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) })}
                   </p>
                   <Button 
                     variant="outline" 
@@ -1160,24 +1170,24 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                     onClick={() => navigate('/pricing')}
                     className="text-xs"
                   >
-                    Upgrade Plan
+                    {t('step6.generate_button_upgrade_plan_button')}
                   </Button>
                 </div>
               )}
 
               {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) >= 4 && completionChecklist.requiredCompleted < completionChecklist.requiredCount && (
                 <p className="text-sm text-red-600 dark:text-red-400">
-                  Please complete all required items before generating content.
+                  {t('step6.generate_button_complete_required_items_prompt')}
                 </p>
               )}
               
               {currentUser && userProfile && ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) >= 4 && completionChecklist.requiredCompleted >= completionChecklist.requiredCount && (
                 <div className="text-center space-y-1">
                   <p className="text-xs text-muted-foreground">
-                    Content will be generated in {selectedExportFormats.length} format{selectedExportFormats.length > 1 ? 's' : ''}: {selectedExportFormats.join(', ')}
+                    {t('step6.generate_button_formats_explanation', { formats: selectedExportFormats.length, format: selectedExportFormats.length > 1 ? 's' : '' })}
                   </p>
                   <p className="text-xs text-green-600 dark:text-green-400">
-                    ✓ You have {((userProfile.requests_limit || 0) - (userProfile.requests_used || 0))} credits available
+                    ✓ {t('step6.generate_button_credits_available', { credits: ((userProfile.requests_limit || 0) - (userProfile.requests_used || 0)) })}
                   </p>
                 </div>
               )}

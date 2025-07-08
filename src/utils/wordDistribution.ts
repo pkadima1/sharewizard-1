@@ -1,575 +1,204 @@
 /**
- * Shared word distribution utility
- * Calculates word allocation for content structures based on user's total word count
+ * Shared word/character distribution utility
+ * Calculates allocation for content structures based on user's total word or character count
+ * Now supports localization, configurability, section flexibility, and error handling
+ *
+ * @param structureFormat - The content structure format key
+ * @param totalCount - The total word or character count
+ * @param options - Optional config: { useCharacters, includeImages, t, config }
+ *   - useCharacters: boolean (default false, use words)
+ *   - includeImages: boolean (default false)
+ *   - t: translation function (key, defaultValue) => string
+ *   - config: external config object for formats/sections
+ * @returns Array of section objects with translation keys and counts
  */
 
 export interface WordDistributionSection {
   id: string;
-  name: string;
-  description: string;
+  nameKey: string; // translation key
+  descriptionKey: string; // translation key
   percentage: number;
-  minWords: number;
-  estimatedWords: number;
+  min: number;
+  estimated: number;
   type: 'heading' | 'paragraph' | 'list' | 'image' | 'quote' | 'cta';
 }
 
-/**
- * Calculate word distribution for different content structure formats
- */
+interface CalculateOptions {
+  useCharacters?: boolean;
+  includeImages?: boolean;
+  t?: (key: string, defaultValue?: string) => string;
+  config?: Record<string, any>;
+}
+
 export const calculateWordDistribution = (
   structureFormat: string,
-  totalWordCount: number,
-  includeImages: boolean = false
+  totalCount: number,
+  options: CalculateOptions = {}
 ): WordDistributionSection[] => {
-  let remainingWords = totalWordCount;
+  const {
+    useCharacters = false,
+    includeImages = false,
+    t = (k: string, d?: string) => d || k,
+    config = undefined
+  } = options;
+
+  // Use external config if provided, else fallback to built-in
+  const formatConfig = config?.[structureFormat] || getDefaultFormatConfig(structureFormat);
+  if (!formatConfig) {
+    // Unknown format fallback
+    return [{
+      id: '1',
+      nameKey: 'structure.unknown',
+      descriptionKey: 'structure.unknownDesc',
+      percentage: 1.0,
+      min: totalCount,
+      estimated: totalCount,
+      type: 'paragraph'
+    }];
+  }
+
+  let remaining = totalCount;
   const sections: WordDistributionSection[] = [];
 
-  // Helper function to allocate words and track remaining
-  const allocateWords = (percentage: number, minWords: number = 10): number => {
-    const allocated = Math.max(Math.floor(remainingWords * percentage), minWords);
-    remainingWords = Math.max(0, remainingWords - allocated);
+  // Helper for allocation
+  const allocate = (percentage: number, min: number = 10): number => {
+    const allocated = Math.max(Math.floor(remaining * percentage), min);
+    remaining = Math.max(0, remaining - allocated);
     return allocated;
   };
 
-  switch (structureFormat) {
-    case 'intro-points-cta':
-      sections.push(
-        {
-          id: '1',
-          name: 'Introduction',
-          description: 'Hook and overview',
-          percentage: 0.15,
-          minWords: 50,
-          estimatedWords: allocateWords(0.15, 50),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Main Point 1',
-          description: 'First key concept',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Main Point 2',
-          description: 'Second key concept',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Main Point 3',
-          description: 'Third key concept',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Call to Action',
-          description: 'Clear next step',
-          percentage: 0.1,
-          minWords: 30,
-          estimatedWords: Math.max(remainingWords, 30),
-          type: 'cta'
-        }
-      );
-      break;
+  // Flexible section allocation
+  for (const [i, section] of formatConfig.sections.entries()) {
+    const pct = section.percentage;
+    const min = section.min || 10;
+    const est = allocate(pct, min);
+    sections.push({
+      id: String(i + 1),
+      nameKey: section.nameKey,
+      descriptionKey: section.descriptionKey,
+      percentage: pct,
+      min,
+      estimated: est,
+      type: section.type
+    });
+  }
 
-    case 'problem-solution-cta':
-      sections.push(
-        {
-          id: '1',
-          name: 'Problem Identification',
-          description: 'Define the challenge',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '2',
-          name: 'Impact & Consequences',
-          description: 'Why it matters',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'paragraph'
-        },
-        {
-          id: '3',
-          name: 'Solution Overview',
-          description: 'Your approach',
-          percentage: 0.3,
-          minWords: 120,
-          estimatedWords: allocateWords(0.3, 120),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Implementation Steps',
-          description: 'How to apply',
-          percentage: 0.15,
-          minWords: 80,
-          estimatedWords: allocateWords(0.15, 80),
-          type: 'list'
-        },
-        {
-          id: '5',
-          name: 'Call to Action',
-          description: 'Next steps',
-          percentage: 0.1,
-          minWords: 30,
-          estimatedWords: Math.max(remainingWords, 30),
-          type: 'cta'
-        }
-      );
-      break;
-
-    case 'listicle':
-      const numListItems = 7;
-      const introWords = allocateWords(0.1, 50);
-      const wordsPerItem = Math.floor((remainingWords - 50) / numListItems);
-      
-      sections.push({
-        id: '1',
-        name: 'Introduction',
-        description: 'List overview',
-        percentage: 0.1,
-        minWords: 50,
-        estimatedWords: introWords,
-        type: 'paragraph'
-      });
-
-      for (let i = 1; i <= numListItems; i++) {
-        const itemWords = Math.min(wordsPerItem, remainingWords);
-        remainingWords = Math.max(0, remainingWords - itemWords);
-        
-        sections.push({
-          id: `item-${i}`,
-          name: `Point ${i}`,
-          description: `List item #${i}`,
-          percentage: wordsPerItem / totalWordCount,
-          minWords: 50,
-          estimatedWords: itemWords,
-          type: 'list'
-        });
-      }
-
-      sections.push({
-        id: 'conclusion',
-        name: 'Conclusion',
-        description: 'Clear next step',
-        percentage: 0.1,
-        minWords: 30,
-        estimatedWords: Math.max(remainingWords, 30),
-        type: 'cta'
-      });
-      break;
-
-    case 'how-to-step-by-step':
-      sections.push(
-        {
-          id: '1',
-          name: 'What You\'ll Learn',
-          description: 'Process overview',
-          percentage: 0.1,
-          minWords: 50,
-          estimatedWords: allocateWords(0.1, 50),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Step 1',
-          description: 'First step',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Step 2',
-          description: 'Second step',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Step 3',
-          description: 'Third step',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Step 4',
-          description: 'Fourth step',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '6',
-          name: 'Next Steps',
-          description: 'Clear next steps',
-          percentage: 0.1,
-          minWords: 30,
-          estimatedWords: Math.max(remainingWords, 30),
-          type: 'cta'
-        }
-      );
-      break;
-
-    case 'faq-qa':
-      const numQuestions = Math.min(7, Math.max(3, Math.floor(totalWordCount / 100)));
-      const introWordsFAQ = allocateWords(0.1, 50);
-      const wordsPerQuestionFAQ = Math.floor((remainingWords - 50) / numQuestions);
-
-      sections.push({
-        id: '1',
-        name: 'Introduction',
-        description: 'FAQ overview',
-        percentage: 0.1,
-        minWords: 50,
-        estimatedWords: introWordsFAQ,
-        type: 'paragraph'
-      });
-
-      for (let i = 1; i <= numQuestions; i++) {
-        const qWords = Math.min(wordsPerQuestionFAQ, remainingWords);
-        remainingWords = Math.max(0, remainingWords - qWords);
-        
-        sections.push({
-          id: `faq-${i}`,
-          name: `Question ${i}`,
-          description: 'FAQ question and answer',
-          percentage: qWords / totalWordCount,
-          minWords: 50,
-          estimatedWords: qWords,
-          type: 'heading'
-        });
-      }
-
-      sections.push({
-        id: 'conclusion',
-        name: 'Still Have Questions?',
-        description: 'Summary and resources',
-        percentage: 0.05,
-        minWords: 30,
-        estimatedWords: Math.max(remainingWords, 30),
-        type: 'paragraph'
-      });
-      break;
-
-    case 'story-facts-lessons':
-      sections.push(
-        {
-          id: '1',
-          name: 'Opening Story',
-          description: 'Engaging narrative',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Key Facts & Data',
-          description: 'Supporting evidence',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'paragraph'
-        },
-        {
-          id: '3',
-          name: 'Analysis',
-          description: 'What it means',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Lessons Learned',
-          description: 'Key takeaways',
-          percentage: 0.15,
-          minWords: 80,
-          estimatedWords: allocateWords(0.15, 80),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Application',
-          description: 'How to use',
-          percentage: 0.1,
-          minWords: 30,
-          estimatedWords: Math.max(remainingWords, 30),
-          type: 'cta'
-        }
-      );
-      break;
-
-    case 'comparison-vs':
-      sections.push(
-        {
-          id: '1',
-          name: 'Comparison Overview',
-          description: 'What being compared',
-          percentage: 0.15,
-          minWords: 60,
-          estimatedWords: allocateWords(0.15, 60),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Option A',
-          description: 'First option',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Option B',
-          description: 'Second option',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Side by Side',
-          description: 'Direct comparison',
-          percentage: 0.25,
-          minWords: 100,
-          estimatedWords: allocateWords(0.25, 100),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Recommendation',
-          description: 'Best choice',
-          percentage: 0.1,
-          minWords: 50,
-          estimatedWords: Math.max(remainingWords, 50),
-          type: 'paragraph'
-        }
-      );
-      break;
-
-    case 'review-analysis':
-      sections.push(
-        {
-          id: '1',
-          name: 'Overview',
-          description: 'Subject introduction',
-          percentage: 0.12,
-          minWords: 50,
-          estimatedWords: allocateWords(0.12, 50),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Key Features',
-          description: 'Main features',
-          percentage: 0.22,
-          minWords: 80,
-          estimatedWords: allocateWords(0.22, 80),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Pros',
-          description: 'Strengths',
-          percentage: 0.18,
-          minWords: 70,
-          estimatedWords: allocateWords(0.18, 70),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Cons',
-          description: 'Weaknesses',
-          percentage: 0.18,
-          minWords: 70,
-          estimatedWords: allocateWords(0.18, 70),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Pricing & Value',
-          description: 'Cost analysis',
-          percentage: 0.15,
-          minWords: 60,
-          estimatedWords: allocateWords(0.15, 60),
-          type: 'heading'
-        },
-        {
-          id: '6',
-          name: 'Final Verdict',
-          description: 'Recommendation',
-          percentage: 0.15,
-          minWords: 50,
-          estimatedWords: Math.max(remainingWords, 50),
-          type: 'paragraph'
-        }
-      );
-      break;
-
-    case 'case-study':
-      sections.push(
-        {
-          id: '1',
-          name: 'Executive Summary',
-          description: 'Brief overview',
-          percentage: 0.1,
-          minWords: 40,
-          estimatedWords: allocateWords(0.1, 40),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Background',
-          description: 'Client context',
-          percentage: 0.18,
-          minWords: 80,
-          estimatedWords: allocateWords(0.18, 80),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Challenge',
-          description: 'Problem statement',
-          percentage: 0.22,
-          minWords: 100,
-          estimatedWords: allocateWords(0.22, 100),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Solution',
-          description: 'Approach used',
-          percentage: 0.25,
-          minWords: 120,
-          estimatedWords: allocateWords(0.25, 120),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Results',
-          description: 'Outcomes achieved',
-          percentage: 0.15,
-          minWords: 70,
-          estimatedWords: allocateWords(0.15, 70),
-          type: 'heading'
-        },
-        {
-          id: '6',
-          name: 'Lessons Learned',
-          description: 'Key insights',
-          percentage: 0.1,
-          minWords: 40,
-          estimatedWords: Math.max(remainingWords, 40),
-          type: 'paragraph'
-        }
-      );
-      break;
-
-    case 'custom':
-      // For custom structures, allocate all words to a single section
-      sections.push({
-        id: '1',
-        name: 'Custom Structure',
-        description: 'Define your own sections',
-        percentage: 1.0,
-        minWords: totalWordCount,
-        estimatedWords: totalWordCount,
-        type: 'paragraph'
-      });
-      break;
-
-    default: // article or other formats
-      sections.push(
-        {
-          id: '1',
-          name: 'Introduction',
-          description: 'Subject introduction',
-          percentage: 0.15,
-          minWords: 50,
-          estimatedWords: allocateWords(0.15, 50),
-          type: 'paragraph'
-        },
-        {
-          id: '2',
-          name: 'Background',
-          description: 'Context and background',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '3',
-          name: 'Key Features',
-          description: 'Main features and benefits',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '4',
-          name: 'Approach Used',
-          description: 'Methodology and approach',
-          percentage: 0.2,
-          minWords: 80,
-          estimatedWords: allocateWords(0.2, 80),
-          type: 'heading'
-        },
-        {
-          id: '5',
-          name: 'Best Choice',
-          description: 'Recommendations',
-          percentage: 0.15,
-          minWords: 60,
-          estimatedWords: allocateWords(0.15, 60),
-          type: 'heading'
-        },
-        {
-          id: '6',
-          name: 'Conclusion',
-          description: 'Summary and takeaways',
-          percentage: 0.1,
-          minWords: 30,
-          estimatedWords: Math.max(remainingWords, 30),
-          type: 'paragraph'
-        }
-      );
-      break;
+  // If any remaining, add to last section
+  if (remaining > 0 && sections.length > 0) {
+    sections[sections.length - 1].estimated += remaining;
   }
 
   return sections;
 };
 
+// Default config for built-in formats (translation keys only)
+function getDefaultFormatConfig(format: string) {
+  switch (format) {
+    case 'problem-solution-cta':
+      // Alias to intro-points-cta for now
+      format = 'intro-points-cta';
+      // fallthrough
+    case 'intro-points-cta':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.introductionDesc', percentage: 0.15, min: 50, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.mainPoint1', descriptionKey: 'step4.structure.sections.mainPoint1Desc', percentage: 0.25, min: 100, type: 'heading' },
+          { nameKey: 'step4.structure.sections.mainPoint2', descriptionKey: 'step4.structure.sections.mainPoint2Desc', percentage: 0.25, min: 100, type: 'heading' },
+          { nameKey: 'step4.structure.sections.mainPoint3', descriptionKey: 'step4.structure.sections.mainPoint3Desc', percentage: 0.25, min: 100, type: 'heading' },
+          { nameKey: 'step4.structure.sections.callToAction', descriptionKey: 'step4.structure.sections.callToActionDesc', percentage: 0.1, min: 30, type: 'cta' }
+        ]
+      };
+    case 'how-to-steps':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.howToIntroDesc', percentage: 0.15, min: 50, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.prerequisites', descriptionKey: 'step4.structure.sections.prerequisitesDesc', percentage: 0.1, min: 30, type: 'list' },
+          { nameKey: 'step4.structure.sections.step1', descriptionKey: 'step4.structure.sections.step1Desc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.step2', descriptionKey: 'step4.structure.sections.step2Desc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.step3', descriptionKey: 'step4.structure.sections.step3Desc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.additionalSteps', descriptionKey: 'step4.structure.sections.additionalStepsDesc', percentage: 0.15, min: 30, type: 'list' },
+          { nameKey: 'step4.structure.sections.conclusionTips', descriptionKey: 'step4.structure.sections.conclusionTipsDesc', percentage: 0.06, min: 30, type: 'paragraph' }
+        ]
+      };
+    case 'faq-qa':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.topicOverviewDesc', percentage: 0.12, min: 40, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.question1Answer', descriptionKey: 'step4.structure.sections.question1AnswerDesc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.question2Answer', descriptionKey: 'step4.structure.sections.question2AnswerDesc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.question3Answer', descriptionKey: 'step4.structure.sections.question3AnswerDesc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.additionalQAs', descriptionKey: 'step4.structure.sections.additionalQAsDesc', percentage: 0.15, min: 30, type: 'list' },
+          { nameKey: 'step4.structure.sections.conclusion', descriptionKey: 'step4.structure.sections.conclusionDesc', percentage: 0.1, min: 30, type: 'paragraph' }
+        ]
+      };
+    case 'comparison-vs':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.comparisonIntroDesc', percentage: 0.15, min: 50, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.optionAOverview', descriptionKey: 'step4.structure.sections.optionAOverviewDesc', percentage: 0.2, min: 60, type: 'heading' },
+          { nameKey: 'step4.structure.sections.optionBOverview', descriptionKey: 'step4.structure.sections.optionBOverviewDesc', percentage: 0.2, min: 60, type: 'heading' },
+          { nameKey: 'step4.structure.sections.sideBySideComparison', descriptionKey: 'step4.structure.sections.sideBySideComparisonDesc', percentage: 0.25, min: 80, type: 'list' },
+          { nameKey: 'step4.structure.sections.prosAndCons', descriptionKey: 'step4.structure.sections.prosAndConsDesc', percentage: 0.15, min: 40, type: 'list' },
+          { nameKey: 'step4.structure.sections.recommendation', descriptionKey: 'step4.structure.sections.recommendationDesc', percentage: 0.1, min: 30, type: 'paragraph' }
+        ]
+      };
+    case 'review-analysis':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.reviewIntroDesc', percentage: 0.12, min: 40, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.keyFeatures', descriptionKey: 'step4.structure.sections.keyFeaturesDesc', percentage: 0.22, min: 60, type: 'heading' },
+          { nameKey: 'step4.structure.sections.pros', descriptionKey: 'step4.structure.sections.prosDesc', percentage: 0.18, min: 40, type: 'heading' },
+          { nameKey: 'step4.structure.sections.cons', descriptionKey: 'step4.structure.sections.consDesc', percentage: 0.18, min: 40, type: 'heading' },
+          { nameKey: 'step4.structure.sections.performanceAnalysis', descriptionKey: 'step4.structure.sections.performanceAnalysisDesc', percentage: 0.15, min: 40, type: 'heading' },
+          { nameKey: 'step4.structure.sections.finalVerdict', descriptionKey: 'step4.structure.sections.finalVerdictDesc', percentage: 0.15, min: 30, type: 'paragraph' }
+        ]
+      };
+    case 'case-study-detailed':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.caseStudyOverviewDesc', percentage: 0.1, min: 30, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.background', descriptionKey: 'step4.structure.sections.backgroundDesc', percentage: 0.18, min: 50, type: 'heading' },
+          { nameKey: 'step4.structure.sections.challenge', descriptionKey: 'step4.structure.sections.challengeDesc', percentage: 0.22, min: 60, type: 'heading' },
+          { nameKey: 'step4.structure.sections.solution', descriptionKey: 'step4.structure.sections.solutionDesc', percentage: 0.25, min: 70, type: 'heading' },
+          { nameKey: 'step4.structure.sections.results', descriptionKey: 'step4.structure.sections.resultsDesc', percentage: 0.15, min: 40, type: 'heading' },
+          { nameKey: 'step4.structure.sections.lessonsLearned', descriptionKey: 'step4.structure.sections.lessonsLearnedDesc', percentage: 0.1, min: 30, type: 'paragraph' }
+        ]
+      };
+    case 'story-facts-lessons':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.openingStory', descriptionKey: 'step4.structure.sections.openingStoryDesc', percentage: 0.25, min: 60, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.keyFactsData', descriptionKey: 'step4.structure.sections.keyFactsDataDesc', percentage: 0.25, min: 60, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.analysis', descriptionKey: 'step4.structure.sections.analysisDesc', percentage: 0.25, min: 60, type: 'heading' },
+          { nameKey: 'step4.structure.sections.lessonsLearned', descriptionKey: 'step4.structure.sections.lessonsLearnedDesc', percentage: 0.15, min: 40, type: 'heading' },
+          { nameKey: 'step4.structure.sections.application', descriptionKey: 'step4.structure.sections.applicationDesc', percentage: 0.1, min: 30, type: 'cta' }
+        ]
+      };
+    case 'listicle':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.introduction', descriptionKey: 'step4.structure.sections.listOverviewDesc', percentage: 0.1, min: 30, type: 'paragraph' },
+          { nameKey: 'step4.structure.sections.point1', descriptionKey: 'step4.structure.sections.point1Desc', percentage: 0.18, min: 40, type: 'list' },
+          { nameKey: 'step4.structure.sections.point2', descriptionKey: 'step4.structure.sections.point2Desc', percentage: 0.18, min: 40, type: 'list' },
+          { nameKey: 'step4.structure.sections.point3', descriptionKey: 'step4.structure.sections.point3Desc', percentage: 0.18, min: 40, type: 'list' },
+          { nameKey: 'step4.structure.sections.point4', descriptionKey: 'step4.structure.sections.point4Desc', percentage: 0.18, min: 40, type: 'list' },
+          { nameKey: 'step4.structure.sections.point5', descriptionKey: 'step4.structure.sections.point5Desc', percentage: 0.18, min: 40, type: 'list' }
+        ]
+      };
+    case 'custom':
+      return {
+        sections: [
+          { nameKey: 'step4.structure.sections.customStructure', descriptionKey: 'step4.structure.sections.customStructureDesc', percentage: 1.0, min: 100, type: 'paragraph' }
+        ]
+      };
+    default:
+      return null;
+  }
+}
+
 /**
- * Calculate total words from a distribution
+ * Calculate total from a distribution (words or characters)
  */
-export const getTotalWordsFromDistribution = (sections: WordDistributionSection[]): number => {
-  return sections.reduce((total, section) => total + section.estimatedWords, 0);
+export const getTotalFromDistribution = (sections: WordDistributionSection[]): number => {
+  return sections.reduce((total, section) => total + section.estimated, 0);
 };
