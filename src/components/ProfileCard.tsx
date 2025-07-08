@@ -3,6 +3,7 @@ import { UserProfile, SubscriptionTier } from '@/types';
 import { formatDate, getDaysRemaining, getSubscriptionBadgeClass } from '@/lib/constants';
 import { Calendar, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 interface ProfileCardProps {
   user: UserProfile;
@@ -12,16 +13,17 @@ interface ProfileCardProps {
 const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
   const daysRemaining = user.planExpiryDate ? getDaysRemaining(user.planExpiryDate) : null;
     // Helper function to map backend subscription types to display names
+  const { t } = useAppTranslation('profile');
   const getDisplayTier = (tier: SubscriptionTier): string => {
     switch(tier) {
-      case 'basicMonth': return 'Basic Monthly';
-      case 'basicYear': return 'Basic Yearly';
-      case 'premiumMonth': return 'Premium Monthly';
-      case 'premiumYear': return 'Premium Yearly';
-      case 'flexy': return 'Flex';
-      case 'trial': return 'Trial';
+      case 'basicMonth': return t('profileCard.tiers.basicMonth');
+      case 'basicYear': return t('profileCard.tiers.basicYear');
+      case 'premiumMonth': return t('profileCard.tiers.premiumMonth');
+      case 'premiumYear': return t('profileCard.tiers.premiumYear');
+      case 'flexy': return t('profileCard.tiers.flexy');
+      case 'trial': return t('profileCard.tiers.trial');
       case 'free':
-      default: return 'Free';
+      default: return t('profileCard.tiers.free');
     }
   };
   
@@ -30,7 +32,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
       <div className="relative h-36 bg-gradient-to-r from-indigo-600 to-violet-600">
         <div className="absolute top-20 left-40 sm:left-44">
           <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            {user.fullName || "User"}
+            {user.fullName || t('user', 'User')}
           </h1>
           <div className="flex items-center space-x-1.5 text-white/80">
             <Mail size={16} />
@@ -41,7 +43,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
           onClick={onEditProfile}
           className="absolute top-4 right-4 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/30 focus:ring-2 focus:ring-white/50 focus:outline-none"
         >
-          Edit Profile
+          {t('profileCard.editProfile')}
         </button>
       </div>
       
@@ -58,7 +60,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-sm font-medium text-gray-600 dark:text-gray-300">Subscription Plan</div>
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-300">{t('profileCard.subscriptionPlan')}</div>
             <div className="flex items-center mt-2">
               <span className={cn("inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium shadow-sm", getSubscriptionBadgeClass(user.subscriptionTier))}>
                 {getDisplayTier(user.subscriptionTier)}
@@ -66,14 +68,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user, onEditProfile }) => {
               
               {daysRemaining !== null && (
                 <span className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                  ({daysRemaining} days remaining)
+                  ({daysRemaining} {t('profileCard.daysRemaining')})
                 </span>
               )}
             </div>
           </div>
           
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-sm font-medium text-gray-600 dark:text-gray-300">Member Since</div>
+            <div className="text-sm font-medium text-gray-600 dark:text-gray-300">{t('profileCard.memberSince')}</div>
             <div className="flex items-center mt-2 text-gray-900 dark:text-white">
               <Calendar size={16} className="mr-1.5 text-gray-600 dark:text-gray-300" />
               <span>{formatDate(user.dateJoined)}</span>

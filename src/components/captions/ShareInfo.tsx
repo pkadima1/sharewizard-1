@@ -15,23 +15,23 @@ const ShareInfo: React.FC<ShareInfoProps> = ({ isVideo, className = '' }) => {
       <div className="flex items-start">
         <AlertCircle className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
         <div>
-          <p className="font-medium text-blue-800 dark:text-blue-300">About Sharing {isVideo ? 'Videos' : 'Images'}</p>
+          <p className="font-medium text-blue-800 dark:text-blue-300">À Propos du Partage {isVideo ? 'de Vidéos' : 'd\'Images'}</p>
           <p className="mt-1 text-blue-700 dark:text-blue-200">
             {isVideo ? (
               <>
-                Browsers require that sharing happens immediately after you click the share button. 
-                Since video processing takes time, we use a two-step approach:
+                Les navigateurs exigent que le partage se fasse immédiatement après avoir cliqué sur le bouton de partage. 
+                Comme le traitement vidéo prend du temps, nous utilisons une approche en deux étapes :
                 <ol className="list-decimal pl-5 mt-2 space-y-1">
-                  <li>Click share to prepare your video</li>
-                  <li>When ready, click "Share Now" to share directly from your device</li>
+                  <li>Cliquez sur partager pour préparer votre vidéo</li>
+                  <li>Quand c'est prêt, cliquez sur "Partager Maintenant" pour partager directement depuis votre appareil</li>
                 </ol>
               </>
             ) : (
               <>
-                For the best sharing experience, click the Share button and then:
+                Pour la meilleure expérience de partage, cliquez sur le bouton Partager puis :
                 <ol className="list-decimal pl-5 mt-2 space-y-1">
-                  <li>Wait for your content to be prepared</li>
-                  <li>Click "Share Now" to open your device's native sharing options</li>
+                  <li>Attendez que votre contenu soit préparé</li>
+                  <li>Cliquez sur "Partager Maintenant" pour ouvrir les options de partage natives de votre appareil</li>
                 </ol>
               </>
             )}

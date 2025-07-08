@@ -2,73 +2,74 @@
 import React from 'react';
 import { TrendingUp, DollarSign, Flame, BookOpen, Target, Users, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 // Define the content goals with their properties
 const CONTENT_GOALS = [
   {
     id: 'boost-engagement',
-    title: 'Boost Engagement',
-    description: 'Increase likes, comments and shares',
+    titleKey: 'boostEngagement',
+    descriptionKey: 'boostEngagement',
+    bestForKey: 'boostEngagement',
+    examplesKey: 'boostEngagement',
     icon: Flame,
     bgColor: 'bg-gradient-to-r from-orange-400 to-orange-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-orange-500/20',
-    bestFor: 'Content that encourages interaction',
-    examples: 'Questions, polls, controversial topics',
     priority: 1, // Higher priority goals appear first
   },
   {
     id: 'grow-audience',
-    title: 'Grow Audience',
-    description: 'Expand your follower base and reach',
+    titleKey: 'growAudience',
+    descriptionKey: 'growAudience',
+    bestForKey: 'growAudience',
+    examplesKey: 'growAudience',
     icon: TrendingUp,
     bgColor: 'bg-gradient-to-r from-green-400 to-emerald-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-green-500/20',
-    bestFor: 'Broadly appealing content',
-    examples: 'Trending topics, viral challenges',
     priority: 2,
   },
   {
     id: 'share-knowledge',
-    title: 'Share Knowledge',
-    description: 'Educate and provide value',
+    titleKey: 'shareKnowledge',
+    descriptionKey: 'shareKnowledge',
+    bestForKey: 'shareKnowledge',
+    examplesKey: 'shareKnowledge',
     icon: BookOpen,
     bgColor: 'bg-gradient-to-r from-purple-400 to-purple-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-purple-500/20',
-    bestFor: 'Educational content that builds authority',
-    examples: 'Tutorials, tips, how-to guides',
     priority: 3,
   },
   {
     id: 'drive-sales',
-    title: 'Drive Sales',
-    description: 'Convert followers into customers',
+    titleKey: 'driveSales',
+    descriptionKey: 'driveSales',
+    bestForKey: 'driveSales',
+    examplesKey: 'driveSales',
     icon: DollarSign,
     bgColor: 'bg-gradient-to-r from-blue-400 to-blue-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-blue-500/20',
-    bestFor: 'Promotional content with clear CTAs',
-    examples: 'Product features, special offers, testimonials',
     priority: 4,
   },
   {
     id: 'brand-awareness',
-    title: 'Brand Awareness',
-    description: 'Increase visibility and recognition',
+    titleKey: 'brandAwareness',
+    descriptionKey: 'brandAwareness',
+    bestForKey: 'brandAwareness',
+    examplesKey: 'brandAwareness',
     icon: Target,
     bgColor: 'bg-gradient-to-r from-pink-400 to-pink-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-pink-500/20',
-    bestFor: 'Content that showcases brand values',
-    examples: 'Brand stories, behind-the-scenes content',
     priority: 5,
   },
   {
     id: 'build-community',
-    title: 'Build Community',
-    description: 'Foster relationships with followers',
+    titleKey: 'buildCommunity',
+    descriptionKey: 'buildCommunity',
+    bestForKey: 'buildCommunity',
+    examplesKey: 'buildCommunity',
     icon: Users,
     bgColor: 'bg-gradient-to-r from-amber-400 to-amber-500',
     hoverBgColor: 'hover:shadow-lg hover:shadow-amber-500/20',
-    bestFor: 'Content that creates belonging',
-    examples: 'User-generated content, community spotlights',
     priority: 6,
   }
 ];
@@ -82,6 +83,8 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
   selectedGoal, 
   onGoalChange 
 }) => {
+  const { t } = useTranslation('caption-generator');
+  
   // Get selected goal details for the info box
   const selectedGoalDetails = CONTENT_GOALS.find(goal => goal.id === selectedGoal);
 
@@ -93,10 +96,10 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
       {/* Heading and description */}
       <div className="text-center mb-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          What's the Goal of Your Content?
+          {t('steps.goal.heading')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
-          Select the primary goal for your content. AI will generate captions optimized for this purpose.
+          {t('steps.goal.subheading')}
         </p>
       </div>
 
@@ -114,7 +117,7 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
                 ? "ring-4 ring-white/30 shadow-xl scale-[1.02]" 
                 : "ring-0 hover:ring-2 hover:ring-white/20 hover:shadow-lg"
             )}
-            aria-label={`Select ${goal.title} as your content goal`}
+            aria-label={t('steps.goal.selectGoalAriaLabel', { goalTitle: t(`steps.goal.goals.${goal.titleKey}.title`) })}
           >
             <div className="flex flex-col space-y-3 w-full">
               {/* Icon and selected indicator */}
@@ -125,15 +128,15 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
                 
                 {selectedGoal === goal.id && (
                   <div className="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
-                    Selected
+                    {t('steps.goal.selected')}
                   </div>
                 )}
               </div>
               
               {/* Goal title and description */}
               <div>
-                <h3 className="text-lg font-semibold">{goal.title}</h3>
-                <p className="text-sm text-white/90 mt-1 line-clamp-2">{goal.description}</p>
+                <h3 className="text-lg font-semibold">{t(`steps.goal.goals.${goal.titleKey}.title`)}</h3>
+                <p className="text-sm text-white/90 mt-1 line-clamp-2">{t(`steps.goal.goals.${goal.descriptionKey}.description`)}</p>
               </div>
             </div>
           </button>
@@ -153,18 +156,18 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
           <div className="space-y-2 flex-1">
             <h3 className="text-blue-300 font-medium flex items-center">
               <Info className="w-4 h-4 mr-1.5" />
-              Goal Strategy: {selectedGoalDetails.title}
+              {t('steps.goal.goalStrategy')}: {t(`steps.goal.goals.${selectedGoalDetails.titleKey}.title`)}
             </h3>
             
             <div className="space-y-3">
               <p className="text-sm text-gray-300">
-                Your captions will be optimized for <span className="text-white font-medium">{selectedGoalDetails.title.toLowerCase()}</span>. 
-                This type of content is <span className="text-blue-200">best for {selectedGoalDetails.bestFor.toLowerCase()}</span>.
+                {t('steps.goal.optimizedFor')} <span className="text-white font-medium">{t(`steps.goal.goals.${selectedGoalDetails.titleKey}.title`).toLowerCase()}</span>. 
+                {t('steps.goal.bestForText')} <span className="text-blue-200">{t(`steps.goal.goals.${selectedGoalDetails.bestForKey}.bestFor`).toLowerCase()}</span>.
               </p>
               
               <div className="text-xs text-gray-400 bg-blue-950/50 p-3 rounded-lg">
-                <span className="text-blue-300 font-medium block mb-1">Content Examples:</span>
-                {selectedGoalDetails.examples}
+                <span className="text-blue-300 font-medium block mb-1">{t('steps.goal.contentExamples')}:</span>
+                {t(`steps.goal.goals.${selectedGoalDetails.examplesKey}.examples`)}
               </div>
             </div>
           </div>
@@ -176,7 +179,7 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({
         <p className="flex items-start">
           <Info className="w-4 h-4 text-gray-400 mr-2 mt-0.5" />
           <span>
-            <span className="font-medium text-gray-700 dark:text-gray-300">Tip:</span> Focusing on one primary goal helps create more effective and targeted content. You can always change this for future posts.
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t('steps.goal.tipTitle')}</span> {t('steps.goal.tipText')}
           </span>
         </p>
       </div>

@@ -26,6 +26,9 @@ export default {
       transitionDuration: {
         'theme': '300ms',
       },
+      borderWidth: {
+        '3': '3px',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -152,5 +155,30 @@ export default {
     require("tailwindcss-animate"),
     // Optionally add Typography plugin if needed
     // require("@tailwindcss/typography")
+    
+    // Custom line-clamp utilities for text truncation
+    function({ addUtilities }: any) {
+      const newUtilities = {
+        '.line-clamp-1': {
+          overflow: 'hidden',
+          display: '-webkit-box',
+          '-webkit-box-orient': 'vertical',
+          '-webkit-line-clamp': '1',
+        },
+        '.line-clamp-2': {
+          overflow: 'hidden',
+          display: '-webkit-box',
+          '-webkit-box-orient': 'vertical',
+          '-webkit-line-clamp': '2',
+        },
+        '.line-clamp-3': {
+          overflow: 'hidden',
+          display: '-webkit-box',
+          '-webkit-box-orient': 'vertical',
+          '-webkit-line-clamp': '3',
+        }
+      }
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }
   ],
 } satisfies Config;

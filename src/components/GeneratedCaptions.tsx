@@ -142,11 +142,11 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-adaptive-primary">Choose Your Caption</h2>
+        <h2 className="text-xl font-semibold text-adaptive-primary">Choisissez Votre Légende</h2>
         <div className="flex items-center gap-4">
           {requestsRemaining !== null && (
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              {requestsRemaining} requests remaining
+              {requestsRemaining} requêtes restantes
             </span>
           )}
           <Button 
@@ -154,7 +154,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
             size="sm"
             onClick={handleRegenerateClick}
           >
-            Regenerate
+            Régénérer
           </Button>
         </div>
       </div>
@@ -176,7 +176,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                 className="w-full flex items-center justify-center gap-2 py-3"
               >
                 <Type className="h-4 w-4" />
-                Add Custom Text
+                Ajouter du Texte Personnalisé
               </Button>
             </div>
           )}
@@ -188,7 +188,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
             {captions.length > 0 && selectedCaption >= 0 && (
               <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-medium text-gray-900 dark:text-white">Preview</h3>
+                  <h3 className="font-medium text-gray-900 dark:text-white">Aperçu</h3>
                 </div>
                 <div ref={mediaContainerRef} className="relative">
                   <CaptionPreview 
@@ -263,7 +263,7 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                 {customTextOverlay.text && !isTextOnly && (
                   <div className="mt-4 flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Show generated caption with custom text
+                      Afficher la légende générée avec le texte personnalisé
                     </span>
                     <Switch
                       checked={showCaptionWithCustomText}

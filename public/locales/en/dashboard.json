@@ -1,0 +1,74 @@
+{
+  "overview": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{name}}!",
+    "subtitle": "Here's what's happening with your content",
+    "stats": "Your stats",
+    "recentShares": "Recent Activity", 
+    "popularContent": "Popular Content",
+    "quickActions": "Quick Actions"
+  },
+  "stats": {
+    "totalShares": "Total Generated",
+    "activeShares": "Posted", 
+    "totalViews": "Total Views",
+    "averageViews": "Avg. Reading Time",
+    "requestsUsed": "Requests Used",
+    "requestsRemaining": "Requests Remaining"
+  },
+  "content": {
+    "empty": "No posts found",
+    "create": "Try adjusting your filters or create new content to see it here",
+    "filter": "Filter content",
+    "search": "Search your content", 
+    "sort": "Sort by",
+    "gridView": "Grid",
+    "listView": "List",
+    "hideFilters": "Hide Filters",
+    "filterOptions": "Filter & Sort Options",
+    "allPlatforms": "All Platforms",
+    "allGoals": "All Goals",
+    "newestFirst": "Newest First",
+    "longform": "Long-form Content",
+    "captions": "Captions",
+    "viewAll": "View all {{count}} articles →"
+  },
+  "captions": {
+    "subtitle": "Manage your AI-generated social media captions",
+    "managementComingSoon": "Caption Management Coming Soon",
+    "historyComingSoon": "Caption history and management features will be available here."
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit", 
+    "delete": "Delete",
+    "share": "Share",
+    "analytics": "Analytics",
+    "duplicate": "Duplicate",
+    "export": "Export"
+  },
+  "quickActions": {
+    "captionGenerator": "AI Caption Generator",
+    "captionDesc": "Create engaging captions for social media posts with AI",
+    "longformContent": "Long-form Content", 
+    "longformDesc": "Generate comprehensive articles and guides with AI",
+    "generateCaptions": "Generate Captions",
+    "viewMyContent": "View My Content"
+  },
+  "subscription": {
+    "currentPlan": "Current Plan: {{plan}}",
+    "memberSince": "Member Since",
+    "subscriptionPlan": "Subscription Plan",
+    "usageStatistics": "Usage Statistics",
+    "requestUsage": "Request Usage",
+    "upgradePrompt": "Choose a plan and start your 5-day free trial with our Basic plan",
+    "startTrial": "Start 5-Day Free Trial"
+  },
+  "activity": {
+    "generated": "Generated",
+    "posted": "Posted", 
+    "favorites": "Favorites",
+    "noActivity": "No recent activity",
+    "createFirst": "Create your first content to see activity here"
+  }
+}

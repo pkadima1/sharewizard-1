@@ -66,7 +66,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-medium flex items-center">
           <Type className="h-4 w-4 mr-1.5 text-primary" />
-          Custom Text Overlay
+          Superposition de Texte Personnalisé
         </h3>
         <Button 
           variant="ghost" 
@@ -84,7 +84,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
             value={textOverlay}
             onChange={(e) => setTextOverlay(e.target.value)}
             className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
-            placeholder="Enter your custom text..."
+            placeholder="Entrez votre texte personnalisé..."
             rows={2}
             style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
           />
@@ -124,7 +124,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-gray-600 dark:text-gray-400">
-            Text Color
+            Couleur du Texte
           </label>
           <div className="flex gap-2 mt-1 items-center">
             <input
@@ -137,16 +137,16 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
               type="button"
               className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"
               onClick={() => setTextColor('#000000')}
-              title="Set text color to black"
+              title="Définir la couleur du texte en noir"
             >
-              Black
+              Noir
             </button>
           </div>
         </div>
         
         <div>
           <label className="text-xs text-gray-600 dark:text-gray-400">
-            Text Size: {textSize}px
+            Taille du Texte: {textSize}px
           </label>
           <Slider
             value={[textSize]}
@@ -162,7 +162,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       {/* Text rotation slider */}
       <div className="mt-2">
         <label className="text-xs text-gray-600 dark:text-gray-400">
-          Text Rotation: {textRotation}&deg;
+          Rotation du Texte: {textRotation}&deg;
         </label>
         <Slider
           value={[textRotation]}
@@ -177,7 +177,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
       {/* Draggable indicator */}
       <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
         <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-        <span>Click and drag the text on the image to position it</span>
+        <span>Cliquez et faites glisser le texte sur l'image pour le positionner</span>
       </div>
     </div>
   );

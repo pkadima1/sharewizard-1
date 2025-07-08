@@ -1,0 +1,11 @@
+{
+  "show_caption_on_media": "Caption on Media",
+  "show_caption_below": "Caption Below Media",
+  "caption_always_on_video": "Caption overlay always enabled for videos",
+  "edit_text_overlay": "Edit Text Overlay",
+  "add_text_overlay": "Add Text Overlay",
+  "preview_post": "Preview Post",
+  "processing_video": "Processing video...",
+  "processing_wait": "This may take a moment",
+  "back": "Back"
+}

@@ -24,89 +24,133 @@ import { useAutoSave, getDraftInfo, formatLastSaved } from '@/hooks/useAutoSave'
 import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngine';
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import ContextualHelp from '@/components/wizard/smart/ContextualHelp';
+import { useTranslation } from 'react-i18next';
 
-// Content tone options
-const TONE_OPTIONS = [
-  { value: 'friendly', label: 'Friendly' },
-  { value: 'professional', label: 'Professional' },
-  { value: 'thought-provoking', label: 'Thought-Provoking' },
-  { value: 'expert', label: 'Expert' },
-  { value: 'persuasive', label: 'Persuasive' }
-];
-
-// Content type options
-const CONTENT_TYPE_OPTIONS = [
-  { value: 'blog-article', label: 'Blog Article' },
-  { value: 'newsletter', label: 'Newsletter' },
-  { value: 'case-study', label: 'Case Study' },
-  { value: 'guide', label: 'Guide' },
-  { value: 'thought-piece', label: 'Thought Piece' }
-];
-
-// Structure format options
-const STRUCTURE_FORMAT_OPTIONS = [
-  { value: 'intro-points-cta', label: 'Intro + 3 Main Points + CTA' },
-  { value: 'problem-solution-cta', label: 'Problem → Solution → Call to Action' },
-  { value: 'story-facts-lessons', label: 'Story + Facts + Lessons' },
-  { value: 'listicle', label: 'Listicle (e.g. 5 ways to...)' },
-  { value: 'custom', label: 'Custom outline' }
-];
-
-// CTA type options
-const CTA_TYPE_OPTIONS = [
-  { value: 'subscribe', label: 'Subscribe' },
-  { value: 'book-call', label: 'Book a Call' },
-  { value: 'download', label: 'Download Freebie' },
-  { value: 'visit-website', label: 'Visit Website' },
-  { value: 'none', label: 'None' }
-];
-
-// Define the steps of our wizard with metadata - NEW FLOW
-const WIZARD_STEPS = [
+// Helper function to get translated wizard steps
+const getWizardSteps = (t: any) => [
   { 
-    name: 'What & Who', 
+    name: t('wizard.steps.whatWho.name'), 
     optional: false, 
     estimatedTime: 4,
-    description: 'Define your topic and target audience'
+    description: t('wizard.steps.whatWho.description')
   },
   { 
-    name: 'Media & Visuals', 
+    name: t('wizard.steps.mediaVisuals.name'), 
     optional: false, 
     estimatedTime: 3,
-    description: 'Upload and manage your visual content'
+    description: t('wizard.steps.mediaVisuals.description')
   },
   { 
-    name: 'SEO & Keywords', 
+    name: t('wizard.steps.seoKeywords.name'), 
     optional: false, 
     estimatedTime: 4,
-    description: 'Optimize with smart keyword suggestions'
+    description: t('wizard.steps.seoKeywords.description')
   },
   { 
-    name: 'Structure & Tone', 
+    name: t('wizard.steps.structureTone.name'), 
     optional: false, 
     estimatedTime: 3,
-    description: 'Create your content blueprint'
+    description: t('wizard.steps.structureTone.description')
   },
   { 
-    name: 'Generation Settings', 
+    name: t('wizard.steps.generationSettings.name'), 
     optional: true, 
     estimatedTime: 2,
-    description: 'Configure length, format, and CTA'
+    description: t('wizard.steps.generationSettings.description')
   },
   { 
-    name: 'Review & Generate', 
+    name: t('wizard.steps.reviewGenerate.name'), 
     optional: false, 
     estimatedTime: 1,
-    description: 'Final preview and content generation'
+    description: t('wizard.steps.reviewGenerate.description')
   }
 ];
 
-// Progress persistence keys
-const PROGRESS_STORAGE_KEY = 'longform-wizard-progress';
-const COMPLETED_STEPS_KEY = 'longform-wizard-completed';
-const SKIPPED_STEPS_KEY = 'longform-wizard-skipped';
+// Helper function to get translated tone options
+const getToneOptions = (t: any) => [
+  { value: 'friendly', label: t('step4.tone.options.friendly') },
+  { value: 'professional', label: t('step4.tone.options.professional') },
+  { value: 'thought-provoking', label: t('step4.tone.options.thoughtProvoking') },
+  { value: 'expert', label: t('step4.tone.options.expert') },
+  { value: 'persuasive', label: t('step4.tone.options.persuasive') },
+  { value: 'informative', label: t('step4.tone.options.informative') },
+  { value: 'casual', label: t('step4.tone.options.casual') },
+  { value: 'authoritative', label: t('step4.tone.options.authoritative') },
+  { value: 'inspirational', label: t('step4.tone.options.inspirational') },
+  { value: 'humorous', label: t('step4.tone.options.humorous') },
+  { value: 'empathetic', label: t('step4.tone.options.empathetic') }
+];
+
+// Helper function to get translated content type options
+const getContentTypeOptions = (t: any) => [
+  { value: 'blog-article', label: t('step4.contentType.options.blogArticle') },
+  { value: 'newsletter', label: t('step4.contentType.options.newsletter') },
+  { value: 'case-study', label: t('step4.contentType.options.caseStudy') },
+  { value: 'guide', label: t('step4.contentType.options.guide') },
+  { value: 'thought-piece', label: t('step4.contentType.options.thoughtPiece') }
+];
+
+// Helper function to get translated structure format options
+const getStructureFormatOptions = (t: any) => [
+  { value: 'intro-points-cta', label: t('step4.structure.options.introPointsCta') },
+  { value: 'problem-solution-cta', label: t('step4.structure.options.problemSolutionCta') },
+  { value: 'story-facts-lessons', label: t('step4.structure.options.storyFactsLessons') },
+  { value: 'listicle', label: t('step4.structure.options.listicle') },
+  { value: 'how-to-step-by-step', label: t('step4.structure.options.howToStepByStep') },
+  { value: 'faq-qa', label: t('step4.structure.options.faqQa') },
+  { value: 'comparison-vs', label: t('step4.structure.options.comparisonVs') },
+  { value: 'review-analysis', label: t('step4.structure.options.reviewAnalysis') },
+  { value: 'case-study', label: t('step4.structure.options.caseStudy') },
+  { value: 'custom', label: t('step4.structure.options.custom') }
+];
+
+// Helper function to get translated CTA type options
+const getCtaTypeOptions = (t: any) => [
+  { value: 'subscribe', label: t('step5.cta.options.subscribe') },
+  { value: 'book-call', label: t('step5.cta.options.bookCall') },
+  { value: 'download', label: t('step5.cta.options.download') },
+  { value: 'visit-website', label: t('step5.cta.options.visitWebsite') },
+  { value: 'none', label: t('step5.cta.options.none') }
+];
 
 const LongFormWizard = () => {
+  const { t } = useTranslation('longform');
+  
+  // Helper function to format last saved time with proper translation context
+  // Import the translation function directly from the common namespace
+  const { t: tCommon } = useTranslation('common');
+  
+  const formatSavedTime = (lastSaved: Date | null): string => {
+    if (!lastSaved) return tCommon('time.never');
+    
+    const now = new Date();
+    const diffMs = now.getTime() - lastSaved.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    
+    if (diffMinutes < 1) {
+      return tCommon('time.justNow');
+    } else if (diffMinutes < 60) {
+      // Now using the tCommon function that points directly to the common namespace
+      return tCommon('time.minutesAgo', { count: diffMinutes });
+    } else if (diffHours < 24) {
+      return tCommon('time.hoursAgo', { count: diffHours });
+    } else {
+      return lastSaved.toLocaleDateString();
+    }
+  };
+  
+  // Get translated options
+  const WIZARD_STEPS = getWizardSteps(t);
+  const TONE_OPTIONS = getToneOptions(t);
+  const CONTENT_TYPE_OPTIONS = getContentTypeOptions(t);
+  const STRUCTURE_FORMAT_OPTIONS = getStructureFormatOptions(t);
+  const CTA_TYPE_OPTIONS = getCtaTypeOptions(t);
+
+  // Progress persistence keys
+  const PROGRESS_STORAGE_KEY = 'longform-wizard-progress';
+  const COMPLETED_STEPS_KEY = 'longform-wizard-completed';
+  const SKIPPED_STEPS_KEY = 'longform-wizard-skipped';
   // Load saved progress
   const loadSavedProgress = () => {
     try {
@@ -152,7 +196,7 @@ const LongFormWizard = () => {
   const navigate = useNavigate();
   const safeNavigate = useSafeNavigation();
   const { suggestedKeywords, suggestedStructure, suggestedTone, isLoading } = useSmartSuggestions(formData);
-  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData);
+  const { isStepValid, getStepErrors, isFormValid } = useWizardValidation(formData, t);
   
   // Auto-save functionality
   const { hasSavedDraft, lastSaved, lastSavedFormatted, restoreDraft, clearDraft, saveNow } = useAutoSave(formData, {
@@ -327,7 +371,7 @@ const LongFormWizard = () => {
     } else {
       const errors = getStepErrors(currentStep);
       const errorMessages = errors.map(error => error.message).join('\n');
-      alert(`Please fix the following errors before proceeding:\n\n${errorMessages}`);
+      alert(`${t('wizard.errors.beforeProceed')}\n\n${errorMessages}`);
       return;
     }
 
@@ -379,7 +423,7 @@ const LongFormWizard = () => {
   // Handle generation
   const handleGenerate = () => {
     if (!isFormValid) {
-      alert('Please complete all required fields before generating content.');
+      alert(t('wizard.errors.allRequired'));
       return;
     }
     console.log('Generating content with data:', formData);
@@ -392,7 +436,7 @@ const LongFormWizard = () => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Keyboard className="h-5 w-5" />
-            Keyboard Shortcuts
+            {t('wizard.keyboard.title')}
           </h3>
           <Button
             variant="ghost"
@@ -406,7 +450,7 @@ const LongFormWizard = () => {
         
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm">Proceed to next step</span>
+            <span className="text-sm">{t('wizard.keyboard.nextStep')}</span>
             <Badge variant="outline" className="font-mono text-xs">
               <Command className="h-3 w-3 mr-1" />
               Ctrl + Enter
@@ -414,7 +458,7 @@ const LongFormWizard = () => {
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-sm">Go back to previous step</span>
+            <span className="text-sm">{t('wizard.keyboard.prevStep')}</span>
             <Badge variant="outline" className="font-mono text-xs">
               <Command className="h-3 w-3 mr-1" />
               Ctrl + Shift + Enter
@@ -422,7 +466,7 @@ const LongFormWizard = () => {
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-sm">Manual save draft</span>
+            <span className="text-sm">{t('wizard.keyboard.manualSave')}</span>
             <Badge variant="outline" className="font-mono text-xs">
               <Command className="h-3 w-3 mr-1" />
               Ctrl + S
@@ -430,14 +474,14 @@ const LongFormWizard = () => {
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-sm">Navigate through form</span>
+            <span className="text-sm">{t('wizard.keyboard.navigate')}</span>
             <Badge variant="outline" className="font-mono text-xs">
               Tab / Shift + Tab
             </Badge>
           </div>
           
           <div className="flex items-center justify-between">
-            <span className="text-sm">Show/hide this help</span>
+            <span className="text-sm">{t('wizard.keyboard.showHelp')}</span>
             <Badge variant="outline" className="font-mono text-xs">
               Esc
             </Badge>
@@ -445,7 +489,7 @@ const LongFormWizard = () => {
         </div>
         
         <div className="pt-2 border-t text-xs text-muted-foreground">
-          <p>💡 Tip: Use keyboard shortcuts to navigate quickly through the wizard</p>
+          <p>💡 {t('wizard.keyboard.tip')}</p>
         </div>
       </Card>
     </div>  );
@@ -523,10 +567,10 @@ const LongFormWizard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-blue-800 dark:text-blue-400">
-                  Draft Available
+                  {t('wizard.draft.available')}
                 </h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  You have a saved draft from {formatLastSaved(lastSaved)}. Would you like to restore it?
+                  {t('wizard.draft.foundSaved', { time: formatSavedTime(lastSaved) })}
                 </p>
               </div>
               <div className="flex gap-2">
@@ -536,7 +580,7 @@ const LongFormWizard = () => {
                   onClick={handleRestoreDraft}
                   className="text-blue-700 border-blue-300 hover:bg-blue-100 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900"
                 >
-                  Restore Draft
+                  {t('wizard.draft.restore')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -544,7 +588,7 @@ const LongFormWizard = () => {
                   onClick={handleClearDraft}
                   className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
                 >
-                  Dismiss
+                  {t('wizard.draft.dismiss')}
                 </Button>
               </div>
             </div>
@@ -555,15 +599,15 @@ const LongFormWizard = () => {
             {/* Progress Overview */}
             <div className="flex justify-between items-center mb-4">
               <div className="space-y-1">
-                <h3 className="text-sm font-medium">Content Wizard Progress</h3>
+                <h3 className="text-sm font-medium">{t('wizard.progress.title')}</h3>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span>Step {currentStep + 1} of {WIZARD_STEPS.length}</span>
+                  <span>{t('wizard.progress.step', { current: currentStep + 1, total: WIZARD_STEPS.length })}</span>
                   <span>•</span>
-                  <span>{Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100)}% Complete</span>
+                  <span>{t('wizard.progress.complete', { percent: Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100) })}</span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {getEstimatedTimeRemaining()} min remaining
+                    {t('wizard.progress.remaining', { time: getEstimatedTimeRemaining() })}
                   </span>
                 </div>
               </div>
@@ -573,7 +617,7 @@ const LongFormWizard = () => {
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full ${hasSavedDraft ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                   <span>
-                    {lastSaved ? `Saved ${formatLastSaved(lastSaved)}` : 'Not saved'}
+                    {lastSaved ? formatSavedTime(lastSaved) : t('wizard.draft.notSaved')}
                   </span>
                 </div>
                 <Button
@@ -582,7 +626,7 @@ const LongFormWizard = () => {
                   onClick={saveNow}
                   className="text-xs h-6 px-2 py-0"
                 >
-                  Save Now
+                  {t('wizard.navigation.saveNow')}
                 </Button>
               </div>
             </div>
@@ -644,7 +688,7 @@ const LongFormWizard = () => {
                             {/* Optional Badge */}
                             {step.optional && (
                               <Badge variant="outline" className="text-xs px-1 py-0 h-4">
-                                Optional
+                                {t('wizard.progress.optional').replace('(', '').replace(')', '')}
                               </Badge>
                             )}
                           </div>
@@ -654,10 +698,10 @@ const LongFormWizard = () => {
                         <div className="text-center">
                           <p className="font-medium">{step.name}</p>
                           <p className="text-xs text-muted-foreground">{step.description}</p>
-                          <p className="text-xs">Estimated: {step.estimatedTime} min</p>
-                          {isCompleted && <p className="text-xs text-green-600">✓ Completed</p>}
-                          {isSkipped && <p className="text-xs text-amber-600">⏭ Skipped</p>}
-                          {hasError && <p className="text-xs text-red-600">⚠ Needs attention</p>}
+                          <p className="text-xs">{t('contextualHelp.estimatedTime', { time: `${step.estimatedTime} min` })}</p>
+                          {isCompleted && <p className="text-xs text-green-600">✓ {t('wizard.status.completed')}</p>}
+                          {isSkipped && <p className="text-xs text-amber-600">⏭ {t('wizard.status.skipped')}</p>}
+                          {hasError && <p className="text-xs text-red-600">⚠ {t('wizard.status.needsAttention')}</p>}
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -677,10 +721,10 @@ const LongFormWizard = () => {
             {/* Current Step Info */}
             <div className="flex justify-between items-center text-xs text-muted-foreground">
               <span>
-                Current: {WIZARD_STEPS[currentStep].name}
-                {WIZARD_STEPS[currentStep].optional && " (Optional)"}
+                {t('wizard.progress.current', { name: WIZARD_STEPS[currentStep].name })}
+                {WIZARD_STEPS[currentStep].optional && ` ${t('wizard.progress.optional')}`}
               </span>
-              <span>{completedSteps.length} of {WIZARD_STEPS.length} steps completed</span>
+              <span>{t('wizard.progress.completed', { completed: completedSteps.length, total: WIZARD_STEPS.length })}</span>
             </div>
           </div>
 
@@ -693,7 +737,7 @@ const LongFormWizard = () => {
               disabled={currentStep === 0}
               className="flex items-center gap-2"
             >
-              ← Previous
+              ← {t('wizard.navigation.previous')}
             </Button>
             
             <div className="flex gap-2">
@@ -705,7 +749,7 @@ const LongFormWizard = () => {
                   className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
                 >
                   <SkipForward className="h-4 w-4" />
-                  Skip Step
+                  {t('wizard.navigation.skip')}
                 </Button>
               )}
               
@@ -715,7 +759,7 @@ const LongFormWizard = () => {
                   disabled={!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional}
                   className="flex items-center gap-2"
                 >
-                  Next →
+                  {t('wizard.navigation.next')} →
                 </Button>
               ) : (
                 <Button 
@@ -724,7 +768,7 @@ const LongFormWizard = () => {
                   className="flex items-center gap-2"
                 >
                   <Info className="h-4 w-4" />
-                  Generate Content
+                  {t('wizard.navigation.generate')}
                 </Button>
               )}
             </div>
@@ -736,13 +780,13 @@ const LongFormWizard = () => {
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1">
                   <Command className="h-3 w-3" />
-                  Ctrl + Enter: Next
+                  Ctrl + Enter: {t('wizard.navigation.next')}
                 </span>
                 <span className="flex items-center gap-1">
                   <Command className="h-3 w-3" />
-                  Ctrl + S: Save
+                  Ctrl + S: {t('wizard.navigation.saveNow')}
                 </span>
-                <span>Esc: Help</span>
+                <span>Esc: {t('wizard.keyboard.showHelp')}</span>
               </div>
               <Button
                 variant="ghost"
@@ -751,7 +795,7 @@ const LongFormWizard = () => {
                 className="h-6 px-2 py-0 text-xs"
               >
                 <Keyboard className="h-3 w-3 mr-1" />
-                Shortcuts
+                {t('wizard.navigation.shortcuts')}
               </Button>
             </div>
           </div>
@@ -763,7 +807,7 @@ const LongFormWizard = () => {
                 <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
                 <div>
                   <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
-                    Please complete the following:
+                    {t('wizard.errors.completeRequired')}
                   </h4>
                   <ul className="text-sm text-red-700 dark:text-red-300 mt-1 space-y-1">
                     {getStepErrors(currentStep).map((error, index) => (

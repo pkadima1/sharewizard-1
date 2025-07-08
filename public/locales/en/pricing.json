@@ -1,0 +1,173 @@
+{
+  "title": "Simple, Transparent Pricing",
+  "subtitle": "Choose the plan that's right for you",
+  "billingCycle": {
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+  },
+  "yearlyDiscount": "Save significantly with our yearly plans!",
+  "freeTrialBanner": {
+    "title": "Start with a 5-day Free Trial",
+    "description": "Subscribe to any plan and get 5 free requests to try out all features",
+    "button": "Start Your Free Trial"
+  },
+  "plans": {
+    "free": {
+      "title": "Free Plan",
+      "description": "🔓 Try it free — no credit card required",
+      "price": "$0",
+      "period": "forever",
+      "noCreditCard": "No credit card required",
+      "features": {
+        "requests": "3 free caption requests on signup",
+        "sharing": "Manual sharing support",
+        "captions": "Post ideas & captions (image-only)",
+        "noBlog": "No blog generation"
+      },
+      "highlight": "🟣 Great for exploring EngagePerfect's core features.",
+      "button": "Sign Up Free"
+    },
+    "basic": {
+      "title": "Basic Plan",
+      "description": "⭐ Perfect for casual creators & side hustlers",
+      "price": {
+        "monthly": "$8",
+        "yearly": "$40"
+      },
+      "period": {
+        "monthly": "/ month",
+        "yearly": "/ year"
+      },
+      "yearlySaving": "💡 Save 58% with yearly plan!",
+      "trial": "5-DAY FREE TRIAL INCLUDED",
+      "discount": "Use code PERFECTSTART for 50% off first month",
+      "features": {
+        "trialRequests": "5 free requests during trial",
+        "captions": {
+          "monthly": "70 captions/month",
+          "yearly": "900 captions/year"
+        },
+        "blogs": {
+          "monthly": "1 SEO blog/month",
+          "yearly": "17 SEO blogs/year",
+          "wordLimit": "(up to 2000 words)"
+        },
+        "mediaSupport": "Posts with image, video, and carousel support",
+        "customization": "Custom overlay text and emojis",
+        "preview": "Mobile-friendly caption preview & download",
+        "sharing": "Manual sharing to social media"
+      },
+      "highlight": "🟣 Includes image-only posts and custom tone support.",
+      "button": "Start Free Trial with Basic",
+      "processing": "Processing...",
+      "terms": "Subscription begins after 5-day trial. Cancel anytime during trial."
+    },
+    "premium": {
+      "title": "Premium Plan",
+      "description": "🚀 Built for content creators, marketers & agencies",
+      "badge": "Most Popular",
+      "price": {
+        "monthly": "$29",
+        "yearly": "$199"
+      },
+      "period": {
+        "monthly": "/month",
+        "yearly": "/year"
+      },
+      "yearlySaving": "🔥 Best Value - Save $149/year!",
+      "features": {
+        "captions": {
+          "monthly": "500 captions/month",
+          "yearly": "6000 captions/year",
+          "note": "(all media types)"
+        },
+        "blogs": {
+          "monthly": "125 long-form blogs/month",
+          "yearly": "1500 long-form blogs/year",
+          "wordLimit": "(up to 2,500 words)"
+        },
+        "seoOptimization": "Includes SEO blog generator with EEAT & GEO optimization",
+        "previews": "Instant social media previews",
+        "formatting": "Advanced formatting + external source linking",
+        "analytics": "Usage analytics",
+        "priority": "Priority processing & support"
+      },
+      "highlight": "🟣 Ideal for newsletters, landing pages, ecommerce content & more.",
+      "creditNote": "💡 Note: 1 blog = 4 credits, 1 caption = 1 credit",
+      "button": "Upgrade to Premium",
+      "processing": "Processing...",
+      "terms": "Subscription starts immediately. Cancel anytime."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": {
+      "trial": {
+        "question": "What's included in the free trial?",
+        "answer": "Basic plans include a 5-day free trial with 5 free requests. You can test all features available in your chosen plan during this period. Your subscription will begin after the trial period unless you cancel. Premium plans start immediately without a trial period."
+      },
+      "credits": {
+        "question": "How does the credit system work?",
+        "answer": "Our credit system is simple: 1 caption generation = 1 credit, 1 blog generation = 4 credits. This reflects the complexity difference between generating a social media caption vs. a full SEO-optimized blog post with our advanced AI system. Credits are used from your monthly allowance and reset each billing cycle."
+      },
+      "discountCode": {
+        "question": "What does PERFECTSTART discount code offer?",
+        "answer": "Use the discount code PERFECTSTART to get 50% off your first month on the Basic monthly plan only. This offer is not available for yearly plans or Premium plans. Enter the code at checkout to receive the discount on your first monthly billing cycle."
+      },
+      "terminology": {
+        "question": "What do SEO, EEAT, and GEO mean?",
+        "answer": "<strong>SEO</strong> (Search Engine Optimization) - Techniques to improve your content's visibility in search results. <strong>EEAT</strong> (Experience, Expertise, Authoritativeness, Trustworthiness) - Google's quality guidelines for content evaluation. <strong>GEO</strong> (Generative Engine Optimization) - Tailoring content that sounds, connects, and feels human-like crafted."
+      },
+      "tracking": {
+        "question": "How do I track my credit usage?",
+        "answer": "You can track your credit usage in your account dashboard. Each time you generate content, the appropriate credits are deducted (1 for captions, 4 for blogs). Your remaining credits for the current billing cycle are always visible, and you'll receive notifications when you're running low."
+      },
+      "planDifference": {
+        "question": "What's the difference between Basic and Premium plans?",
+        "answer": "Basic plans are perfect for casual users and side hustlers with limited blog generation (17 blogs/year) and include a 5-day free trial. Premium plans are designed for content creators, marketers, and agencies who need high-volume content creation with advanced features like EEAT optimization, priority support, and no trial period for immediate access."
+      },
+      "changePlans": {
+        "question": "Can I change plans later?",
+        "answer": "Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle. Unused credits from your current plan will carry over when upgrading."
+      },
+      "refunds": {
+        "question": "Do you offer refunds?",
+        "answer": "We offer a 14-day money-back guarantee if you're not satisfied with your subscription. Contact our support team to process your refund."
+      }
+    }
+  },
+  "allPlansInclude": {
+    "title": "All Paid Plans Include",
+    "features": {
+      "aiGeneration": {
+        "title": "AI-generated captions & blogs",
+        "description": "Captions (1 credit each) and SEO-optimized blogs (4 credits each)"
+      },
+      "mobileOptimized": {
+        "title": "Mobile-optimized preview & sharing",
+        "description": "Ready-to-use formatting for all platforms"
+      },
+      "multiPlatform": {
+        "title": "Multi-platform content creation",
+        "description": "Optimized for Twitter, LinkedIn, Facebook, Instagram & more"
+      },
+      "creditBased": {
+        "title": "Credit-based fair usage",
+        "description": "Simple pricing: 1 caption = 1 credit, 1 blog = 4 credits"
+      }
+    },
+    "vatIncluded": "VAT included in all prices"
+  },
+  "cta": {
+    "title": "Ready to get started?",
+    "description": "Join thousands of content creators and businesses who use EngagePerfect AI to create engaging content that resonates with their audience.",
+    "button": "Start Your Free Trial Today"
+  },
+  "loading": {
+    "processing": "Processing..."
+  },
+  "errors": {
+    "title": "Error",
+    "checkout": "Failed to create checkout"
+  }
+}

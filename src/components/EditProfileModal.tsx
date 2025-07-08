@@ -5,6 +5,7 @@ import { X, Upload, Loader2 } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth } from '@/lib/firebase';
 import { updateProfile } from 'firebase/auth';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 interface EditProfileModalProps {
   user: UserProfile;
@@ -24,6 +25,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   
+  const { t } = useAppTranslation('profile');
+
   if (!isOpen) return null;
 
   const handleSave = async () => {
@@ -89,7 +92,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-5 border-b border-gray-700">
-          <h3 className="text-lg font-semibold text-white">Edit Profile</h3>
+          <h3 className="text-lg font-semibold text-white">{t('editProfileModal.title')}</h3>
           <button 
             onClick={onClose}
             className="text-gray-400 hover:text-gray-200 transition-colors"
@@ -118,7 +121,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             <label className="mt-3 cursor-pointer">
               <div className="flex items-center text-sm text-violet-400 hover:text-violet-300 transition-colors">
                 <Upload size={14} className="mr-1" />
-                Change Photo
+                {t('editProfileModal.changePhoto')}
               </div>
               <input 
                 type="file" 
@@ -133,7 +136,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Full Name
+              {t('editProfileModal.fullName')}
             </label>
             <input
               type="text"
@@ -146,7 +149,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           {/* Email (Read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">
-              Email Address
+              {t('editProfileModal.email')}
             </label>
             <input
               type="email"
@@ -155,7 +158,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-400"
             />
             <p className="mt-1 text-xs text-gray-400">
-              Email cannot be changed
+              {t('editProfileModal.emailNote')}
             </p>
           </div>
         </div>
@@ -165,7 +168,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700 transition-colors"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSave}
@@ -173,7 +176,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             disabled={isUploading}
           >
             {isUploading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            Save Changes
+            {t('common.saveChanges')}
           </button>
         </div>
       </div>

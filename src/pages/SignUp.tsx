@@ -6,6 +6,7 @@ import { Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -17,6 +18,7 @@ const SignUp: React.FC = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { t } = useAppTranslation('auth');
 
   const { signUp, loginWithGoogle, currentUser } = useAuth();
   const { toast } = useToast();
@@ -33,27 +35,27 @@ const SignUp: React.FC = () => {
     const newErrors: Record<string, string> = {};
     
     if (!username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = t('errors.usernameRequired');
     }
     
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('errors.emailRequired');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = t('errors.emailInvalid');
     }
     
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('errors.passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('errors.passwordLength');
     }
     
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('errors.passwordsDoNotMatch');
     }
     
     if (!acceptTerms) {
-      newErrors.terms = 'You must accept the terms and conditions';
+      newErrors.terms = t('errors.mustAcceptTerms');
     }
     
     setErrors(newErrors);
@@ -71,15 +73,15 @@ const SignUp: React.FC = () => {
     try {
       await signUp(email, password, username);
       toast({
-        title: "Account created successfully!",
-        description: "Welcome to EngagePerfect AI",
+        title: t('notifications.accountCreated'),
+        description: t('notifications.welcomeToApp'),
         variant: "default",
       });
       navigate('/caption-generator');
     } catch (error: any) {
-      let errorMessage = "Failed to create an account.";
+      let errorMessage = t('errors.failedToCreate');
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = "This email is already in use.";
+        errorMessage = t('errors.emailInUse');
       }
       toast({
         title: "Error",
@@ -96,15 +98,15 @@ const SignUp: React.FC = () => {
     try {
       await loginWithGoogle();
       toast({
-        title: "Account created successfully!",
-        description: "Welcome to EngagePerfect AI",
+        title: t('notifications.accountCreated'),
+        description: t('notifications.welcomeToApp'),
         variant: "default",
       });
       navigate('/caption-generator');
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to sign up with Google.",
+        description: t('errors.failedGoogleSignUp'),
         variant: "destructive",
       });
     } finally {
@@ -125,11 +127,11 @@ const SignUp: React.FC = () => {
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
               />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Create an account</h2>
+              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('register.title')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Already have an account?{' '}
+                {t('register.haveAccount')}{' '}
                 <Link to="/login" className="font-medium text-primary hover:text-primary/90">
-                  Sign in
+                  {t('register.signIn')}
                 </Link>
               </p>
             </div>
@@ -138,7 +140,7 @@ const SignUp: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Username
+                    {t('username')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -151,7 +153,7 @@ const SignUp: React.FC = () => {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       className="block w-full pl-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Your username"
+                      placeholder={t('your_username')}
                     />
                   </div>
                   {errors.username && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.username}</p>}
@@ -159,7 +161,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                    {t('email_address')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -180,7 +182,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
+                    {t('register.password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -193,7 +195,7 @@ const SignUp: React.FC = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Create a strong password"
+                      placeholder={t('create_strong_password')}
                     />
                     <button
                       type="button"
@@ -212,7 +214,7 @@ const SignUp: React.FC = () => {
 
                 <div>
                   <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Confirm Password
+                    {t('confirm_password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -225,7 +227,7 @@ const SignUp: React.FC = () => {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       className="block w-full pl-10 pr-10 dark:bg-gray-800 dark:text-white dark:border-gray-700"
-                      placeholder="Confirm your password"
+                      placeholder={t('confirm_your_password')}
                     />
                     <button
                       type="button"
@@ -253,14 +255,15 @@ const SignUp: React.FC = () => {
                       className="w-4 h-4 border-gray-300 rounded text-primary focus:ring-primary dark:border-gray-700 dark:bg-gray-800"
                     />
                   </div>
-                  <div className="ml-3 text-sm">                    <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300">
-                      I agree to the{' '}
-                      <Link to="/terms" className="text-primary hover:text-primary/90">
-                        Terms of Service
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">
+                      {t('i_agree_to')}{' '}
+                      <Link to="/terms" className="font-medium text-primary hover:text-primary/90">
+                        {t('terms_of_service')}
                       </Link>{' '}
-                      and{' '}
-                      <Link to="/privacy" className="text-primary hover:text-primary/90">
-                        Privacy Policy
+                      {t('and')}{' '}
+                      <Link to="/privacy" className="font-medium text-primary hover:text-primary/90">
+                        {t('privacy_policy')}
                       </Link>
                     </label>
                     {errors.terms && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.terms}</p>}
@@ -273,7 +276,7 @@ const SignUp: React.FC = () => {
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Creating account...' : 'Sign up'}
+                    {loading ? t('creating_account') : t('register.submit')}
                   </button>
                 </div>
               </form>
@@ -284,7 +287,7 @@ const SignUp: React.FC = () => {
                     <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">Or continue with</span>
+                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">{t('or_continue_with')}</span>
                   </div>
                 </div>
 
@@ -300,7 +303,7 @@ const SignUp: React.FC = () => {
                         d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z"
                       />
                     </svg>
-                    Continue with Google
+                    {t('continue_with_google')}
                   </button>
                 </div>
               </div>
@@ -310,26 +313,26 @@ const SignUp: React.FC = () => {
         <div className="relative flex-1 hidden w-0 lg:block">
           <div className="absolute inset-0 object-cover w-full h-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
             <div className="text-center text-white p-8 max-w-md">
-              <h1 className="text-5xl font-bold mb-6">EngagePerfect AI</h1>
-              <p className="text-xl mb-8">Create engaging social media content in seconds with our AI-powered platform</p>
+              <h1 className="text-5xl font-bold mb-6">{t('signup_sidebar.title')}</h1>
+              <p className="text-xl mb-8">{t('signup_sidebar.subtitle')}</p>
               <div className="text-lg">
                 <p className="flex items-center justify-center mb-2">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Generate captions for any platform
+                  {t('signup_sidebar.feature1')}
                 </p>
                 <p className="flex items-center justify-center mb-2">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Optimize your social media presence
+                  {t('signup_sidebar.feature2')}
                 </p>
                 <p className="flex items-center justify-center">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Share content directly to your accounts
+                  {t('signup_sidebar.feature3')}
                 </p>
               </div>
             </div>

@@ -54,20 +54,20 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
   
   const handleShareToSocial = async () => {
     if (!previewRef.current) {
-      toast.error("Preview container not found. Please try again.");
+      toast.error("Conteneur d'aperçu introuvable. Veuillez réessayer.");
       console.error("Preview ref is null:", previewRef.current);
       return;
     }
     
     const sharableContent = previewRef.current.querySelector('#sharable-content');
     if (!sharableContent) {
-      toast.error("Sharable content not found. Please try again.");
+      toast.error("Contenu partageable introuvable. Veuillez réessayer.");
       console.error("Sharable content not found in:", previewRef.current);
       return;
     }
     
     if (!captions[selectedCaption]) {
-      toast.error("No caption selected to share");
+      toast.error("Aucune légende sélectionnée à partager");
       return;
     }
     
@@ -96,7 +96,7 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
       // Dialog stays open for user to click actual share button
     } catch (error) {
       console.error("Error preparing media for sharing:", error);
-      toast.error("Failed to prepare content for sharing. Please try again.");
+      toast.error("Échec de la préparation du contenu pour le partage. Veuillez réessayer.");
       setShowShareDialog(false);
     } finally {
       setIsSharing(false);
@@ -152,7 +152,7 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
           );
         } catch (error) {
           console.error("Error in download process:", error);
-          toast.error("Download failed. Please try again.");
+          toast.error("Échec du téléchargement. Veuillez réessayer.");
         } finally {
           setIsDownloading(false);
         }
@@ -185,7 +185,7 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
         <ShareDialog
           isOpen={showShareDialog}
           onClose={() => setShowShareDialog(false)}
-          title={preparedShareData?.title || (captions[selectedCaption]?.title || "Share Content")}
+          title={preparedShareData?.title || (captions[selectedCaption]?.title || "Partager le Contenu")}
           text={preparedShareData?.text || ""}
           file={preparedShareData?.file}
           isProcessing={!preparedShareData} // Show processing state until data is ready

@@ -1,0 +1,20 @@
+{
+  "caption_title": "Repost Caption",
+  "caption_upload_title": "Repost Caption",
+  "how_would_you": "How would you like to repost this caption?",
+  "add_media": "Add Media",
+  "upload_image_video": "Upload image or video",
+  "text_only": "Text Only",
+  "just_use_caption": "Just use the caption without media",
+  "upload_media_description": "Upload your media or capture directly to create engaging AI-powered captions.",
+  "drag_drop_media": "Drag & drop your media here, or click to select",
+  "supported_formats": "Supports JPG, PNG, GIF, WEBP, MP4, WEBM, MOV (max 10MB)",
+  "upload_preview_description": "Upload an image or video, or use your camera to capture a photo. Your media will appear here for editing.",
+  "upload_media_button": "Upload Media: Image or Video",
+  "create_text_only": "Create text-only caption",
+  "select_legend": "Select a legend:",
+  "text_caption_selection": "Select a Caption for Reposting",
+  "back": "Back",
+  "cancel": "Cancel",
+  "continue": "Continue"
+}

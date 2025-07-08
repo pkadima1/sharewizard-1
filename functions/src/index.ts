@@ -20,6 +20,10 @@ export { syncSubscriptionToUserProfile } from "./syncSubscription.js";
 // Export longform content generation function
 export { generateLongformContent } from "./services/longformContent.js";
 
+// Export test functions (for debugging - remove in production)
+// export { testGeminiOnly } from "./services/testGemini.js";
+// export { testLongformNoAuth } from "./services/testLongformNoAuth.js";
+
 // Export support chat function
 export { supportChat } from './supportChat.js';
 

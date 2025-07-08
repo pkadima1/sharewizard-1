@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ const Login: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { t } = useAppTranslation('auth');
 
   const { login, loginWithGoogle, currentUser } = useAuth();
   const { toast } = useToast();
@@ -27,16 +29,15 @@ const Login: React.FC = () => {
       navigate('/caption-generator');
     }
   }, [currentUser, navigate]);
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
     if (!email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('errors.emailRequired', 'Email is required');
     }
     
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('errors.passwordRequired', 'Password is required');
     }
     
     setErrors(newErrors);
@@ -59,26 +60,25 @@ const Login: React.FC = () => {
       } else {
         localStorage.removeItem('rememberMe');
       }
-      
-      toast({
-        title: "Login successful!",
-        description: "Welcome back to EngagePerfect AI",
+        toast({
+        title: t('notifications.loginSuccess', 'Login successful!'),
+        description: t('notifications.welcomeBack', 'Welcome back to EngagePerfect AI'),
         variant: "default",
       });
       navigate('/caption-generator');
     } catch (error: any) {
-      let errorMessage = "Failed to sign in.";
+      let errorMessage = t('login.failedSignIn');
       let shouldRedirectToSignup = false;
       
       if (error.code === 'auth/user-not-found') {
-        errorMessage = "Account not found. Please sign up first.";
+        errorMessage = t('login.accountNotFound');
         shouldRedirectToSignup = true;
       } else if (error.code === 'auth/wrong-password') {
-        errorMessage = "Incorrect password.";
+        errorMessage = t('login.incorrectPassword');
       } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = "Too many failed login attempts. Please try again later.";
+        errorMessage = t('login.tooManyAttempts');
       } else if (error.message && error.message.includes("Please sign up first")) {
-        errorMessage = "Account not found. Please sign up first.";
+        errorMessage = t('login.accountNotFound');
         shouldRedirectToSignup = true;
       }
       
@@ -97,16 +97,15 @@ const Login: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-  const handleGoogleSignIn = async () => {
+  };  const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
       const result = await loginWithGoogle();
       
       // If loginWithGoogle completes successfully, show success toast
       toast({
-        title: "Login successful!",
-        description: "Welcome to EngagePerfect AI",
+        title: t('notifications.loginSuccess', 'Login successful!'),
+        description: t('notifications.welcomeToApp', 'Welcome to EngagePerfect AI'),
         variant: "default",
       });
       navigate('/caption-generator');
@@ -114,8 +113,8 @@ const Login: React.FC = () => {
       // Handle errors as before
       if (error.message && error.message.includes("has no profile")) {
         toast({
-          title: "Account not found",
-          description: "Please sign up with Google first.",
+          title: t('login.accountNotFound', 'Account not found'),
+          description: t('login.signUpWithGoogle', 'Please sign up with Google first.'),
           variant: "destructive",
         });
         
@@ -146,12 +145,11 @@ const Login: React.FC = () => {
                 src="/lovable-uploads/23327aae-0892-407a-a483-66a3aff1f9e7.png" 
                 alt="AI Star" 
                 className="w-16 h-16 mb-4"
-              />
-              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">Sign in to your account</h2>
+              />              <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">{t('login.title')}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account?{' '}
+                {t('login.noAccount')}{' '}
                 <Link to="/signup" className="font-medium text-primary hover:text-primary/90">
-                  Create an account
+                  {t('login.signUp')}
                 </Link>
               </p>
             </div>
@@ -160,7 +158,7 @@ const Login: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email address
+                    {t('login.email')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -181,7 +179,7 @@ const Login: React.FC = () => {
 
                 <div>
                   <Label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
+                    {t('login.password')}
                   </Label>
                   <div className="relative mt-1">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -220,26 +218,24 @@ const Login: React.FC = () => {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="w-4 h-4 border-gray-300 rounded text-primary focus:ring-primary dark:border-gray-700 dark:bg-gray-800"
-                    />
-                    <label htmlFor="remember-me" className="block ml-2 text-sm text-gray-700 dark:text-gray-300">
-                      Remember me
+                    />                    <label htmlFor="remember-me" className="block ml-2 text-sm text-gray-700 dark:text-gray-300">
+                      {t('login.rememberMe')}
                     </label>
                   </div>
 
                   <div className="text-sm">
                     <Link to="/forgot-password" className="font-medium text-primary hover:text-primary/90">
-                      Forgot your password?
+                      {t('login.forgotPassword')}
                     </Link>
                   </div>
                 </div>
 
-                <div>
-                  <button
+                <div>                  <button
                     type="submit"
                     className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-gray-900"
                     disabled={loading}
                   >
-                    {loading ? 'Signing in...' : 'Sign in'}
+                    {loading ? t('signing_in') : t('login.submit')}
                   </button>
                 </div>
               </form>
@@ -250,7 +246,7 @@ const Login: React.FC = () => {
                     <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">Or continue with</span>
+                    <span className="px-2 text-gray-500 bg-gray-50 dark:bg-gray-900 dark:text-gray-400">{t('login.orContinueWith')}</span>
                   </div>
                 </div>
 
@@ -266,7 +262,7 @@ const Login: React.FC = () => {
                         d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z"
                       />
                     </svg>
-                    Continue with Google
+                    {t('continue_with_google')}
                   </button>
                 </div>
               </div>
@@ -276,26 +272,26 @@ const Login: React.FC = () => {
         <div className="relative flex-1 hidden w-0 lg:block">
           <div className="absolute inset-0 object-cover w-full h-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
             <div className="text-center text-white p-8 max-w-md">
-              <h1 className="text-5xl font-bold mb-6">Welcome Back!</h1>
-              <p className="text-xl mb-8">Sign in to continue creating engaging content for your social media platforms</p>
+              <h1 className="text-5xl font-bold mb-6">{t('login_sidebar.title', 'Welcome Back!')}</h1>
+              <p className="text-xl mb-8">{t('login_sidebar.subtitle', 'Sign in to continue creating engaging content for your social media platforms')}</p>
               <div className="text-lg">
                 <p className="flex items-center justify-center mb-2">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Access your drafts and previous content
+                  {t('login_sidebar.feature1', 'Access your drafts and previous content')}
                 </p>
                 <p className="flex items-center justify-center mb-2">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Continue where you left off
+                  {t('login_sidebar.feature2', 'Continue where you left off')}
                 </p>
                 <p className="flex items-center justify-center">
                   <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 mr-2 text-blue-200">
                     <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Track your engagement metrics
+                  {t('login_sidebar.feature3')}
                 </p>
               </div>
             </div>

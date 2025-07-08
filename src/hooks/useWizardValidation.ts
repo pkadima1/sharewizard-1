@@ -31,9 +31,10 @@ interface WizardValidationResult {
 /**
  * Custom hook for validating wizard steps
  * @param formData - The current form data
+ * @param t - Translation function
  * @returns Validation functions and state
  */
-export function useWizardValidation(formData: FormData): WizardValidationResult {
+export function useWizardValidation(formData: FormData, t: (key: string) => string): WizardValidationResult {
     // Validate Step 0: Media & Topic (only topic validation now)
   const validateStep0 = (): ValidationResult => {
     const errors: ValidationError[] = [];
@@ -42,7 +43,7 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
     if (!formData.topic || formData.topic.trim().length <= 10) {
       errors.push({
         field: 'topic',
-        message: 'Topic must be more than 10 characters long'
+        message: t('step1.validation.topicTooShort')
       });
     }
     
@@ -56,19 +57,24 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
   const validateStep1 = (): ValidationResult => {
     const errors: ValidationError[] = [];
     
-    // Industry validation - must be selected
+    // Industry validation - must be selected or custom industry provided
     if (!formData.industry || formData.industry.trim().length === 0) {
       errors.push({
         field: 'industry',
-        message: 'Industry must be selected'
+        message: t('step1.validation.industryRequired')
+      });
+    } else if (formData.industry === 'Other' && (!formData.customIndustry || formData.customIndustry.trim().length < 2)) {
+      errors.push({
+        field: 'customIndustry',
+        message: t('step1.validation.customIndustryRequired')
       });
     }
     
-    // Audience validation - must be selected
+    // Audience validation - must be specified
     if (!formData.audience || formData.audience.trim().length === 0) {
       errors.push({
         field: 'audience',
-        message: 'Target audience must be specified'
+        message: t('step1.validation.audienceRequired')
       });
     }
     
@@ -86,7 +92,7 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
     if (!formData.keywords || formData.keywords.length === 0) {
       errors.push({
         field: 'keywords',
-        message: 'At least one keyword must be selected for SEO optimization'
+        message: t('step1.validation.keywordsRequired')
       });
     }
     
@@ -104,7 +110,7 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
     if (!formData.contentType || formData.contentType.trim().length === 0) {
       errors.push({
         field: 'contentType',
-        message: 'Content type must be selected'
+        message: t('step6.validation.missingContentType')
       });
     }
     
@@ -112,7 +118,7 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
     if (!formData.contentTone || formData.contentTone.trim().length === 0) {
       errors.push({
         field: 'contentTone',
-        message: 'Content tone must be selected'
+        message: t('step6.validation.missingTone')
       });
     }
     
@@ -209,7 +215,18 @@ export function useWizardValidation(formData: FormData): WizardValidationResult 
 }
 
 // Helper function to get user-friendly error messages
-export function getFieldDisplayName(field: string): string {
+export function getFieldDisplayName(field: string, t?: (key: string) => string): string {
+  // If translation function is provided, use it
+  if (t) {
+    const translationKey = `fields.${field}`;
+    const translated = t(translationKey);
+    // Only use the translation if it's not the same as the key (which indicates no translation found)
+    if (translated !== translationKey) {
+      return translated;
+    }
+  }
+  
+  // Fallback to hardcoded English
   const fieldNames: Record<string, string> = {
     topic: 'Topic',
     audience: 'Target Audience',

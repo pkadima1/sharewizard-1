@@ -37,6 +37,7 @@ import {
   exportToOneDriveWord,
   createGoogleDocsService 
 } from '@/services/googleDocsService';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 interface LongformContentManagerProps {
   content: LongformContent[];
@@ -52,6 +53,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
   const [selectedContent, setSelectedContent] = useState<LongformContent | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useAppTranslation('longform');
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return 'Unknown';
@@ -321,7 +323,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      <Card className="p-6">
        <div className="text-center text-red-600 dark:text-red-400">
          <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-         <h3 className="text-lg font-medium mb-2">Error Loading Content</h3>
+         <h3 className="text-lg font-medium mb-2">{t('errorLoading', 'Error Loading Content')}</h3>
          <p className="text-sm">{error}</p>
        </div>
      </Card>
@@ -333,10 +335,10 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      <Card className="p-6">
        <div className="text-center text-gray-500 dark:text-gray-400">
          <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-         <h3 className="text-lg font-medium mb-2">No Content Generated Yet</h3>
-         <p className="text-sm mb-4">Create your first long-form content to see it here.</p>
+         <h3 className="text-lg font-medium mb-2">{t('empty', 'No Content Generated Yet')}</h3>
+         <p className="text-sm mb-4">{t('createFirst', 'Create your first long-form content to see it here.')}</p>
          <Button onClick={() => window.location.href = '/longform'}>
-           Start Creating Content
+           {t('startCreating', 'Start Creating Content')}
          </Button>
        </div>
      </Card>
@@ -402,7 +404,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              className="flex items-center gap-1"
            >
              <Eye className="h-4 w-4" />
-             Preview
+             {t('actions.preview', 'Preview')}
            </Button>
            
            <Button
@@ -412,7 +414,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              className="flex items-center gap-1"
            >
              <Copy className="h-4 w-4" />
-             Copy
+             {t('actions.copy', 'Copy')}
            </Button>
 
            {/* Collaborative Export Buttons */}
@@ -423,7 +425,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
            >
              <FileEdit className="h-4 w-4" />
-             Google Docs
+             {t('gdocs', 'Google Docs')}
            </Button>
            
            <Button
@@ -433,7 +435,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
            >
              <FileEdit className="h-4 w-4" />
-             OneDrive Word
+             {t('word', 'OneDrive Word')}
            </Button>
 
            {/* Regular Download Options */}
@@ -445,35 +447,35 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  className="flex items-center gap-1"
                >
                  <Download className="h-4 w-4" />
-                 Download
+                 {t('actions.download', 'Download')}
                  <ChevronDown className="h-3 w-3" />
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
                <DropdownMenuItem onClick={() => downloadContent(item, 'markdown')}>
                  <Download className="h-4 w-4 mr-2" />
-                 Markdown (.md)
+                 {t('export.markdown', 'Markdown (.md)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'html')}>
                  <Download className="h-4 w-4 mr-2" />
-                 HTML (.html)
+                 {t('export.html', 'HTML (.html)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'txt')}>
                  <Download className="h-4 w-4 mr-2" />
-                 Text (.txt)
+                 {t('export.txt', 'Text (.txt)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'pdf')}>
                  <Download className="h-4 w-4 mr-2" />
-                 PDF (.pdf)
+                 {t('export.pdf', 'PDF (.pdf)')}
                </DropdownMenuItem>
                <DropdownMenuSeparator />
                <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
                  <Share2 className="h-4 w-4 mr-2" />
-                 Google Docs (Collaborative)
+                 {t('gdocs', 'Google Docs (Collaborative)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'word')}>
                  <Share2 className="h-4 w-4 mr-2" />
-                 OneDrive Word (Collaborative)
+                 {t('word', 'OneDrive Word (Collaborative)')}
                </DropdownMenuItem>
              </DropdownMenuContent>
            </DropdownMenu>
@@ -495,7 +497,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  className="flex items-center gap-1"
                >
                  <Copy className="h-4 w-4" />
-                 Copy
+                 {t('actions.copy', 'Copy')}
                </Button>
                
                <DropdownMenu>
@@ -506,35 +508,35 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                      className="flex items-center gap-1"
                    >
                      <Download className="h-4 w-4" />
-                     Export
+                     {t('actions.export', 'Export')}
                      <ChevronDown className="h-3 w-3" />
                    </Button>
                  </DropdownMenuTrigger>
                  <DropdownMenuContent align="end">
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'gdoc')}>
                      <FileEdit className="h-4 w-4 mr-2" />
-                     Google Docs (Collaborative)
+                     {t('gdocs', 'Google Docs (Collaborative)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'word')}>
                      <FileEdit className="h-4 w-4 mr-2" />
-                     OneDrive Word (Collaborative)
+                     {t('word', 'OneDrive Word (Collaborative)')}
                    </DropdownMenuItem>
                    <DropdownMenuSeparator />
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'markdown')}>
                      <Download className="h-4 w-4 mr-2" />
-                     Markdown (.md)
+                     {t('export.markdown', 'Markdown (.md)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'html')}>
                      <Download className="h-4 w-4 mr-2" />
-                     HTML (.html)
+                     {t('export.html', 'HTML (.html)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'txt')}>
                      <Download className="h-4 w-4 mr-2" />
-                     Text (.txt)
+                     {t('export.txt', 'Text (.txt)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'pdf')}>
                      <Download className="h-4 w-4 mr-2" />
-                     PDF (.pdf)
+                     {t('export.pdf', 'PDF (.pdf)')}
                    </DropdownMenuItem>
                  </DropdownMenuContent>
                </DropdownMenu>
@@ -547,10 +549,10 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                    {selectedContent.inputs.contentType.replace('-', ' ')}
                  </Badge>
                  <Badge variant="outline">
-                   {selectedContent.metadata.actualWordCount.toLocaleString()} words
+                   {selectedContent.metadata.actualWordCount.toLocaleString()} {t('words', 'words')}
                  </Badge>
                  <Badge variant="outline">
-                   {selectedContent.metadata.estimatedReadingTime} min read
+                   {selectedContent.metadata.estimatedReadingTime} {t('minRead', 'min read')}
                  </Badge>
                </div>
              )}

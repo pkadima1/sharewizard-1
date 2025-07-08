@@ -22,7 +22,7 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
   return (    <div className="w-full max-w-6xl mx-auto p-6">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-1/2 lg:w-3/5">
-          <h2 className="text-xl font-semibold text-adaptive-primary mb-4">Generating Captions...</h2>
+          <h2 className="text-xl font-semibold text-adaptive-primary mb-4">Génération des Légendes...</h2>
           <div className="space-y-6">
             <div className="space-y-3">
               <Skeleton className="h-4 w-3/4" />
@@ -60,14 +60,14 @@ const GenerationLoading: React.FC<GenerationLoadingProps> = ({
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-64 bg-gray-200 dark:bg-gray-700">
-                  <span className="text-gray-500 dark:text-gray-400">Media preview</span>
+                  <span className="text-gray-500 dark:text-gray-400">Aperçu du média</span>
                 </div>
               )}
             </div>
             <div className="mt-4">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Creating engaging {selectedTone} captions for {selectedPlatform} 
-                in the {selectedNiche} niche...
+                Création de légendes {selectedTone} engageantes pour {selectedPlatform} 
+                dans la niche {selectedNiche}...
               </p>
             </div>
           </div>

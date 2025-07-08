@@ -362,16 +362,93 @@ const generateContent = async (openai: OpenAI, outline: any, promptData: any) =>
  * Focuses on emotional resonance, practical value, and authentic expertise demonstration
  */
 const buildGeminiPrompt = (data: any): string => {
+  const toneInstructions = getToneInstructions(data.contentTone);
+  
+  // Structure-specific instructions for new content formats
+  const getStructureInstructions = (structureFormat: string): string => {
+    switch (structureFormat) {
+      case 'how-to-steps':
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (How-To / Step-by-Step):
+• Create a clear introduction explaining what readers will accomplish
+• Include a prerequisites section listing what's needed before starting
+• Break down the process into 3-7 numbered steps
+• Each step should be actionable and specific
+• Include tips, warnings, or best practices for each step
+• End with a summary of what was accomplished and next steps
+• Ensure each step flows logically to the next
+• Use action verbs to start each step title`;
+
+      case 'faq-qa':
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (FAQ / Q&A):
+• Start with an introduction explaining the topic scope
+• Organize questions from most common/basic to more advanced
+• Create 5-8 question-answer pairs
+• Use natural question language that real users would ask
+• Provide comprehensive but concise answers
+• Include follow-up information or related questions where relevant
+• End with a conclusion addressing how to get additional help
+• Questions should cover the full spectrum of user concerns`;
+
+      case 'comparison-vs':
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (Comparison / vs.):
+• Begin with context explaining what's being compared and why
+• Provide an overview of Option A with its key features
+• Provide an overview of Option B with its key features
+• Create a side-by-side comparison section with specific criteria
+• Include pros and cons for each option
+• Provide clear recommendations for different use cases
+• End with guidance on how to choose between options
+• Maintain objectivity while providing clear guidance`;
+
+      case 'review-analysis':
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (Review / Analysis):
+• Start with an introduction explaining what's being reviewed
+• Create a comprehensive features overview section
+• Organize pros and cons into clear sections
+• Include real-world performance analysis
+• Provide rating or scoring where appropriate
+• Include comparisons to alternatives where relevant
+• End with a clear verdict and recommendation
+• Support claims with specific examples and evidence`;
+
+      case 'case-study-detailed':
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (Case Study):
+• Begin with an executive summary of outcomes
+• Provide detailed background and context
+• Clearly define the challenge or problem faced
+• Explain the solution approach and implementation
+• Present quantifiable results and metrics
+• Include lessons learned and key takeaways
+• End with actionable insights for readers
+• Use storytelling elements throughout to maintain engagement`;
+
+      default:
+        return `
+STRUCTURE-SPECIFIC REQUIREMENTS (${structureFormat}):
+• Follow the specified structure format guidance
+• Ensure content flows logically between sections
+• Maintain consistent tone throughout
+• Include clear transitions between sections`;
+    }
+  };
+
   return `You are an expert content strategist and editorial consultant with 15 years of experience in ${data.industry} content creation.
+
+${toneInstructions}
 
 CONTEXT & REQUIREMENTS:
 • Topic: "${data.topic}"
 • Target Audience: ${data.audience}
 • Industry: ${data.industry}
 • Content Type: ${data.contentType}
+• Structure Format: ${data.structureFormat}
 • Target Word Count: ${data.wordCount} words
 • Tone: ${data.contentTone}
-• Structure Preference: ${data.structureFormat}
 • Keywords to include: ${data.keywords.join(", ")}
 ${data.structureNotes ? `• Additional Structure Notes: ${data.structureNotes}` : ""}
 ${data.includeStats ? "• MUST include relevant statistics and data points" : ""}
@@ -383,14 +460,16 @@ ${data.mediaUrls.length > 0 ? `
 • Alt Text Requirements: Generate SEO-friendly alt text for each image
 ` : ""}
 
+${getStructureInstructions(data.structureFormat)}
+
 YOUR TASK:
-Create a comprehensive content outline that serves as a blueprint for writing ${data.wordCount}-word ${data.contentType} content. This outline will be used by a skilled writer to create engaging, human-centered content.
+Create a comprehensive content outline that serves as a blueprint for writing ${data.wordCount}-word ${data.contentType} content. This outline will be used by a skilled writer to create engaging, human-centered content that follows the ${data.structureFormat} structure format.
 
 OUTLINE REQUIREMENTS:
 1. **Hook & Opening Strategy**: Provide 2-3 opening hook options (story, question, statistic, or bold statement)
-2. **Detailed Section Breakdown**: Create 4-7 main sections with:
+2. **Detailed Section Breakdown**: Create sections appropriate for ${data.structureFormat} format with:
    - Section titles (H2 level)
-   - 2-3 subsection points (H3 level) per section
+   - 2-3 subsection points (H3 level) per section where appropriate
    - Key messages and talking points
    - Suggested word count per section
    - Emotional tone guidance for each section
@@ -509,10 +588,85 @@ Return ONLY a well-structured JSON object with this exact format:
  * Focuses on authenticity, practical value, and genuine expertise demonstration
  */
 const buildGPTPrompt = (outline: any, data: any): string => {
+  const toneInstructions = getToneInstructions(data.contentTone);
+  
+  // Structure-specific writing guidance
+  const getStructureWritingGuidance = (structureFormat: string): string => {
+    switch (structureFormat) {
+      case 'how-to-steps':
+        return `
+🔧 **HOW-TO STRUCTURE GUIDANCE:**
+- Start each step with a clear action verb (e.g., "Create", "Navigate", "Configure")
+- Use numbered lists for the main steps and bullet points for sub-tasks
+- Include time estimates for each step where appropriate
+- Add "Pro Tips" or "Warning" callouts for important considerations
+- Use screenshots or visual references when describing UI elements
+- End each step by confirming what the reader should have accomplished
+- Include troubleshooting tips for common issues`;
+
+      case 'faq-qa':
+        return `
+❓ **FAQ STRUCTURE GUIDANCE:**
+- Format questions as H3 headings in natural language
+- Start answers immediately after each question without additional formatting
+- Keep answers concise but comprehensive (50-200 words each)
+- Use bullet points within answers for multiple related points
+- Cross-reference related questions when appropriate
+- Include follow-up questions or "Related: See question X" references
+- End with a clear next step or resource for additional help`;
+
+      case 'comparison-vs':
+        return `
+⚖️ **COMPARISON STRUCTURE GUIDANCE:**
+- Use comparison tables or side-by-side formatting where possible
+- Maintain objectivity while providing clear guidance
+- Include specific criteria for comparison (price, features, usability, etc.)
+- Use consistent evaluation criteria across both options
+- Provide real-world use case examples for each option
+- Include "Winner" or "Best for" callouts for specific scenarios
+- Support claims with specific examples and data points`;
+
+      case 'review-analysis':
+        return `
+📊 **REVIEW STRUCTURE GUIDANCE:**
+- Include ratings or scores where appropriate (e.g., "8/10" or "4.5/5 stars")
+- Use clear section headers for different aspects being reviewed
+- Balance positive and negative points fairly
+- Include specific examples and evidence for all claims
+- Compare to alternatives or competitors where relevant
+- Use callout boxes for key pros and cons
+- End with a clear recommendation and target user profile`;
+
+      case 'case-study-detailed':
+        return `
+📈 **CASE STUDY STRUCTURE GUIDANCE:**
+- Use storytelling elements to maintain engagement throughout
+- Include specific metrics and quantifiable results
+- Present information chronologically where appropriate
+- Use quotes or testimonials if available
+- Include before/after comparisons with specific data
+- Highlight key decision points and rationale
+- Focus on actionable insights readers can apply
+- Use data visualization concepts in descriptions`;
+
+      default:
+        return `
+📝 **STANDARD STRUCTURE GUIDANCE:**
+- Follow the outline structure precisely
+- Maintain consistent formatting throughout
+- Use appropriate heading hierarchy (H1, H2, H3)
+- Include clear transitions between sections`;
+    }
+  };
+
   return `You are an exceptionally skilled ${data.industry} content writer and ${data.audience} specialist with a gift for creating deeply human, emotionally resonant content that feels like it was written by someone who truly understands both the subject matter and the reader's world.
 
+${toneInstructions}
+
 WRITING MISSION:
-Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that ${data.audience} will find genuinely valuable, relatable, and engaging.
+Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that follows the ${data.structureFormat} structure format. Ensure ${data.audience} will find it genuinely valuable, relatable, and engaging.
+
+${getStructureWritingGuidance(data.structureFormat)}
 
 CONTENT OUTLINE TO EXPAND:
 ${JSON.stringify(outline, null, 2)}
@@ -655,9 +809,186 @@ Remember: This content should feel like it was written by a human expert who gen
 Write the complete ${data.wordCount}-word ${data.contentType} now:`;
 };
 
+const getToneInstructions = (tone: string): string => {
+  switch (tone.toLowerCase()) {
+    case 'friendly':
+      return `
+TONE GUIDELINES - FRIENDLY:
+• Use warm, approachable language that feels like a conversation with a trusted friend
+• Include personal touches and relatable examples from everyday life
+• Ask rhetorical questions to engage readers and create dialogue
+• Use "you" frequently to create direct connection
+• Share experiences and insights in a personal way
+• Maintain optimism and positivity throughout
+• Use contractions and casual language where appropriate
+• Include encouraging phrases and supportive language
+• Make complex topics feel accessible and non-intimidating`;
+
+    case 'professional':
+      return `
+TONE GUIDELINES - PROFESSIONAL:
+• Maintain formal, authoritative language appropriate for business contexts
+• Use industry-standard terminology and proper business etiquette
+• Structure content with clear, logical progression
+• Support statements with credible sources and data
+• Avoid overly casual expressions or slang
+• Use third-person perspective when appropriate
+• Include executive summaries and key takeaways
+• Maintain objectivity while providing expert insights
+• Present information in a polished, corporate-appropriate manner`;
+
+    case 'thoughtprovoking':
+    case 'thought-provoking':
+      return `
+TONE GUIDELINES - THOUGHT-PROVOKING:
+• Challenge conventional thinking and present new perspectives
+• Ask deep, meaningful questions that encourage reflection
+• Present contrasting viewpoints and explore nuances
+• Use thought experiments and hypothetical scenarios
+• Connect ideas across different domains and disciplines
+• Encourage critical thinking and self-examination
+• Present complex concepts that require mental engagement
+• Use philosophical approaches and broader implications
+• Inspire readers to reconsider their assumptions and beliefs`;
+
+    case 'expert':
+      return `
+TONE GUIDELINES - EXPERT:
+• Demonstrate deep, specialized knowledge and years of experience
+• Use technical terminology appropriately with clear explanations
+• Share insider knowledge and industry secrets
+• Reference specific methodologies, frameworks, and best practices
+• Include detailed analysis and sophisticated insights
+• Cite authoritative sources and recent research
+• Provide advanced strategies beyond basic advice
+• Show mastery through nuanced understanding of complex topics
+• Offer strategic perspectives that only experienced professionals would know`;
+
+    case 'persuasive':
+      return `
+TONE GUIDELINES - PERSUASIVE:
+• Build compelling arguments using logical reasoning and emotional appeal
+• Use social proof, testimonials, and success stories
+• Address objections and counterarguments proactively
+• Create urgency and emphasize benefits clearly
+• Use powerful action words and decisive language
+• Structure arguments with strong opening and closing statements
+• Include specific examples and case studies as evidence
+• Appeal to readers' desires, fears, and aspirations
+• Guide readers toward a specific conclusion or action`;
+
+    case 'informative':
+    case 'informative/neutral':
+    case 'neutral':
+      return `
+TONE GUIDELINES - INFORMATIVE/NEUTRAL:
+• Present information objectively without bias or personal opinion
+• Use clear, straightforward language that's easy to understand
+• Focus on facts, data, and verifiable information
+• Organize content logically with clear headings and structure
+• Provide balanced coverage of different aspects or viewpoints
+• Use examples and analogies to clarify complex concepts
+• Maintain educational focus without trying to persuade
+• Include relevant statistics and research findings
+• Write in an accessible style suitable for general audiences`;
+
+    case 'casual':
+    case 'casual/conversational':
+    case 'conversational':
+      return `
+TONE GUIDELINES - CASUAL/CONVERSATIONAL:
+• Write as if speaking directly to a friend over coffee
+• Use everyday language, contractions, and natural speech patterns
+• Include personal anecdotes and relatable stories
+• Use humor, pop culture references, and current trends
+• Break complex ideas into bite-sized, digestible pieces
+• Include rhetorical questions and direct reader engagement
+• Use shorter sentences and paragraphs for easy reading
+• Add personality and authentic voice throughout
+• Make content feel effortless and enjoyable to read`;
+
+    case 'authoritative':
+    case 'authoritative/confident':
+    case 'confident':
+      return `
+TONE GUIDELINES - AUTHORITATIVE/CONFIDENT:
+• Make definitive statements backed by expertise and evidence
+• Use commanding language that demonstrates leadership
+• Present information with unwavering confidence and clarity
+• Establish credibility through demonstrated knowledge and experience
+• Use assertive statements rather than tentative suggestions
+• Include specific metrics, results, and proven outcomes
+• Take clear positions on controversial or debated topics
+• Show mastery through comprehensive understanding
+• Guide readers with confidence and decisive recommendations`;
+
+    case 'inspirational':
+    case 'inspirational/motivational':
+    case 'motivational':
+      return `
+TONE GUIDELINES - INSPIRATIONAL/MOTIVATIONAL:
+• Use uplifting language that energizes and motivates action
+• Share success stories and transformation examples
+• Focus on possibilities, potential, and positive outcomes
+• Include calls to action that inspire immediate steps
+• Use empowering language that builds confidence
+• Address challenges as opportunities for growth
+• Create vision of better future and achievable goals
+• Include motivational quotes and inspiring examples
+• End sections with encouraging and actionable insights`;
+
+    case 'humorous':
+    case 'humorous/witty':
+    case 'witty':
+      return `
+TONE GUIDELINES - HUMOROUS/WITTY:
+• Include appropriate humor, wordplay, and clever observations
+• Use funny analogies and entertaining examples
+• Make light of common frustrations and shared experiences
+• Include witty one-liners and amusing anecdotes
+• Use self-deprecating humor when appropriate
+• Keep humor relevant to the topic and audience
+• Balance entertainment with valuable information
+• Use unexpected comparisons and creative metaphors
+• Maintain professionalism while being entertaining`;
+
+    case 'empathetic':
+      return `
+TONE GUIDELINES - EMPATHETIC:
+• Acknowledge readers' feelings, struggles, and challenges
+• Use understanding and compassionate language
+• Validate emotions and experiences without judgment
+• Share relatable stories of overcoming difficulties
+• Offer support and encouragement throughout content
+• Use inclusive language that makes everyone feel welcome
+• Address common pain points with sensitivity
+• Provide comfort and reassurance alongside practical advice
+• Show genuine care for readers' wellbeing and success`;
+
+    default:
+      return `
+TONE GUIDELINES - ${tone.toUpperCase()}:
+• Write in a ${tone} tone that resonates with your target audience
+• Maintain consistency throughout the content
+• Use language appropriate for the selected tone
+• Ensure the tone enhances rather than distracts from the message`;
+  }
+};
+
 const buildSystemPrompt = (data: any): string => {
   const personalityText = data.writingPersonality ? ` with a ${data.writingPersonality} personality` : "";
-  return `You are an expert ${data.industry} content writer${personalityText} specializing in ${data.audience}-focused content. Write in a ${data.contentTone} tone with deep expertise and authentic human voice. Ensure the content is comprehensive, engaging, and provides genuine value to the reader.`;
+  const toneInstructions = getToneInstructions(data.contentTone);
+  
+  return `You are an expert ${data.industry} content writer${personalityText} specializing in ${data.audience}-focused content. Write with deep expertise and authentic human voice that provides genuine value to the reader.
+
+${toneInstructions}
+
+CORE WRITING PRINCIPLES:
+• Ensure every paragraph provides genuine value and insights
+• Use specific examples and concrete details rather than generic statements
+• Maintain the specified tone consistently throughout the entire piece
+• Write with authority while being accessible to your target audience
+• Create content that is comprehensive, engaging, and actionable`;
 };
 
 /**
@@ -666,38 +997,344 @@ const buildSystemPrompt = (data: any): string => {
  */
 const createFallbackOutline = (data: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { topic, audience, industry, wordCount, contentTone, keywords, includeReferences, mediaUrls, mediaPlacementStrategy, ctaType } = data;
+  const { topic, audience, industry, wordCount, contentTone, keywords, includeReferences, mediaUrls, mediaPlacementStrategy, ctaType, structureFormat } = data;
   
-  const sections = Math.max(4, Math.min(7, Math.ceil(wordCount / 300))); // 4-7 sections
-  const wordsPerSection = Math.floor(wordCount / sections);
+  // Structure-specific section generation
+  const generateStructureSpecificSections = () => {
+    const wordsPerSection = Math.floor(wordCount / 5); // Default to 5 sections
+
+    switch (structureFormat) {
+      case 'how-to-steps':
+        return [
+          {
+            title: `How to ${topic}: Complete Step-by-Step Guide`,
+            wordCount: Math.floor(wordCount * 0.15),
+            tone: contentTone,
+            keyPoints: ["Overview of the process", "What readers will learn", "Prerequisites and requirements"],
+            humanElements: {
+              storyOpportunity: "User success story or common frustration",
+              emotionalConnection: "Building confidence about the process",
+              practicalValue: "Clear expectations and outcomes"
+            }
+          },
+          {
+            title: "Step 1: Getting Started",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Initial setup", "First actions to take", "Common beginner mistakes to avoid"],
+            humanElements: {
+              storyOpportunity: "First-time experience scenario",
+              emotionalConnection: "Reducing anxiety about starting",
+              practicalValue: "Concrete first steps"
+            }
+          },
+          {
+            title: "Step 2: Building Momentum",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Next level actions", "Building on previous step", "Tips for efficiency"],
+            humanElements: {
+              storyOpportunity: "Progress milestone story",
+              emotionalConnection: "Celebrating early wins",
+              practicalValue: "Advanced techniques"
+            }
+          },
+          {
+            title: "Step 3: Mastering the Process",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Advanced techniques", "Optimization strategies", "Troubleshooting common issues"],
+            humanElements: {
+              storyOpportunity: "Expert-level application",
+              emotionalConnection: "Building expertise and confidence",
+              practicalValue: "Pro tips and best practices"
+            }
+          },
+          {
+            title: "Conclusion & Next Steps",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Summary of accomplishments", "What to do next", "Resources for continued learning"],
+            humanElements: {
+              storyOpportunity: "Long-term success vision",
+              emotionalConnection: "Empowerment and motivation",
+              practicalValue: "Clear path forward"
+            }
+          }
+        ];
+
+      case 'faq-qa':
+        return [
+          {
+            title: `${topic}: Frequently Asked Questions`,
+            wordCount: Math.floor(wordCount * 0.12),
+            tone: contentTone,
+            keyPoints: ["Introduction to the topic", "Scope of questions covered", "How to use this guide"],
+            humanElements: {
+              storyOpportunity: "Common user scenarios",
+              emotionalConnection: "Understanding user concerns",
+              practicalValue: "Navigation guide"
+            }
+          },
+          {
+            title: "Basic Questions",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["What is questions", "Why questions", "When questions"],
+            humanElements: {
+              storyOpportunity: "Beginner experiences",
+              emotionalConnection: "Reducing confusion and anxiety",
+              practicalValue: "Foundational understanding"
+            }
+          },
+          {
+            title: "Getting Started Questions",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["How to start", "What you need", "First steps"],
+            humanElements: {
+              storyOpportunity: "First-time user journey",
+              emotionalConnection: "Building confidence to begin",
+              practicalValue: "Actionable starting points"
+            }
+          },
+          {
+            title: "Advanced Questions",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Complex scenarios", "Troubleshooting", "Optimization"],
+            humanElements: {
+              storyOpportunity: "Power user experiences",
+              emotionalConnection: "Advanced mastery",
+              practicalValue: "Expert-level insights"
+            }
+          },
+          {
+            title: "Additional Resources",
+            wordCount: Math.floor(wordCount * 0.13),
+            tone: contentTone,
+            keyPoints: ["Where to get help", "Further reading", "Community resources"],
+            humanElements: {
+              storyOpportunity: "Continuing education journey",
+              emotionalConnection: "Ongoing support and growth",
+              practicalValue: "Resource directory"
+            }
+          }
+        ];
+
+      case 'comparison-vs':
+        return [
+          {
+            title: `${topic}: Complete Comparison Guide`,
+            wordCount: Math.floor(wordCount * 0.15),
+            tone: contentTone,
+            keyPoints: ["What's being compared", "Why comparison matters", "How to use this guide"],
+            humanElements: {
+              storyOpportunity: "Decision-making scenario",
+              emotionalConnection: "Understanding the dilemma",
+              practicalValue: "Framework for comparison"
+            }
+          },
+          {
+            title: "Option A: In-Depth Analysis",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Key features", "Strengths and benefits", "Ideal use cases"],
+            humanElements: {
+              storyOpportunity: "Success story with Option A",
+              emotionalConnection: "Excitement about possibilities",
+              practicalValue: "When to choose this option"
+            }
+          },
+          {
+            title: "Option B: Comprehensive Review",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Key features", "Strengths and benefits", "Ideal use cases"],
+            humanElements: {
+              storyOpportunity: "Success story with Option B",
+              emotionalConnection: "Alternative path excitement",
+              practicalValue: "When to choose this option"
+            }
+          },
+          {
+            title: "Side-by-Side Comparison",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Feature comparison", "Pros and cons", "Cost analysis"],
+            humanElements: {
+              storyOpportunity: "Real user choosing between options",
+              emotionalConnection: "Confidence in decision-making",
+              practicalValue: "Clear comparison framework"
+            }
+          },
+          {
+            title: "Final Recommendation",
+            wordCount: Math.floor(wordCount * 0.15),
+            tone: contentTone,
+            keyPoints: ["Best choice for different scenarios", "Final thoughts", "How to proceed"],
+            humanElements: {
+              storyOpportunity: "Successful implementation story",
+              emotionalConnection: "Clarity and confidence",
+              practicalValue: "Decision-making guidance"
+            }
+          }
+        ];
+
+      case 'review-analysis':
+        return [
+          {
+            title: `${topic}: Complete Review and Analysis`,
+            wordCount: Math.floor(wordCount * 0.12),
+            tone: contentTone,
+            keyPoints: ["What's being reviewed", "Review methodology", "Key evaluation criteria"],
+            humanElements: {
+              storyOpportunity: "Why this review matters",
+              emotionalConnection: "Understanding user needs",
+              practicalValue: "Review framework"
+            }
+          },
+          {
+            title: "Key Features and Capabilities",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Core features", "Unique capabilities", "User interface"],
+            humanElements: {
+              storyOpportunity: "First impressions experience",
+              emotionalConnection: "Excitement about features",
+              practicalValue: "Feature breakdown"
+            }
+          },
+          {
+            title: "What We Loved (Pros)",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Standout strengths", "User experience highlights", "Value propositions"],
+            humanElements: {
+              storyOpportunity: "Positive user experiences",
+              emotionalConnection: "Satisfaction and delight",
+              practicalValue: "Key benefits"
+            }
+          },
+          {
+            title: "Areas for Improvement (Cons)",
+            wordCount: Math.floor(wordCount * 0.18),
+            tone: contentTone,
+            keyPoints: ["Limitations", "User frustrations", "Missing features"],
+            humanElements: {
+              storyOpportunity: "Challenging user scenarios",
+              emotionalConnection: "Honest assessment",
+              practicalValue: "Realistic expectations"
+            }
+          },
+          {
+            title: "Final Verdict and Recommendation",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Overall rating", "Who should use this", "Final thoughts"],
+            humanElements: {
+              storyOpportunity: "Ideal user success story",
+              emotionalConnection: "Confident recommendation",
+              practicalValue: "Clear guidance"
+            }
+          }
+        ];
+
+      case 'case-study-detailed':
+        return [
+          {
+            title: `${topic}: Case Study Overview`,
+            wordCount: Math.floor(wordCount * 0.1),
+            tone: contentTone,
+            keyPoints: ["Executive summary", "Key outcomes", "Why this matters"],
+            humanElements: {
+              storyOpportunity: "Setting the scene",
+              emotionalConnection: "Inspiring possibility",
+              practicalValue: "Key takeaways preview"
+            }
+          },
+          {
+            title: "Background and Context",
+            wordCount: Math.floor(wordCount * 0.15),
+            tone: contentTone,
+            keyPoints: ["Initial situation", "Market conditions", "Stakeholders involved"],
+            humanElements: {
+              storyOpportunity: "Behind-the-scenes setup",
+              emotionalConnection: "Understanding the stakes",
+              practicalValue: "Context for decisions"
+            }
+          },
+          {
+            title: "The Challenge",
+            wordCount: Math.floor(wordCount * 0.2),
+            tone: contentTone,
+            keyPoints: ["Problem definition", "Constraints faced", "Why traditional solutions failed"],
+            humanElements: {
+              storyOpportunity: "Moment of crisis or realization",
+              emotionalConnection: "Tension and urgency",
+              practicalValue: "Problem identification"
+            }
+          },
+          {
+            title: "The Solution and Implementation",
+            wordCount: Math.floor(wordCount * 0.3),
+            tone: contentTone,
+            keyPoints: ["Strategic approach", "Implementation steps", "Key decisions made"],
+            humanElements: {
+              storyOpportunity: "Breakthrough moments",
+              emotionalConnection: "Innovation and determination",
+              practicalValue: "Actionable strategies"
+            }
+          },
+          {
+            title: "Results and Key Takeaways",
+            wordCount: Math.floor(wordCount * 0.25),
+            tone: contentTone,
+            keyPoints: ["Quantifiable results", "Lessons learned", "Actionable insights"],
+            humanElements: {
+              storyOpportunity: "Success celebration",
+              emotionalConnection: "Achievement and satisfaction",
+              practicalValue: "Replicable insights"
+            }
+          }
+        ];
+
+      default:
+        return Array.from({ length: 5 }, (_, i) => ({
+          title: i === 0 ? `Understanding ${topic}: A Complete Guide for ${audience}` :
+                 i === 4 ? `Your Next Steps: Implementing ${topic} Successfully` :
+                 `Strategy ${i}: Key Approaches to ${topic}`,
+          wordCount: wordsPerSection,
+          tone: contentTone,
+          keyPoints: [
+            `Essential information for ${audience}`,
+            `Practical implementation strategies`,
+            `Real-world examples and case studies`
+          ],
+          humanElements: {
+            storyOpportunity: `Real-world scenario relevant to ${industry}`,
+            emotionalConnection: "Building confidence and understanding",
+            practicalValue: "Actionable insights and next steps"
+          }
+        }));
+    }
+  };
+
+  const sections = generateStructureSpecificSections();
   
   return {
     meta: {
       estimatedReadingTime: `${Math.ceil(wordCount / 200)} minutes`,
       primaryEmotion: "informed and empowered",
-      keyValueProposition: `Comprehensive guide to ${topic} for ${audience}`
+      keyValueProposition: `Comprehensive ${structureFormat} guide to ${topic} for ${audience}`
     },
     hookOptions: [
       `Did you know that ${audience} face this exact challenge with ${topic} every single day?`,
       `Picture this: You're a ${audience.toLowerCase()} trying to navigate ${topic}, and everything feels overwhelming.`,
       `Here's the truth about ${topic} that most ${audience} never discover...`
     ],
-    sections: Array.from({ length: sections }, (_, i) => ({
-      title: i === 0 ? `Understanding ${topic}: A Complete Guide for ${audience}` :
-             i === sections - 1 ? `Your Next Steps: Implementing ${topic} Successfully` :
-             `Strategy ${i}: Key Approaches to ${topic}`,
-      wordCount: wordsPerSection,
-      tone: contentTone,
-      keyPoints: [
-        `Essential information for ${audience}`,
-        `Practical implementation strategies`,
-        `Real-world examples and case studies`
-      ],
-      humanElements: {
-        storyOpportunity: `Real-world scenario relevant to ${industry}`,
-        emotionalConnection: "Building confidence and understanding",
-        practicalValue: "Actionable insights and next steps"
-      },
+    sections: sections.map((section, i) => ({
+      ...section,
       ...(includeReferences && {
         referenceOpportunities: {
           authoritySourceTypes: "Industry authorities, government sources, and research studies",
@@ -712,18 +1349,11 @@ const createFallbackOutline = (data: any) => {
           captionIdeas: [`Visual guide to ${topic} concept ${i + 1}`]
         }
       }),
-      subsections: [
-        {
-          subtitle: "Key Concepts",
-          focusArea: "Foundational understanding",
-          wordCount: Math.floor(wordsPerSection / 2)
-        },
-        {
-          subtitle: "Practical Application", 
-          focusArea: "Implementation guidance",
-          wordCount: Math.floor(wordsPerSection / 2)
-        }
-      ]
+      subsections: section.keyPoints.map((point, idx) => ({
+        subtitle: point,
+        focusArea: `Implementation of ${point.toLowerCase()}`,
+        wordCount: Math.floor(section.wordCount / section.keyPoints.length)
+      }))
     })),
     seoStrategy: {
       metaDescription: `Discover essential ${topic} strategies for ${audience} in ${industry}. Expert insights, practical tips, and actionable advice.`,
@@ -749,7 +1379,7 @@ const createFallbackOutline = (data: any) => {
         imageCount: mediaUrls.length,
         strategicPlacements: mediaUrls.map((_: any, index: number) => ({
           imageIndex: index,
-          recommendedSection: `Section ${Math.min(index + 1, sections)}`,
+          recommendedSection: `Section ${Math.min(index + 1, sections.length)}`,
           placementReason: "Visual support for key concepts",
           altTextSuggestion: `Illustration showing ${topic} concept ${index + 1}`,
           captionSuggestion: `Visual guide to understanding this aspect of ${topic}`
@@ -800,7 +1430,7 @@ export const generateLongformContent = onCall({
     /engageperfect\.com$/
   ],
   maxInstances: config.maxInstances,
-  timeoutSeconds: config.timeoutSeconds,
+  timeoutSeconds: 540, // Increased to 9 minutes for complex generation
   memory: config.memory,
   minInstances: isProduction ? 1 : 0,
   region: "us-central1"

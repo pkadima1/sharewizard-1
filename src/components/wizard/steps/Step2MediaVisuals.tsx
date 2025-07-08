@@ -13,11 +13,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useToast } from '@/hooks/use-toast';
 import { useAutoSave, getDraftInfo } from '@/hooks/useAutoSave';
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
+import { useTranslation } from 'react-i18next';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 5;
 
-const Step2MediaVisuals = ({ formData, updateFormData }) => {
+interface Step2Props {
+  formData: any;
+  updateFormData: (key: string, value: any) => void;
+}
+
+const Step2MediaVisuals: React.FC<Step2Props> = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
   const [files, setFiles] = useState(formData.mediaFiles || []);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
@@ -54,8 +61,8 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
       setIncludeImages(restoredData.includeImages || false);
       
       toast({
-        title: "Draft Restored",
-        description: "Your saved media settings have been restored.",
+        title: t('step2.success.draftRestored'),
+        description: t('step2.success.draftRestoredDesc'),
       });
     }
   };
@@ -64,8 +71,8 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
   const handleManualSave = () => {
     saveNow();
     toast({
-      title: "Progress Saved",
-      description: "Your media settings have been saved.",
+      title: t('step2.success.progressSaved'),
+      description: t('step2.success.progressSavedDesc'),
     });
   };
 
@@ -76,8 +83,8 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
     // Validate file count
     if (files.length + selectedFiles.length > MAX_FILES) {
       toast({
-        title: "Too many files",
-        description: `You can upload a maximum of ${MAX_FILES} files.`,
+        title: t('step2.errors.tooManyFiles'),
+        description: t('step2.errors.maxFilesMsg', { count: MAX_FILES }),
         variant: "destructive",
       });
       return;
@@ -89,9 +96,9 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
 
     selectedFiles.forEach((file: File) => {
       if (file.size > MAX_FILE_SIZE) {
-        invalidFiles.push(`${file.name} (too large)`);
+        invalidFiles.push(`${file.name} (${t('step2.errors.fileTooLarge')})`);
       } else if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-        invalidFiles.push(`${file.name} (invalid type)`);
+        invalidFiles.push(`${file.name} (${t('step2.errors.unsupportedType')})`);
       } else {
         validFiles.push(file);
       }
@@ -99,8 +106,8 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
 
     if (invalidFiles.length > 0) {
       toast({
-        title: "Invalid files",
-        description: `The following files were skipped: ${invalidFiles.join(', ')}`,
+        title: t('step2.errors.invalidFiles'),
+        description: t('step2.errors.invalidFilesDesc', { files: invalidFiles.join(', ') }),
         variant: "destructive",
       });
     }
@@ -114,8 +121,8 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
   const uploadFiles = async (filesToUpload) => {
     if (!currentUser) {
       toast({
-        title: "Authentication required",
-        description: "Please sign in to upload files.",
+        title: t('step2.errors.authRequired'),
+        description: t('step2.errors.authRequiredDesc'),
         variant: "destructive",
       });
       return;
@@ -128,14 +135,14 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
       const uploadedFiles = await Promise.all(uploadPromises);
       setFiles(prev => [...prev, ...uploadedFiles]);
       toast({
-        title: "Upload successful",
-        description: `${uploadedFiles.length} file(s) uploaded successfully.`,
+        title: t('step2.success.uploadSuccess'),
+        description: t('step2.success.uploadSuccessDesc', { count: uploadedFiles.length }),
       });
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: "Upload failed",
-        description: "Some files could not be uploaded. Please try again.",
+        title: t('step2.errors.uploadFailed'),
+        description: t('step2.errors.uploadFailedDesc'),
         variant: "destructive",
       });
     } finally {
@@ -253,10 +260,10 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
         {/* Header */}
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Media & Visuals
+            {t('step2.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Upload images, videos, or other media to enhance your content
+            {t('step2.subtitle')}
           </p>
         </div>
 
@@ -267,7 +274,7 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
               <div className="flex items-center space-x-2">
                 <RotateCcw className="h-4 w-4 text-amber-600" />
                 <span className="text-sm text-amber-800 dark:text-amber-200">
-                  Found saved draft from {getDraftInfo('step2-media-visuals-draft').timestamp?.toLocaleString() || 'unknown time'}
+                  {t('step2.draft.foundSaved', { time: getDraftInfo('step2-media-visuals-draft').timestamp?.toLocaleString() || t('step2.draft.unknownTime') })}
                 </span>
               </div>
               <div className="flex space-x-2">
@@ -277,7 +284,7 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                   onClick={handleRestoreDraft}
                   className="border-amber-300 text-amber-700 hover:bg-amber-100"
                 >
-                  Restore
+                  {t('step2.draft.restore')}
                 </Button>
                 <Button 
                   size="sm" 
@@ -285,18 +292,18 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                   onClick={clearDraft}
                   className="text-amber-700 hover:bg-amber-100"
                 >
-                  Dismiss
+                  {t('step2.draft.dismiss')}
                 </Button>
               </div>
             </div>
           </Card>
         )}        {/* Progress Indicator */}
         <QualityIndicator 
-          input={`${files.length} files uploaded, ${includeImages ? 'images enabled' : 'images disabled'}`}
+          input={`${files.length} files uploaded, ${includeImages ? t('step2.quality.statusEnabled') : t('step2.quality.statusDisabled')}`}
           type="topic"
           suggestions={[
-            'Enable image suggestions for enhanced content',
-            'Upload media files to include in your content'
+            t('step2.quality.suggestions.enableImages'),
+            t('step2.quality.suggestions.uploadFiles')
           ]}
         />
 
@@ -307,16 +314,16 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
             <div className="space-y-6">
               <div className="flex items-center space-x-2">
                 <Image className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Visual Content Settings</h3>
+                <h3 className="text-lg font-semibold">{t('step2.settings.title')}</h3>
               </div>
 
               {/* Include Images Toggle */}
               <div className="flex items-center justify-between p-4 border rounded-lg">                <div className="space-y-1">
                   <Label htmlFor="include-images" className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                    Include Image Suggestions
+                    {t('step2.settings.includeImagesLabel')}
                   </Label>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Generate suggestions for relevant images to include in your content
+                    {t('step2.settings.includeImagesDesc')}
                   </p>
                 </div>
                 <Switch
@@ -326,19 +333,19 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                 />
               </div>              {/* File Upload Area */}
               <div className="space-y-4">                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Upload Media Files (Optional)</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{t('step2.settings.uploadTitle')}</h4>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-0 h-6 w-6">
                         <Image className="h-4 w-4 text-gray-500" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent className="max-w-sm p-3">                      <h5 className="font-medium mb-1">Media Placement Guide</h5>
+                    <TooltipContent className="max-w-sm p-3">                      <h5 className="font-medium mb-1">{t('step2.settings.placementGuideTitle')}</h5>
                       <ul className="text-sm space-y-1">
-                        <li><strong className="font-semibold">Header:</strong> Main image at the top of content</li>
-                        <li><strong className="font-semibold">Section 1/2:</strong> Supporting visuals for content sections</li>
-                        <li><strong className="font-semibold">Inline:</strong> Placed within the text flow</li>
-                        <li><strong className="font-semibold">End:</strong> Placed at the conclusion of content</li>
+                        <li><strong className="font-semibold">{t('step2.placements.header')}:</strong> {t('step2.settings.placementGuide.header')}</li>
+                        <li><strong className="font-semibold">{t('step2.placements.section_1')}/{t('step2.placements.section_2')}:</strong> {t('step2.settings.placementGuide.section')}</li>
+                        <li><strong className="font-semibold">{t('step2.placements.inline')}:</strong> {t('step2.settings.placementGuide.inline')}</li>
+                        <li><strong className="font-semibold">{t('step2.placements.end')}:</strong> {t('step2.settings.placementGuide.end')}</li>
                       </ul>
                     </TooltipContent>
                   </Tooltip>
@@ -355,18 +362,18 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
                     <UploadCloud className="h-12 w-12 text-gray-400 mx-auto mb-4" />                    <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                      Drop files here or click to upload
+                      {t('step2.upload.dragDrop')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Supports images and videos up to {formatFileSize(MAX_FILE_SIZE)} each
+                      {t('step2.upload.supported', { size: formatFileSize(MAX_FILE_SIZE) })}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      Maximum {MAX_FILES} files
+                      {t('step2.upload.maxFiles', { count: MAX_FILES })}
                     </p>
                   </label>
                 </div>                  {uploading && (
                   <div className="space-y-2">
-                    <p className="text-sm text-gray-700 dark:text-gray-300">Uploading files...</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">{t('step2.upload.uploading')}</p>
                     {Object.entries(uploadProgress).map(([fileId, progress]) => (
                       <Progress key={fileId} value={progress as number} className="w-full" />
                     ))}
@@ -379,16 +386,16 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
           {/* Right Column - Uploaded Files */}
           <Card className="p-6">
             <div className="space-y-4">              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Uploaded Files</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('step2.files.title')}</h3>
                 <span className="text-sm text-gray-600 dark:text-gray-300">
-                  {files.length} / {MAX_FILES} files
+                  {t('step2.files.count', { current: files.length, max: MAX_FILES })}
                 </span>
               </div>
 
               {files.length === 0 ? (                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   <FileImage className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="text-gray-700 dark:text-gray-300">No files uploaded yet</p>
-                  <p className="text-sm">Upload some media to enhance your content</p>
+                  <p className="text-gray-700 dark:text-gray-300">{t('step2.files.noFiles')}</p>
+                  <p className="text-sm">{t('step2.files.noFilesDesc')}</p>
                 </div>
               ) : (                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {files.map((file) => (
@@ -438,28 +445,28 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
                       {/* Media placement and caption controls */}                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                         <div>
                           <Label htmlFor={`placement-${file.id}`} className="text-sm font-medium mb-1 block text-gray-700 dark:text-gray-300">
-                            Placement
+                            {t('step2.files.placement')}
                           </Label><select
                             id={`placement-${file.id}`}
                             value={file.mediaPlacement}
                             onChange={(e) => updateFileMetadata(file.id, 'mediaPlacement', e.target.value)}
                             className="w-full text-sm p-1.5 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary dark:bg-gray-800 dark:text-gray-200"
                           >
-                            <option value="header">Header</option>
-                            <option value="section_1">Section 1</option>
-                            <option value="section_2">Section 2</option>
-                            <option value="inline">Inline</option>
-                            <option value="end">End</option>
+                            <option value="header">{t('step2.placements.header')}</option>
+                            <option value="section_1">{t('step2.placements.section_1')}</option>
+                            <option value="section_2">{t('step2.placements.section_2')}</option>
+                            <option value="inline">{t('step2.placements.inline')}</option>
+                            <option value="end">{t('step2.placements.end')}</option>
                           </select>
                         </div>                        <div>
                           <Label htmlFor={`caption-${file.id}`} className="text-sm font-medium mb-1 block text-gray-700 dark:text-gray-300">
-                            Caption
+                            {t('step2.files.caption')}
                           </Label><input
                             id={`caption-${file.id}`}
                             type="text"
                             value={file.mediaCaption || ''}
                             onChange={(e) => updateFileMetadata(file.id, 'mediaCaption', e.target.value)}
-                            placeholder="Add a caption..."
+                            placeholder={t('step2.files.captionPlaceholder')}
                             className="w-full text-sm p-1.5 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-1 focus:ring-primary dark:bg-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
                           />
                         </div>
@@ -481,12 +488,12 @@ const Step2MediaVisuals = ({ formData, updateFormData }) => {
             className="flex items-center space-x-2"
           >
             <Save className="h-4 w-4" />
-            <span>Save Progress</span>
+            <span>{t('step2.actions.saveProgress')}</span>
           </Button>
         </div>        {/* Auto-save indicator */}
         {lastSavedFormatted && (
           <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-            Auto-saved {lastSavedFormatted}
+            {t('step2.actions.autoSaved', { time: lastSavedFormatted })}
           </div>
         )}
       </div>

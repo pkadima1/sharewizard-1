@@ -9,6 +9,7 @@ import { clearTrialPending } from '@/lib/subscriptionUtils';
 import { useLongformContent } from '@/hooks/useLongformContent';
 import LongformContentManager from '@/components/LongformContentManager';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 const Dashboard: React.FC = () => {
   const { currentUser, userProfile, refreshUserProfile } = useAuth();
@@ -20,6 +21,8 @@ const Dashboard: React.FC = () => {
   // Fetch longform content
   const { longformContent, loading: longformLoading, error: longformError } = useLongformContent(currentUser?.uid || '');
   
+  const { t } = useAppTranslation('dashboard');
+
   // Protect route - redirect to login if not authenticated
   useEffect(() => {
     if (!currentUser) {
@@ -77,7 +80,7 @@ const Dashboard: React.FC = () => {
   }, [location, currentUser, navigate, toast]);
 
   if (!currentUser || !userProfile) {
-    return <div>Loading...</div>;
+    return <div>{t('loading', 'Loading...')}</div>;
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -85,9 +88,9 @@ const Dashboard: React.FC = () => {
       
       <main className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('overview.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Welcome back, {currentUser.displayName || 'User'}!
+            {t('overview.welcome', { name: currentUser.displayName || t('user', 'User') })}
           </p>
         </div>
 
@@ -96,11 +99,11 @@ const Dashboard: React.FC = () => {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              Overview
+              {t('content.longform')}
             </TabsTrigger>
             <TabsTrigger value="longform" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              Long-form Content
+              {t('content.longform')}
               {longformContent.length > 0 && (
                 <span className="ml-1 bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">
                   {longformContent.length}
@@ -109,7 +112,7 @@ const Dashboard: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="captions" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Captions
+              {t('content.captions')}
             </TabsTrigger>
           </TabsList>
 
@@ -123,13 +126,13 @@ const Dashboard: React.FC = () => {
                     <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                       <Sparkles className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <h3 className="text-lg font-medium">AI Caption Generator</h3>
+                    <h3 className="text-lg font-medium">{t('quickActions.captionGenerator')}</h3>
                   </div>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Create engaging captions for your social media content with AI
+                    {t('quickActions.captionDesc')}
                   </p>
                   <Button className="w-full mt-4">
-                    Generate Captions
+                    {t('quickActions.generateCaptions')}
                   </Button>
                 </div>
               </Link>
@@ -140,33 +143,33 @@ const Dashboard: React.FC = () => {
                     <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                       <BookOpen className="h-6 w-6 text-green-600 dark:text-green-400" />
                     </div>
-                    <h3 className="text-lg font-medium">Long-form Content</h3>
+                    <h3 className="text-lg font-medium">{t('quickActions.longformContent')}</h3>
                   </div>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Generate comprehensive blog posts, articles, and guides
+                    {t('quickActions.longformDesc')}
                   </p>
                   <Button className="w-full mt-4">
-                    Create Content
+                    {t('content.create', 'Create Content')}
                   </Button>
                 </div>
               </Link>
 
               <div className="stats-card dark:bg-gray-800 dark:text-white">
-                <h3 className="text-lg font-medium">Content Summary</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Your content generation overview</p>
+                <h3 className="text-lg font-medium">{t('overview.stats')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('overview.subtitle')}</p>
                 <div className="mt-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Long-form Articles:</span>
+                    <span>{t('stats.totalShares')}</span>
                     <span className="font-medium">{longformContent.length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Total Words:</span>
+                    <span>{t('stats.totalViews')}</span>
                     <span className="font-medium">
                       {longformContent.reduce((total, content) => total + content.metadata.actualWordCount, 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Avg. Reading Time:</span>
+                    <span>{t('stats.averageViews')}</span>
                     <span className="font-medium">
                       {longformContent.length > 0 
                         ? Math.round(longformContent.reduce((total, content) => total + content.metadata.estimatedReadingTime, 0) / longformContent.length)
@@ -180,15 +183,15 @@ const Dashboard: React.FC = () => {
             {/* Quick Actions */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <div className="stats-card dark:bg-gray-800 dark:text-white">
-                <h3 className="text-lg font-medium">Quick Actions</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Common tasks you might want to do</p>
+                <h3 className="text-lg font-medium">{t('overview.quickActions')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('quickActions.captionDesc')}</p>
                 <div className="mt-4 space-y-2">
                   <Button 
                     className="w-full flex items-center gap-2"
                     onClick={() => navigate('/longform')}
                   >
                     <PenTool className="h-4 w-4" />
-                    Create Article
+                    {t('content.create', 'Create Article')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -196,7 +199,7 @@ const Dashboard: React.FC = () => {
                     onClick={() => navigate('/caption-generator')}
                   >
                     <Sparkles className="h-4 w-4" />
-                    Generate Captions
+                    {t('quickActions.generateCaptions')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -205,22 +208,22 @@ const Dashboard: React.FC = () => {
                     disabled={longformContent.length === 0}
                   >
                     <FileText className="h-4 w-4" />
-                    View My Content
+                    {t('quickActions.viewMyContent')}
                   </Button>
                 </div>
               </div>
 
               <div className="stats-card dark:bg-gray-800 dark:text-white">
-                <h3 className="text-lg font-medium">Engagement Metrics</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Performance of your published content</p>
+                <h3 className="text-lg font-medium">{t('overview.stats')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('overview.subtitle')}</p>
                 <div className="mt-4">
-                  <p className="text-center text-gray-500 dark:text-gray-400">No data available</p>
+                  <p className="text-center text-gray-500 dark:text-gray-400">{t('activity.noActivity')}</p>
                 </div>
               </div>
 
               <div className="stats-card dark:bg-gray-800 dark:text-white">
-                <h3 className="text-lg font-medium">Recent Activity</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Your latest content activity</p>
+                <h3 className="text-lg font-medium">{t('overview.recentShares')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('overview.subtitle')}</p>
                 <div className="mt-4">
                   {longformContent.length > 0 ? (
                     <div className="space-y-2">
@@ -228,10 +231,10 @@ const Dashboard: React.FC = () => {
                         <div key={content.id} className="text-xs p-2 bg-gray-50 dark:bg-gray-700 rounded">
                           <div className="font-medium truncate">{content.inputs.topic}</div>
                           <div className="text-gray-500 dark:text-gray-400">
-                            {content.metadata.actualWordCount} words • {
+                            {content.metadata.actualWordCount} {t('stats.totalViews', 'words')} • {
                               content.metadata.generatedAt && content.metadata.generatedAt.toDate 
                                 ? content.metadata.generatedAt.toDate().toLocaleDateString()
-                                : 'Recently'
+                                : t('activity.generated', 'Recently')
                             }
                           </div>
                         </div>
@@ -242,12 +245,12 @@ const Dashboard: React.FC = () => {
                           className="text-xs p-0 h-auto"
                           onClick={() => setActiveTab('longform')}
                         >
-                          View all {longformContent.length} articles →
+                          {t('content.viewAll', { count: longformContent.length })}
                         </Button>
                       )}
                     </div>
                   ) : (
-                    <p className="text-center text-gray-500 dark:text-gray-400">No activity yet</p>
+                    <p className="text-center text-gray-500 dark:text-gray-400">{t('activity.noActivity')}</p>
                   )}
                 </div>
               </div>
@@ -258,14 +261,14 @@ const Dashboard: React.FC = () => {
           <TabsContent value="longform" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Long-form Content</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('content.longform')}</h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Manage and download your generated articles, guides, and blog posts
+                  {t('longform.subtitle', 'Manage and download your generated articles, guides, and blog posts')}
                 </p>
               </div>
               <Button onClick={() => navigate('/longform')} className="flex items-center gap-2">
                 <PenTool className="h-4 w-4" />
-                Create New Content
+                {t('longform.createNew', 'Create New Content')}
               </Button>
             </div>
             
@@ -280,21 +283,21 @@ const Dashboard: React.FC = () => {
           <TabsContent value="captions" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Caption Generation</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('content.captions')}</h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Manage your AI-generated social media captions
+                  {t('captions.subtitle', 'Manage your AI-generated social media captions')}
                 </p>
               </div>
               <Button onClick={() => navigate('/caption-generator')} className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4" />
-                Generate Captions
+                {t('quickActions.generateCaptions')}
               </Button>
             </div>
             
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2">Caption Management Coming Soon</h3>
-              <p className="text-sm">Caption history and management features will be available here.</p>
+              <h3 className="text-lg font-medium mb-2">{t('captions.managementComingSoon', 'Caption Management Coming Soon')}</h3>
+              <p className="text-sm">{t('captions.historyComingSoon', 'Caption history and management features will be available here.')}</p>
             </div>
           </TabsContent>
         </Tabs>

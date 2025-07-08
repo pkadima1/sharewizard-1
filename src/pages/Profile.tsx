@@ -34,6 +34,7 @@ import { Heart, Share2, Download, Eye, Edit, Copy, Trash2, Star, Calendar, Slide
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAppTranslation } from '@/hooks/useAppTranslation';
 
 // Import the Generation type from the hook
 import { Generation } from '@/hooks/useUserGenerations';
@@ -92,6 +93,41 @@ const Profile: React.FC = () => {
   const [mediaPreviewUrl, setMediaPreviewUrl] = useState<string | null>(null);
   const [overlayEnabled, setOverlayEnabled] = useState(false);
   const navigate = useNavigate();
+
+  const { t } = useAppTranslation('profile');
+
+  // Add translation helpers for goal and tone
+  const goalLabel = (goal: string) => {
+    // Map backend value to translation key
+    const goalMap: Record<string, string> = {
+      'boost-engagement': 'boostEngagement',
+      'grow-audience': 'growAudience',
+      'share-knowledge': 'shareKnowledge',
+      'drive-sales': 'driveSales',
+      'brand-awareness': 'brandAwareness',
+      'build-community': 'buildCommunity',
+    };
+    const key = goalMap[goal] || goal;
+    return t(`goal.goals.${key}.title`, undefined, { ns: 'caption-generator' }) || goal;
+  };
+  const toneLabel = (tone: string) => {
+    // Map backend value to translation key
+    const toneMap: Record<string, string> = {
+      'friendly': 'friendly',
+      'professional': 'professional',
+      'thought-provoking': 'thoughtProvoking',
+      'expert': 'expert',
+      'persuasive': 'persuasive',
+      'informative': 'informative',
+      'casual': 'casual',
+      'authoritative': 'authoritative',
+      'inspirational': 'inspirational',
+      'humorous': 'humorous',
+      'empathetic': 'empathetic',
+    };
+    const key = toneMap[tone] || tone;
+    return t(`tone.tones.${key}.title`, undefined, { ns: 'caption-generator' }) || tone;
+  };
 
   // Memoize expensive calculations for better performance
   const allPlatforms = useMemo(() => 
@@ -465,9 +501,9 @@ const Profile: React.FC = () => {
         <Navbar />
         <div className="container mx-auto px-4 sm:px-6 py-8">
           <div className="bg-card text-card-foreground rounded-2xl shadow-subtle p-8 text-center">
-            <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('notFoundTitle')}</h2>
             <p className="text-muted-foreground">
-              Unable to load your profile data. Please try again later.
+              {t('notFoundDescription')}
             </p>
           </div>
         </div>
@@ -499,15 +535,15 @@ const Profile: React.FC = () => {
         >
         {}  <Card className="text-center py-4 shadow-sm hover:shadow-md transition-all">
             <div className="text-2xl font-bold">{totalGenerated}</div>
-            <div className="text-xs text-muted-foreground">Generated</div>
+            <div className="text-xs text-muted-foreground">{t('summary.generated')}</div>
           </Card>
           <Card className="text-center py-4 shadow-sm hover:shadow-md transition-all">
             <div className="text-2xl font-bold">{totalPosted}</div>
-            <div className="text-xs text-muted-foreground">Posted</div>
+            <div className="text-xs text-muted-foreground">{t('summary.posted')}</div>
           </Card>
           <Card className="text-center py-4 shadow-sm hover:shadow-md transition-all">
             <div className="text-2xl font-bold">{totalFavorites}</div>
-            <div className="text-xs text-muted-foreground">Favorites</div>
+            <div className="text-xs text-muted-foreground">{t('summary.favorites')}</div>
           </Card>
         </motion.div>
 
@@ -525,13 +561,13 @@ const Profile: React.FC = () => {
             className="flex items-center gap-2"
           >
             <SlidersHorizontal className="h-4 w-4" />
-            {showFilters ? 'Hide Filters' : 'Show Filters'}
+            {showFilters ? t('filters.hide') : t('filters.show')}
           </Button>
           
           <Tabs defaultValue={viewMode} onValueChange={(v) => setViewMode(v as 'grid' | 'list')}>
             <TabsList className="bg-muted">
-              <TabsTrigger value="grid" className="data-[state=active]:bg-background">Grid</TabsTrigger>
-              <TabsTrigger value="list" className="data-[state=active]:bg-background">List</TabsTrigger>
+              <TabsTrigger value="grid" className="data-[state=active]:bg-background">{t('filters.grid')}</TabsTrigger>
+              <TabsTrigger value="list" className="data-[state=active]:bg-background">{t('filters.list')}</TabsTrigger>
             </TabsList>
           </Tabs>
         </motion.div>
@@ -548,7 +584,7 @@ const Profile: React.FC = () => {
             >
               <Card className="p-4">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-sm font-medium">Filter & Sort Options</h3>
+                  <h3 className="text-sm font-medium">{t('filters.filterSort')}</h3>
                   <Button variant="ghost" size="sm" onClick={() => setShowFilters(false)} className="h-8 w-8 p-0">
                     <X className="h-4 w-4" />
                   </Button>
@@ -556,10 +592,10 @@ const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   <Select value={platformFilter} onValueChange={setPlatformFilter}>
                     <SelectTrigger className="w-full" aria-label="Filter by platform">
-                      <SelectValue placeholder="Platform" />
+                      <SelectValue placeholder={t('filters.platform')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Platforms</SelectItem>
+                      <SelectItem value="all">{t('filters.allPlatforms')}</SelectItem>
                       {allPlatforms.map(p => (
                         <SelectItem key={p} value={p}>{p}</SelectItem>
                       ))}
@@ -568,12 +604,12 @@ const Profile: React.FC = () => {
                   
                   <Select value={goalFilter} onValueChange={setGoalFilter}>
                     <SelectTrigger className="w-full" aria-label="Filter by goal">
-                      <SelectValue placeholder="Goal" />
+                      <SelectValue placeholder={t('filters.goal')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Goals</SelectItem>
+                      <SelectItem value="all">{t('filters.allGoals')}</SelectItem>
                       {allGoals.map(goal => (
-                        <SelectItem key={goal} value={goal}>{goal}</SelectItem>
+                        <SelectItem key={goal} value={goal}>{goalLabel(goal)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -591,33 +627,33 @@ const Profile: React.FC = () => {
                   
                   <Select value={postedFilter} onValueChange={setPostedFilter}>
                     <SelectTrigger className="w-full" aria-label="Filter by posted status">
-                      <SelectValue placeholder="Posted Status" />
+                      <SelectValue placeholder={t('filters.postedStatus')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="posted">Posted</SelectItem>
-                      <SelectItem value="not_posted">Not Posted</SelectItem>
+                      <SelectItem value="all">{t('filters.all')}</SelectItem>
+                      <SelectItem value="posted">{t('filters.posted')}</SelectItem>
+                      <SelectItem value="not_posted">{t('filters.notPosted')}</SelectItem>
                     </SelectContent>
                   </Select>
                   
                   <Select value={favoriteFilter} onValueChange={setFavoriteFilter}>
                     <SelectTrigger className="w-full" aria-label="Filter by favorite status">
-                      <SelectValue placeholder="Favorite Status" />
+                      <SelectValue placeholder={t('filters.favoriteStatus')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="favorite">Favorite</SelectItem>
-                      <SelectItem value="not_favorite">Not Favorite</SelectItem>
+                      <SelectItem value="all">{t('filters.all')}</SelectItem>
+                      <SelectItem value="favorite">{t('filters.favorite')}</SelectItem>
+                      <SelectItem value="not_favorite">{t('filters.notFavorite')}</SelectItem>
                     </SelectContent>
                   </Select>
                   
                   <Select value={sortOrder} onValueChange={v => setSortOrder(v as 'desc' | 'asc')}>
                     <SelectTrigger className="w-full" aria-label="Sort order">
-                      <SelectValue placeholder="Sort" />
+                      <SelectValue placeholder={t('filters.sort')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="desc">Newest First</SelectItem>
-                      <SelectItem value="asc">Oldest First</SelectItem>
+                      <SelectItem value="desc">{t('filters.newest')}</SelectItem>
+                      <SelectItem value="asc">{t('filters.oldest')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -636,9 +672,9 @@ const Profile: React.FC = () => {
           {filteredGenerations.length === 0 && (
             <div className="col-span-full text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-medium mb-2">No posts found</h3>
+              <h3 className="text-xl font-medium mb-2">{t('empty.noPosts')}</h3>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Try adjusting your filters or create new content to see it here.
+                {t('empty.tryAdjust')}
               </p>
             </div>
           )}
@@ -671,7 +707,7 @@ const Profile: React.FC = () => {
                       variant={gen.isFavorite ? "default" : "ghost"}
                       onClick={() => handleFavoriteToggle(gen)}
                       className="h-8 w-8"
-                      aria-label={gen.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                      aria-label={gen.isFavorite ? t('actions.removeFavorite') : t('actions.addFavorite')}
                     >
                       <Star className={`h-4 w-4 ${gen.isFavorite ? 'fill-yellow-400 text-yellow-400' : ''}`} />
                     </Button>
@@ -681,9 +717,9 @@ const Profile: React.FC = () => {
                   <div className="text-xs text-muted-foreground mb-3 space-x-2">
                     <span>{gen.input.niche}</span>
                     <span>•</span>
-                    <span>{gen.input.goal}</span>
+                    <span>{goalLabel(gen.input.goal)}</span>
                     <span>•</span>
-                    <span>{gen.input.tone}</span>
+                    <span>{toneLabel(gen.input.tone)}</span>
                   </div>
                   
                   {/* Content */}
@@ -715,7 +751,7 @@ const Profile: React.FC = () => {
                          className="w-full"
                          aria-label="Repost this caption"
                        >
-                         <Share2 className="mr-2 h-4 w-4" /> Repost
+                         <Share2 className="mr-2 h-4 w-4" /> {t('actions.repost')}
                        </Button>
                      </div>
                    ))}
@@ -737,7 +773,7 @@ const Profile: React.FC = () => {
        {/* Repost Dialog */}
        <Dialog open={repostModalOpen} onOpenChange={setRepostModalOpen}>
          <DialogContent className="max-w-3xl w-full">
-           <DialogTitle className="text-xl">Repost Caption</DialogTitle>
+           <DialogTitle className="text-xl">{t('repostDialog.title')}</DialogTitle>
            {!mediaChoice && (
              <motion.div
                initial={{ opacity: 0, y: 5 }}
@@ -745,7 +781,7 @@ const Profile: React.FC = () => {
                transition={{ duration: 0.2 }}
              >
                <DialogDescription className="mb-4">
-                 How would you like to repost this caption?
+                 {t('repostDialog.howRepost')}
                </DialogDescription>
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                  <Button 
@@ -756,8 +792,8 @@ const Profile: React.FC = () => {
                    <div className="rounded-full p-3 bg-primary/10">
                      <Download className="h-6 w-6 text-primary" />
                    </div>
-                   <span className="font-medium">Add Media</span>
-                   <span className="text-xs text-muted-foreground">Upload image or video</span>
+                   <span className="font-medium">{t('repostDialog.addMedia')}</span>
+                   <span className="text-xs text-muted-foreground">{t('repostDialog.uploadMedia')}</span>
                  </Button>
                  
                  <Button 
@@ -768,8 +804,8 @@ const Profile: React.FC = () => {
                    <div className="rounded-full p-3 bg-primary/10">
                      <Edit className="h-6 w-6 text-primary" />
                    </div>
-                   <span className="font-medium">Text Only</span>
-                   <span className="text-xs text-muted-foreground">Just use the caption without media</span>
+                   <span className="font-medium">{t('repostDialog.textOnly')}</span>
+                   <span className="text-xs text-muted-foreground">{t('repostDialog.textOnlyDesc')}</span>
                  </Button>
                </div>
              </motion.div>
@@ -782,7 +818,7 @@ const Profile: React.FC = () => {
                transition={{ duration: 0.2 }}
              >
                <DialogDescription className="mb-4">
-                 Upload an image or video to go with your caption.
+                 {t('repostDialog.uploadPrompt')}
                </DialogDescription>
                <MediaUploader
                  onMediaSelect={file => {
@@ -811,7 +847,7 @@ const Profile: React.FC = () => {
                transition={{ duration: 0.2 }}
              >
                <DialogDescription className="mb-4">
-                 Your caption will be shared as text only.
+                 {t('repostDialog.textOnlyPrompt')}
                </DialogDescription>
                
                {selectedCaption && (
@@ -849,7 +885,7 @@ const Profile: React.FC = () => {
                  // Disable if mediaChoice is 'media' but no mediaFile is selected
                  disabled={mediaChoice === 'media' && !mediaFile}
                >
-                 <span className="text-base font-semibold">Continue to Preview</span>
+                 <span className="text-base font-semibold">{t('actions.continuePreview')}</span>
                </Button>
              </div>
            )}

@@ -23,7 +23,7 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
     if (captions[index]) {
       const text = `${stripMarkdownFormatting(captions[index].caption)}\n\n${stripMarkdownFormatting(captions[index].cta)}\n\n${captions[index].hashtags.map(h => `#${stripMarkdownFormatting(h)}`).join(' ')}`;
       navigator.clipboard.writeText(text);
-      toast.success("Caption copied to clipboard!");
+      toast.success("Légende copiée dans le presse-papiers !");
     }
   };
 
@@ -63,7 +63,7 @@ const CaptionsList: React.FC<CaptionsListProps> = ({
               onClick={(e) => handleCopyCaption(index, e)}
             >
               <Copy className="h-4 w-4 mr-1" />
-              Copy
+              Copier
             </Button>
           </div>
         </div>

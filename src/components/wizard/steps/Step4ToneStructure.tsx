@@ -5,7 +5,8 @@
  * word count estimates, and CTA previews. Two-column layout with real-time preview.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
@@ -31,160 +32,446 @@ import {
   Mail,
   Globe,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  BookOpen,
+  List,
+  HelpCircle,
+  Scale,
+  Star,
+  Briefcase,
+  Lightbulb,
+  PenTool,
+  Zap,
+  Users,
+  Award
 } from 'lucide-react';
 import ContentPreview from '@/components/wizard/smart/ContentPreview';
 
-// Content tone options with examples
-const TONE_OPTIONS = [
-  { 
-    value: 'friendly', 
-    label: 'Friendly', 
-    description: 'Approachable and conversational',
-    example: "Hey there! Let's talk about something that could completely change how you approach...",
-    color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-  },
-  { 
-    value: 'professional', 
-    label: 'Professional', 
-    description: 'Formal and authoritative',
-    example: "Studies indicate that strategic implementation of these methodologies can significantly...",
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-  },
-  { 
-    value: 'thought-provoking', 
-    label: 'Thought-Provoking', 
-    description: 'Challenging and reflective',
-    example: "What if everything you thought you knew about this topic was fundamentally flawed?",
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-  },
-  { 
-    value: 'expert', 
-    label: 'Expert', 
-    description: 'Technical and detailed',
-    example: "The implementation leverages advanced algorithms and established frameworks to optimize...",
-    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-  },
-  { 
-    value: 'persuasive', 
-    label: 'Persuasive', 
-    description: 'Compelling and influential',
-    example: "You're just three steps away from achieving results that others can only dream of...",
-    color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-  }
-];
 
-// Content type options
-const CONTENT_TYPE_OPTIONS = [
-  { value: 'blog-article', label: 'Blog Article' },
-  { value: 'newsletter', label: 'Newsletter' },
-  { value: 'case-study', label: 'Case Study' },
-  { value: 'guide', label: 'Guide' },
-  { value: 'thought-piece', label: 'Thought Piece' }
-];
 
-// Structure format options with word count estimates
-const STRUCTURE_FORMAT_OPTIONS = [
-  { 
-    value: 'intro-points-cta', 
-    label: 'Intro + 3 Main Points + CTA',
-    sections: [
-      { name: 'Introduction', words: 150, description: 'Hook and overview' },
-      { name: 'Main Point 1', words: 200, description: 'First key concept' },
-      { name: 'Main Point 2', words: 200, description: 'Second key concept' },
-      { name: 'Main Point 3', words: 200, description: 'Third key concept' },
-      { name: 'Call to Action', words: 50, description: 'Clear next step' }
-    ]
-  },
-  { 
-    value: 'problem-solution-cta', 
-    label: 'Problem → Solution → Call to Action',
-    sections: [
-      { name: 'Problem Identification', words: 200, description: 'Define the challenge' },
-      { name: 'Impact & Consequences', words: 150, description: 'Why it matters' },
-      { name: 'Solution Overview', words: 250, description: 'Your approach' },
-      { name: 'Implementation Steps', words: 150, description: 'How to apply' },
-      { name: 'Call to Action', words: 50, description: 'Next steps' }
-    ]
-  },
-  { 
-    value: 'story-facts-lessons', 
-    label: 'Story + Facts + Lessons',
-    sections: [
-      { name: 'Opening Story', words: 200, description: 'Engaging narrative' },
-      { name: 'Key Facts & Data', words: 200, description: 'Supporting evidence' },
-      { name: 'Analysis', words: 200, description: 'What it means' },
-      { name: 'Lessons Learned', words: 150, description: 'Takeaways' },
-      { name: 'Application', words: 50, description: 'How to use' }
-    ]
-  },
-  { 
-    value: 'listicle', 
-    label: 'Listicle (e.g. 5 ways to...)',
-    sections: [
-      { name: 'Introduction', words: 100, description: 'List overview' },
-      { name: 'Point 1', words: 140, description: 'First item' },
-      { name: 'Point 2', words: 140, description: 'Second item' },
-      { name: 'Point 3', words: 140, description: 'Third item' },
-      { name: 'Point 4', words: 140, description: 'Fourth item' },
-      { name: 'Point 5', words: 140, description: 'Fifth item' }
-    ]
-  },
-  { 
-    value: 'custom', 
-    label: 'Custom outline',
-    sections: [
-      { name: 'Custom Structure', words: 800, description: 'Define your own sections' }
-    ]
-  }
-];
 
-// CTA type options with previews
-const CTA_TYPE_OPTIONS = [
-  { 
-    value: 'subscribe', 
-    label: 'Subscribe', 
-    icon: Mail,
-    preview: "Ready to get more insights like this? Subscribe to our newsletter for weekly tips delivered straight to your inbox.",
-    buttonText: "Subscribe Now"
-  },
-  { 
-    value: 'book-call', 
-    label: 'Book a Call', 
-    icon: Phone,
-    preview: "Want to dive deeper? Book a free 30-minute consultation to discuss your specific needs and goals.",
-    buttonText: "Schedule Call"
-  },
-  { 
-    value: 'download', 
-    label: 'Download Freebie', 
-    icon: Download,
-    preview: "Take action today! Download our free resource guide with templates and checklists to get started.",
-    buttonText: "Download Free Guide"
-  },
-  { 
-    value: 'visit-website', 
-    label: 'Visit Website', 
-    icon: Globe,
-    preview: "Learn more about our solutions and see how we can help you achieve your goals.",
-    buttonText: "Visit Our Website"
-  },
-  { 
-    value: 'none', 
-    label: 'None', 
-    icon: ExternalLink,
-    preview: "Content ends with a strong conclusion without a specific call to action.",
-    buttonText: ""
-  }
-];
+
+
 
 const Step4ToneStructure = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
+  
   // State for UI interactions
   const [showStructureNotes, setShowStructureNotes] = useState(
     formData.structureFormat === 'custom' || !!formData.structureNotes
   );
   const [expandedSections, setExpandedSections] = useState(new Set(['tone', 'structure']));
   const [showToneExample, setShowToneExample] = useState(false);
+
+  // Get translated tone options
+  const getToneOptions = useMemo(() => {
+    return [
+      { 
+        value: 'friendly', 
+        label: t('step4.tone.options.friendly', 'Friendly'), 
+        description: t('step4.tone.examples.friendly.description', 'Approachable and conversational'),
+        example: t('step4.tone.examples.friendly.example', "Hey there! Let's talk about something that could completely change how you approach..."),
+        color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      },
+      { 
+        value: 'professional', 
+        label: t('step4.tone.options.professional', 'Professional'), 
+        description: t('step4.tone.examples.professional.description', 'Formal and authoritative'),
+        example: t('step4.tone.examples.professional.example', "Studies indicate that strategic implementation of these methodologies can significantly..."),
+        color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      },
+      { 
+        value: 'thought-provoking', 
+        label: t('step4.tone.options.thoughtProvoking', 'Thought-Provoking'), 
+        description: t('step4.tone.examples.thoughtProvoking.description', 'Challenging and reflective'),
+        example: t('step4.tone.examples.thoughtProvoking.example', "What if everything you thought you knew about this topic was fundamentally flawed?"),
+        color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      },
+      { 
+        value: 'expert', 
+        label: t('step4.tone.options.expert', 'Expert'), 
+        description: t('step4.tone.examples.expert.description', 'Technical and detailed'),
+        example: t('step4.tone.examples.expert.example', "The implementation leverages advanced algorithms and established frameworks to optimize..."),
+        color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      },
+      { 
+        value: 'persuasive', 
+        label: t('step4.tone.options.persuasive', 'Persuasive'), 
+        description: t('step4.tone.examples.persuasive.description', 'Compelling and influential'),
+        example: t('step4.tone.examples.persuasive.example', "You're just three steps away from achieving results that others can only dream of..."),
+        color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      },
+      { 
+        value: 'informative', 
+        label: t('step4.tone.options.informative', 'Informative / Neutral'), 
+        description: t('step4.tone.examples.informative.description', 'Objective, balanced tone for encyclopedic or factual content'),
+        example: t('step4.tone.examples.informative.example', "This comprehensive overview examines the key factors, providing balanced analysis of the available data and methodologies..."),
+        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+      },
+      { 
+        value: 'casual', 
+        label: t('step4.tone.options.casual', 'Casual / Conversational'), 
+        description: t('step4.tone.examples.casual.description', 'More relaxed than friendly, like talking to a friend over coffee'),
+        example: t('step4.tone.examples.casual.example', "So here's the thing about this topic - it's way more straightforward than most people make it out to be..."),
+        color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
+      },
+      { 
+        value: 'authoritative', 
+        label: t('step4.tone.options.authoritative', 'Authoritative / Confident'), 
+        description: t('step4.tone.examples.authoritative.description', 'Strong leadership voice, often used in white papers or B2B blogs'),
+        example: t('step4.tone.examples.authoritative.example', "Industry leaders recognize this as the definitive approach to achieving sustainable, measurable outcomes..."),
+        color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
+      },
+      { 
+        value: 'inspirational', 
+        label: t('step4.tone.options.inspirational', 'Inspirational / Motivational'), 
+        description: t('step4.tone.examples.inspirational.description', 'Ideal for coaching, leadership, wellness content'),
+        example: t('step4.tone.examples.inspirational.example', "Every breakthrough starts with a single step. Today, you have the opportunity to transform your approach and unlock your true potential..."),
+        color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+      },
+      { 
+        value: 'humorous', 
+        label: t('step4.tone.options.humorous', 'Humorous / Witty'), 
+        description: t('step4.tone.examples.humorous.description', 'Lightens content; great for social posts or creative brands'),
+        example: t('step4.tone.examples.humorous.example', "Let's face it - this topic has about as much excitement as watching paint dry. But stick with me, because I promise to make this surprisingly entertaining..."),
+        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      },
+      { 
+        value: 'empathetic', 
+        label: t('step4.tone.options.empathetic', 'Empathetic'), 
+        description: t('step4.tone.examples.empathetic.description', 'Warm, understanding tone for sensitive topics (health, mental wellness)'),
+        example: t('step4.tone.examples.empathetic.example', "I understand this can feel overwhelming, and it's completely normal to have these concerns. Let's work through this together, at your own pace..."),
+        color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200'
+      }
+    ];
+  }, [t]);
+
+  // Get translated content type options
+  const getContentTypeOptions = useMemo(() => {
+    return [
+      { 
+        value: 'blog-article', 
+        label: t('step4.contentType.options.blogArticle', 'Blog Article'),
+        icon: '📝',
+        description: t('step4.contentType.descriptions.blogArticle', 'Versatile blog content'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1200, 1800],
+        recommendedTones: ['professional', 'friendly', 'informative']
+      },
+      { 
+        value: 'newsletter', 
+        label: t('step4.contentType.options.newsletter', 'Newsletter'),
+        icon: '📧',
+        description: t('step4.contentType.descriptions.newsletter', 'Email newsletter content'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [800, 1200],
+        recommendedTones: ['friendly', 'casual', 'informative']
+      },
+      { 
+        value: 'case-study', 
+        label: t('step4.contentType.options.caseStudy', 'Case Study'),
+        icon: '📊',
+        description: t('step4.contentType.descriptions.caseStudy', 'Detailed business case studies'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1500, 2500],
+        recommendedTones: ['professional', 'authoritative', 'expert']
+      },
+      { 
+        value: 'guide', 
+        label: t('step4.contentType.options.guide', 'Guide'),
+        icon: '📚',
+        description: t('step4.contentType.descriptions.guide', 'Comprehensive how-to guides'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [2000, 3000],
+        recommendedTones: ['expert', 'professional', 'informative']
+      },
+      { 
+        value: 'thought-piece', 
+        label: t('step4.contentType.options.thoughtPiece', 'Thought Piece'),
+        icon: '💭',
+        description: t('step4.contentType.descriptions.thoughtPiece', 'Industry opinions and perspectives'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [1000, 1500],
+        recommendedTones: ['thought-provoking', 'authoritative', 'professional']
+      },
+      { 
+        value: 'how-to-steps', 
+        label: t('step4.contentType.options.howToSteps', 'How-To / Step-by-Step'),
+        icon: '🔢',
+        description: t('step4.contentType.descriptions.howToSteps', 'Tutorial and instructional content'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [1200, 2000],
+        recommendedTones: ['friendly', 'expert', 'informative']
+      },
+      { 
+        value: 'faq-qa', 
+        label: t('step4.contentType.options.faqQa', 'FAQ / Q&A'),
+        icon: '❓',
+        description: t('step4.contentType.descriptions.faqQa', 'Question and answer format'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        idealLength: [800, 1500],
+        recommendedTones: ['informative', 'professional', 'helpful']
+      },
+      { 
+        value: 'comparison-vs', 
+        label: t('step4.contentType.options.comparisonVs', 'Comparison / vs.'),
+        icon: '⚖️',
+        description: t('step4.contentType.descriptions.comparisonVs', 'Product or service comparisons'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1200, 2000],
+        recommendedTones: ['informative', 'professional', 'expert']
+      },
+      { 
+        value: 'review-analysis', 
+        label: t('step4.contentType.options.reviewAnalysis', 'Review / Analysis'),
+        icon: '⭐',
+        description: t('step4.contentType.descriptions.reviewAnalysis', 'Product or service reviews'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        idealLength: [1000, 1800],
+        recommendedTones: ['expert', 'professional', 'informative']
+      },
+      { 
+        value: 'case-study-detailed', 
+        label: t('step4.contentType.options.caseStudyDetailed', 'Case Study (Detailed)'),
+        icon: '📈',
+        description: t('step4.contentType.descriptions.caseStudyDetailed', 'In-depth case study analysis'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        idealLength: [2000, 3500],
+        recommendedTones: ['professional', 'authoritative', 'expert']
+      }
+    ];
+  }, [t]);
+
+  // Get translated structure format options
+  const getStructureFormatOptions = useMemo(() => {
+    return [
+      { 
+        value: 'intro-points-cta', 
+        label: t('step4.structure.options.introPointsCta.label', 'Intro + 3 Main Points + CTA'),
+        category: t('step4.structure.categories.classic', 'Classic'),
+        icon: BookOpen,
+        useCase: t('step4.structure.options.introPointsCta.useCase', 'General blog posts, thought leadership'),
+        flow: t('step4.structure.options.introPointsCta.flow', 'Hook → Point 1 → Point 2 → Point 3 → Action'),
+        difficulty: t('step4.structure.difficulty.easy', 'Easy'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 150, description: t('step4.structure.sections.introductionDesc', 'Hook and overview') },
+          { name: t('step4.structure.sections.mainPoint1', 'Main Point 1'), words: 200, description: t('step4.structure.sections.mainPoint1Desc', 'First key concept') },
+          { name: t('step4.structure.sections.mainPoint2', 'Main Point 2'), words: 200, description: t('step4.structure.sections.mainPoint2Desc', 'Second key concept') },
+          { name: t('step4.structure.sections.mainPoint3', 'Main Point 3'), words: 200, description: t('step4.structure.sections.mainPoint3Desc', 'Third key concept') },
+          { name: t('step4.structure.sections.callToAction', 'Call to Action'), words: 50, description: t('step4.structure.sections.callToActionDesc', 'Clear next step') }
+        ]
+      },
+      { 
+        value: 'problem-solution-cta', 
+        label: t('step4.structure.options.problemSolutionCta.label', 'Problem → Solution → Call to Action'),
+        category: t('step4.structure.categories.business', 'Business'),
+        icon: Lightbulb,
+        useCase: t('step4.structure.options.problemSolutionCta.useCase', 'Sales content, service explanations'),
+        flow: t('step4.structure.options.problemSolutionCta.flow', 'Problem → Impact → Solution → Steps → Action'),
+        difficulty: t('step4.structure.difficulty.medium', 'Medium'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+        sections: [
+          { name: t('step4.structure.sections.problemIdentification', 'Problem Identification'), words: 200, description: t('step4.structure.sections.problemIdentificationDesc', 'Define the challenge') },
+          { name: t('step4.structure.sections.impactConsequences', 'Impact & Consequences'), words: 150, description: t('step4.structure.sections.impactConsequencesDesc', 'Why it matters') },
+          { name: t('step4.structure.sections.solutionOverview', 'Solution Overview'), words: 250, description: t('step4.structure.sections.solutionOverviewDesc', 'Your approach') },
+          { name: t('step4.structure.sections.implementationSteps', 'Implementation Steps'), words: 150, description: t('step4.structure.sections.implementationStepsDesc', 'How to apply') },
+          { name: t('step4.structure.sections.callToAction', 'Call to Action'), words: 50, description: t('step4.structure.sections.callToActionDesc', 'Clear next step') }
+        ]
+      },
+      { 
+        value: 'how-to-steps', 
+        label: t('step4.structure.options.howToSteps.label', 'How-To / Step-by-Step'),
+        category: t('step4.structure.categories.tutorial', 'Tutorial'),
+        icon: List,
+        useCase: t('step4.structure.options.howToSteps.useCase', 'Tutorials, process guides, actionable posts'),
+        flow: t('step4.structure.options.howToSteps.flow', 'Intro → Prerequisites → Step 1 → Step 2 → Step 3 → Tips'),
+        difficulty: t('step4.structure.difficulty.easy', 'Easy'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 150, description: t('step4.structure.sections.howToIntroDesc', 'Overview and what readers will learn') },
+          { name: t('step4.structure.sections.prerequisites', 'Prerequisites'), words: 100, description: t('step4.structure.sections.prerequisitesDesc', 'What you need before starting') },
+          { name: t('step4.structure.sections.step1', 'Step 1'), words: 150, description: t('step4.structure.sections.step1Desc', 'First action step') },
+          { name: t('step4.structure.sections.step2', 'Step 2'), words: 150, description: t('step4.structure.sections.step2Desc', 'Second action step') },
+          { name: t('step4.structure.sections.step3', 'Step 3'), words: 150, description: t('step4.structure.sections.step3Desc', 'Third action step') },
+          { name: t('step4.structure.sections.additionalSteps', 'Additional Steps'), words: 200, description: t('step4.structure.sections.additionalStepsDesc', 'More steps as needed') },
+          { name: t('step4.structure.sections.conclusionTips', 'Conclusion & Tips'), words: 100, description: t('step4.structure.sections.conclusionTipsDesc', 'Summary and best practices') }
+        ]
+      },
+      { 
+        value: 'faq-qa', 
+        label: t('step4.structure.options.faqQa.label', 'FAQ / Q&A Format'),
+        category: t('step4.structure.categories.support', 'Support'),
+        icon: HelpCircle,
+        useCase: t('step4.structure.options.faqQa.useCase', 'SEO pages, product explanations, service overviews'),
+        flow: t('step4.structure.options.faqQa.flow', 'Intro → Q1+A → Q2+A → Q3+A → More Q&As → Conclusion'),
+        difficulty: t('step4.structure.difficulty.easy', 'Easy'),
+        seoScore: t('step4.structure.seoScore.veryHigh', 'Very High'),
+        color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 120, description: t('step4.structure.sections.topicOverviewDesc', 'Topic overview') },
+          { name: t('step4.structure.sections.question1Answer', 'Question 1 + Answer'), words: 150, description: t('step4.structure.sections.question1AnswerDesc', 'Most common question') },
+          { name: t('step4.structure.sections.question2Answer', 'Question 2 + Answer'), words: 150, description: t('step4.structure.sections.question2AnswerDesc', 'Second most common question') },
+          { name: t('step4.structure.sections.question3Answer', 'Question 3 + Answer'), words: 150, description: t('step4.structure.sections.question3AnswerDesc', 'Third most common question') },
+          { name: t('step4.structure.sections.additionalQAs', 'Additional Q&As'), words: 180, description: t('step4.structure.sections.additionalQAsDesc', 'More questions as needed') },
+          { name: t('step4.structure.sections.conclusion', 'Conclusion'), words: 50, description: t('step4.structure.sections.conclusionDesc', 'Summary and next steps') }
+        ]
+      },
+      { 
+        value: 'comparison-vs', 
+        label: t('step4.structure.options.comparisonVs.label', 'Comparison / vs.'),
+        category: t('step4.structure.categories.analysis', 'Analysis'),
+        icon: Scale,
+        useCase: t('step4.structure.options.comparisonVs.useCase', 'Product comparisons, software alternatives, decision-making content'),
+        flow: t('step4.structure.options.comparisonVs.flow', 'Intro → Option A → Option B → Side-by-Side → Pros/Cons → Recommendation'),
+        difficulty: t('step4.structure.difficulty.medium', 'Medium'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 150, description: t('step4.structure.sections.comparisonIntroDesc', 'Context and what\'s being compared') },
+          { name: t('step4.structure.sections.optionAOverview', 'Option A Overview'), words: 200, description: t('step4.structure.sections.optionAOverviewDesc', 'First option details') },
+          { name: t('step4.structure.sections.optionBOverview', 'Option B Overview'), words: 200, description: t('step4.structure.sections.optionBOverviewDesc', 'Second option details') },
+          { name: t('step4.structure.sections.sideBySideComparison', 'Side-by-side Comparison'), words: 250, description: t('step4.structure.sections.sideBySideComparisonDesc', 'Direct feature comparison') },
+          { name: t('step4.structure.sections.prosAndCons', 'Pros and Cons'), words: 150, description: t('step4.structure.sections.prosAndConsDesc', 'Advantages and disadvantages') },
+          { name: t('step4.structure.sections.recommendation', 'Recommendation'), words: 100, description: t('step4.structure.sections.recommendationDesc', 'Which option to choose when') }
+        ]
+      },
+      { 
+        value: 'review-analysis', 
+        label: t('step4.structure.options.reviewAnalysis.label', 'Review / Analysis'),
+        category: t('step4.structure.categories.analysis', 'Analysis'),
+        icon: Star,
+        useCase: t('step4.structure.options.reviewAnalysis.useCase', 'Product reviews, service evaluations'),
+        flow: t('step4.structure.options.reviewAnalysis.flow', 'Intro → Features → Pros → Cons → Performance → Verdict'),
+        difficulty: t('step4.structure.difficulty.medium', 'Medium'),
+        seoScore: t('step4.structure.seoScore.high', 'High'),
+        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 120, description: t('step4.structure.sections.reviewIntroDesc', 'What\'s being reviewed') },
+          { name: t('step4.structure.sections.keyFeatures', 'Key Features'), words: 200, description: t('step4.structure.sections.keyFeaturesDesc', 'Main features and capabilities') },
+          { name: t('step4.structure.sections.pros', 'Pros'), words: 150, description: t('step4.structure.sections.prosDesc', 'What works well') },
+          { name: t('step4.structure.sections.cons', 'Cons'), words: 150, description: t('step4.structure.sections.consDesc', 'Limitations and drawbacks') },
+          { name: t('step4.structure.sections.performanceAnalysis', 'Performance Analysis'), words: 150, description: t('step4.structure.sections.performanceAnalysisDesc', 'How it performs in practice') },
+          { name: t('step4.structure.sections.finalVerdict', 'Final Verdict'), words: 80, description: t('step4.structure.sections.finalVerdictDesc', 'Overall recommendation') }
+        ]
+      },
+      { 
+        value: 'case-study-detailed', 
+        label: t('step4.structure.options.caseStudyDetailed.label', 'Case Study'),
+        category: t('step4.structure.categories.business', 'Business'),
+        icon: Briefcase,
+        useCase: t('step4.structure.options.caseStudyDetailed.useCase', 'Showcasing client success stories'),
+        flow: t('step4.structure.options.caseStudyDetailed.flow', 'Intro → Background → Challenge → Solution → Results → Lessons'),
+        difficulty: t('step4.structure.difficulty.hard', 'Hard'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 100, description: t('step4.structure.sections.caseStudyOverviewDesc', 'Case study overview') },
+          { name: t('step4.structure.sections.background', 'Background'), words: 150, description: t('step4.structure.sections.backgroundDesc', 'Context and situation') },
+          { name: t('step4.structure.sections.challenge', 'Challenge'), words: 200, description: t('step4.structure.sections.challengeDesc', 'The problem that needed solving') },
+          { name: t('step4.structure.sections.solution', 'Solution'), words: 250, description: t('step4.structure.sections.solutionDesc', 'Approach and implementation') },
+          { name: t('step4.structure.sections.results', 'Results'), words: 200, description: t('step4.structure.sections.resultsDesc', 'Outcomes and metrics') },
+          { name: t('step4.structure.sections.lessonsLearned', 'Lessons Learned'), words: 100, description: t('step4.structure.sections.lessonsLearnedDesc', 'Key takeaways and insights') }
+        ]
+      },
+      { 
+        value: 'story-facts-lessons', 
+        label: t('step4.structure.options.storyFactsLessons.label', 'Story + Facts + Lessons'),
+        category: t('step4.structure.categories.narrative', 'Narrative'),
+        icon: PenTool,
+        useCase: t('step4.structure.options.storyFactsLessons.useCase', 'Engaging storytelling with data backing'),
+        flow: t('step4.structure.options.storyFactsLessons.flow', 'Story → Facts → Analysis → Lessons → Application'),
+        difficulty: t('step4.structure.difficulty.medium', 'Medium'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+        sections: [
+          { name: t('step4.structure.sections.openingStory', 'Opening Story'), words: 200, description: t('step4.structure.sections.openingStoryDesc', 'Engaging narrative') },
+          { name: t('step4.structure.sections.keyFactsData', 'Key Facts & Data'), words: 200, description: t('step4.structure.sections.keyFactsDataDesc', 'Supporting evidence') },
+          { name: t('step4.structure.sections.analysis', 'Analysis'), words: 200, description: t('step4.structure.sections.analysisDesc', 'What it means') },
+          { name: t('step4.structure.sections.lessonsLearned', 'Lessons Learned'), words: 150, description: t('step4.structure.sections.lessonsLearnedDesc', 'Key takeaways and insights') },
+          { name: t('step4.structure.sections.application', 'Application'), words: 50, description: t('step4.structure.sections.applicationDesc', 'How to use') }
+        ]
+      },
+      { 
+        value: 'listicle', 
+        label: t('step4.structure.options.listicle.label', 'Listicle (e.g. 5 ways to...)'),
+        category: t('step4.structure.categories.classic', 'Classic'),
+        icon: Zap,
+        useCase: t('step4.structure.options.listicle.useCase', 'Social media friendly, quick consumption'),
+        flow: t('step4.structure.options.listicle.flow', 'Intro → Point 1 → Point 2 → Point 3 → Point 4 → Point 5'),
+        difficulty: t('step4.structure.difficulty.easy', 'Easy'),
+        seoScore: t('step4.structure.seoScore.medium', 'Medium'),
+        color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
+        sections: [
+          { name: t('step4.structure.sections.introduction', 'Introduction'), words: 100, description: t('step4.structure.sections.listOverviewDesc', 'List overview') },
+          { name: t('step4.structure.sections.point1', 'Point 1'), words: 140, description: t('step4.structure.sections.point1Desc', 'First item') },
+          { name: t('step4.structure.sections.point2', 'Point 2'), words: 140, description: t('step4.structure.sections.point2Desc', 'Second item') },
+          { name: t('step4.structure.sections.point3', 'Point 3'), words: 140, description: t('step4.structure.sections.point3Desc', 'Third item') },
+          { name: t('step4.structure.sections.point4', 'Point 4'), words: 140, description: t('step4.structure.sections.point4Desc', 'Fourth item') },
+          { name: t('step4.structure.sections.point5', 'Point 5'), words: 140, description: t('step4.structure.sections.point5Desc', 'Fifth item') }
+        ]
+      },
+      { 
+        value: 'custom', 
+        label: t('step4.structure.options.custom.label', 'Custom outline'),
+        category: t('step4.structure.categories.advanced', 'Advanced'),
+        icon: Users,
+        useCase: t('step4.structure.options.custom.useCase', 'Unique content structures'),
+        flow: t('step4.structure.options.custom.flow', 'Define your own flow'),
+        difficulty: t('step4.structure.difficulty.hard', 'Hard'),
+        seoScore: t('step4.structure.seoScore.variable', 'Variable'),
+        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+        sections: [
+          { name: t('step4.structure.sections.customStructure', 'Custom Structure'), words: 800, description: t('step4.structure.sections.customStructureDesc', 'Define your own sections') }
+        ]
+      }
+    ];
+  }, [t]);
+
+  // Get translated CTA type options
+  const getCtaTypeOptions = useMemo(() => {
+    return [
+      { 
+        value: 'subscribe', 
+        label: t('step4.cta.options.subscribe', 'Subscribe'),
+        icon: Mail,
+        preview: t('step4.cta.previews.subscribe', 'Ready to get more insights like this? Subscribe to our newsletter for weekly tips delivered straight to your inbox.'),
+        buttonText: t('step4.cta.buttons.subscribeNow', 'Subscribe Now')
+      },
+      { 
+        value: 'book-call', 
+        label: t('step4.cta.options.bookCall', 'Book a Call'),
+        icon: Phone,
+        preview: t('step4.cta.previews.bookCall', 'Want to dive deeper? Book a free 30-minute consultation to discuss your specific needs and goals.'),
+        buttonText: t('step4.cta.buttons.scheduleCall', 'Schedule Call')
+      },
+      { 
+        value: 'download', 
+        label: t('step4.cta.options.download', 'Download Freebie'),
+        icon: Download,
+        preview: t('step4.cta.previews.download', 'Take action today! Download our free resource guide with templates and checklists to get started.'),
+        buttonText: t('step4.cta.buttons.downloadGuide', 'Download Free Guide')
+      },
+      { 
+        value: 'visit-website', 
+        label: t('step4.cta.options.visitWebsite', 'Visit Website'),
+        icon: Globe,
+        preview: t('step4.cta.previews.visitWebsite', 'Learn more about our solutions and see how we can help you achieve your goals.'),
+        buttonText: t('step4.cta.buttons.visitWebsite', 'Visit Our Website')
+      },
+      { 
+        value: 'none', 
+        label: t('step4.cta.options.none', 'None'),
+        icon: ExternalLink,
+        preview: t('step4.cta.previews.none', 'Content ends with a strong conclusion without a specific call to action.'),
+        buttonText: ""
+      }
+    ];
+  }, [t]);
+
   // Initialize from formData
   useEffect(() => {
     // Set default values for any missing fields
@@ -222,17 +509,58 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
 
   // Get selected tone details
   const getSelectedTone = () => {
-    return TONE_OPTIONS.find(t => t.value === formData.contentTone) || TONE_OPTIONS[1];
+    return getToneOptions.find(t => t.value === formData.contentTone) || getToneOptions[1];
   };
 
   // Get selected structure details
   const getSelectedStructure = () => {
-    return STRUCTURE_FORMAT_OPTIONS.find(s => s.value === formData.structureFormat) || STRUCTURE_FORMAT_OPTIONS[0];
+    return getStructureFormatOptions.find(s => s.value === formData.structureFormat) || getStructureFormatOptions[0];
   };
 
   // Get selected CTA details
   const getSelectedCTA = () => {
-    return CTA_TYPE_OPTIONS.find(c => c.value === formData.ctaType) || CTA_TYPE_OPTIONS[4];
+    return getCtaTypeOptions.find(c => c.value === formData.ctaType) || getCtaTypeOptions[4];
+  };
+
+  // Get selected content type details
+  const getSelectedContentType = () => {
+    return getContentTypeOptions.find(ct => ct.value === formData.contentType) || getContentTypeOptions[0];
+  };
+
+  // Get SEO score styling
+  const getSEOScoreStyle = (score) => {
+    const veryHigh = t('step4.structure.seoScore.veryHigh', 'Very High');
+    const high = t('step4.structure.seoScore.high', 'High');
+    const medium = t('step4.structure.seoScore.medium', 'Medium');
+    
+    switch (score) {
+      case veryHigh:
+        return 'border-green-300 text-green-700 bg-green-50 dark:bg-green-950/20 dark:text-green-400';
+      case high:
+        return 'border-blue-300 text-blue-700 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400';
+      case medium:
+        return 'border-yellow-300 text-yellow-700 bg-yellow-50 dark:bg-yellow-950/20 dark:text-yellow-400';
+      default:
+        return 'border-gray-300 text-gray-600 bg-gray-50 dark:bg-gray-950/20 dark:text-gray-400';
+    }
+  };
+
+  // Get difficulty styling
+  const getDifficultyStyle = (difficulty) => {
+    const easy = t('step4.structure.difficulty.easy', 'Easy');
+    const medium = t('step4.structure.difficulty.medium', 'Medium');
+    const hard = t('step4.structure.difficulty.hard', 'Hard');
+    
+    switch (difficulty) {
+      case easy:
+        return 'text-green-600 dark:text-green-400';
+      case medium:
+        return 'text-yellow-600 dark:text-yellow-400';
+      case hard:
+        return 'text-red-600 dark:text-red-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
   };
   // Calculate total word count
   const calculateTotalWords = () => {
@@ -256,13 +584,13 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     const [min, max] = contentRanges[contentType] || [1200, 1800];
     
     if (currentCount >= 1200 && currentCount <= 1800) {
-      return " this length is ideal for SEO and reader engagement.";
+      return t('step4.wordCount.recommendations.seoIdeal', ' this length is ideal for SEO and reader engagement.');
     } else if (currentCount >= min && currentCount <= max) {
-      return ` a length of ${min}-${max} words is recommended for optimal results.`;
+      return t('step4.wordCount.recommendations.optimal', ` a length of ${min}-${max} words is recommended for optimal results.`, { min, max });
     } else if (currentCount < min) {
-      return ` consider adding more content. At least ${min} words is recommended.`;
+      return t('step4.wordCount.recommendations.tooShort', ` consider adding more content. At least ${min} words is recommended.`, { min });
     } else {
-      return " your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces.";
+      return t('step4.wordCount.recommendations.tooLong', ' your content might be too lengthy for optimal engagement. Consider breaking it into multiple pieces.');
     }
   };
   
@@ -284,22 +612,22 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
     
     // SEO optimal range always takes precedence
     if (currentCount >= 1200 && currentCount <= 1800) {
-      return { status: 'optimal', message: 'SEO Optimal' };
+      return { status: 'optimal', message: t('step4.wordCount.status.seoOptimal', 'SEO Optimal') };
     } else if (currentCount < min) {
-      return { status: 'warning', message: 'Too Short' };
+      return { status: 'warning', message: t('step4.wordCount.status.tooShort', 'Too Short') };
     } else if (currentCount > max) {
-      return { status: 'warning', message: 'Very Long' };
+      return { status: 'warning', message: t('step4.wordCount.status.veryLong', 'Very Long') };
     } else {
-      return { status: 'normal', message: `${currentCount} words` };
+      return { status: 'normal', message: `${currentCount} ${t('common.words', 'words')}` };
     }
   };
   return (
     <TooltipProvider>
       <div className="space-y-6 animate-in fade-in duration-300">
         <div>
-          <h2 className="text-2xl font-bold">Content Structure & Tone</h2>
+          <h2 className="text-2xl font-bold">{t('step4.title', 'Content Structure & Tone')}</h2>
           <p className="text-muted-foreground">
-            Define how your blog content should be structured and the tone it should have.
+            {t('step4.subtitle', 'Define how your blog content should be structured and the tone it should have.')}
           </p>
         </div>
 
@@ -313,14 +641,14 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <Quote className="h-4 w-4" />
-                    Content Tone
+                    {t('step4.tone.title', 'Content Tone')}
                   </h3>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowToneExample(!showToneExample)}
                   >
-                    {showToneExample ? 'Hide' : 'Show'} Example
+                    {showToneExample ? t('common.hide', 'Masquer') : t('common.show', 'Afficher')} {t('step4.tone.example', 'Exemple')}
                   </Button>
                 </div>
 
@@ -330,10 +658,10 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={(value) => updateFormData('contentTone', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a tone" />
+                      <SelectValue placeholder={t('step4.tone.placeholder', 'Sélectionnez un ton')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {TONE_OPTIONS.map((tone) => (
+                      {getToneOptions.map((tone) => (
                         <SelectItem key={tone.value} value={tone.value}>
                           <div className="flex items-center gap-2">
                             <span>{tone.label}</span>
@@ -358,7 +686,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 {showToneExample && (
                   <div className="p-3 border rounded-md bg-background">
                     <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                      WRITING SAMPLE
+                      {t('step4.tone.writingSample', 'ÉCHANTILLON D\'ÉCRITURE')}
                     </Label>
                     <p className="text-sm italic">
                       "{getSelectedTone().example}"
@@ -368,22 +696,64 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
 
                 {/* Content Type */}
                 <div className="space-y-2 pt-2 border-t">
-                  <Label className="text-sm font-medium">Content Type</Label>
+                  <Label className="text-sm font-medium">{t('step4.contentType.title', 'Content Type')}</Label>
                   <Select
                     value={formData.contentType}
                     onValueChange={(value) => updateFormData('contentType', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select content type" />
+                      <SelectValue placeholder={t('step4.contentType.placeholder', 'Sélectionnez le type de contenu')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {CONTENT_TYPE_OPTIONS.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
+                      {getContentTypeOptions.map((contentType) => {
+                        return (
+                          <SelectItem key={contentType.value} value={contentType.value}>
+                            <div className="flex items-center gap-3 py-1">
+                              <span className="text-lg">{contentType.icon}</span>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">{contentType.label}</span>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={`text-xs ${getSEOScoreStyle(contentType.seoScore)}`}
+                                  >
+                                    {contentType.seoScore} SEO
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {contentType.description}
+                                </p>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
+                  
+                  {/* Content Type Insights */}
+                  {formData.contentType && (
+                    <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-md border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">{getSelectedContentType().icon}</span>
+                        <span className="text-sm font-medium">{getSelectedContentType().label} {t('step4.contentType.insights', 'Insights')}</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <span className="font-medium text-blue-600">{t('step4.contentType.recommendedTones', 'Best tones')}:</span>
+                          <p className="text-muted-foreground">
+                            {getSelectedContentType().recommendedTones?.slice(0, 2).join(', ') || t('step4.contentType.anyTone', 'Any tone')}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-green-600">{t('step4.contentType.idealLength', 'Ideal length')}:</span>
+                          <p className="text-muted-foreground">
+                            {getSelectedContentType().idealLength?.[0]}-{getSelectedContentType().idealLength?.[1]} {t('common.words', 'words')}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>
@@ -394,14 +764,14 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-purple-600" />
-                    Content Length
+                    {t('step4.wordCount.title', 'Longueur du Contenu')}
                   </h3>
                   
                   {/* Word Count Status Badge */}
                   {getWordCountStatus().status === 'optimal' ? (
                     <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3" />
-                      SEO Optimal
+                      {t('step4.wordCount.status.seoOptimal', 'SEO Optimal')}
                     </Badge>
                   ) : getWordCountStatus().status === 'warning' ? (
                     <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 flex items-center gap-1">
@@ -411,7 +781,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   ) : (
                     <Badge variant="outline" className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {formData.wordCount || 800} words
+                      {formData.wordCount || 800} {t('common.words', 'mots')}
                     </Badge>
                   )}
                 </div>
@@ -420,7 +790,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <Label htmlFor="word-count" className="text-sm font-medium flex items-center gap-1.5">
-                      <span>Word Count:</span> 
+                      <span>{t('step4.wordCount.label', 'Nombre de mots')}:</span> 
                       <span className="font-bold text-purple-700 dark:text-purple-300">
                         {formData.wordCount || 800}
                       </span>
@@ -451,7 +821,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>300</span>
-                    <span className="font-medium text-green-600">1200-1800 (SEO Optimal)</span>
+                    <span className="font-medium text-green-600">{t('step4.wordCount.seoOptimalRange', '1200-1800 (SEO Optimal)')}</span>
                     <span>3000</span>
                   </div>
                 </div>
@@ -461,18 +831,18 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                   <div className="flex items-center gap-2">
                     <Info className="h-4 w-4 text-purple-600" />
                     <h4 className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                      Content Length Impact
+                      {t('step4.wordCount.impactTitle', 'Impact de la Longueur du Contenu')}
                     </h4>
                   </div>
                   <p className="text-xs text-purple-700 dark:text-purple-300 mt-1">
-                    For {formData.contentType || 'blog-article'} content with a {formData.contentTone || 'professional'} tone, 
+                    {t('step4.wordCount.recommendation.prefix', 'Pour un contenu')} {formData.contentType || 'blog-article'} {t('step4.wordCount.recommendation.withTone', 'avec un ton')} {formData.contentTone || 'professional'}, 
                     {getContentLengthRecommendation()}
                   </p>
                   
                   {/* Reading Time Estimate */}
                   <div className="flex items-center gap-2 mt-2 text-xs text-purple-600 dark:text-purple-400">
                     <Clock className="h-3 w-3" />
-                    <span>Estimated reading time: {Math.ceil((formData.wordCount || 800) / 200)} minutes</span>
+                    <span>{t('step4.wordCount.readingTime', 'Temps de lecture estimé')}: {Math.ceil((formData.wordCount || 800) / 200)} {t('common.minutes', 'minutes')}</span>
                   </div>
                 </div>
               </div>
@@ -483,11 +853,11 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold flex items-center gap-2">
                     <FileText className="h-4 w-4" />
-                    Structure Format
+                    {t('step4.structure.title', 'Format de Structure')}
                   </h3>
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {calculateTotalWords()} words
+                    {calculateTotalWords()} {t('common.words', 'mots')}
                   </Badge>
                 </div>
 
@@ -497,82 +867,199 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={handleStructureFormatChange}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select structure format" />
+                      <SelectValue placeholder={t('step4.structure.placeholder', 'Sélectionnez le format de structure')} />
                     </SelectTrigger>
-                    <SelectContent>
-                      {STRUCTURE_FORMAT_OPTIONS.map((format) => (
-                        <SelectItem key={format.value} value={format.value}>
-                          {format.label}
-                        </SelectItem>
-                      ))}
+                    <SelectContent 
+                      className="max-h-[280px] min-w-[320px] overflow-y-auto"
+                      position="popper"
+                      sideOffset={4}
+                    >
+                      {getStructureFormatOptions.map((format) => {
+                        const IconComponent = format.icon;
+                        return (
+                          <SelectItem 
+                            key={format.value} 
+                            value={format.value} 
+                            className="p-2 cursor-pointer"
+                          >
+                            <div className="flex items-center gap-2 w-full">
+                              <div className={`p-1 rounded ${format.color} flex-shrink-0`}>
+                                <IconComponent className="h-3 w-3" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium text-sm truncate">{format.label}</span>
+                                  <div className="flex items-center gap-1 ml-2">
+                                    <Badge 
+                                      variant="outline" 
+                                      className="text-xs px-1 py-0"
+                                    >
+                                      {format.difficulty}
+                                    </Badge>
+                                  </div>
+                                </div>
+                                <div className="text-xs text-muted-foreground truncate">
+                                  {format.category} • {format.sections.reduce((total, section) => total + section.words, 0)} {t('common.words', 'mots')}
+                                </div>
+                              </div>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Enhanced Structure Preview Card */}
+                <div className="p-4 border rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${getSelectedStructure().color} flex-shrink-0`}>
+                      {React.createElement(getSelectedStructure().icon, { className: "h-5 w-5" })}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div>
+                          <h4 className="font-semibold text-sm">{getSelectedStructure().label}</h4>
+                          <p className="text-xs text-muted-foreground">{getSelectedStructure().useCase}</p>
+                        </div>
+                        <div className="flex gap-1">
+                          <Badge variant="outline" className={`text-xs ${getDifficultyStyle(getSelectedStructure().difficulty)}`}>
+                            {getSelectedStructure().difficulty}
+                          </Badge>
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${getSEOScoreStyle(getSelectedStructure().seoScore)}`}
+                          >
+                            {getSelectedStructure().seoScore} SEO
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="bg-white/50 dark:bg-gray-900/50 p-2 rounded border text-xs font-mono text-muted-foreground">
+                        <strong>{t('step4.structure.flow', 'Flux')}:</strong> {getSelectedStructure().flow}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Structure Sections Preview */}
                 <div className="space-y-2 p-3 bg-muted/30 rounded-md">
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-medium text-muted-foreground">
-                      STRUCTURE BREAKDOWN
+                      {t('step4.structure.breakdown', 'DÉCOMPOSITION DE LA STRUCTURE')}
                     </Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleSection('structure')}
-                      className="h-6 w-6 p-0"
-                    >
-                      {expandedSections.has('structure') ? 
-                        <ChevronDown className="h-3 w-3" /> : 
-                        <ChevronRight className="h-3 w-3" />
-                      }
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {calculateTotalWords()} {t('step4.structure.totalWords', 'mots au total')}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleSection('structure')}
+                        className="h-6 w-6 p-0"
+                      >
+                        {expandedSections.has('structure') ? 
+                          <ChevronDown className="h-3 w-3" /> : 
+                          <ChevronRight className="h-3 w-3" />
+                        }
+                      </Button>
+                    </div>
                   </div>
                   
                   {expandedSections.has('structure') && (
                     <div className="space-y-2">
                       {getSelectedStructure().sections.map((section, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-background rounded border">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="w-6 h-6 p-0 flex items-center justify-center text-xs">
-                              {index + 1}
-                            </Badge>
-                            <div>
-                              <p className="text-sm font-medium">{section.name}</p>
-                              <p className="text-xs text-muted-foreground">{section.description}</p>
+                        <div key={index} className="group relative">
+                          <div className="flex items-center justify-between p-3 bg-background rounded-lg border hover:border-primary/20 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <Badge 
+                                  variant="outline" 
+                                  className="w-7 h-7 p-0 flex items-center justify-center text-xs font-semibold border-2"
+                                >
+                                  {index + 1}
+                                </Badge>
+                                {/* Connection line to next section */}
+                                {index < getSelectedStructure().sections.length - 1 && (
+                                  <div className="absolute top-7 left-1/2 w-0.5 h-4 bg-border -translate-x-px"></div>
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium flex items-center gap-2">
+                                  {section.name}
+                                  {section.name.includes('Step') && <List className="h-3 w-3 text-purple-500" />}
+                                  {section.name.includes('Question') && <HelpCircle className="h-3 w-3 text-orange-500" />}
+                                  {section.name.includes('CTA') && <Target className="h-3 w-3 text-green-500" />}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">{section.description}</p>
+                                
+                                {/* Progress bar for word allocation */}
+                                <div className="mt-2 bg-muted rounded-full h-1.5 overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-300"
+                                    style={{ 
+                                      width: `${(section.words / Math.max(...getSelectedStructure().sections.map(s => s.words))) * 100}%` 
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="secondary" className="text-xs font-mono">
+                                {section.words}{t('common.wordsShort', 'm')}
+                              </Badge>
+                              <Badge variant="outline" className="text-xs text-muted-foreground">
+                                {Math.round((section.words / calculateTotalWords()) * 100)}%
+                              </Badge>
                             </div>
                           </div>
-                          <Badge variant="secondary" className="text-xs">
-                            {section.words}w
-                          </Badge>
                         </div>
                       ))}
+                      
+                      {/* Structure Summary */}
+                      <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-lg border border-blue-100 dark:border-blue-800">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Award className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">{t('step4.structure.analysisTitle', 'Analyse de Structure')}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">{t('step4.structure.sectionsCount', 'Sections')}:</span>
+                            <span className="ml-1 font-medium">{getSelectedStructure().sections.length}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">{t('step4.structure.avgPerSection', 'Moy. par section')}:</span>
+                            <span className="ml-1 font-medium">{Math.round(calculateTotalWords() / getSelectedStructure().sections.length)}{t('common.wordsShort', 'm')}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">{t('step4.structure.readingTime', 'Temps de lecture')}:</span>
+                            <span className="ml-1 font-medium">{Math.ceil(calculateTotalWords() / 200)} min</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">{t('step4.structure.seoPotential', 'Potentiel SEO')}:</span>
+                            <Badge 
+                              variant="outline" 
+                              className={`ml-1 text-xs ${getSEOScoreStyle(getSelectedStructure().seoScore)}`}
+                            >
+                              {getSelectedStructure().seoScore}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* Statistics Toggle */}
-                <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md">
-                  <div>
-                    <Label className="text-sm font-medium">Include Statistics & Data</Label>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Add relevant statistics and data to support your points.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={formData.includeStats}
-                    onCheckedChange={(checked) => updateFormData('includeStats', checked)}
-                    className="data-[state=checked]:bg-blue-500"
-                  />
-                </div>
+
 
                 {/* Custom Structure Notes */}
                 {(formData.structureFormat === 'custom' || showStructureNotes) && (
                   <div className="space-y-2 pt-2 border-t">
                     <Label className="text-sm font-medium">
-                      Structure Notes {formData.structureFormat === 'custom' ? '(Required)' : '(Optional)'}
+                      {t('step4.structure.notes', 'Notes de Structure')} {formData.structureFormat === 'custom' ? `(${t('common.required', 'Requis')})` : `(${t('common.optional', 'Optionnel')})`}
                     </Label>
                     <Textarea
-                      placeholder="e.g. Include an introduction, 3 key sections, and a conclusion with call to action"
+                      placeholder={t('step4.structure.notesPlaceholder', 'ex. Inclure une introduction, 3 sections clés, et une conclusion avec appel à l\'action')}
                       value={formData.structureNotes || ''}
                       onChange={(e) => updateFormData('structureNotes', e.target.value)}
                       rows={4}
@@ -588,7 +1075,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onClick={() => setShowStructureNotes(true)}
                     className="w-full"
                   >
-                    Add Custom Structure Notes
+                    {t('step4.structure.addCustomNotes', 'Ajouter des Notes de Structure Personnalisées')}
                   </Button>
                 )}
               </div>
@@ -599,7 +1086,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               <div className="space-y-4">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  Call to Action
+                  {t('step4.cta.title', 'Appel à l\'Action')}
                 </h3>
 
                 <div className="space-y-2">
@@ -608,10 +1095,10 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                     onValueChange={(value) => updateFormData('ctaType', value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select CTA type" />
+                      <SelectValue placeholder={t('step4.cta.placeholder', 'Sélectionnez le type d\'appel à l\'action')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {CTA_TYPE_OPTIONS.map((cta) => {
+                      {getCtaTypeOptions.map((cta) => {
                         const IconComponent = cta.icon;
                         return (
                           <SelectItem key={cta.value} value={cta.value}>
@@ -630,7 +1117,7 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
                 {formData.ctaType && formData.ctaType !== 'none' && (
                   <div className="p-3 border rounded-md bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20">
                     <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                      CTA PREVIEW
+                      {t('step4.cta.ctaPreview', 'CTA PREVIEW')}
                     </Label>
                     <p className="text-sm mb-3">{getSelectedCTA().preview}</p>                    {getSelectedCTA().buttonText && (
                       <Button size="sm" className="bg-green-600 hover:bg-green-700">
@@ -650,11 +1137,11 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Hash className="h-4 w-4" />
-                  Content Preview
+                  {t('step4.preview.title', 'Aperçu du Contenu')}
                 </h3>
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <CheckCircle2 className="h-3 w-3" />
-                  Live Preview
+                  {t('step4.preview.live', 'Aperçu en Temps Réel')}
                 </Badge>
               </div>
               
@@ -672,30 +1159,42 @@ const Step4ToneStructure = ({ formData, updateFormData }) => {
           </div>
         </div>
 
-        {/* Helper tip box */}        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-100 dark:border-blue-900 rounded-md">
+        {/* Helper tip box */}
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border border-blue-100 dark:border-blue-900 rounded-md">
           <h3 className="font-medium text-blue-800 dark:text-blue-400 flex items-center gap-2 mb-2">
             <Info className="h-4 w-4" />
-            <span>Content Structure & Length Tips</span>
+            <span>{t('step4.guide.title', 'Guide de Sélection de Structure Intelligente')}</span>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <p className="text-blue-700 dark:text-blue-300">
-                <strong>Structure Impact:</strong> The structure you choose impacts how readers engage with your content. 
-                Clear sections with headers and a strong opening paragraph typically perform better for SEO.
+                <strong>{t('step4.guide.seoImpact', 'Impact SEO')}:</strong> {t('step4.guide.seoText', 'Les formats How-To et FAQ se classent généralement le mieux dans les résultats de recherche. Le contenu tutoriel avec des instructions étape par étape reçoit plus d\'engagement et de meilleures fonctionnalités SERP.')}
               </p>
             </div>
             <div>
               <p className="text-purple-700 dark:text-purple-300">
-                <strong>Tone Consistency:</strong> Maintain your chosen tone throughout the content. 
-                The preview updates in real-time to show how your selections will affect the final output.
+                <strong>{t('step4.guide.structureFlow', 'Flux de Structure')}:</strong> {t('step4.guide.structureText', 'Chaque format montre son flux de contenu pour une visualisation facile. Le niveau de difficulté vous aide à choisir en fonction de votre expérience d\'écriture et de vos contraintes de temps.')}
               </p>
             </div>
             <div>
               <p className="text-green-700 dark:text-green-300">
-                <strong>Optimal Length:</strong> For SEO purposes, articles between 1200-1800 words tend to rank better.
-                Shorter content works well for newsletters, while comprehensive guides benefit from longer content.
+                <strong>{t('step4.guide.bestPractices', 'Meilleures Pratiques')}:</strong> {t('step4.guide.bestPracticesText', 'Utilisez les structures de comparaison pour le contenu d\'aide à la décision, les études de cas pour présenter les résultats, et les formats FAQ pour répondre aux questions communes des utilisateurs.')}
               </p>
             </div>
+          </div>
+          
+          {/* Quick recommendations based on content type */}
+          <div className="mt-4 p-3 bg-white/50 dark:bg-gray-900/50 rounded border">
+            <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+              💡 {t('step4.recommendation.title', 'Recommandation pour')} {formData.contentType || t('step4.recommendation.yourContent', 'votre contenu')}:
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              {formData.contentType === 'guide' && t('step4.recommendation.guide', 'La structure How-To/Étape par Étape fonctionne le mieux pour les guides - haute valeur SEO et engagement utilisateur.')}
+              {formData.contentType === 'blog-article' && t('step4.recommendation.blogArticle', 'Les structures Intro + 3 Points Principaux ou Problème→Solution sont idéales pour les articles de blog.')}
+              {formData.contentType === 'case-study' && t('step4.recommendation.caseStudy', 'La structure Étude de Cas est parfaite - raconte une histoire complète du défi aux résultats.')}
+              {formData.contentType === 'newsletter' && t('step4.recommendation.newsletter', 'Histoire + Faits + Leçons maintient l\'engagement des lecteurs de newsletter avec un flux narratif.')}
+              {(!formData.contentType || formData.contentType === 'thought-piece') && t('step4.recommendation.default', 'Choisissez selon votre objectif: How-To pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu d\'aide à la décision.')}
+            </p>
           </div>
         </div>
       </div>

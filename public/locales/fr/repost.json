@@ -1,0 +1,20 @@
+{
+  "caption_title": "Republier la Légende",
+  "caption_upload_title": "Republier la Légende",
+  "how_would_you": "Comment souhaitez-vous republier cette légende ?",
+  "add_media": "Ajouter un Média",
+  "upload_image_video": "Télécharger une image ou une vidéo",
+  "text_only": "Texte Uniquement",
+  "just_use_caption": "Utiliser la légende sans média",
+  "upload_media_description": "Téléchargez votre média ou capturez directement pour créer des légendes générées par IA.",
+  "drag_drop_media": "Glissez-déposez le média ici, ou cliquez pour sélectionner",
+  "supported_formats": "Supporte JPG, PNG, GIF, WEBP, MP4, WEBM, MOV (max 10MB)",
+  "upload_preview_description": "Téléchargez une image ou vidéo, ou utilisez votre caméra pour capturer une photo. Votre média apparaîtra ici pour édition.",
+  "upload_media_button": "Télécharger un Média: Image ou Vidéo",
+  "create_text_only": "Créer une légende texte uniquement",
+  "select_legend": "Sélectionnez une légende :",
+  "text_caption_selection": "Sélectionner une Légende pour Republier",
+  "back": "Retour",
+  "cancel": "Annuler",
+  "continue": "Continuer à l'Aperçu"
+}

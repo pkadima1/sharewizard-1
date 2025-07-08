@@ -16,7 +16,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   onTryAgainClick
 }) => {
   const handleTryAgain = () => {
-    toast.info("Attempting to generate captions again...");
+    toast.info("Tentative de génération des légendes à nouveau...");
     onTryAgainClick();
   };
 
@@ -39,14 +39,14 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
       <div className="bg-red-50 dark:bg-red-900/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
         <AlertCircle className="h-8 w-8 text-red-500 dark:text-red-400" />
       </div>
-      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">Generation Failed</h3>
+      <h3 className="text-xl font-semibold text-adaptive-primary mb-2">Échec de la Génération</h3>
       <p className="text-adaptive-secondary mb-4 max-w-md">{error}</p>
       {isCorsError && (
         <Alert variant="destructive" className="mb-4 max-w-md">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Connection Error</AlertTitle>
+          <AlertTitle>Erreur de Connexion</AlertTitle>
           <AlertDescription>
-            This often happens due to browser security settings. Try using a different browser or refreshing the page.
+            Cela se produit souvent en raison des paramètres de sécurité du navigateur. Essayez d'utiliser un navigateur différent ou actualisez la page.
           </AlertDescription>
         </Alert>
       )}
@@ -55,14 +55,14 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           variant="outline"
           onClick={() => window.location.reload()}
         >
-          Refresh Page
+          Actualiser la Page
         </Button>
         <Button
           onClick={handleTryAgain}
           className="flex items-center gap-2"
         >
           <RefreshCw className="h-4 w-4" />
-          Try Again
+          Réessayer
         </Button>
       </div>
     </div>

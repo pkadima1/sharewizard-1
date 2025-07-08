@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, UploadCloud, Image, RotateCcw, Save } from 'lucide-react';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -18,6 +19,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 5;
 
 const Step1MediaUpload = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({});
@@ -54,8 +56,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
         setFiles(restoredData.mediaFiles);
       }
       toast({
-        title: "Draft restored",
-        description: "Your previous work has been restored.",
+        title: t('step2.actions.draftRestored'),
+        description: t('step2.success.draftRestoredDesc'),
       });
     }
   };
@@ -64,8 +66,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
   const handleManualSave = () => {
     saveNow();
     toast({
-      title: "Draft saved",
-      description: "Your progress has been saved.",
+      title: t('step2.actions.draftSavedAuto'),
+      description: t('step2.actions.progressSavedDesc'),
     });
   };
 
@@ -87,8 +89,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
     
     if (files.length + selectedFiles.length > MAX_FILES) {
       toast({
-        title: "Too many files",
-        description: `You can only upload up to ${MAX_FILES} images.`,
+        title: t('step2.errors.tooManyFiles'),
+        description: t('step2.errors.maxFilesMsg', { count: MAX_FILES }),
         variant: "destructive"
       });
       return;
@@ -98,8 +100,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
     const validFiles = selectedFiles.filter((file: File) => {
       if (!file.type.startsWith('image/')) {
         toast({
-          title: "Invalid file type",
-          description: `${file.name} is not an image file.`,
+          title: t('step2.errors.invalidFileType'),
+          description: t('step2.errors.invalidFileTypeDesc'),
           variant: "destructive"
         });
         return false;
@@ -107,8 +109,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
 
       if (file.size > MAX_FILE_SIZE) {
         toast({
-          title: "File too large",
-          description: `${file.name} exceeds the 5MB limit.`,
+          title: t('step2.errors.fileTooLargeTitle'),
+          description: t('step2.errors.fileTooLargeDesc', { maxSize: 5 }),
           variant: "destructive"
         });
         return false;
@@ -126,8 +128,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
   const uploadFiles = async (filesToUpload) => {
     if (!currentUser) {
       toast({
-        title: "Authentication required",
-        description: "You must be logged in to upload files.",
+        title: t('step2.errors.authRequired'),
+        description: t('step2.errors.authRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -162,8 +164,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
           (error) => {
             console.error("Upload error:", error);
             toast({
-              title: "Upload failed",
-              description: `Failed to upload ${file.name}.`,
+              title: t('step2.errors.uploadFailed'),
+              description: t('step2.errors.uploadFailedDesc'),
               variant: "destructive"
             });
             reject(error);
@@ -191,8 +193,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
             } catch (error) {
               console.error("Error getting download URL:", error);
               toast({
-                title: "Processing error",
-                description: `Error processing ${file.name}.`,
+                title: t('step2.errors.processingError'),
+                description: t('step2.errors.processingErrorDesc'),
                 variant: "destructive"
               });
               reject(error);
@@ -206,8 +208,8 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
       const uploadedFiles = await Promise.all(uploadPromises);
       setFiles(prevFiles => [...prevFiles, ...uploadedFiles]);
       toast({
-        title: "Upload complete",
-        description: `Successfully uploaded ${uploadedFiles.length} file(s).`,
+        title: t('step2.success.uploadComplete'),
+        description: t('step2.success.uploadSuccessDesc', { count: uploadedFiles.length }),
       });
     } catch (error) {
       console.error("Error during upload:", error);

@@ -12,84 +12,95 @@ import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngine';
 import { useAutoSave, getDraftInfo } from '@/hooks/useAutoSave';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
-// Predefined industry options with audience suggestions
-const INDUSTRY_OPTIONS = [
+// Helper function to get industry options with translations
+const getIndustryOptions = (t: any) => [
   { 
     value: 'Marketing', 
-    label: 'Marketing & Advertising',
-    suggestedAudiences: ['Small Business Owners', 'Marketing Professionals', 'Entrepreneurs', 'Students'],
+    label: t('step1.industries.marketing'),
+    suggestedAudiences: [t('step1.audienceTypes.smallBusiness'), t('step1.audienceTypes.marketingPros'), t('step1.audienceTypes.entrepreneurs'), t('step1.audienceTypes.students')],
     contentTypes: ['strategy guides', 'case studies', 'trend analysis']
   },
   { 
     value: 'Health', 
-    label: 'Health & Wellness',
-    suggestedAudiences: ['General Public', 'Healthcare Providers', 'Patients', 'Fitness Enthusiasts'],
+    label: t('step1.industries.health'),
+    suggestedAudiences: [t('step1.audienceTypes.generalPublic'), t('step1.audienceTypes.healthcare'), t('step1.audienceTypes.patients'), t('step1.audienceTypes.fitness')],
     contentTypes: ['health tips', 'medical insights', 'wellness guides']
   },
   { 
     value: 'Technology', 
-    label: 'Technology & Software',
-    suggestedAudiences: ['Tech Enthusiasts', 'Software Developers', 'IT Professionals', 'Business Leaders'],
+    label: t('step1.industries.technology'),
+    suggestedAudiences: [t('step1.audienceTypes.techEnthusiasts'), t('step1.audienceTypes.developers'), t('step1.audienceTypes.itPros'), t('step1.audienceTypes.businessLeaders')],
     contentTypes: ['technical tutorials', 'product reviews', 'industry updates']
   },
   { 
     value: 'Finance', 
-    label: 'Finance & Investment',
-    suggestedAudiences: ['Investors', 'Financial Planners', 'Small Business Owners', 'Young Professionals'],
+    label: t('step1.industries.finance'),
+    suggestedAudiences: [t('step1.audienceTypes.investors'), t('step1.audienceTypes.financialPlanners'), t('step1.audienceTypes.smallBusiness'), t('step1.audienceTypes.youngPros')],
     contentTypes: ['investment guides', 'financial tips', 'market analysis']
   },
   { 
     value: 'Education', 
-    label: 'Education & Learning',
-    suggestedAudiences: ['Students', 'Educators', 'Parents', 'Professionals'],
+    label: t('step1.industries.education'),
+    suggestedAudiences: [t('step1.audienceTypes.students'), t('step1.audienceTypes.educators'), t('step1.audienceTypes.parents'), t('step1.audienceTypes.professionals')],
     contentTypes: ['educational content', 'study guides', 'skill development']
   },
   { 
     value: 'Coaching', 
-    label: 'Life & Business Coaching',
-    suggestedAudiences: ['Entrepreneurs', 'Professionals', 'Career Changers', 'Personal Development Seekers'],
+    label: t('step1.industries.coaching'),
+    suggestedAudiences: [t('step1.audienceTypes.entrepreneurs'), t('step1.audienceTypes.professionals'), t('step1.audienceTypes.careerChangers'), t('step1.audienceTypes.personalDev')],
     contentTypes: ['motivational content', 'success strategies', 'personal growth']
   },
   { 
     value: 'E-commerce',
-    label: 'E-commerce & Retail',
-    suggestedAudiences: ['Online Sellers', 'Retail Managers', 'Consumers', 'Dropshippers'],
+    label: t('step1.industries.ecommerce'),
+    suggestedAudiences: [t('step1.audienceTypes.onlineSellers'), t('step1.audienceTypes.retailManagers'), t('step1.audienceTypes.consumers'), t('step1.audienceTypes.dropshippers')],
     contentTypes: ['product guides', 'buying advice', 'industry trends']
   },
   { 
     value: 'Food', 
-    label: 'Food & Beverage',
-    suggestedAudiences: ['Food Enthusiasts', 'Restaurant Owners', 'Home Cooks', 'Health-Conscious Consumers'],
+    label: t('step1.industries.food'),
+    suggestedAudiences: [t('step1.audienceTypes.foodEnthusiasts'), t('step1.audienceTypes.restaurantOwners'), t('step1.audienceTypes.homeCooks'), t('step1.audienceTypes.healthConscious')],
     contentTypes: ['recipes', 'restaurant reviews', 'nutrition guides']
   },
   { 
     value: 'Real Estate', 
-    label: 'Real Estate',
-    suggestedAudiences: ['Home Buyers', 'Real Estate Agents', 'Investors', 'Renters'],
+    label: t('step1.industries.realEstate'),
+    suggestedAudiences: [t('step1.audienceTypes.homeBuyers'), t('step1.audienceTypes.realEstateAgents'), t('step1.audienceTypes.investors'), t('step1.audienceTypes.renters')],
     contentTypes: ['market analysis', 'buying guides', 'investment strategies']
   },
   { 
     value: 'Travel', 
-    label: 'Travel & Tourism',
-    suggestedAudiences: ['Travelers', 'Travel Agents', 'Local Businesses', 'Adventure Seekers'],
+    label: t('step1.industries.travel'),
+    suggestedAudiences: [t('step1.audienceTypes.travelers'), t('step1.audienceTypes.travelAgents'), t('step1.audienceTypes.localBusinesses'), t('step1.audienceTypes.adventureSeekers')],
     contentTypes: ['travel guides', 'destination reviews', 'travel tips']
   },
   { 
     value: 'Other', 
-    label: 'Other Industry',
-    suggestedAudiences: ['General Audience', 'Professionals', 'Enthusiasts'],
+    label: t('step1.industries.other'),
+    suggestedAudiences: [t('step1.audienceTypes.generalAudience'), t('step1.audienceTypes.professionals'), t('step1.audienceTypes.enthusiasts')],
     contentTypes: ['informational content', 'guides', 'insights']
   }
 ];
 
-const Step1WhatWho = ({ formData, updateFormData }) => {
+interface Step1Props {
+  formData: any;
+  updateFormData: (key: string, value: any) => void;
+}
+
+const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
+  const { t } = useTranslation('longform');
   const [topic, setTopic] = useState(formData.topic || '');
   const [audience, setAudience] = useState(formData.audience || '');
   const [industry, setIndustry] = useState(formData.industry || '');
+  const [customIndustry, setCustomIndustry] = useState(formData.customIndustry || ''); // NEW: Custom industry field
   const [selectedAudienceType, setSelectedAudienceType] = useState('');
   const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
   const { toast } = useToast();
+
+  // Get industry options with translations
+  const INDUSTRY_OPTIONS = getIndustryOptions(t);
 
   // Auto-save functionality for this step
   const { hasSavedDraft, lastSaved, lastSavedFormatted, restoreDraft, clearDraft, saveNow } = useAutoSave(formData, {
@@ -112,9 +123,20 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
     updateFormData('industry', industry);
   }, [industry]);
 
+  // NEW: Update custom industry
+  useEffect(() => {
+    updateFormData('customIndustry', customIndustry);
+  }, [customIndustry]);
+
   // Handle industry selection and suggest audiences
   const handleIndustryChange = (selectedIndustry) => {
     setIndustry(selectedIndustry);
+    
+    // Clear custom industry if not "Other"
+    if (selectedIndustry !== 'Other') {
+      setCustomIndustry('');
+    }
+    
     const industryData = INDUSTRY_OPTIONS.find(opt => opt.value === selectedIndustry);
     if (industryData && industryData.suggestedAudiences.length > 0) {
       // Don't auto-select, just make suggestions available
@@ -135,9 +157,10 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
       setTopic(restoredData.topic || '');
       setAudience(restoredData.audience || '');
       setIndustry(restoredData.industry || '');
+      setCustomIndustry(restoredData.customIndustry || ''); // NEW: Restore custom industry
       toast({
-        title: "Draft Restored",
-        description: "Your saved progress has been restored.",
+        title: t('wizard.draft.restored'),
+        description: t('wizard.draft.restoredDesc'),
       });
     }
   };
@@ -146,8 +169,8 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
   const handleManualSave = () => {
     saveNow();
     toast({
-      title: "Progress Saved",
-      description: "Your current progress has been saved.",
+      title: t('wizard.draft.saved'),
+      description: t('wizard.draft.savedDesc'),
     });
   };
 
@@ -159,8 +182,22 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
     let score = 0;
     if (topic.trim().length > 10) score += 40;
     if (audience.trim().length > 5) score += 30;
-    if (industry) score += 30;
+    if (industry) {
+      if (industry === 'Other' && customIndustry.trim().length > 2) {
+        score += 30; // Custom industry counts as valid
+      } else if (industry !== 'Other') {
+        score += 30; // Predefined industry counts as valid
+      }
+    }
     return Math.min(score, 100);
+  };
+
+  // Get the effective industry for suggestions (custom or selected)
+  const getEffectiveIndustry = () => {
+    if (industry === 'Other' && customIndustry.trim()) {
+      return customIndustry;
+    }
+    return industry;
   };
 
   return (
@@ -169,10 +206,10 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
         {/* Header */}
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            What & Who
+            {t('step1.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Define your topic and target audience to create focused, engaging content
+            {t('step1.subtitle')}
           </p>
         </div>
 
@@ -183,7 +220,9 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
               <div className="flex items-center space-x-2">
                 <RotateCcw className="h-4 w-4 text-amber-600" />
                 <span className="text-sm text-amber-800 dark:text-amber-200">
-                  Found saved draft from {getDraftInfo('step1-what-who-draft').timestamp?.toLocaleString()}
+                  {t('wizard.draft.foundSaved', { 
+                    time: getDraftInfo('step1-what-who-draft').timestamp?.toLocaleString() 
+                  })}
                 </span>
               </div>
               <div className="flex space-x-2">
@@ -193,7 +232,7 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
                   onClick={handleRestoreDraft}
                   className="border-amber-300 text-amber-700 hover:bg-amber-100"
                 >
-                  Restore
+                  {t('wizard.draft.restore')}
                 </Button>
                 <Button 
                   size="sm" 
@@ -201,7 +240,7 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
                   onClick={clearDraft}
                   className="text-amber-700 hover:bg-amber-100"
                 >
-                  Dismiss
+                  {t('wizard.draft.dismiss')}
                 </Button>
               </div>
             </div>
@@ -220,51 +259,87 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Topic */}
-          <Card className="p-6">
+          <Card className="p-6 border-2 border-blue-100 dark:border-blue-900/50 hover:border-blue-200 dark:hover:border-blue-800/50 transition-colors">
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Target className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">What will you write about?</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                    <Target className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">{t('step1.topic.title')}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.topic.subtitle', { fallback: 'Define your content focus' })}</p>
+                  </div>
+                </div>
                 <Tooltip>
                   <TooltipTrigger>
-                    <HelpCircle className="h-4 w-4 text-gray-400" />
+                    <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Be specific about your main topic. This helps generate more targeted content.</p>
+                    <p>{t('step1.topic.tooltip')}</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="topic">Content Topic *</Label>
-                <Textarea
-                  id="topic"
-                  placeholder="e.g., 'How to improve email marketing open rates for small businesses' or 'The best productivity tools for remote teams'"
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
-                  className="min-h-[100px] resize-none"
-                />
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">
-                    {topic.length} characters
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setShowTopicSuggestions(!showTopicSuggestions)}
-                    className="flex items-center space-x-1"
-                  >
-                    <Lightbulb className="h-4 w-4" />
-                    <span>Get Ideas</span>
-                  </Button>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="topic" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('step1.topic.label')}
+                  </Label>
+                  <Textarea
+                    id="topic"
+                    placeholder={t('step1.topic.placeholder')}
+                    value={topic}
+                    onChange={(e) => setTopic(e.target.value)}
+                    className="min-h-[120px] resize-none border-2 focus:border-blue-500 transition-colors"
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">
+                      {t('step1.topic.characters', { count: topic.length })}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowTopicSuggestions(!showTopicSuggestions)}
+                      className="flex items-center space-x-2 border-blue-200 hover:border-blue-300 hover:bg-blue-50"
+                    >
+                      <Lightbulb className="h-4 w-4" />
+                      <span>{t('step1.topic.getIdeas')}</span>
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Topic Quality Indicator */}
+                {topic.trim().length > 0 && (
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {topic.length >= 20 ? t('step1.qualityLabels.excellent') : topic.length >= 10 ? t('step1.qualityLabels.good') : t('step1.qualityLabels.addMoreDetails')}
+                        </span>
+                      </div>
+                      <Badge variant={topic.length >= 20 ? 'default' : topic.length >= 10 ? 'secondary' : 'outline'}>
+                        {topic.length >= 20 ? t('step1.qualityLabels.excellentBadge') : topic.length >= 10 ? t('step1.qualityLabels.goodBadge') : t('step1.qualityLabels.needsWork')}
+                      </Badge>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {showTopicSuggestions && (
-                <div className="mt-4">
+                <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 border-2 border-purple-200 dark:border-purple-800 rounded-xl shadow-sm">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="p-1 bg-purple-100 dark:bg-purple-900/50 rounded">
+                      <Lightbulb className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h4 className="font-medium text-purple-800 dark:text-purple-200">{t('step1.suggestions.smartTopicSuggestions')}</h4>
+                  </div>
                   <TopicSuggestionEngine
-                    industry={industry}
+                    industry={getEffectiveIndustry()}
                     audience={audience}
+                    currentTopic={topic}
+                    keywords={topic ? [topic] : []}
                     onTopicSelect={setTopic}
                   />
                 </div>
@@ -273,44 +348,105 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
           </Card>
 
           {/* Right Column - Audience */}
-          <Card className="p-6">
+          <Card className="p-6 border-2 border-green-100 dark:border-green-900/50 hover:border-green-200 dark:hover:border-green-800/50 transition-colors">
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Users className="h-5 w-5 text-green-600" />
-                <h3 className="text-lg font-semibold">Who are you writing for?</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                    <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">{t('step1.audience.title')}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.audience.subtitle', { fallback: 'Define your target audience' })}</p>
+                  </div>
+                </div>
                 <Tooltip>
                   <TooltipTrigger>
-                    <HelpCircle className="h-4 w-4 text-gray-400" />
+                    <HelpCircle className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Understanding your audience helps tailor the content tone and complexity.</p>
+                    <p>{t('step1.audience.tooltip')}</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="industry">Industry (optional)</Label>
-                <Select value={industry} onValueChange={handleIndustryChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your industry for better suggestions" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INDUSTRY_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div className="flex items-center space-x-2">
-                          <Building2 className="h-4 w-4" />
-                          <span>{option.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="industry" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('step1.audience.industryLabel')}
+                  </Label>
+                  <Select value={industry} onValueChange={handleIndustryChange}>
+                    <SelectTrigger className="border-2 focus:border-green-500 transition-colors">
+                      <SelectValue placeholder={t('step1.audience.industryPlaceholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDUSTRY_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          <div className="flex items-center space-x-2">
+                            <Building2 className="h-4 w-4" />
+                            <span>{option.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Enhanced Custom Industry Field */}
+                {industry === 'Other' && (
+                  <div className="space-y-3 animate-in slide-in-from-top-2 duration-300 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-2 border-blue-200 dark:border-blue-800 rounded-xl shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="p-1 bg-blue-100 dark:bg-blue-900/50 rounded">
+                        <Building2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <Label htmlFor="customIndustry" className="text-blue-800 dark:text-blue-200 font-medium text-sm">
+                        {t('step1.audience.customIndustryLabel', { fallback: 'Specify your industry' })}
+                      </Label>
+                    </div>
+                    <Input
+                      id="customIndustry"
+                      placeholder={t('step1.audience.customIndustryPlaceholder', { 
+                        fallback: 'e.g., Renewable Energy, Pet Care, Gaming...' 
+                      })}
+                      value={customIndustry}
+                      onChange={(e) => setCustomIndustry(e.target.value)}
+                      className="transition-all duration-200 border-2 border-blue-200 focus:border-blue-400 bg-white dark:bg-blue-950/50"
+                    />
+                    <div className="p-2 bg-blue-100/50 dark:bg-blue-900/20 rounded-lg">
+                      <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+                        <Lightbulb className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>
+                          {t('step1.audience.customIndustryHint', { 
+                            fallback: 'Be specific to get better topic suggestions tailored to your industry' 
+                          })}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Industry Status Indicator */}
+                {industry && (
+                  <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {industry === 'Other' && customIndustry.trim() 
+                          ? t('step1.completion.customIndustry', { industry: customIndustry })
+                          : industry === 'Other' 
+                          ? t('step1.completion.specifyCustom')
+                          : t('step1.completion.selected', { industry: selectedIndustryData?.label })
+                        }
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Suggested Audiences */}
               {selectedIndustryData && (
                 <div className="space-y-3">
-                  <Label>Suggested Audiences</Label>
+                  <Label>{t('step1.audience.suggestedAudiences', { industry: selectedIndustryData.label })}</Label>
                   <div className="flex flex-wrap gap-2">
                     {selectedIndustryData.suggestedAudiences.map((suggestion) => (
                       <Badge
@@ -326,40 +462,95 @@ const Step1WhatWho = ({ formData, updateFormData }) => {
                 </div>
               )}
 
-              <div className="space-y-3">
-                <Label htmlFor="audience">Target Audience *</Label>
-                <Textarea
-                  id="audience"
-                  placeholder="e.g., 'Small business owners who struggle with email marketing' or 'Remote workers looking to improve productivity'"
-                  value={audience}
-                  onChange={(e) => setAudience(e.target.value)}
-                  className="min-h-[100px] resize-none"
-                />
-                <span className="text-sm text-gray-500">
-                  {audience.length} characters
-                </span>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="audience" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('step1.audience.audienceLabel')}
+                  </Label>
+                  <Textarea
+                    id="audience"
+                    placeholder={t('step1.audience.audiencePlaceholder')}
+                    value={audience}
+                    onChange={(e) => setAudience(e.target.value)}
+                    className="min-h-[120px] resize-none border-2 focus:border-green-500 transition-colors"
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">
+                      {t('step1.topic.characters', { count: audience.length })}
+                    </span>
+                    {audience.trim().length > 0 && (
+                      <Badge variant={audience.length >= 20 ? 'default' : audience.length >= 10 ? 'secondary' : 'outline'}>
+                        {audience.length >= 20 ? t('step1.qualityLabels.detailed') : audience.length >= 10 ? t('step1.qualityLabels.goodBadge') : t('step1.qualityLabels.addMore')}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* Audience Quality Indicator */}
+                {audience.trim().length > 0 && (
+                  <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {audience.length >= 20 ? t('step1.qualityLabels.greatAudience') : audience.length >= 10 ? t('step1.qualityLabels.goodAudience') : t('step1.qualityLabels.addMoreAudience')}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
         </div>
 
-        {/* Manual Save Button */}
-        <div className="flex justify-center">
-          <Button 
-            onClick={handleManualSave}
-            variant="outline"
-            size="sm"
-            className="flex items-center space-x-2"
-          >
-            <Save className="h-4 w-4" />
-            <span>Save Progress</span>
-          </Button>
-        </div>        {/* Auto-save indicator */}
-        {lastSavedFormatted && (
-          <div className="text-center text-sm text-gray-500">
-            Auto-saved {lastSavedFormatted}
+        {/* Completion Status & Actions */}
+        <Card className="p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/50 dark:to-slate-900/50 border-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${completionScore() >= 80 ? 'bg-green-500' : completionScore() >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                <span className="text-sm font-medium">
+                  {t('step1.completion.stepCompletion', { score: completionScore() })}
+                </span>
+              </div>
+              <div className="text-xs text-gray-500">
+                {completionScore() >= 80 ? t('step1.completion.readyToProceed') : 
+                 completionScore() >= 50 ? t('step1.completion.almostThere') : 
+                 t('step1.completion.keepFilling')}
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              {lastSavedFormatted && (
+                <span className="text-xs text-gray-500">
+                  💾 {t('wizard.draft.savedTime', { time: lastSavedFormatted })}
+                </span>
+              )}
+              <Button 
+                onClick={handleManualSave}
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-2 hover:bg-gray-100"
+              >
+                <Save className="h-4 w-4" />
+                <span>{t('wizard.navigation.saveNow', { fallback: 'Save Now' })}</span>
+              </Button>
+            </div>
           </div>
-        )}
+
+          {/* Progress Bar */}
+          <div className="mt-3">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div 
+                className={`h-2 rounded-full transition-all duration-500 ${
+                  completionScore() >= 80 ? 'bg-green-500' : 
+                  completionScore() >= 50 ? 'bg-yellow-500' : 
+                  'bg-red-500'
+                }`}
+                style={{ width: `${completionScore()}%` }}
+              />
+            </div>
+          </div>
+        </Card>
       </div>
     </TooltipProvider>
   );

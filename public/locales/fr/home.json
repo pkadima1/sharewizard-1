@@ -1,0 +1,65 @@
+{
+  "hero": {
+    "title": "Contenu IA Humain Qui Engage Vraiment!",
+    "subtitle": "Créez du contenu convaincant pour votre audience et plateforme avec une IA avancée qui comprend le contexte.",
+    "cta": "Essayer Gratuitement",
+    "secondaryCta": "Voir Comment Ça Marche"
+  },  "testimonial": {
+    "quote": "En tant que psychologue, j'ai été impressionnée par la capacité d'EngagePerfect à générer du contenu qui établit une véritable connexion émotionnelle avec mes clients. C'est remarquablement naturel.",
+    "name": "Louise Lernourd",
+    "title": "Psychologue"
+  },"cta": {
+    "title": "Prêt à Créer du Contenu Parfait ?",
+    "subtitle": "Commencez avec notre Générateur de Légendes et de Contenu Long-forme !",
+    "button": "Commencer Gratuitement",
+    "description": "Rejoignez des milliers de marketeurs et créateurs de contenu qui utilisent EngagePerfect AI."
+  },
+  "features": {
+    "title": "Voyez Ce Que Vous Pouvez Créer",
+    "subtitle": "Du Contenu Qui Sonne Comme Vous, Pas Comme l'IA",
+    "description": "Notre technologie IA avancée crée du contenu avec personnalité, ton et style qui semble authentique et engageant.",
+    "humanLikeContent": {
+      "title": "Contenu Humain",
+      "description": "Générez du contenu qui sonne naturel et authentique, pas robotique ou générique."
+    },
+    "contextAware": {
+      "title": "Idées Contextuelles", 
+      "description": "IA qui comprend votre secteur, audience et objectifs pour créer du contenu pertinent."
+    },
+    "multipleFormats": {
+      "title": "Formats de Contenu Multiples",
+      "description": "Des légendes de réseaux sociaux aux articles longs, créez du contenu pour toute plateforme."
+    },
+    "seoOptimization": {
+      "title": "Optimisation SEO & GEO",
+      "description": "Contenu optimisé pour les moteurs de recherche et taux de conversion pour maximiser votre portée."
+    },
+    "instantGeneration": {
+      "title": "Génération Instantanée",
+      "description": "Créez du contenu de haute qualité en secondes, pas en heures. Parfait pour les créateurs occupés."
+    },
+    "crossPlatform": {
+      "title": "Compatibilité Multi-Plateforme", 
+      "description": "Générez du contenu optimisé pour toutes les principales plateformes de réseaux sociaux et blogs."
+    }
+  },
+  "sample": {
+    "title": "Boostez Votre Influence avec la Magie de l'IA !",
+    "description": "Découvrez comment le contenu humain généré par IA peut élever la présence de votre marque sur Instagram, TikTok et d'autres plateformes sociales — engageant les audiences comme jamais auparavant.",
+    "cta": "Prêt à révolutionner votre stratégie de contenu ? Essayez EngagePerfect maintenant gratuitement !",
+    "hashtags": {
+      "1": "#CroissanceIA",
+      "2": "#InfluenceDigitale",
+      "3": "#MagieDeContenu",
+      "4": "#ContenuHumain"
+    },
+    "footer": {
+      "created": "Créé avec EngagePerfect"
+    }
+  },
+  "carousel": {
+    "title": "Exemples Créés avec EngagePerfect AI",
+    "subtitle": "Découvrez comment notre IA génère du contenu beau et engageant sur toutes les plateformes",
+    "viewGalleryButton": "Voir la Galerie Complète"
+  }
+}

@@ -28,7 +28,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
   if (isEditing) return null;
   const handleDirectShare = async (platform: string) => {
     try {
-      toast.info(`Preparing to share on ${platform}...`);
+      toast.info(`Préparation du partage sur ${platform}...`);
       
       // If we're trying to share directly to a social platform
       if (platform.toLowerCase() !== 'browser') {
@@ -40,13 +40,13 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
         });
         
         if (result.success) {
-          toast.success(result.message || `Shared to ${platform} successfully!`);
+          toast.success(result.message || `Partagé sur ${platform} avec succès !`);
           console.log(`Shared to ${platform} via API`);
           return;
         } else if (result.error) {
           // If direct API sharing fails, fall back to browser sharing
           console.warn(`Direct ${platform} sharing failed: ${result.error}`);
-          toast.warning(`Direct ${platform} sharing unavailable. Falling back to browser sharing.`);
+          toast.warning(`Partage direct ${platform} indisponible. Retour au partage via navigateur.`);
         }
       }
       
@@ -55,7 +55,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
       console.log(`Initiated two-step share process via dialog`);
     } catch (error) {
       console.error(`Error sharing to ${platform}:`, error);
-      toast.error(`Failed to share to ${platform}. Trying browser sharing instead.`);
+      toast.error(`Échec du partage sur ${platform}. Essai du partage via navigateur à la place.`);
       onShareClick();
     }
   };
@@ -77,7 +77,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
 
   return (
     <div className="space-y-3">
-      <h2 className="font-medium dark:text-white">Download to Share to prefered Social Media Platform </h2>
+      <h2 className="font-medium dark:text-white">Télécharger pour Partager sur la Plateforme de Médias Sociaux Préférée</h2>
         {/* Selected platform share button - prominently displayed if a platform is selected */}      {selectedPlatformDetails && (
         <Button
           className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
@@ -104,7 +104,7 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
         ) : (
           <Share className="h-4 w-4 mr-2" />
         )}
-        Direct Share via Browser (WhatsApp, Telegram, etc.)
+        Partage Direct via Navigateur (WhatsApp, Telegram, etc.)
       </Button>
       
       {/* ====================commented out for now until full SM platforms integration============*/}

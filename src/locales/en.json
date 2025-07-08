@@ -1,0 +1,106 @@
+{
+  "contentStructures": {
+    "howToSteps": {
+      "label": "How-To / Step-by-Step",
+      "description": "Step-by-step guides need clear, actionable instructions",
+      "sections": {
+        "introduction": "Overview and what readers will learn",
+        "prerequisites": "What you need before starting",
+        "step": "Action step",
+        "conclusion": "Summary and best practices"
+      }
+    },
+    "faqQa": {
+      "label": "FAQ / Q&A",
+      "description": "FAQs should provide concise, helpful answers",
+      "sections": {
+        "introduction": "Topic overview and scope",
+        "question": "Question",
+        "answer": "Detailed answer with examples",
+        "conclusion": "Contact information or next steps"
+      }
+    },
+    "comparisonVs": {
+      "label": "Comparison / vs.",
+      "description": "Comparisons require thorough analysis of options",
+      "sections": {
+        "introduction": "Context and what's being compared",
+        "optionOverview": "Option details",
+        "comparison": "Direct feature comparison",
+        "prosAndCons": "Advantages and disadvantages",
+        "recommendation": "Which option to choose when"
+      }
+    },
+    "reviewAnalysis": {
+      "label": "Review / Analysis",
+      "description": "Reviews need balanced evaluation and detailed analysis",
+      "sections": {
+        "introduction": "What's being reviewed",
+        "keyFeatures": "Main features and capabilities",
+        "pros": "What works well",
+        "cons": "Limitations and drawbacks",
+        "performance": "How it performs in practice",
+        "verdict": "Overall recommendation"
+      }
+    },
+    "caseStudyDetailed": {
+      "label": "Case Study",
+      "description": "Detailed case studies require comprehensive storytelling",
+      "sections": {
+        "introduction": "Case study overview",
+        "background": "Context and situation",
+        "challenge": "The problem that needed solving",
+        "solution": "Approach and implementation",
+        "results": "Outcomes and metrics",
+        "lessons": "Key takeaways and insights"
+      }
+    }
+  },
+  "readingLevels": {
+    "beginner": {
+      "label": "Beginner",
+      "description": "Easy to understand for general audiences"
+    },
+    "intermediate": {
+      "label": "Intermediate", 
+      "description": "Suitable for informed readers"
+    },
+    "advanced": {
+      "label": "Advanced",
+      "description": "Detailed content for experts"
+    }
+  },
+  "formatOptions": {
+    "markdown": {
+      "label": "Markdown",
+      "description": "Perfect for developers and technical content",
+      "features": ["Clean formatting", "GitHub compatible", "Easy to edit"]
+    },
+    "html": {
+      "label": "HTML",
+      "description": "Ready for web publishing",
+      "features": ["Web-ready", "SEO optimized", "Styled output"]
+    },
+    "gdocs": {
+      "label": "Google Docs",
+      "description": "Collaborative editing and sharing",
+      "features": ["Team collaboration", "Comment system", "Version history"]
+    }
+  },
+  "contentGeneration": {
+    "plagiarismCheck": "Plagiarism Check",
+    "plagiarismCheckDescription": "Verify content originality and detect potential issues",
+    "includeImages": "Include Image Suggestions",
+    "includeImagesDescription": "AI will suggest relevant images and visual elements",
+    "estimatedTime": "Estimated Generation Time",
+    "basedOnComplexity": "Based on content complexity, word count, and additional features",
+    "generationFeatures": "Generation Features",
+    "imageSuggestions": "Image suggestions",
+    "statisticsData": "Statistics & data",
+    "seoOptimization": "SEO optimization",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "active": "active",
+    "basic": "basic"
+  }
+}
