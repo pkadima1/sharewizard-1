@@ -30,7 +30,13 @@
     "allGoals": "All Goals",
     "newestFirst": "Newest First",
     "longform": "Long-form Content",
-    "captions": "Captions"
+    "captions": "Captions",
+    "viewAll": "View all {{count}} articles →"
+  },
+  "captions": {
+    "subtitle": "Manage your AI-generated social media captions",
+    "managementComingSoon": "Caption Management Coming Soon",
+    "historyComingSoon": "Caption history and management features will be available here."
   },
   "actions": {
     "view": "View",

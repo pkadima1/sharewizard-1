@@ -1852,5 +1852,17 @@
   "wordsShort": "mots",
   "minRead": "min de lecture",
   "estReadingTime": "Temps de lecture estimé",
-  "bestTones": "Meilleurs tons"
+  "bestTones": "Meilleurs tons",
+  "actions": {
+    "preview": "Aperçu",
+    "copy": "Copier"
+  },
+  "gdocs": "Google Docs",
+  "word": "OneDrive Word",
+  "export": {
+    "markdown": "Markdown (.md)",
+    "html": "HTML (.html)",
+    "txt": "Texte (.txt)",
+    "pdf": "PDF (.pdf)"
+  }
 }

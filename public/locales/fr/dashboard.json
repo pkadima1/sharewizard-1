@@ -18,7 +18,7 @@
   },
   "content": {
     "empty": "Aucun post trouvé",
-    "create": "Essayez d'ajuster vos filtres ou de créer du nouveau contenu",
+    "create": "Essayez d'ajuster vos filtres/créer du nouveau contenu",
     "filter": "Filtrer le contenu",
     "search": "Rechercher votre contenu", 
     "sort": "Trier par",
@@ -30,7 +30,8 @@
     "allGoals": "Tous les Objectifs",
     "newestFirst": "Plus Récent d'Abord",
     "longform": "Contenu long",
-    "captions": "Légendes"
+    "captions": "Légendes",
+    "viewAll": "Voir les {{count}} articles →"
   },
   "actions": {
     "view": "Voir",
@@ -63,5 +64,14 @@
     "posted": "Publié", 
     "favorites": "Favoris",
     "noActivity": "Aucune activité récente"
+  },
+  "longform": {
+    "subtitle": "Gérez et téléchargez vos articles, guides et billets générés",
+    "createNew": "Créer un nouveau contenu"
+  },
+  "captions": {
+    "subtitle": "Gérez vos légendes générées par l'IA pour les réseaux sociaux",
+    "managementComingSoon": "Gestion des légendes à venir",
+    "historyComingSoon": "L'historique et la gestion des légendes seront bientôt disponibles ici."
   }
 }
