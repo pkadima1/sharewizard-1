@@ -193,7 +193,8 @@ export const generateCaptionsV3 = onCall({
     }
     
     const uid = request.auth.uid;
-    const data = request.data as GenerateCaptionsRequest;
+    const data = request.data as GenerateCaptionsRequest & { lang?: string };
+    const lang = typeof data.lang === 'string' ? data.lang : 'en';
     
     // Generate a consistent request ID if not provided
     const requestId = data.requestId || `${uid}_${data.platform}_${data.niche}_${Date.now()}`;
@@ -263,7 +264,9 @@ export const generateCaptionsV3 = onCall({
       // Create the prompt for OpenAI - improved structure for better parsing
       const systemPrompt = `You are the world's best content creator and digital, Social Media marketing and sales expert. You create highly engaging content tailored to specific platforms and audiences.`;
       
+      const languageInstruction = `Write all captions in ${lang}.`;
       const userPrompt = `
+        ${languageInstruction}
         Create exactly 3 highly engaging ${tone} captions for ${platform} about '${postIdea || niche}' in the ${niche} industry.
         
         The captions MUST follow this exact format with these exact headings:
@@ -330,7 +333,8 @@ export const generateCaptionsV3 = onCall({
           niche,
           goal,
           postIdea,
-          requestId
+          requestId,
+          lang
         },
         output: captions,
         createdAt: FieldValue.serverTimestamp()

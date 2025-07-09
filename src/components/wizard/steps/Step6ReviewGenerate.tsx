@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { functions } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Info, 
   CheckCircle2, 
@@ -66,9 +67,10 @@ const SEO_WEIGHTS = {
 
 // Define the interface for the function response
 interface GenerateLongformResponse {
-  content: string;
-  outline: any;
-  metadata: {
+  success: boolean;
+  content?: string;
+  outline?: any;
+  metadata?: {
     actualWordCount: number;
     outlineGenerationTime: number;
     contentGenerationTime: number;
@@ -78,7 +80,12 @@ interface GenerateLongformResponse {
       seoOptimized: boolean;
       structureComplexity: number;
     }
-  }
+  };
+  message?: string;
+  error?: string;
+  requestsRemaining?: number;
+  contentId?: string;
+  hasUsage?: boolean;
 }
 
 interface Step6Props {
@@ -102,6 +109,12 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
   
   const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
+  const { currentLanguage } = useLanguage();
+
+  // Helper function to ensure progress is always rounded
+  const updateProgress = (value: number) => {
+    setGenerationProgress(Math.round(value * 10) / 10); // Round to 1 decimal place
+  };
 
   // Create the callable function
   const generateLongformContentFunction = httpsCallable<
@@ -414,7 +427,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     const complexityMultiplier = (formData.includeStats ? 1.3 : 1) * (formData.plagiarismCheck ? 1.2 : 1);
     const formatMultiplier = selectedExportFormats.length * 0.3 + 0.7;
     
-    return Math.round(baseTime * wordMultiplier * complexityMultiplier * formatMultiplier * 10) / 10;
+    const calculatedTime = baseTime * wordMultiplier * complexityMultiplier * formatMultiplier;
+    return Math.round(calculatedTime * 10) / 10; // Round to 1 decimal place
   }, [formData, selectedExportFormats]);
 
   // Handle the generation process
@@ -460,7 +474,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     try {
       setIsGenerating(true);
       setGenerationError(null);
-      setGenerationProgress(10);
+      updateProgress(10);
       setGenerationStage('outline');
 
       // Prepare the data for the function call
@@ -476,75 +490,92 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         optimizedTitle: formData.optimizedTitle || formData.topic,
         includeImages: formData.includeImages || false,
         includeStats: formData.includeStats || false,
+        includeReferences: formData.includeReferences || false,
+        tocRequired: formData.tocRequired || false,
+        summaryRequired: formData.summaryRequired || false,
+        structuredData: formData.structuredData || false,
+        enableMetadataBlock: formData.enableMetadataBlock || false,
         plagiarismCheck: formData.plagiarismCheck !== false,
         outputFormat: selectedExportFormats[0] || 'markdown',
         ctaType: formData.ctaType || 'none',
         structureNotes: formData.structureNotes || '',
-        mediaUrls: (formData.mediaFiles || []).map(file => file.url || ''),
+        mediaUrls: (formData.mediaFiles || []).map((file: any) => file.url || ''),
         // Enhanced Media Integration Fields
-        mediaCaptions: (formData.mediaFiles || []).map(file => file.metadata?.mediaCaption || ''),
-        mediaAnalysis: (formData.mediaFiles || []).map(file => file.metadata?.aiAnalysis || ''),
-        mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto' // auto, manual, or semantic
+        mediaCaptions: (formData.mediaFiles || []).map((file: any) => file.metadata?.mediaCaption || ''),
+        mediaAnalysis: (formData.mediaFiles || []).map((file: any) => file.metadata?.aiAnalysis || ''),
+        mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto', // auto, manual, or semantic
+        // Enhanced GEO optimization parameters
+        targetLocation: formData.targetLocation || '',
+        geographicScope: formData.geographicScope || 'global',
+        marketFocus: formData.marketFocus || [],
+        localSeoKeywords: formData.localSeoKeywords || [],
+        culturalContext: formData.culturalContext || '',
+        lang: currentLanguage
       };
 
       // Update progress based on typical function execution timeline
       progressUpdateInterval = setInterval(() => {
         setGenerationProgress(prev => {
-          // Outline generation typically takes ~30% of the total time
-          if (generationStage === 'outline' && prev < 30) return prev + 1;
-          // Content generation takes ~65% of the total time
-          if (generationStage === 'content' && prev < 95) return prev + 0.5;
-          // Keep progress steady if we're at the expected stage limit
-          return prev;
+          // Fix floating-point precision by using Math.min and proper rounding
+          const newProgress = Math.min(85, Math.round((prev + 0.5) * 10) / 10);
+          return newProgress;
         });
-      }, 800); // Slightly faster updates for smoother progress      // Call the Firebase function
+      }, 1500); // Slower updates to account for actual generation time
+      
+      setGenerationStage('outline');
+
+      // Call the Firebase function
       const result = await generateLongformContentFunction(functionData);
       
-      // Update progress and stage based on function response
-      setGenerationStage('content');
-      setGenerationProgress(50);
+      // Clear progress intervals immediately after function completes
+      if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+      if (contentGenerationInterval) clearInterval(contentGenerationInterval);
       
-      // Update progress to simulate content generation phase
-      contentGenerationInterval = setInterval(() => {
-        setGenerationProgress(prev => {
-          if (prev < 95) return prev + 1;
-          return prev;
-        });
-      }, 1000);
+      console.log("Function result:", result); // Debug log
       
-      // Short delay to simulate content processing
-      setTimeout(() => {
-        if (progressUpdateInterval) clearInterval(progressUpdateInterval);
-        if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+      // Handle success - The backend returns success: true and content in result.data
+      if (result.data && result.data.success && result.data.content) {
+        setGenerationResult(result.data);
+        updateProgress(100);
+        setGenerationStage('complete');
+        setIsGenerating(false);
         
-        // Handle success - Only show success if we actually have content
-        if (result.data && result.data.content) {
-          setGenerationResult(result.data);
-          setGenerationProgress(100);
-          setGenerationStage('complete');
-          
-          toast.success(t('step6.generation_success'), {
-            description: t('step6.generation_success_description', { wordCount: result.data.metadata?.actualWordCount || formData.wordCount })
-          });
+        toast.success(t('step6.generation_success'), {
+          description: t('step6.generation_success_description', { 
+            wordCount: result.data.metadata?.actualWordCount || formData.wordCount 
+          })
+        });
 
-          // Navigate to the dashboard longform tab
-          setTimeout(() => {
-            navigate('/dashboard?tab=longform', { 
-              state: { 
-                newContentGenerated: true,
-                generationCompleted: true
-              } 
-            });
-          }, 2000);
-        } else {
-          // Handle case where function succeeded but no content was returned
-          throw new Error("Content generation completed but no content was returned. This may be due to insufficient credits or a processing error.");
-        }
-      }, 1500);
+        // Navigate to the dashboard longform tab
+        setTimeout(() => {
+          navigate('/dashboard?tab=longform', { 
+            state: { 
+              newContentGenerated: true,
+              generationCompleted: true,
+              contentId: result.data.contentId
+            } 
+          });
+        }, 2000);
+      } else if (result.data && result.data.hasUsage === false) {
+        // Handle insufficient credits case
+        throw new Error(result.data.message || "Insufficient credits to generate content.");
+      } else if (result.data && result.data.success === false) {
+        // Handle case where function returned an error response
+        throw new Error(result.data.message || "Content generation failed. Please try again.");
+      } else {
+        // Handle unexpected response format
+        console.error("Unexpected response format:", result);
+        throw new Error("Content generation completed but returned an unexpected response format. Please try again.");
+      }
 
     } catch (error: any) {
       if (progressUpdateInterval) clearInterval(progressUpdateInterval);
       if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+      
+      // Reset generation state
+      setIsGenerating(false);
+      updateProgress(0);
+      setGenerationStage(null);
       
       console.error("Generation error:", error);
       
@@ -1071,9 +1102,9 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                           ? t('step6.generating_content_description')
                           : t('step6.finalizing_content_description')}
                     </span>
-                    <span>{generationProgress}%</span>
+                    <span>{Math.round(generationProgress)}%</span>
                   </div>
-                  <Progress value={generationProgress} className="h-2" />
+                  <Progress value={Math.round(generationProgress)} className="h-2" />
                 </div>
                   <p className="text-sm text-muted-foreground">
                   {generationStage === 'outline' 

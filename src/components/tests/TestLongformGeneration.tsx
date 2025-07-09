@@ -89,8 +89,9 @@ const TestLongformGeneration = () => {
       }, 800);
       
       // Call the Firebase function
-      console.log('Calling generateLongformContent with:', testDataConfig);
-      const result = await generateLongformContentFunction(testDataConfig);
+      const testDataWithLang = { ...testDataConfig, lang: 'en' };
+      console.log('Calling generateLongformContent with:', testDataWithLang);
+      const result = await generateLongformContentFunction(testDataWithLang);
       
       // Update progress and stage
       setGenerationStage('content');

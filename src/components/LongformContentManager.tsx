@@ -53,7 +53,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
   const [selectedContent, setSelectedContent] = useState<LongformContent | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const { toast } = useToast();
-  const { t } = useAppTranslation('longform');
+  const { t } = useAppTranslation();
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return 'Unknown';
