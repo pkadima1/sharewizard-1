@@ -1847,6 +1847,41 @@
     "generate_button_upgrade_plan_button": "Upgrade Plan",
     "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
     "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
-    "generate_button_credits_available": "You have {{credits}} credits available"
+    "generate_button_credits_available": "You have {{credits}} credits available",
+    
+    "contentManager": {
+      "actions": {
+        "preview": "Preview",
+        "copy": "Copy",
+        "copyClean": "Copy Clean",
+        "copyFormatted": "Copy Formatted", 
+        "download": "Download",
+        "export": "Export"
+      },
+      "export": {
+        "markdown": "Markdown (.md)",
+        "html": "HTML (.html)", 
+        "txt": "Text (.txt)",
+        "pdf": "PDF (.pdf)",
+        "gdocs": "Google Docs",
+        "word": "OneDrive Word"
+      },
+      "status": {
+        "empty": "No Content Generated Yet",
+        "createFirst": "Create your first long-form content to see it here.",
+        "startCreating": "Start Creating Content", 
+        "errorLoading": "Error Loading Content"
+      },
+      "metadata": {
+        "words": "words",
+        "minRead": "min read"
+      },
+      "copy": {
+        "success": "Clean content copied!",
+        "description": "Clean, formatted content with black text copied. Perfect for pasting into any document.",
+        "fallback": "Content copied to clipboard (plain text fallback).",
+        "error": "Content copied to clipboard."
+      }
+    }
   }
 }

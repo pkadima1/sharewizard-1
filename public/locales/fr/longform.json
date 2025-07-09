@@ -1864,5 +1864,40 @@
     "html": "HTML (.html)",
     "txt": "Texte (.txt)",
     "pdf": "PDF (.pdf)"
+  },
+  
+  "contentManager": {
+    "actions": {
+      "preview": "Aperçu",
+      "copy": "Copier",
+      "copyClean": "Copier Propre",
+      "copyFormatted": "Copier Formaté", 
+      "download": "Télécharger",
+      "export": "Exporter"
+    },
+    "export": {
+      "markdown": "Markdown (.md)",
+      "html": "HTML (.html)", 
+      "txt": "Texte (.txt)",
+      "pdf": "PDF (.pdf)",
+      "gdocs": "Google Docs",
+      "word": "OneDrive Word"
+    },
+    "status": {
+      "empty": "Aucun Contenu Généré",
+      "createFirst": "Créez votre premier contenu long pour le voir ici.",
+      "startCreating": "Commencer à Créer du Contenu", 
+      "errorLoading": "Erreur de Chargement du Contenu"
+    },
+    "metadata": {
+      "words": "mots",
+      "minRead": "min de lecture"
+    },
+    "copy": {
+      "success": "Contenu propre copié !",
+      "description": "Contenu formaté propre avec texte noir copié. Parfait pour coller dans n'importe quel document.",
+      "fallback": "Contenu copié dans le presse-papiers (texte brut de secours).",
+      "error": "Contenu copié dans le presse-papiers."
+    }
   }
 }

@@ -3,12 +3,11 @@
  * Tests the simplified prompts and JSON parsing fixes
  */
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+import { initializeApp } from 'firebase/app';
+import { getFunctions, connectFunctionsEmulator, httpsCallable } from 'firebase/functions';
 
-const admin = require('firebase-admin');
-const { httpsCallable } = require('firebase/functions');
-const { initializeApp } = require('firebase/app');
-const { getFunctions, connectFunctionsEmulator } = require('firebase/functions');
+dotenv.config();
 
 // Firebase config (using environment variables)
 const firebaseConfig = {

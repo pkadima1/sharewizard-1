@@ -10,7 +10,8 @@ type Namespace =
   | 'repost' 
   | 'ui' 
   | 'wizard' 
-  | 'pricing';
+  | 'pricing'
+  | 'longform';
 
 /**
  * Custom hook to use translations with type safety for namespaces
