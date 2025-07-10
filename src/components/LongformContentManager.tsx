@@ -161,7 +161,13 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        mimeType = 'text/plain';
        break;
      case 'pdf':
-       downloadAsPDF(content);
+       // Try improved PDF generation first, fallback to alternative if needed
+       try {
+         downloadAsPDF(content);
+       } catch (error) {
+         console.warn('Primary PDF generation failed, trying alternative method:', error);
+         downloadAsPDFAlternative(content);
+       }
        return;
      case 'gdoc':
        exportToGoogleDocsNew(content);
@@ -182,792 +188,445 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    URL.revokeObjectURL(url);
 
    toast({
-     title: "Download started",
-     description: `${fileName} has been downloaded successfully.`,
+     title: t('contentManager.download.started'),
+     description: t('contentManager.download.success', { fileName }),
    });
  };
 
  const downloadAsPDF = (content: LongformContent) => {
    const sanitizedTitle = content.inputs.topic.replace(/[^a-z0-9]/gi, '-').toLowerCase();
    
-   // Enhanced markdown to HTML conversion with better typography
-   let htmlContent = content.content
-     // First, handle code blocks to prevent interference
-     .replace(/```([\s\S]*?)```/gim, (match, code) => {
-       return `<pre class="pdf-code-block"><code class="pdf-code">${code.trim()}</code></pre>`;
-     })
-     // Headers with improved typography hierarchy
-     .replace(/^# (.*$)/gim, '<h1 class="pdf-h1">$1</h1>')
-     .replace(/^## (.*$)/gim, '<h2 class="pdf-h2">$1</h2>')
-     .replace(/^### (.*$)/gim, '<h3 class="pdf-h3">$1</h3>')
-     .replace(/^#### (.*$)/gim, '<h4 class="pdf-h4">$1</h4>')
-     .replace(/^##### (.*$)/gim, '<h5 class="pdf-h5">$1</h5>')
-     .replace(/^###### (.*$)/gim, '<h6 class="pdf-h6">$1</h6>')
-     // Enhanced text formatting with proper nesting
-     .replace(/\*\*\*(.*?)\*\*\*/gim, '<strong class="pdf-bold"><em class="pdf-italic">$1</em></strong>')
-     .replace(/\*\*(.*?)\*\*/gim, '<strong class="pdf-bold">$1</strong>')
-     .replace(/\*(.*?)\*/gim, '<em class="pdf-italic">$1</em>')
-     .replace(/~~(.*?)~~/gim, '<del class="pdf-strikethrough">$1</del>')
-     .replace(/`(.*?)`/gim, '<code class="pdf-code">$1</code>')
-     // Links with proper styling
-     .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" class="pdf-link">$1</a>')
-     // Blockquotes (before lists to avoid conflicts)
-     .replace(/^> (.*$)/gim, '<blockquote class="pdf-blockquote">$1</blockquote>')
-     // Horizontal rules
-     .replace(/^---+$/gim, '<hr class="pdf-divider">')
-     .replace(/^\*\*\*+$/gim, '<hr class="pdf-divider">')
-     // Lists with proper spacing
-     .replace(/^\* (.*$)/gim, '<li class="pdf-list-item">$1</li>')
-     .replace(/^- (.*$)/gim, '<li class="pdf-list-item">$1</li>')
-     .replace(/^\+ (.*$)/gim, '<li class="pdf-list-item">$1</li>')
-     .replace(/^\d+\. (.*$)/gim, '<li class="pdf-list-item-numbered">$1</li>')
-     // Tables (basic support)
-     .replace(/\|(.+)\|/gim, (match) => {
-       const cells = match.split('|').filter(cell => cell.trim()).map(cell => `<td class="pdf-table-cell">${cell.trim()}</td>`).join('');
-       return `<tr class="pdf-table-row">${cells}</tr>`;
-     });
-
-   // Split into paragraphs and process each one
-   const paragraphs = htmlContent.split(/\n\s*\n/);
-   const processedParagraphs = paragraphs.map(paragraph => {
-     const trimmed = paragraph.trim();
-     if (!trimmed) return '';
-     
-     // Skip if already a block element
-     if (trimmed.match(/^<(h[1-6]|blockquote|pre|ul|ol|table|hr|li)/i)) {
-       return trimmed;
-     }
-     
-     // Convert single line breaks to <br> within paragraphs
-     const withBreaks = trimmed.replace(/\n/g, '<br>');
-     
-     // Wrap in paragraph if not already a block element
-     return `<p class="pdf-paragraph">${withBreaks}</p>`;
+   // Use the same HTML generation logic as the HTML download but optimized for PDF
+   const formattedContent = formatBlogContent(content.content, {
+     darkMode: false,
+     mobileFirst: true,
+     enhancedReadability: true,
+     titleToRemove: content.inputs.topic
    });
+   
+   // Create PDF-optimized HTML structure
+   const pdfHtml = `<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+   <title>${content.inputs.topic}</title>
+   <style>
+       * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+       }
+       
+       body { 
+         font-family: Georgia, 'Times New Roman', serif;
+         max-width: 100%;
+         margin: 0;
+         padding: 15mm;
+         line-height: 1.6;
+         color: #333;
+         background: #ffffff;
+         font-size: 11pt;
+       }
+       
+       h1, h2, h3, h4, h5, h6 { 
+         color: #2563eb;
+         margin-top: 1.5em;
+         margin-bottom: 0.5em;
+         page-break-after: avoid;
+         font-family: Arial, Helvetica, sans-serif;
+       }
+       
+       h1 { font-size: 1.8em; margin-top: 0; }
+       h2 { font-size: 1.5em; }
+       h3 { font-size: 1.3em; }
+       h4 { font-size: 1.1em; }
+       
+       p { 
+         margin-bottom: 1em;
+         orphans: 2;
+         widows: 2;
+         text-align: left;
+       }
+       
+       ul, ol {
+         margin: 0.8em 0;
+         padding-left: 1.5em;
+       }
+       
+       li {
+         margin-bottom: 0.3em;
+         line-height: 1.5;
+       }
+       
+       strong { font-weight: bold; }
+       em { font-style: italic; }
+       
+       blockquote {
+         margin: 1em 0;
+         padding: 0.8em 1em;
+         border-left: 3pt solid #2563eb;
+         background: #f8f9fa;
+         font-style: italic;
+       }
+       
+       code {
+         font-family: 'Courier New', monospace;
+         background: #f1f1f1;
+         padding: 2pt 4pt;
+         border-radius: 2pt;
+         font-size: 0.9em;
+       }
+       
+       pre {
+         background: #f8f9fa;
+         padding: 1em;
+         border-radius: 4pt;
+         margin: 1em 0;
+         overflow-x: auto;
+         border: 1pt solid #e9ecef;
+       }
+       
+       pre code {
+         background: transparent;
+         padding: 0;
+       }
+       
+       table {
+         width: 100%;
+         border-collapse: collapse;
+         margin: 1em 0;
+       }
+       
+       th, td {
+         border: 1pt solid #ddd;
+         padding: 8pt;
+         text-align: left;
+       }
+       
+       th {
+         background: #f8f9fa;
+         font-weight: bold;
+       }
+       
+       hr {
+         border: none;
+         height: 1pt;
+         background: #ddd;
+         margin: 2em 0;
+       }
+       
+       a {
+         color: #2563eb;
+         text-decoration: underline;
+       }
+       
+       /* Print optimizations */
+       @media print {
+         body {
+           padding: 0;
+           margin: 0;
+         }
+       }
+   </style>
+</head>
+<body>
+   ${formattedContent}
+</body>
+</html>`;
 
-   const processedContent = processedParagraphs.join('\n')
-     // Handle consecutive list items
-     .replace(/(<li class="pdf-list-item">.*?<\/li>)(\s*<li class="pdf-list-item">.*?<\/li>)*/gims, (match) => {
-       return `<ul class="pdf-list">${match}</ul>`;
-     })
-     .replace(/(<li class="pdf-list-item-numbered">.*?<\/li>)(\s*<li class="pdf-list-item-numbered">.*?<\/li>)*/gims, (match) => {
-       return `<ol class="pdf-list-numbered">${match}</ol>`;
-     })
-     // Handle tables
-     .replace(/(<tr class="pdf-table-row">.*?<\/tr>)(\s*<tr class="pdf-table-row">.*?<\/tr>)*/gims, (match) => {
-       return `<table class="pdf-table"><tbody>${match}</tbody></table>`;
-     })
-     // Clean up any remaining standalone list items
-     .replace(/<li class="pdf-list-item">(.*?)<\/li>/g, '<ul class="pdf-list"><li class="pdf-list-item">$1</li></ul>')
-     .replace(/<li class="pdf-list-item-numbered">(.*?)<\/li>/g, '<ol class="pdf-list-numbered"><li class="pdf-list-item-numbered">$1</li></ol>')
-     // Clean up any nested paragraph tags within block elements
-     .replace(/<(blockquote|li)[^>]*>.*?<p class="pdf-paragraph">(.*?)<\/p>.*?<\/\1>/gims, (match, tag, content) => {
-       return match.replace(/<p class="pdf-paragraph">(.*?)<\/p>/g, '$1');
-     });
-
+   // Create a temporary element with the PDF-optimized HTML
    const element = document.createElement('div');
-   element.innerHTML = `
-     <div class="pdf-container">
-       <style>
-         * {
-           box-sizing: border-box;
-           margin: 0;
-           padding: 0;
-         }
-         
-         .pdf-container {
-           font-family: 'Georgia', 'Times New Roman', serif;
-           width: 100%;
-           min-height: 100vh;
-           margin: 0;
-           padding: 40pt 30pt;
-           line-height: 1.8;
-           color: #1a1a1a;
-           background: #ffffff;
-           font-size: 11pt;
-           box-sizing: border-box;
-         }
-         
-         @media screen and (max-width: 768px) {
-           .pdf-container {
-             padding: 20pt 15pt;
-             font-size: 10pt;
-           }
-         }
-         
-         /* Typography Scale - Mobile First */
-         .pdf-h1 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 24pt;
-           font-weight: 700;
-           color: #1a365d;
-           margin: 0 0 16pt 0;
-           line-height: 1.2;
-           letter-spacing: -0.3pt;
-           text-align: left;
-           page-break-after: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h1 {
-             font-size: 28pt;
-             margin: 0 0 20pt 0;
-             letter-spacing: -0.5pt;
-           }
-         }
-         
-         .pdf-h2 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 18pt;
-           font-weight: 600;
-           color: #2c5282;
-           margin: 24pt 0 12pt 0;
-           line-height: 1.3;
-           letter-spacing: -0.2pt;
-           border-bottom: 1pt solid #e2e8f0;
-           padding-bottom: 6pt;
-           page-break-after: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h2 {
-             font-size: 22pt;
-             margin: 30pt 0 16pt 0;
-             border-bottom: 2pt solid #e2e8f0;
-             padding-bottom: 8pt;
-           }
-         }
-         
-         .pdf-h3 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 14pt;
-           font-weight: 600;
-           color: #3c4858;
-           margin: 18pt 0 10pt 0;
-           line-height: 1.4;
-           page-break-after: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h3 {
-             font-size: 18pt;
-             margin: 24pt 0 12pt 0;
-           }
-         }
-         
-         .pdf-h4 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 12pt;
-           font-weight: 600;
-           color: #4a5568;
-           margin: 14pt 0 8pt 0;
-           line-height: 1.4;
-           page-break-after: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h4 {
-             font-size: 14pt;
-             margin: 18pt 0 10pt 0;
-           }
-         }
-         
-         .pdf-h5 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 11pt;
-           font-weight: 600;
-           color: #5a6472;
-           margin: 12pt 0 6pt 0;
-           line-height: 1.4;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h5 {
-             font-size: 12pt;
-             margin: 14pt 0 8pt 0;
-           }
-         }
-         
-         .pdf-h6 {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 10pt;
-           font-weight: 600;
-           color: #6b7280;
-           margin: 10pt 0 5pt 0;
-           line-height: 1.4;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-h6 {
-             font-size: 11pt;
-             margin: 12pt 0 6pt 0;
-           }
-         }
-         
-         /* Body Text - Mobile First */
-         .pdf-paragraph {
-           margin: 0 0 12pt 0;
-           line-height: 1.7;
-           font-size: 11pt;
-           color: #2d3748;
-           text-align: justify;
-           orphans: 2;
-           widows: 2;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-paragraph {
-             margin: 0 0 16pt 0;
-             line-height: 1.8;
-             font-size: 12pt;
-           }
-         }
-         
-         /* Enhanced Text Formatting */
-         .pdf-bold {
-           font-weight: 700;
-           color: #1a202c;
-         }
-         
-         .pdf-italic {
-           font-style: italic;
-           color: #4a5568;
-         }
-         
-         .pdf-strikethrough {
-           text-decoration: line-through;
-           color: #6b7280;
-         }
-         
-         .pdf-code {
-           font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-           background: #f7fafc;
-           color: #2d3748;
-           padding: 1pt 4pt;
-           border-radius: 2pt;
-           font-size: 9pt;
-           border: 1pt solid #e2e8f0;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-code {
-             padding: 2pt 6pt;
-             border-radius: 3pt;
-             font-size: 10pt;
-           }
-         }
-         
-         .pdf-code-block {
-           background: #f7fafc;
-           border: 1pt solid #e2e8f0;
-           border-radius: 4pt;
-           padding: 12pt;
-           margin: 12pt 0;
-           overflow-x: auto;
-           page-break-inside: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-code-block {
-             border-radius: 6pt;
-             padding: 16pt;
-             margin: 16pt 0;
-           }
-         }
-         
-         .pdf-code-block .pdf-code {
-           background: transparent;
-           border: none;
-           padding: 0;
-           font-size: 9pt;
-           line-height: 1.4;
-           display: block;
-           white-space: pre-wrap;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-code-block .pdf-code {
-             font-size: 10pt;
-             line-height: 1.5;
-           }
-         }
-         
-         .pdf-link {
-           color: #3182ce;
-           text-decoration: none;
-           border-bottom: 1pt solid #3182ce;
-         }
-         
-         .pdf-divider {
-           border: none;
-           height: 1pt;
-           background: #e2e8f0;
-           margin: 20pt 0;
-           page-break-inside: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-divider {
-             height: 2pt;
-             margin: 32pt 0;
-           }
-         }
-         
-         /* Lists - Mobile First */
-         .pdf-list, .pdf-list-numbered {
-           margin: 12pt 0 12pt 18pt;
-           padding: 0;
-           page-break-inside: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-list, .pdf-list-numbered {
-             margin: 16pt 0 16pt 24pt;
-           }
-         }
-         
-         .pdf-list-item, .pdf-list-item-numbered {
-           margin: 6pt 0;
-           line-height: 1.5;
-           color: #2d3748;
-           page-break-inside: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-list-item, .pdf-list-item-numbered {
-             margin: 8pt 0;
-             line-height: 1.6;
-           }
-         }
-         
-         .pdf-list {
-           list-style-type: disc;
-         }
-         
-         .pdf-list-numbered {
-           list-style-type: decimal;
-         }
-         
-         /* Tables - Mobile First */
-         .pdf-table {
-           width: 100%;
-           border-collapse: collapse;
-           margin: 16pt 0;
-           font-size: 10pt;
-           page-break-inside: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-table {
-             margin: 20pt 0;
-             font-size: 11pt;
-           }
-         }
-         
-         .pdf-table-cell {
-           border: 1pt solid #e2e8f0;
-           padding: 6pt 8pt;
-           text-align: left;
-           vertical-align: top;
-           color: #2d3748;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-table-cell {
-             padding: 8pt 12pt;
-           }
-         }
-         
-         .pdf-table-row:first-child .pdf-table-cell {
-           background: #f7fafc;
-           font-weight: 600;
-           color: #1a202c;
-         }
-         
-         /* Blockquotes - Mobile First */
-         .pdf-blockquote {
-           margin: 16pt 0 16pt 20pt;
-           padding: 12pt 16pt;
-           border-left: 3pt solid #3182ce;
-           background: #f7fafc;
-           font-style: italic;
-           color: #4a5568;
-           line-height: 1.6;
-           page-break-inside: avoid;
-           position: relative;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-blockquote {
-             margin: 20pt 0 20pt 40pt;
-             padding: 16pt 20pt;
-             border-left: 4pt solid #3182ce;
-             line-height: 1.7;
-           }
-         }
-         
-         .pdf-blockquote:before {
-           content: '"';
-           font-size: 32pt;
-           color: #3182ce;
-           position: absolute;
-           top: -6pt;
-           left: 8pt;
-           font-family: Georgia, serif;
-           opacity: 0.3;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-blockquote:before {
-             font-size: 48pt;
-             top: -10pt;
-             left: 10pt;
-           }
-         }
-         
-         /* Header Section - Compact & Clean */
-         .pdf-header {
-           text-align: center;
-           margin-bottom: 30pt;
-           padding-bottom: 20pt;
-           border-bottom: 2pt solid #e2e8f0;
-           page-break-after: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-header {
-             margin-bottom: 40pt;
-             padding-bottom: 24pt;
-             border-bottom: 3pt solid #e2e8f0;
-           }
-         }
-         
-         .pdf-title {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-size: 24pt;
-           font-weight: 700;
-           color: #1a365d;
-           margin: 0 0 12pt 0;
-           line-height: 1.1;
-           letter-spacing: -0.4pt;
-           word-wrap: break-word;
-           hyphens: auto;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-title {
-             font-size: 30pt;
-             margin: 0 0 16pt 0;
-             letter-spacing: -0.6pt;
-           }
-         }
-         
-         .pdf-subtitle {
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           color: #4a5568;
-           font-size: 10pt;
-           margin: 8pt 0 0 0;
-           line-height: 1.3;
-           font-weight: 400;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-subtitle {
-             font-size: 11pt;
-             margin: 10pt 0 0 0;
-             line-height: 1.4;
-           }
-         }
-         
-         .pdf-meta {
-           color: #718096;
-           font-size: 8pt;
-           margin: 12pt 0 0 0;
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           letter-spacing: 0.2pt;
-           line-height: 1.3;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-meta {
-             font-size: 9pt;
-             margin: 16pt 0 0 0;
-             letter-spacing: 0.3pt;
-           }
-         }
-         
-         .pdf-tags {
-           margin-top: 16pt;
-           line-height: 1.4;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-tags {
-             margin-top: 20pt;
-           }
-         }
-         
-         .pdf-tag {
-           display: inline-block;
-           background: #edf2f7;
-           color: #4a5568;
-           padding: 3pt 8pt;
-           border-radius: 8pt;
-           font-size: 8pt;
-           margin: 0 4pt 4pt 0;
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           font-weight: 500;
-           border: 1pt solid #cbd5e0;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-tag {
-             padding: 4pt 12pt;
-             border-radius: 12pt;
-             font-size: 9pt;
-             margin: 0 6pt 6pt 0;
-           }
-         }
-         
-         /* Footer - Compact */
-         .pdf-footer {
-           margin-top: 40pt;
-           padding-top: 16pt;
-           border-top: 1pt solid #e2e8f0;
-           text-align: center;
-           page-break-before: avoid;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-footer {
-             margin-top: 60pt;
-             padding-top: 24pt;
-           }
-         }
-         
-         .pdf-footer-text {
-           color: #a0aec0;
-           font-size: 8pt;
-           margin: 0;
-           font-family: 'Helvetica Neue', 'Arial', sans-serif;
-           letter-spacing: 0.1pt;
-         }
-         
-         @media screen and (min-width: 768px) {
-           .pdf-footer-text {
-             font-size: 9pt;
-             letter-spacing: 0.2pt;
-           }
-         }
-         
-         /* Page breaks and print optimizations */
-         .pdf-h1, .pdf-h2, .pdf-h3, .pdf-h4 {
-           page-break-after: avoid;
-         }
-         
-         .pdf-paragraph {
-           page-break-inside: avoid;
-           orphans: 2;
-           widows: 2;
-         }
-         
-         .pdf-list, .pdf-blockquote, .pdf-code-block, .pdf-table {
-           page-break-inside: avoid;
-         }
-         
-         /* Print optimizations - No empty pages */
-         @media print {
-           .pdf-container {
-             padding: 30pt 20pt;
-             margin: 0;
-             width: 100%;
-             max-width: none;
-           }
-           
-           .pdf-header {
-             page-break-after: avoid;
-             margin-bottom: 20pt;
-           }
-           
-           .pdf-footer {
-             page-break-before: avoid;
-             margin-top: 30pt;
-           }
-           
-           /* Prevent empty pages */
-           html, body {
-             margin: 0;
-             padding: 0;
-             height: auto;
-           }
-         }
-         
-         /* High-DPI display optimizations */
-         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-           .pdf-container {
-             -webkit-font-smoothing: antialiased;
-             -moz-osx-font-smoothing: grayscale;
-           }
-         }
-         
-         /* Content Flow Improvements */
-         .pdf-content {
-           width: 100%;
-           margin: 0;
-           padding: 0;
-           border: none;
-           background: transparent;
-         }
-         
-         .pdf-content > *:first-child {
-           margin-top: 0;
-         }
-         
-         .pdf-content > *:last-child {
-           margin-bottom: 0;
-         }
-         
-         /* Ensure no unexpected borders or backgrounds */
-         .pdf-content p, .pdf-content div, .pdf-content section {
-           border: none;
-           background: transparent;
-         }
-       </style>
-       
-       <div class="pdf-header">
-         <h1 class="pdf-title">${content.inputs.topic}</h1>
-         <div class="pdf-subtitle">
-           Generated for ${content.inputs.audience} • ${content.inputs.industry}
-         </div>
-         <div class="pdf-meta">
-           ${content.metadata.actualWordCount} words • ${content.metadata.estimatedReadingTime} min read<br>
-           Generated on ${formatDate(content.metadata.generatedAt)} • Tone: ${content.inputs.contentTone}
-         </div>
-         ${content.inputs.keywords && content.inputs.keywords.length > 0 ? `
-           <div class="pdf-tags">
-             ${content.inputs.keywords.slice(0, 6).map((tag: string) => `
-               <span class="pdf-tag">#${tag}</span>
-             `).join('')}
-           </div>
-         ` : ''}
-       </div>
-       
-       <div class="pdf-content">
-         ${processedContent}
-       </div>
-       
-       <div class="pdf-footer">
-         <p class="pdf-footer-text">
-           Generated with EngagePerfect AI • Content v${content.metadata.version || '1.0'}
-         </p>
-       </div>
-     </div>
-   `;
+   element.innerHTML = pdfHtml;
 
    const opt = {
-     margin: [0.4, 0.4, 0.4, 0.4], // Compact margins for mobile-first
+     margin: [8, 8, 8, 8],
      filename: `${sanitizedTitle}.pdf`,
      image: { 
        type: 'jpeg', 
-       quality: 0.98 
+       quality: 0.88
      },
      html2canvas: { 
-       scale: 2, // Balanced scale for mobile performance
+       scale: 1.2,
        useCORS: true,
-       letterRendering: true,
        allowTaint: false,
-       removeContainer: true,
-       scrollX: 0,
-       scrollY: 0,
-       windowWidth: 800, // Mobile-optimized width
-       windowHeight: 1200,
+       windowWidth: 794,
+       windowHeight: 1123,
        backgroundColor: '#ffffff',
        logging: false,
-       imageTimeout: 15000,
-       ignoreElements: function(element: any) {
-         // Ignore any elements that might cause rendering issues
-         return element.tagName === 'SCRIPT' || 
-                element.tagName === 'STYLE' ||
-                element.hasAttribute('data-html2canvas-ignore');
-       },
-       onclone: function(clonedDoc: any) {
-         // Remove any potential empty elements that cause blank pages
-         const emptyElements = clonedDoc.querySelectorAll('p:empty, div:empty, br + br');
-         emptyElements.forEach((el: any) => el.remove());
-         
-         // Remove any elements with borders that shouldn't be there
-         const unwantedBorders = clonedDoc.querySelectorAll('[style*="border"]');
-         unwantedBorders.forEach((el: any) => {
-           if (!el.classList.contains('pdf-header') && 
-               !el.classList.contains('pdf-footer') &&
-               !el.classList.contains('pdf-h2') &&
-               !el.classList.contains('pdf-blockquote') &&
-               !el.classList.contains('pdf-table-cell')) {
-             el.style.border = 'none';
-           }
-         });
-       }
+       letterRendering: true
      },
      jsPDF: { 
-       unit: 'in', 
+       unit: 'mm',
        format: 'a4', 
        orientation: 'portrait',
-       compress: true,
-       precision: 2,
-       userUnit: 1.0,
-       hotfixes: ['px_scaling'],
-       putOnlyUsedFonts: true, // Optimize font loading
-       floatPrecision: 2 // Reduce file size
+       compress: true
      },
      pagebreak: {
-       mode: ['avoid-all', 'css'],
-       before: '.pdf-header',
-       after: '.pdf-footer',
-       avoid: ['.pdf-header', '.pdf-blockquote', '.pdf-code-block', '.pdf-table']
+       mode: ['css'],
+       avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
      }
    };
 
    html2pdf().set(opt).from(element).save().then(() => {
+     console.log('PDF generated from HTML content successfully');
      toast({
-       title: "PDF downloaded",
-       description: `${sanitizedTitle}.pdf has been downloaded successfully.`,
+       title: t('contentManager.download.pdfTitle'),
+       description: t('contentManager.download.pdfSuccess', { fileName: sanitizedTitle }),
      });
    }).catch((error: any) => {
      console.error('PDF generation failed:', error);
      toast({
-       title: "PDF generation failed",
-       description: "There was an error generating the PDF. Please try again.",
+       title: t('contentManager.download.pdfError'),
+       description: t('contentManager.download.pdfErrorDesc'),
        variant: "destructive",
      });
    });
  };
 
+ // Alternative PDF generation - Optimized for print efficiency
+ const downloadAsPDFAlternative = async (content: LongformContent) => {
+   const sanitizedTitle = content.inputs.topic.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+   
+   try {
+     // Use the same HTML formatting as the HTML download for perfect consistency
+     const formattedContent = formatBlogContent(content.content, {
+       darkMode: false,
+       mobileFirst: true,
+       enhancedReadability: true,
+       titleToRemove: content.inputs.topic
+     });
+     
+     const element = document.createElement('div');
+     element.innerHTML = `
+       <div class="pdf-container-alt">
+         <style>
+           .pdf-container-alt { 
+             font-family: Arial, Helvetica, sans-serif; 
+             line-height: 1.35; 
+             font-size: 10pt; 
+             max-width: 100%; 
+             margin: 0; 
+             padding: 12mm;
+             color: #333;
+             height: auto;
+             box-sizing: border-box;
+           }
+           h1 { 
+             font-size: 14pt;
+             font-weight: bold;
+             margin: 12pt 0 6pt 0;
+             page-break-after: avoid;
+             page-break-inside: avoid;
+             color: #2c3e50;
+             line-height: 1.2;
+           }
+           h2 { 
+             font-size: 12pt;
+             font-weight: bold;
+             margin: 10pt 0 5pt 0;
+             page-break-after: avoid;
+             page-break-inside: avoid;
+             color: #34495e;
+             line-height: 1.2;
+           }
+           h3 { 
+             font-size: 11pt;
+             font-weight: bold;
+             margin: 8pt 0 4pt 0;
+             page-break-after: avoid;
+             page-break-inside: avoid;
+             color: #34495e;
+             line-height: 1.2;
+           }
+           h4 { 
+             font-size: 10pt;
+             font-weight: bold;
+             margin: 6pt 0 3pt 0;
+             page-break-after: avoid;
+             page-break-inside: avoid;
+             color: #4a5568;
+           }
+           p { 
+             orphans: 2; 
+             widows: 2; 
+             margin: 0 0 6pt 0;
+             text-align: left;
+             line-height: 1.35;
+             page-break-inside: avoid;
+           }
+           ul, ol {
+             margin: 4pt 0;
+             padding-left: 15pt;
+             page-break-inside: avoid;
+           }
+           li {
+             margin-bottom: 2pt;
+             line-height: 1.3;
+             page-break-inside: avoid;
+           }
+           strong {
+             font-weight: bold;
+           }
+           em {
+             font-style: italic;
+           }
+           /* Tight spacing for efficiency */
+           h1 + p, h2 + p, h3 + p, h4 + p {
+             margin-top: 0;
+           }
+           p + h1 { margin-top: 10pt; }
+           p + h2 { margin-top: 8pt; }
+           p + h3 { margin-top: 6pt; }
+           p + h4 { margin-top: 4pt; }
+           /* Compact list spacing */
+           ul + p, ol + p, p + ul, p + ol {
+             margin-top: 4pt;
+           }
+           /* Remove excessive breaks */
+           br {
+             line-height: 0.5;
+           }
+           /* Efficient content sections */
+           .content-section {
+             page-break-inside: avoid;
+             margin-bottom: 8pt;
+           }
+           .content-section:last-child {
+             margin-bottom: 0;
+           }
+         </style>
+         <div class="content-body">
+           ${formattedContent}
+         </div>
+       </div>
+     `;
+
+     const optAlt = {
+       margin: [8, 8, 8, 8], // Smaller margins for more content
+       filename: `${sanitizedTitle}-alt.pdf`,
+       image: { type: 'jpeg', quality: 0.85 },
+       html2canvas: { 
+         scale: 1.5, // Lower scale for efficiency
+         windowWidth: 794,  // A4 width in pixels at 96 DPI
+         windowHeight: 1123, // A4 height in pixels at 96 DPI
+         backgroundColor: '#ffffff',
+         logging: false,
+         useCORS: true
+       },
+       jsPDF: { 
+         unit: 'mm', 
+         format: 'a4', 
+         orientation: 'portrait',
+         compress: true
+       },
+       pagebreak: { 
+         mode: ['css', 'legacy'],
+         avoid: ['h1', 'h2', 'h3', 'h4', 'ul', 'ol', '.content-section']
+       }
+     };
+
+     console.log('Generating efficient alternative PDF...');
+     await html2pdf().set(optAlt).from(element).save();
+     
+     toast({
+       title: t('contentManager.download.pdfTitle'),
+       description: t('contentManager.download.pdfSuccess', { fileName: `${sanitizedTitle}-alt` }),
+     });
+   } catch (error) {
+     console.error('Alternative PDF generation failed:', error);
+     // Fallback to original method
+     downloadAsPDF(content);
+   }
+ };
+
+ // Helper function to format content efficiently for print - NO CHUNKING
+ const formatContentForPrint = (content: string): string => {
+   // Split content into sections by headers to add logical breaks
+   const sections = content.split(/(?=^#+ )/gm).filter(section => section.trim());
+   
+   return sections.map(section => {
+     // Process each section as a cohesive unit
+     const formattedSection = section
+       // Headers
+       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+       .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+       // Text formatting
+       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+       .replace(/\*(.*?)\*/g, '<em>$1</em>')
+       // Lists - improved handling
+       .replace(/^\* (.+)$/gm, '<li>$1</li>')
+       .replace(/^- (.+)$/gm, '<li>$1</li>')
+       .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+       // Group consecutive list items into ul tags
+       .replace(/(<li>.*?<\/li>\s*)+/gm, '<ul>$&</ul>')
+       // Convert line breaks to paragraphs efficiently
+       .split('\n\n')
+       .map(para => {
+         para = para.trim();
+         if (!para) return '';
+         // Don't wrap headers or lists in paragraphs
+         if (para.match(/^<(h[1-6]|ul)/)) return para;
+         // Already wrapped content
+         if (para.includes('</')) return para;
+         return `<p>${para}</p>`;
+       })
+       .filter(para => para)
+       .join('\n');
+       
+     // Wrap section in a container for better page break control
+     return `<div class="content-section">${formattedSection}</div>`;
+   }).join('\n');
+ };
+
  const exportToGoogleDocsNew = async (content: LongformContent) => {
    try {
+     // Show immediate feedback about automation
+     toast({
+       title: t('contentManager.gdocs.autoOpening'),
+       description: t('contentManager.gdocs.preparing'),
+     });
+
      await exportToGoogleDocs(content);
 
-     toast({
-       title: "🎉 Google Docs Export Started!",
-       description: "File downloaded and Google Docs opened. Follow the import instructions.",
-       action: (
-         <Button 
-           variant="outline" 
-           size="sm" 
-           onClick={() => window.open('https://docs.google.com/document/u/0/create', '_blank')}
-           className="flex items-center gap-1"
-         >
-           <ExternalLink className="h-3 w-3" />
-           Open Google Docs
-         </Button>
-       ),
-     });
+     // Enhanced success feedback
+     setTimeout(() => {
+       toast({
+         title: t('contentManager.gdocs.magicProgress'),
+         description: t('contentManager.gdocs.opened'),
+         duration: 10000,
+         action: (
+           <Button 
+             variant="outline" 
+             size="sm" 
+             onClick={() => window.open('https://docs.google.com/document/u/0/', '_blank')}
+             className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+           >
+             <ExternalLink className="h-3 w-3" />
+             {t('contentManager.gdocs.focusGdocs')}
+           </Button>
+         ),
+       });
+     }, 1000);
 
    } catch (error) {
      console.error('Google Docs export error:', error);
      toast({
-       title: "Export Error",
-       description: "Failed to prepare Google Docs export. Please try again.",
+       title: t('contentManager.errors.exportError'),
+       description: t('contentManager.errors.automationFailed'),
        variant: "destructive",
+       action: (
+         <Button 
+           variant="outline" 
+           size="sm" 
+           onClick={() => downloadContent(content, 'html')}
+           className="flex items-center gap-1"
+         >
+           <Download className="h-3 w-3" />
+           {t('contentManager.gdocs.downloadHtml')}
+         </Button>
+       ),
      });
    }
  };
@@ -995,8 +654,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    } catch (error) {
      console.error('OneDrive Word export error:', error);
      toast({
-       title: "Export Error",
-       description: "Failed to prepare OneDrive Word export. Please try again.",
+       title: t('contentManager.errors.exportError'),
+       description: t('contentManager.errors.wordError'),
        variant: "destructive",
      });
    }
@@ -1025,8 +684,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    // Generate complete article with clean, neutral styling
    const metadata = {
      title: content.inputs.topic,
-     author: 'AI Content Creator',
-     readingTime: `${content.metadata.estimatedReadingTime} min read`,
+     author: t('contentManager.metadata.aiContentCreator'),
+     readingTime: `${content.metadata.estimatedReadingTime} ${t('contentManager.metadata.minRead')}`,
      publishDate: formatDate(content.metadata.generatedAt),
      tags: content.inputs.keywords?.slice(0, 5) || []
    };
@@ -1067,10 +726,10 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
 
  // Clean copy content generator - neutral colors, no backgrounds
  const generateCleanCopyContent = (content: string, metadata: any, language: string) => {
-   // Use dynamic translation based on detected language
-   const authorLabel = language === 'fr' ? 'Auteur' : 'Author';
-   const readingTimeLabel = language === 'fr' ? 'Temps de lecture' : 'Reading Time';
-   const publishedLabel = language === 'fr' ? 'Publié le' : 'Published';
+   // Use translation system instead of manual language detection
+   const authorLabel = t('contentManager.metadata.author') || 'Author';
+   const readingTimeLabel = t('contentManager.metadata.readingTime') || 'Reading Time';
+   const publishedLabel = t('contentManager.metadata.published') || 'Published';
    
    return `
      <div style="
@@ -1185,8 +844,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    // Generate complete article with metadata
    const metadata = {
      title: selectedContent.inputs.topic,
-     author: 'AI Content Creator',
-     readingTime: `${selectedContent.metadata.estimatedReadingTime} min read`,
+     author: t('contentManager.metadata.aiContentCreator'),
+     readingTime: `${selectedContent.metadata.estimatedReadingTime} ${t('contentManager.metadata.minRead')}`,
      publishDate: formatDate(selectedContent.metadata.generatedAt),
      tags: selectedContent.inputs.keywords?.slice(0, 5) || []
    };
@@ -1270,16 +929,16 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                </Badge>
                <Badge variant="outline" className="flex items-center gap-1">
                  <Clock className="h-3 w-3" />
-                 {item.metadata.estimatedReadingTime} min read
+                 {item.metadata.estimatedReadingTime} {t('contentManager.metadata.minRead')}
                </Badge>
                <Badge variant="outline" className="flex items-center gap-1">
                  <FileText className="h-3 w-3" />
-                 {item.metadata.actualWordCount.toLocaleString()} words
+                 {item.metadata.actualWordCount.toLocaleString()} {t('contentManager.metadata.words')}
                </Badge>
                {item.metadata.contentQuality.seoOptimized && (
                  <Badge variant="outline" className="flex items-center gap-1">
                    <TrendingUp className="h-3 w-3" />
-                   SEO Optimized
+                   {t('outputFormat.html.seoOptimized')}
                  </Badge>
                )}
              </div>
@@ -1329,10 +988,11 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              variant="outline"
              size="sm"
              onClick={() => downloadContent(item, 'gdoc')}
-             className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+             className="flex items-center gap-1 bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 text-blue-700 border-blue-200 dark:from-green-950 dark:to-blue-950 dark:hover:from-green-900 dark:hover:to-blue-900 dark:border-blue-800 dark:text-blue-300 shadow-sm"
+             title="Open Google Docs with automated paste (Almost zero-click collaboration!)"
            >
              <FileEdit className="h-4 w-4" />
-             {t('contentManager.export.gdocs')}
+             🤖 {t('contentManager.export.gdocs')} Auto
            </Button>
            
            <Button
@@ -1373,12 +1033,16 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'pdf')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.pdf')}
+                 {t('contentManager.export.pdf')} (Enhanced)
+               </DropdownMenuItem>
+               <DropdownMenuItem onClick={() => downloadAsPDFAlternative(item)}>
+                 <Download className="h-4 w-4 mr-2" />
+                 {t('contentManager.export.pdf')} (Page-Safe)
                </DropdownMenuItem>
                <DropdownMenuSeparator />
                <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
                  <Share2 className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.gdocs')} (Collaborative)
+                 🤖 {t('contentManager.export.gdocs')} (Auto-Paste)
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'word')}>
                  <Share2 className="h-4 w-4 mr-2" />
@@ -1425,7 +1089,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  <DropdownMenuContent align="end">
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'gdoc')}>
                      <FileEdit className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.gdocs')} (Collaborative)
+                     🤖 {t('contentManager.export.gdocs')} (Auto-Paste)
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'word')}>
                      <FileEdit className="h-4 w-4 mr-2" />
@@ -1446,7 +1110,11 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'pdf')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.pdf')}
+                     {t('contentManager.export.pdf')} (Enhanced)
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => selectedContent && downloadAsPDFAlternative(selectedContent)}>
+                     <Download className="h-4 w-4 mr-2" />
+                     {t('contentManager.export.pdf')} (Page-Safe)
                    </DropdownMenuItem>
                  </DropdownMenuContent>
                </DropdownMenu>

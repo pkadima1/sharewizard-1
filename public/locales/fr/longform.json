@@ -1883,6 +1883,21 @@
       "gdocs": "Google Docs",
       "word": "OneDrive Word"
     },
+    "errors": {
+      "exportError": "Erreur d'Export",
+      "gdocsError": "Échec de la préparation de l'export Google Docs. Veuillez réessayer.",
+      "wordError": "Échec de la préparation de l'export OneDrive Word. Veuillez réessayer.",
+      "automationFailed": "L'automatisation a échoué. Retour à l'option de téléchargement manuel."
+    },
+    "gdocs": {
+      "autoOpening": "🤖 Ouverture Auto de Google Docs...",
+      "preparing": "Préparation de votre contenu avec tentatives de collage automatisé",
+      "magicProgress": "🚀 Magie en Cours !",
+      "opened": "Google Docs ouvert avec automatisation intelligente. Le contenu devrait se coller automatiquement ou appuyez simplement sur Ctrl+V !",
+      "openNow": "Ouvrir Maintenant",
+      "focusGdocs": "Focuser Google Docs",
+      "downloadHtml": "Télécharger HTML"
+    },
     "status": {
       "empty": "Aucun Contenu Généré",
       "createFirst": "Créez votre premier contenu long pour le voir ici.",
@@ -1891,13 +1906,25 @@
     },
     "metadata": {
       "words": "mots",
-      "minRead": "min de lecture"
+      "minRead": "min de lecture",
+      "author": "Auteur",
+      "readingTime": "Temps de lecture",
+      "published": "Publié le",
+      "aiContentCreator": "Créateur de Contenu IA"
     },
     "copy": {
       "success": "Contenu propre copié !",
       "description": "Contenu formaté propre avec texte noir copié. Parfait pour coller dans n'importe quel document.",
       "fallback": "Contenu copié dans le presse-papiers (texte brut de secours).",
       "error": "Contenu copié dans le presse-papiers."
+    },
+    "download": {
+      "started": "Téléchargement commencé",
+      "success": "{{fileName}} a été téléchargé avec succès.",
+      "pdfSuccess": "{{fileName}}.pdf a été téléchargé avec succès.",
+      "pdfTitle": "PDF propre téléchargé",
+      "pdfError": "Échec de la génération PDF",
+      "pdfErrorDesc": "Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer."
     }
   }
 }

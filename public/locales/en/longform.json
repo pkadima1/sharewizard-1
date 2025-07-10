@@ -1847,41 +1847,67 @@
     "generate_button_upgrade_plan_button": "Upgrade Plan",
     "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
     "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
-    "generate_button_credits_available": "You have {{credits}} credits available",
-    
-    "contentManager": {
-      "actions": {
-        "preview": "Preview",
-        "copy": "Copy",
-        "copyClean": "Copy Clean",
-        "copyFormatted": "Copy Formatted", 
-        "download": "Download",
-        "export": "Export"
-      },
-      "export": {
-        "markdown": "Markdown (.md)",
-        "html": "HTML (.html)", 
-        "txt": "Text (.txt)",
-        "pdf": "PDF (.pdf)",
-        "gdocs": "Google Docs",
-        "word": "OneDrive Word"
-      },
-      "status": {
-        "empty": "No Content Generated Yet",
-        "createFirst": "Create your first long-form content to see it here.",
-        "startCreating": "Start Creating Content", 
-        "errorLoading": "Error Loading Content"
-      },
-      "metadata": {
-        "words": "words",
-        "minRead": "min read"
-      },
-      "copy": {
-        "success": "Clean content copied!",
-        "description": "Clean, formatted content with black text copied. Perfect for pasting into any document.",
-        "fallback": "Content copied to clipboard (plain text fallback).",
-        "error": "Content copied to clipboard."
-      }
+    "generate_button_credits_available": "You have {{credits}} credits available"
+  },
+  "contentManager": {
+    "actions": {
+      "preview": "Preview",
+      "copy": "Copy",
+      "copyClean": "Copy Clean",
+      "copyFormatted": "Copy Formatted", 
+      "download": "Download",
+      "export": "Export"
+    },
+    "export": {
+      "markdown": "Markdown (.md)",
+      "html": "HTML (.html)", 
+      "txt": "Text (.txt)",
+      "pdf": "PDF (.pdf)",
+      "gdocs": "Google Docs",
+      "word": "OneDrive Word"
+    },
+    "errors": {
+      "exportError": "Export Error",
+      "gdocsError": "Failed to prepare Google Docs export. Please try again.",
+      "wordError": "Failed to prepare OneDrive Word export. Please try again.",
+      "automationFailed": "Automation failed. Falling back to manual download option."
+    },
+    "gdocs": {
+      "autoOpening": "🤖 Auto-Opening Google Docs...",
+      "preparing": "Preparing your content with automated paste attempts",
+      "magicProgress": "🚀 Magic in Progress!",
+      "opened": "Google Docs opened with smart automation. Content should auto-paste or just press Ctrl+V!",
+      "openNow": "Open Now",
+      "focusGdocs": "Focus Google Docs",
+      "downloadHtml": "Download HTML"
+    },
+    "status": {
+      "empty": "No Content Generated Yet",
+      "createFirst": "Create your first long-form content to see it here.",
+      "startCreating": "Start Creating Content", 
+      "errorLoading": "Error Loading Content"
+    },
+    "metadata": {
+      "words": "words",
+      "minRead": "min read",
+      "author": "Author",
+      "readingTime": "Reading Time",
+      "published": "Published",
+      "aiContentCreator": "AI Content Creator"
+    },
+    "copy": {
+      "success": "Clean content copied!",
+      "description": "Clean, formatted content with black text copied. Perfect for pasting into any document.",
+      "fallback": "Content copied to clipboard (plain text fallback).",
+      "error": "Content copied to clipboard."
+    },
+    "download": {
+      "started": "Download started",
+      "success": "{{fileName}} has been downloaded successfully.",
+      "pdfSuccess": "{{fileName}}.pdf has been downloaded successfully.",
+      "pdfTitle": "Clean PDF downloaded",
+      "pdfError": "PDF generation failed",
+      "pdfErrorDesc": "There was an error generating the PDF. Please try again."
     }
   }
 }
