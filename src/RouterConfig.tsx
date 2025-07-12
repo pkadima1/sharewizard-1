@@ -12,12 +12,14 @@ import Dashboard from "./pages/Dashboard";
 import Pricing from "./pages/Pricing";
 import CaptionGenerator from "./pages/CaptionGenerator";
 import LongFormWizard from "./pages/LongFormWizard";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Gallery from "./pages/Gallery";
+import Blog from "./pages/Blog";
 import { useLanguage } from "./contexts/LanguageContext";
 
 // Lazy-loaded test components (only in development)
@@ -94,6 +96,8 @@ const RouterConfig = () => {
               <Route path="/preview-repost" element={<RootRedirect />} />
               <Route path="/longform" element={<RootRedirect />} />
               <Route path="/gallery" element={<RootRedirect />} />
+              <Route path="/blog" element={<RootRedirect />} />
+              <Route path="/contact" element={<RootRedirect />} />
               <Route path="/admin" element={<RootRedirect />} />
               
               {/* Language-prefixed routes */}
@@ -113,6 +117,8 @@ const RouterConfig = () => {
                     <Route path="/preview-repost" element={<PreviewRepost />} />
                     <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
                     <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
+                    <Route path="/contact" element={<Contact />} />
                     
                     {/* Admin routes */}
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />

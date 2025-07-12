@@ -33,6 +33,10 @@ export { getChatConversations } from './adminChatFunctions.js';
 export { getChatMessages } from './adminChatFunctions.js';
 export { exportChatData } from './adminChatFunctions.js';
 
+// Export contact form functions
+export { processContactForm } from './contactForm.js';
+export { getContactFormAnalytics } from './contactForm.js';
+
 // Add any additional function exports below
 
 // Start writing functions

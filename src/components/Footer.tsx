@@ -1,12 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Github, Instagram, Twitter, Facebook, Linkedin, Youtube } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import MobileFooterNav from './MobileFooterNav';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { toast } from '@/hooks/use-toast';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const { t } = useTranslation();  return (
+  const { t } = useTranslation();
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleNewsletterSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      // Add email to Firestore blogSubs collection
+      await addDoc(collection(db, 'blogSubs'), {
+        email: email.trim(),
+        subscribedAt: serverTimestamp(),
+        source: 'footer_newsletter'
+      });
+
+      toast({
+        title: "Success!",
+        description: "You've been successfully subscribed to our newsletter.",
+      });
+
+      setEmail(''); // Clear the input
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to subscribe to newsletter. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubscribing(false);
+    }
+  };  return (
     <>
       <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 py-8 md:py-12 mb-16 md:mb-0">
@@ -56,6 +101,8 @@ const Footer: React.FC = () => {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">{t('footer.product')}</h3>
             <ul className="space-y-3">
               <li><Link to="/caption-generator" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.caption_generator')}</Link></li>
+              <li><Link to="/blog-wizard" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog_wizard')}</Link></li>
+              <li><Link to="/blog" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog')}</Link></li>
               <li><Link to="/pricing" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.pricing')}</Link></li>
              {/*} <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Features</Link></li>
               <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Roadmap</Link></li>
@@ -101,17 +148,24 @@ const Footer: React.FC = () => {
               <p className="text-sm text-gray-600 dark:text-gray-400">{t('footer.newsletterDesc')}</p>
             </div>
             <div className="w-full md:w-auto flex flex-col md:flex-row gap-3">
-              <input 
-                type="email" 
-                placeholder={t('footer.emailPlaceholder')}
-                className="px-4 py-2 w-full md:w-64 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              />
-              <button 
-                type="button"
-                className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
-              >
-                {t('buttons.subscribe')}
-              </button>
+              <form onSubmit={handleNewsletterSubscription} className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('footer.emailPlaceholder')}
+                  className="px-4 py-2 w-full md:w-64 text-sm border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  disabled={isSubscribing}
+                  required
+                />
+                <button 
+                  type="submit"
+                  disabled={isSubscribing}
+                  className="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubscribing ? t('buttons.subscribing') || 'Subscribing...' : t('buttons.subscribe')}
+                </button>
+              </form>
             </div>
           </div>
         </div>

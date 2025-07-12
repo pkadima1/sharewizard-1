@@ -414,10 +414,63 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      toast.success(t('step6.copy_link_copied'), {
+        description: t('step6.link_copied_description')
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error(t('step6.copy_failed'), {
+        description: t('step6.copy_failed_description')
+      });
     }
+  };
+
+  // Handle social sharing
+  const handleSocialShare = (platform: 'twitter' | 'facebook') => {
+    if (!shareUrl) {
+      toast.error(t('step6.generate_link_first'));
+      return;
+    }
+
+    const shareText = t('step6.social_share_text', { 
+      topic: formData.topic || 'content',
+      app: 'EngagePerfect'
+    });
+
+    let shareUrlFinal = '';
+    
+    switch (platform) {
+      case 'twitter':
+        shareUrlFinal = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'facebook':
+        shareUrlFinal = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+        break;
+      default:
+        return;
+    }
+
+    // Open in new window
+    window.open(shareUrlFinal, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  };
+
+  // Handle email sharing
+  const handleEmailShare = () => {
+    if (!shareUrl) {
+      toast.error(t('step6.generate_link_first'));
+      return;
+    }
+
+    const subject = t('step6.email_subject', { topic: formData.topic || 'content' });
+    const body = t('step6.email_body', { 
+      topic: formData.topic || 'content',
+      url: shareUrl,
+      app: 'EngagePerfect'
+    });
+
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
   };
 
   // Estimated generation time
@@ -791,7 +844,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
               </div>
               <Progress value={publishReadinessScore.total} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {t('step6.publish_readiness_description')}
+                {t('step6.publish_readiness_description_text')}
               </p>
             </div>
           </Card>
@@ -992,6 +1045,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={handleEmailShare}
                     className="flex items-center gap-2"
                   >
                     <Mail className="h-4 w-4" />
@@ -1000,40 +1054,59 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 </div>
 
                 {shareModalOpen && (
-                  <div className="p-3 bg-muted/50 rounded-md space-y-2">
-                    <Label className="text-xs font-medium">{t('step6.shareable_link_label')}</Label>
+                  <div className="p-4 bg-muted/50 rounded-lg space-y-3 border">
+                    <Label className="text-sm font-medium">{t('step6.shareable_link_label')}</Label>
                     <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={shareUrl}
-                        readOnly
-                        className="flex-1 px-2 py-1 text-xs border rounded"
-                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <input
+                            type="text"
+                            value={shareUrl}
+                            readOnly
+                            onClick={(e) => e.currentTarget.select()}
+                            className="flex-1 px-3 py-2 text-sm border rounded-md bg-background font-mono text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
+                            placeholder="Generating link..."
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Click to select all text</p>
+                        </TooltipContent>
+                      </Tooltip>
                       <Button
                         size="sm"
                         onClick={handleCopyLink}
-                        className={`flex items-center gap-1 ${copied ? 'bg-green-600' : ''}`}
+                        className={`flex items-center gap-2 min-w-[80px] ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
                       >
                         {copied ? (
                           <>
-                            <CheckCircle2 className="h-3 w-3" />
+                            <CheckCircle2 className="h-4 w-4" />
                             {t('step6.copy_link_copied')}
                           </>
                         ) : (
                           <>
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-4 w-4" />
                             {t('step6.copy_link_button')}
                           </>
                         )}
                       </Button>
                     </div>
-                    <div className="flex gap-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex items-center gap-1">
-                        <Twitter className="h-3 w-3" />
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleSocialShare('twitter')}
+                      >
+                        <Twitter className="h-4 w-4" />
                         {t('step6.twitter_button')}
                       </Button>
-                      <Button size="sm" variant="outline" className="flex items-center gap-1">
-                        <Facebook className="h-3 w-3" />
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleSocialShare('facebook')}
+                      >
+                        <Facebook className="h-4 w-4" />
                         {t('step6.facebook_button')}
                       </Button>
                     </div>

@@ -28,6 +28,8 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { createSupportEmail, sendContactEmail } from '@/lib/emailUtils';
+import { toast } from '@/hooks/use-toast';
 
 interface ContextualHelpProps {
   currentStep: number;
@@ -100,10 +102,39 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     window.open(video.url, '_blank');
   };
 
-  const handleSupportContact = () => {
+  const handleSupportContact = async () => {
     trackEngagement('support_contacted', { step: currentStep });
-    // In a real app, you'd open a support modal or chat
-    alert(t('contextualHelp.supportAlert'));
+    
+    try {
+      // Create support email with context
+      const supportEmail = createSupportEmail(
+        'User requested support from contextual help',
+        { 
+          currentStep, 
+          helpEngagement,
+          timestamp: new Date().toISOString()
+        }
+      );
+
+      // Send the email
+      const success = await sendContactEmail(supportEmail);
+      
+      if (success) {
+        toast({
+          title: "Support Request Sent",
+          description: "Your support request has been sent to our team. We'll get back to you soon!",
+        });
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Support contact error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send support request. Please try emailing us directly at engageperfect@gmail.com",
+        variant: "destructive"
+      });
+    }
   };
 
   const ExampleSection: React.FC<{ examples: { good: string[], bad: string[] } }> = ({ examples }) => (

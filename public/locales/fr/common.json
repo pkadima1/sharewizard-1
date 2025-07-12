@@ -1,20 +1,20 @@
-{
-  "nav": {
+{  "nav": {
     "home": "Accueil",
     "dashboard": "Tableau de bord", 
-    "pricing": "Prix",
+    "pricing": "Tarifs",
     "login": "Connexion",
     "signup": "S'inscrire",
     "caption_generator": "Générateur de Légendes",
-    "blog_wizard": "Contenu Long-forme",
+    "blog_wizard": "Contenu Long-format",
     "gallery": "Galerie",
+    "contact": "Contact",
     "logout": "Déconnexion",
     "profile": "Profil",
     "adminDashboard": "Tableau de bord Admin",
     "logOut": "Se déconnecter",
     "features": "Fonctionnalités",
     "blog": "Blog"
-  },  
+  },
   "wizard": {
     "step1": "Télécharger un Média",
     "step2": "Sélectionner une Niche", 
@@ -39,6 +39,7 @@
     "tryFree": "Essayer gratuitement",
     "upgrade": "Mettre à niveau",
     "subscribe": "S'abonner",
+    "subscribing": "Abonnement...",
     "cancel": "Annuler",
     "save": "Enregistrer",
     "saving": "Enregistrement...",
@@ -116,7 +117,35 @@
     "subtitle": "Toujours là pour vous aider",
     "typing": "L'assistant tape...",
     "placeholder": "Tapez votre message...",
-    "footer": "Alimenté par l'IA • Temps de réponse ~2-3 secondes"
+    "footer": "Alimenté par l'IA • Temps de réponse ~2-3 secondes",
+    "userInfo": {
+      "title": "Commençons",
+      "subtitle": "Veuillez fournir quelques informations de base pour que nous puissions mieux vous aider.",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Entrez votre prénom",
+      "firstNameRequired": "Le prénom est requis",
+      "firstNameMinLength": "Le prénom doit comporter au moins 2 caractères",
+      "email": "Adresse Email",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "emailRequired": "L'email est requis",
+      "emailInvalid": "Veuillez entrer une adresse email valide",
+      "topic": "De quoi avez-vous besoin d'aide ?",
+      "topicPlaceholder": "Sélectionnez un sujet",
+      "topicRequired": "Veuillez sélectionner un sujet",
+      "startChat": "Démarrer le Chat",
+      "starting": "Démarrage du Chat...",
+      "privacy": "Vos informations ne sont utilisées que pour fournir un meilleur support et sont gardées confidentielles."
+    },
+    "topics": {
+      "accountSetup": "Configuration du Compte",
+      "subscriptionBilling": "Abonnement et Facturation",
+      "captionGenerator": "Aide Générateur de Légendes",
+      "longformContent": "Aide Contenu Long-format",
+      "technicalIssue": "Problème Technique",
+      "featureRequest": "Demande de Fonctionnalité",
+      "generalQuestion": "Question Générale",
+      "other": "Autre"
+    }
   },
   "activating": "Activation en cours...",
   "cancel_trial": "Annuler l'essai",
@@ -127,5 +156,103 @@
   "optional": "Optionnel",
   "words": "mots",
   "wordsShort": "m",
-  "seo": "SEO"
+  "seo": "SEO",
+  "contact": {
+    "getInTouch": {
+      "title": {
+        "get": "Une question ?",
+        "touch": "Parlons-en !"
+      },
+      "subtitle": "Prêt à transformer votre stratégie de contenu ? Découvrons comment EngagePerfect peut vous aider à rester authentique, vous démarquer et développer votre activité — sans l’épuisement lié à la création."
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "fullName": "Nom Complet",
+      "fullNamePlaceholder": "Votre nom complet",
+      "emailAddress": "Adresse Email",
+      "emailPlaceholder": "Votre adresse email",
+      "company": "Entreprise (Optionnel)",
+      "companyPlaceholder": "Nom de votre entreprise",
+      "message": "Message",
+      "messagePlaceholder": "Parlez-nous de votre projet et comment nous pouvons vous aider...",
+      "sendMessage": "Envoyer le Message",
+      "sending": "Envoi en cours..."
+    },
+    "info": {
+      "title": "Informations de Contact",
+      "email": "Email",
+      "ukOffice": "Bureau UK",
+      "euOffice": "Bureau EU",
+      "phone": "Téléphone & WhatsApp",
+      "whatsapp": {
+        "title": "Support Rapide via WhatsApp",
+        "description": "Obtenez une aide instantanée avec notre équipe de support WhatsApp",
+        "button": "Démarrer le Chat WhatsApp"
+      }
+    },
+    "hours": {
+      "title": "Heures de Bureau",
+      "mondayFriday": "Lundi - Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche",
+      "closed": "Fermé"
+    },
+    "response": {
+      "title": {
+        "well": "Nous Répondrons",
+        "quickly": "Rapidement"
+      },
+      "subtitle": "Notre équipe répond généralement aux demandes dans les 2-4 heures pendant les heures de bureau.",
+      "times": {
+        "twoHours": "2h",
+        "fourHours": "4h",
+        "twentyFourHours": "24h"
+      },
+      "types": {
+        "sales": "Demandes Commerciales",
+        "general": "Questions Générales",
+        "technical": "Support Technique"
+      }
+    },
+    "success": "Message Envoyé !",
+    "successMessage": "Merci pour votre message. Nous vous répondrons bientôt !",
+    "successWithWhatsApp": "Merci de nous avoir contactés ! Nous vous répondrons bientôt. Vous pouvez aussi discuter avec nous directement sur WhatsApp pour un support plus rapide.",
+    "whatsappSuggestion": {
+      "title": "Besoin d'Aide Immédiate ?",
+      "description": "Discutez avec nous sur WhatsApp pour un support instantané !",
+      "button": "Ouvrir WhatsApp"
+    },
+    "error": "Erreur",
+    "errorMessage": "Échec de l'envoi du message. Veuillez réessayer ou nous contacter directement par email.",
+    "fillRequired": "Veuillez remplir tous les champs requis."
+  },
+  "blog": {
+    "title": "Des vrais articles. Écrits en un instant. Authentiquement vous.",
+    "subtitle": "Chaque article ici a été créé en quelques secondes avec EngagePerfect — ajusté pour refléter votre voix, pas celle d’une machine.",
+    "stats": {
+      "articles": "Articles",
+      "aiPoweredContent": "Contenu par EngagePerfect AI",
+      "updatedRegularly": "Mis à jour régulièrement"
+    },
+    "search": {
+      "placeholder": "Rechercher des articles, sujets ou mots-clés...",
+      "noResults": "Aucun article trouvé correspondant à votre recherche."
+    },
+    "filters": {
+      "allCategories": "Toutes les catégories",
+      "category": "Catégorie"
+    },
+    "article": {
+      "readTime": "min de lecture",
+      "readArticle": "Lire l'article",
+      "generatedOn": "Généré le",
+      "words": "mots",
+      "seo": "SEO",
+      "preview": "Aperçu",
+      "close": "Fermer"
+    },
+    "loading": "Chargement des articles...",
+    "error": "Impossible de charger les articles. Veuillez réessayer plus tard.",
+    "noArticles": "Aucun article disponible pour le moment."
+  }
 }

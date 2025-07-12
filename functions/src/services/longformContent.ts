@@ -52,13 +52,13 @@ const CONFIG = {
     timeoutSeconds: 180,
     memory: "256MiB" as const,
     maxInstances: 5,
-    retryAttempts: 2
+    retryAttempts: 3 // Increased for better reliability
   },
   production: {
     timeoutSeconds: 300,
     memory: "512MiB" as const,
     maxInstances: 20,
-    retryAttempts: 3
+    retryAttempts: 4 // Increased for better reliability
   }
 };
 
@@ -98,6 +98,14 @@ const retryWithBackoff = async <T>(
       if (error instanceof HttpsError && 
           (error.code === "unauthenticated" || error.code === "permission-denied")) {
         throw error;
+      }
+      
+      // Log retry attempt for debugging
+      if (attempt < maxRetries) {
+        console.warn(`Retry attempt ${attempt + 1}/${maxRetries} after ${baseDelay * Math.pow(2, attempt)}ms`);
+        if (lastError.message.includes("JSON parsing failed")) {
+          console.warn("JSON parsing error detected, retrying with fresh generation...");
+        }
       }
       
       // For the last attempt, throw the error
@@ -300,7 +308,7 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
           temperature: 0.6, // Slightly lower for more consistent output
           topK: 40,
           topP: 0.9, // Increase for better completion
-          maxOutputTokens: 3000, // Increase token limit
+          maxOutputTokens: 8000, // Significantly increased token limit for complex JSON
           responseMimeType: "application/json"
         }
       });
@@ -312,17 +320,37 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
         throw new Error("Gemini response too short or empty");
       }
       
-      // Enhanced JSON parsing with cleanup
+      // Check if the response is likely truncated based on length and structure
+      if (response.length > 2000 && !response.includes('"enhancedSeoStrategy"')) {
+        console.warn("Response may be incomplete - missing expected JSON sections");
+      }
+      
+      // Enhanced JSON parsing with cleanup and truncation detection
       let cleanedResponse = response.trim();
       
       // Remove markdown code blocks if present
       cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
       
+      // Check if response appears to be truncated
+      const isTruncated = cleanedResponse.length > 1000 && 
+        (!cleanedResponse.endsWith('}') && !cleanedResponse.endsWith('}"}'));
+      
+      if (isTruncated) {
+        console.warn("Response appears to be truncated, attempting completion...");
+        // Try to find the last complete object boundary
+        const lastCompleteObject = cleanedResponse.lastIndexOf('},{');
+        if (lastCompleteObject > 0) {
+          cleanedResponse = cleanedResponse.substring(0, lastCompleteObject + 1) + ']}}';
+        }
+      }
+      
       try {
         return JSON.parse(cleanedResponse);
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError);
-        console.error("Raw response:", response);
+        console.error("Raw response length:", response.length);
+        console.error("Raw response (first 500 chars):", response.substring(0, 500));
+        console.error("Raw response (last 500 chars):", response.substring(Math.max(0, response.length - 500)));
         
         // Try to extract JSON from response with more aggressive cleanup
         const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
@@ -333,7 +361,17 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
               .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Add quotes to keys
               .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double
               .replace(/,\s*}/g, '}') // Remove trailing commas
-              .replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+              .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
+              .replace(/"\s*$/, '"}') // Fix unterminated strings
+              .replace(/,\s*$/, ''); // Remove trailing commas at end
+            
+            // If still truncated, try to close the JSON properly
+            if (!fixedJson.endsWith('}')) {
+              const openBraces = (fixedJson.match(/\{/g) || []).length;
+              const closeBraces = (fixedJson.match(/\}/g) || []).length;
+              const missingBraces = openBraces - closeBraces;
+              fixedJson += '}'.repeat(missingBraces);
+            }
             
             return JSON.parse(fixedJson);
           } catch (secondParseError) {

@@ -29,7 +29,7 @@
         "description": "Téléchargez et gérez votre contenu visuel"
       },
       "seoKeywords": {
-        "name": "SEO & Mots-clés", 
+        "name": "SEO & Mots-clés",
         "description": "Optimisez avec des suggestions de mots-clés intelligents"
       },
       "structureTone": {
@@ -83,7 +83,7 @@
     "keyboard": {
       "title": "Raccourcis Clavier",
       "nextStep": "Passer à l'étape suivante",
-      "prevStep": "Retourner à l'étape précédente", 
+      "prevStep": "Retourner à l'étape précédente",
       "manualSave": "Sauvegarder manuellement le brouillon",
       "navigate": "Naviguer dans le formulaire",
       "showHelp": "Afficher/masquer cette aide",
@@ -118,7 +118,7 @@
     },
     "industries": {
       "marketing": "Marketing & Publicité",
-      "health": "Santé & Bien-être", 
+      "health": "Santé & Bien-être",
       "technology": "Technologie & Logiciels",
       "finance": "Finance & Investissement",
       "education": "Éducation & Apprentissage",
@@ -131,7 +131,7 @@
     },
     "audienceTypes": {
       "smallBusiness": "Propriétaires de Petites Entreprises",
-      "marketingPros": "Professionnels du Marketing", 
+      "marketingPros": "Professionnels du Marketing",
       "entrepreneurs": "Entrepreneurs",
       "students": "Étudiants",
       "generalPublic": "Grand Public",
@@ -358,7 +358,13 @@
         "keywordReason": "Placez le mot-clé principal au début pour un meilleur SEO",
         "powerWordReason": "Ajoutez des mots puissants pour augmenter les taux de clic"
       },
-      "powerWords": ["Ultime", "Complet", "Essentiel", "Prouvé", "Expert"]
+      "powerWords": [
+        "Ultime",
+        "Complet",
+        "Essentiel",
+        "Prouvé",
+        "Expert"
+      ]
     },
     "keywordDensity": {
       "title": "Analyse de Densité des Mots-clés",
@@ -378,7 +384,7 @@
     },
     "defaults": {
       "content": "Contenu",
-      "business": "Entreprise", 
+      "business": "Entreprise",
       "professionals": "Professionnels"
     },
     "keywords": {
@@ -611,13 +617,13 @@
       "writingSample": "ÉCHANTILLON D'ÉCRITURE",
       "options": {
         "friendly": "Amical",
-        "professional": "Professionnel", 
+        "professional": "Professionnel",
         "thoughtProvoking": "Qui Fait Réfléchir",
         "expert": "Expert",
         "persuasive": "Persuasif",
         "informative": "Informatif / Neutre",
         "casual": "Décontracté / Conversationnel",
-        "authoritative": "Autoritaire / Confiant", 
+        "authoritative": "Autoritaire / Confiant",
         "inspirational": "Inspirant / Motivant",
         "humorous": "Humoristique / Spirituel",
         "empathetic": "Empathique"
@@ -695,7 +701,7 @@
       "options": {
         "introPointsCta": {
           "label": "Intro + 3 Points Principaux + Appel à l'Action",
-          "useCase": "Articles de blog généraux, leadership d'opinion", 
+          "useCase": "Articles de blog généraux, leadership d'opinion",
           "flow": "Accroche → Point 1 → Point 2 → Point 3 → Action"
         },
         "problemSolutionCta": {
@@ -749,7 +755,7 @@
         "business": "Affaires",
         "tutorial": "Tutoriel",
         "support": "Support",
-        "analysis": "Analyse", 
+        "analysis": "Analyse",
         "narrative": "Narratif",
         "advanced": "Avancé"
       },
@@ -769,7 +775,7 @@
         "introductionDesc": "Accroche et aperçu",
         "mainPoint1": "Point Principal 1",
         "mainPoint1Desc": "Premier concept clé",
-        "mainPoint2": "Point Principal 2", 
+        "mainPoint2": "Point Principal 2",
         "mainPoint2Desc": "Deuxième concept clé",
         "mainPoint3": "Point Principal 3",
         "mainPoint3Desc": "Troisième concept clé",
@@ -781,7 +787,7 @@
         "impactConsequencesDesc": "Pourquoi c'est important",
         "solutionOverview": "Aperçu de la Solution",
         "solutionOverviewDesc": "Votre approche",
-        "implementationSteps": "Étapes d'Implémentation", 
+        "implementationSteps": "Étapes d'Implémentation",
         "implementationStepsDesc": "Comment appliquer",
         "howToIntroDesc": "Aperçu et ce que les lecteurs vont apprendre",
         "prerequisites": "Prérequis",
@@ -890,7 +896,7 @@
       "options": {
         "blogArticle": "Article de Blog",
         "newsletter": "Newsletter",
-        "caseStudy": "Étude de Cas", 
+        "caseStudy": "Étude de Cas",
         "guide": "Guide",
         "thoughtPiece": "Article de Réflexion",
         "howToSteps": "Comment-Faire / Étape-par-Étape",
@@ -1146,17 +1152,99 @@
   "step6": {
     "title": "Révision & Génération",
     "subtitle": "Vérifiez vos paramètres de contenu, consultez les scores d'optimisation et générez votre contenu",
-    "seoScore": { "title": "Score SEO", "grade": "Note {{grade}}", "points": "{{points}}/100 points sur {{factors}} facteurs" },
-    "completion": { "title": "Achèvement", "badge": "{{completed}}/{{total}}", "required": "Requis", "requiredItems": "{{completed}}/{{total}} éléments requis complétés" },
-    "publishReady": { "title": "Prêt à Publier", "grade": "{{grade}}", "overall": "Prêt global pour la publication" },
-    "completionChecklist": { "title": "Liste de Vérification du Contenu", "required": "Requis", "edit_button": "Modifier" },
-    "seoScoreBreakdown": { "title": "Détail du Score SEO", "improve_button": "Améliorer" },
-    "generationCost": { "title": "Coût & Paramètres de Génération", "creditsRequired": "{{credits}} crédits requis", "estimatedTime": "Temps de génération estimé : {{minutes}} minutes", "includedFeatures": "Fonctionnalités incluses :" },
-    "exportSettings": { "title": "Paramètres d'Export", "selectFormats": "Sélectionnez les formats d'export :" },
-    "shareDraft": { "title": "Partager le Brouillon", "desc": "Partagez vos paramètres de contenu avec des membres de l'équipe ou des collaborateurs avant de générer.", "generateLink": "Générer un lien de partage", "email": "Email", "shareableLink": "Lien partageable :", "copied": "Copié", "copy": "Copier", "twitter": "Twitter", "facebook": "Facebook" },
-    "publishReadinessAnalysis": { "title": "Analyse de Prêt à Publier" },
-    "checklist": { "topic": "Sujet défini", "industryAudience": "Secteur & Public sélectionnés", "keywords": "Mots-clés ajoutés", "title": "Titre SEO optimisé", "structure": "Structure du contenu définie", "tone": "Ton du contenu sélectionné", "wordCount": "Nombre de mots configuré", "format": "Format de sortie sélectionné", "media": "Préférences médias définies", "qualityChecks": "Contrôles qualité activés" },
-    "seoFactors": { "seoTitle": "Titre optimisé SEO", "targetKeywords": "Mots-clés cibles", "contentLength": "Longueur du contenu", "structure": "Structure du contenu", "readability": "Lisibilité", "media": "Intégration média", "meta": "Optimisation des métadonnées", "status": { "good": "Bon", "needsWork": "À améliorer", "couldImprove": "Peut être amélioré" }, "improve": "Améliorer", "defined": "Structure définie", "noStructure": "Aucune structure sélectionnée", "toneSelected": "Ton sélectionné pour l'audience cible", "noTone": "Aucun ton spécifié", "imagesSuggested": "Des images seront suggérées", "noMedia": "Aucune intégration média", "metaDefined": "Secteur et audience définis", "missingMeta": "Métadonnées manquantes", "keywordsSelected": "{{count}} mots-clés sélectionnés", "words": "{{count}} mots (optimal : 1200-1800)", "titleOptimized": "Le titre est correctement optimisé", "titleNeedsOptimization": "Le titre doit être optimisé" },
+    "seoScore": {
+      "title": "Score SEO",
+      "grade": "Note {{grade}}",
+      "points": "{{points}}/100 points sur {{factors}} facteurs"
+    },
+    "completion": {
+      "title": "Achèvement",
+      "badge": "{{completed}}/{{total}}",
+      "required": "Requis",
+      "requiredItems": "{{completed}}/{{total}} éléments requis complétés"
+    },
+    "publishReady": {
+      "title": "Prêt à Publier",
+      "grade": "{{grade}}",
+      "overall": "Prêt global pour la publication"
+    },
+    "completionChecklist": {
+      "title": "Liste de Vérification du Contenu",
+      "required": "Requis",
+      "edit_button": "Modifier"
+    },
+    "seoScoreBreakdown": {
+      "title": "Détail du Score SEO",
+      "improve_button": "Améliorer"
+    },
+    "generationCost": {
+      "basicContent": "Génération de contenu basique",
+      "standardFormatting": "Mise en forme standard",
+      "enhancedContent": "Contenu amélioré",
+      "imageSuggestions": "Suggestions d'images",
+      "seoOptimization": "Optimisation SEO",
+      "advancedContent": "Contenu avancé",
+      "researchIntegration": "Intégration de la recherche",
+      "plagiarismCheck": "Vérification du plagiat",
+      "multipleFormats": "Formats multiples"
+    },
+    "exportSettings": {
+      "title": "Paramètres d'Export",
+      "selectFormats": "Sélectionnez les formats d'export :"
+    },
+    "shareDraft": {
+      "title": "Partager le Brouillon",
+      "desc": "Partagez vos paramètres de contenu avec des membres de l'équipe ou des collaborateurs avant de générer.",
+      "generateLink": "Générer un lien de partage",
+      "email": "Email",
+      "shareableLink": "Lien partageable :",
+      "copied": "Copié",
+      "copy": "Copier",
+      "twitter": "Twitter",
+      "facebook": "Facebook"
+    },
+    "publishReadinessAnalysis": {
+      "title": "Analyse de Prêt à Publier"
+    },
+    "checklist": {
+      "topic": "Sujet défini",
+      "industryAudience": "Secteur & Public sélectionnés",
+      "keywords": "Mots-clés ajoutés",
+      "title": "Titre SEO optimisé",
+      "structure": "Structure du contenu définie",
+      "tone": "Ton du contenu sélectionné",
+      "wordCount": "Nombre de mots configuré",
+      "format": "Format de sortie sélectionné",
+      "media": "Préférences médias définies",
+      "qualityChecks": "Contrôles qualité activés"
+    },
+    "seoFactors": {
+      "seoTitle": "Titre optimisé SEO",
+      "targetKeywords": "Mots-clés cibles",
+      "contentLength": "Longueur du contenu",
+      "structure": "Structure du contenu",
+      "readability": "Lisibilité",
+      "media": "Intégration média",
+      "meta": "Optimisation des métadonnées",
+      "status": {
+        "good": "Bon",
+        "needsWork": "À améliorer",
+        "couldImprove": "Peut être amélioré"
+      },
+      "improve": "Améliorer",
+      "defined": "Structure définie",
+      "noStructure": "Aucune structure sélectionnée",
+      "toneSelected": "Ton sélectionné pour l'audience cible",
+      "noTone": "Aucun ton spécifié",
+      "imagesSuggested": "Des images seront suggérées",
+      "noMedia": "Aucune intégration média",
+      "metaDefined": "Secteur et audience définis",
+      "missingMeta": "Métadonnées manquantes",
+      "keywordsSelected": "{{count}} mots-clés sélectionnés",
+      "words": "{{count}} mots (optimal : 1200-1800)",
+      "titleOptimized": "Le titre est correctement optimisé",
+      "titleNeedsOptimization": "Le titre doit être optimisé"
+    },
     "export": {
       "markdown": "Markdown",
       "markdown.desc": "Format texte léger, idéal pour les développeurs et la documentation.",
@@ -1186,8 +1274,26 @@
         "cloudStorage": "Stockage cloud"
       }
     },
-    "publishReadiness": { "contentCompleteness": "Complétude du contenu", "seoOptimization": "Optimisation SEO", "technicalSetup": "Configuration technique", "qualityAssurance": "Assurance qualité", "engagementFeatures": "Fonctionnalités d'engagement", "requiredItems": "{{completed}}/{{total}} éléments requis complétés", "seoScore": "Score SEO : {{score}}%", "exportConfigured": "Formats d'export et paramètres configurés", "plagiarismEnabled": "Vérification du plagiat activée", "basicChecks": "Contrôles qualité de base", "images": "Images", "noImages": "Pas d'images", "ctaIncluded": "CTA inclus", "noCta": "Pas de CTA" },
-    "button": { "edit": "Modifier", "improve": "Améliorer" },
+    "publishReadiness": {
+      "contentCompleteness": "Complétude du contenu",
+      "seoOptimization": "Optimisation SEO",
+      "technicalSetup": "Configuration technique",
+      "qualityAssurance": "Assurance qualité",
+      "engagementFeatures": "Fonctionnalités d'engagement",
+      "requiredItems": "{{completed}}/{{total}} éléments requis complétés",
+      "seoScore": "Score SEO : {{score}}%",
+      "exportConfigured": "Formats d'export et paramètres configurés",
+      "plagiarismEnabled": "Vérification du plagiat activée",
+      "basicChecks": "Contrôles qualité de base",
+      "images": "Images",
+      "noImages": "Pas d'images",
+      "ctaIncluded": "CTA inclus",
+      "noCta": "Pas de CTA"
+    },
+    "button": {
+      "edit": "Modifier",
+      "improve": "Améliorer"
+    },
     "review_generate_title": "Révision & Génération",
     "review_generate_description": "Vérifiez vos paramètres de contenu, consultez les scores d'optimisation et générez votre contenu",
     "completion_checklist_title": "Liste de Vérification du Contenu",
@@ -1199,7 +1305,18 @@
     "completion_title": "Achèvement",
     "completion_required_items": "{{completed}}/{{total}} éléments requis complétés",
     "publish_readiness_title": "Prêt à Publier",
-    "publish_readiness_description": "Prêt global pour la publication",
+    "publish_readiness_description": {
+      "content_completeness": "{{completed}}/{{total}} éléments requis complétés",
+      "seo_optimization": "Score SEO : {{score}}%",
+      "technical_setup": "Formats d'export et paramètres configurés",
+      "quality_assurance_plagiarism_enabled": "Vérification du plagiat activée",
+      "quality_assurance_basic_checks": "Contrôles qualité de base",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "Pas d'images",
+      "cta_included": "CTA inclus",
+      "no_cta": "Pas de CTA"
+    },
     "seo_score_breakdown_title": "Détail du Score SEO",
     "seo_score_breakdown_improve_button": "Améliorer",
     "generation_settings_title": "Coût & Paramètres de Génération",
@@ -1288,18 +1405,6 @@
       "quality_assurance": "Assurance qualité",
       "engagement_features": "Fonctionnalités d'engagement"
     },
-    "publish_readiness_description": {
-      "content_completeness": "{{completed}}/{{total}} éléments requis complétés",
-      "seo_optimization": "Score SEO : {{score}}%",
-      "technical_setup": "Formats d'export et paramètres configurés",
-      "quality_assurance_plagiarism_enabled": "Vérification du plagiat activée",
-      "quality_assurance_basic_checks": "Contrôles qualité de base",
-      "engagement_features": "{{images}}, {{cta}}",
-      "images_included": "Images",
-      "no_images": "Pas d'images",
-      "cta_included": "CTA inclus",
-      "no_cta": "Pas de CTA"
-    },
     "grade": {
       "A": "Note A",
       "B": "Note B",
@@ -1310,46 +1415,14 @@
       "fair": "Moyen",
       "needs_work": "À améliorer"
     },
-    "generationCost": {
-      "basicContent": "Génération de contenu basique",
-      "standardFormatting": "Mise en forme standard",
-      "enhancedContent": "Contenu amélioré",
-      "imageSuggestions": "Suggestions d'images",
-      "seoOptimization": "Optimisation SEO",
-      "advancedContent": "Contenu avancé",
-      "researchIntegration": "Intégration de la recherche",
-      "plagiarismCheck": "Vérification du plagiat",
-      "multipleFormats": "Formats multiples"
-    },
-    "export": {
-      "markdown": "Markdown",
-      "markdown.desc": "Format texte léger, idéal pour les développeurs et la documentation.",
-      "html": "HTML",
-      "html.desc": "Prêt pour le web avec balises méta SEO.",
-      "docx": "Word (DOCX)",
-      "docx.desc": "Document Microsoft Word pour édition avancée.",
-      "pdf": "PDF",
-      "pdf.desc": "Format prêt à imprimer, compatible universellement.",
-      "gdocs": "Google Docs",
-      "gdocs.desc": "Collaboration en temps réel et stockage cloud.",
-      "feature": {
-        "cleanFormatting": "Mise en forme propre",
-        "platformAgnostic": "Indépendant de la plateforme",
-        "easyEditing": "Édition facile",
-        "webReady": "Prêt pour le web",
-        "seoMetaTags": "Balises méta SEO",
-        "styledOutput": "Sortie stylisée",
-        "richFormatting": "Mise en forme riche",
-        "commentsSupport": "Support des commentaires",
-        "trackChanges": "Suivi des modifications",
-        "printReady": "Prêt à imprimer",
-        "universalCompatibility": "Compatibilité universelle",
-        "fixedLayout": "Mise en page fixe",
-        "realTimeCollab": "Collaboration en temps réel",
-        "commentSystem": "Système de commentaires",
-        "cloudStorage": "Stockage cloud"
-      }
-    }
+    "publish_readiness_description_text": "Prêt global pour la publication",
+    "link_copied_description": "Le lien partageable a été copié dans votre presse-papiers",
+    "copy_failed": "Échec de la copie",
+    "copy_failed_description": "Impossible de copier le lien dans le presse-papiers. Veuillez copier manuellement.",
+    "generate_link_first": "Veuillez d'abord générer un lien",
+    "social_share_text": "Découvrez ce brouillon de contenu sur {{topic}} sur lequel je travaille avec {{app}} !",
+    "email_subject": "Brouillon de Contenu : {{topic}}",
+    "email_body": "Bonjour,\n\nJe voulais partager un brouillon de contenu sur lequel je travaille concernant {{topic}}.\n\nVous pouvez le consulter ici : {{url}}\n\nCeci a été créé avec {{app}}.\n\nCordialement !"
   },
   "smartComponents": {
     "topicEngine": {
@@ -1396,7 +1469,7 @@
       "competition": {
         "label": "concurrence",
         "low": "faible",
-        "medium": "moyenne", 
+        "medium": "moyenne",
         "high": "élevée"
       },
       "metrics": {
@@ -1530,7 +1603,7 @@
   },
   "contextualHelp": {
     "estimatedTime": "Temps estimé : {{time}}",
-    "quickTips": "Conseils Rapides", 
+    "quickTips": "Conseils Rapides",
     "learnMore": "En Savoir Plus",
     "videoTutorials": "Tutoriels Vidéo",
     "tutorial": "Tutoriel",
@@ -1552,7 +1625,7 @@
         "title": "Définir le Sujet et le Public Cible",
         "tips": [
           "Soyez précis sur votre sujet - évitez les sujets larges et génériques",
-          "Définissez clairement les données démographiques et les intérêts de votre public cible", 
+          "Définissez clairement les données démographiques et les intérêts de votre public cible",
           "Considérez les points de douleur de votre audience et la valeur que vous pouvez apporter"
         ],
         "learnMoreSections": [
@@ -1562,12 +1635,12 @@
             "examples": {
               "good": [
                 "10 Stratégies d'Email Marketing pour l'E-commerce",
-                "Comment Porter des Jeans Larges selon Différents Types de Corps", 
+                "Comment Porter des Jeans Larges selon Différents Types de Corps",
                 "React vs Vue : Comparaison de Performance 2024"
               ],
               "bad": [
                 "Marketing",
-                "Mode", 
+                "Mode",
                 "Programmation"
               ]
             }
@@ -1666,7 +1739,7 @@
               ],
               "bad": [
                 "nourriture",
-                "outils", 
+                "outils",
                 "exercice"
               ]
             }
@@ -1865,19 +1938,18 @@
     "txt": "Texte (.txt)",
     "pdf": "PDF (.pdf)"
   },
-  
   "contentManager": {
     "actions": {
       "preview": "Aperçu",
       "copy": "Copier",
       "copyClean": "Copier Propre",
-      "copyFormatted": "Copier Formaté", 
+      "copyFormatted": "Copier Formaté",
       "download": "Télécharger",
       "export": "Exporter"
     },
     "export": {
       "markdown": "Markdown (.md)",
-      "html": "HTML (.html)", 
+      "html": "HTML (.html)",
       "txt": "Texte (.txt)",
       "pdf": "PDF (.pdf)",
       "gdocs": "Google Docs",
@@ -1901,7 +1973,7 @@
     "status": {
       "empty": "Aucun Contenu Généré",
       "createFirst": "Créez votre premier contenu long pour le voir ici.",
-      "startCreating": "Commencer à Créer du Contenu", 
+      "startCreating": "Commencer à Créer du Contenu",
       "errorLoading": "Erreur de Chargement du Contenu"
     },
     "metadata": {

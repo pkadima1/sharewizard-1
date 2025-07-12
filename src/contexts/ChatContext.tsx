@@ -18,6 +18,12 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+export interface ChatUserInfo {
+  firstName: string;
+  email: string;
+  topic: string;
+}
+
 interface ChatContextType {
   // Chat state
   isOpen: boolean;
@@ -25,6 +31,8 @@ interface ChatContextType {
   isTyping: boolean;
   isSubmitting: boolean;
   messagesRemaining?: number;
+  userInfo: ChatUserInfo | null;
+  hasProvidedInfo: boolean;
 
   // Chat actions
   openChat: () => void;
@@ -32,6 +40,7 @@ interface ChatContextType {
   toggleChat: () => void;
   sendMessage: (content: string) => Promise<void>;
   clearMessages: () => void;
+  setUserInfo: (info: ChatUserInfo) => void;
 }
 
 // Create context with default values
@@ -41,23 +50,20 @@ const ChatContext = createContext<ChatContextType>({
   isTyping: false,
   isSubmitting: false,
   messagesRemaining: undefined,
+  userInfo: null,
+  hasProvidedInfo: false,
   openChat: () => {},
   closeChat: () => {},
   toggleChat: () => {},
   sendMessage: async () => {},
   clearMessages: () => {},
+  setUserInfo: () => {},
 });
 
 // Local storage keys
 const CHAT_STORAGE_KEY = 'engageperfect_chat_messages';
 const CHAT_LAST_ACTIVITY_KEY = 'engageperfect_chat_last_activity';
-
-// Default welcome message
-const WELCOME_MESSAGE: ChatMessage = {
-  role: 'assistant',
-  content: 'Hi! I\'m here to help you with EngagePerfect. Ask me about features, subscriptions, or how to create amazing content!',
-  timestamp: new Date()
-};
+const CHAT_USER_INFO_KEY = 'engageperfect_chat_user_info';
 
 /**
  * Provider component that wraps your app and makes chat context available to any
@@ -68,10 +74,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Chat state
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [messagesRemaining, setMessagesRemaining] = useState<number | undefined>(undefined);
+  const [userInfo, setUserInfoState] = useState<ChatUserInfo | null>(null);
+  const [hasProvidedInfo, setHasProvidedInfo] = useState<boolean>(false);
   
   // Reference to store the last activity timestamp
   const lastActivityRef = useRef<Date>(new Date());
@@ -80,9 +88,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (currentUser?.uid) {
       try {
-        // Try to load messages from localStorage
+        // Try to load user info from localStorage
+        const storedUserInfo = localStorage.getItem(`${CHAT_USER_INFO_KEY}_${currentUser.uid}`);
         const storedMessages = localStorage.getItem(`${CHAT_STORAGE_KEY}_${currentUser.uid}`);
         const lastActivity = localStorage.getItem(`${CHAT_LAST_ACTIVITY_KEY}_${currentUser.uid}`);
+        
+        // Load user info if available
+        if (storedUserInfo) {
+          const parsedUserInfo = JSON.parse(storedUserInfo);
+          setUserInfoState(parsedUserInfo);
+          setHasProvidedInfo(true);
+        }
         
         if (storedMessages && lastActivity) {
           const parsedMessages = JSON.parse(storedMessages);
@@ -102,15 +118,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setMessages(formattedMessages);
             lastActivityRef.current = parsedLastActivity;
           } else {
-            // Chat too old, reset to welcome message
-            setMessages([WELCOME_MESSAGE]);
+            // Chat too old, clear everything
+            setMessages([]);
+            setUserInfoState(null);
+            setHasProvidedInfo(false);
             lastActivityRef.current = now;
+            // Clear old data
+            localStorage.removeItem(`${CHAT_STORAGE_KEY}_${currentUser.uid}`);
+            localStorage.removeItem(`${CHAT_USER_INFO_KEY}_${currentUser.uid}`);
           }
         }
       } catch (error) {
         console.error('Error loading chat history:', error);
-        // If there's an error, just use the welcome message
-        setMessages([WELCOME_MESSAGE]);
+        // If there's an error, reset everything
+        setMessages([]);
+        setUserInfoState(null);
+        setHasProvidedInfo(false);
       }
     }
   }, [currentUser?.uid]);
@@ -133,12 +156,36 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const toggleChat = useCallback(() => setIsOpen(prev => !prev), []);
   
   const clearMessages = useCallback(() => {
-    setMessages([WELCOME_MESSAGE]);
+    setMessages([]);
+    setHasProvidedInfo(false);
+    setUserInfoState(null);
+    
     if (currentUser?.uid) {
       localStorage.removeItem(`${CHAT_STORAGE_KEY}_${currentUser.uid}`);
+      localStorage.removeItem(`${CHAT_USER_INFO_KEY}_${currentUser.uid}`);
       localStorage.setItem(`${CHAT_LAST_ACTIVITY_KEY}_${currentUser.uid}`, JSON.stringify(new Date()));
     }
   }, [currentUser?.uid]);
+
+  // Set user information
+  const setUserInfo = useCallback((info: ChatUserInfo) => {
+    setUserInfoState(info);
+    setHasProvidedInfo(true);
+    
+    // Store user info in localStorage
+    if (currentUser?.uid) {
+      localStorage.setItem(`${CHAT_USER_INFO_KEY}_${currentUser.uid}`, JSON.stringify(info));
+    }
+    
+    // Create personalized welcome message
+    const welcomeMessage: ChatMessage = {
+      role: 'assistant',
+      content: `Hi ${info.firstName}! Thanks for reaching out about "${info.topic}". I'm here to help you with EngagePerfect. What specific questions do you have?`,
+      timestamp: new Date()
+    };
+    
+    setMessages([welcomeMessage]);
+  }, [currentUser]);
   
   // Send message to API and handle response
   const sendMessage = useCallback(async (content: string) => {
@@ -161,7 +208,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Get Firebase function
       const supportChatFunction = httpsCallable<
-        { messages: Array<{ role: 'user' | 'assistant', content: string }> },
+        { 
+          messages: Array<{ role: 'user' | 'assistant', content: string }>,
+          userInfo?: ChatUserInfo 
+        },
         { reply: string, messagesRemaining?: number }
       >(functions, 'supportChat');
       
@@ -177,9 +227,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         content: userMessage.content
       });
       
-      // Call Firebase function
+      // Call Firebase function with user info
       const response = await supportChatFunction({
-        messages: messageHistory
+        messages: messageHistory,
+        userInfo: userInfo || undefined
       });
       
       // Extract response data
@@ -233,11 +284,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isTyping,
     isSubmitting,
     messagesRemaining,
+    userInfo,
+    hasProvidedInfo,
     openChat,
     closeChat,
     toggleChat,
     sendMessage,
-    clearMessages
+    clearMessages,
+    setUserInfo
   };
   
   return (
