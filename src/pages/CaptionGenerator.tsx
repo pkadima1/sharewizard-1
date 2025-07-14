@@ -8,8 +8,13 @@ import GoalSelector from '@/components/GoalSelector';
 import ToneSelector from '@/components/ToneSelector';
 import GeneratedCaptions from '@/components/GeneratedCaptions';
 import { toast } from "sonner";
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackContentGeneration, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
 
 const CaptionGenerator: React.FC = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Caption Generator - EngagePerfect');
+
   const { t } = useTranslation('caption-generator');
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState<File | null>(null);
@@ -88,23 +93,66 @@ const CaptionGenerator: React.FC = () => {
 
   const handleNicheChange = (niche: string) => {
     setSelectedNiche(niche);
+    // Analytics: Track niche selection
+    trackFeatureUsage('niche_selection', {
+      niche: niche,
+      step: 'wizard_step_1'
+    });
   };
 
   const handlePlatformChange = (platform: string) => {
     setSelectedPlatform(platform);
+    // Analytics: Track platform selection
+    trackFeatureUsage('platform_selection', {
+      platform: platform,
+      step: 'wizard_step_2'
+    });
   };
 
   const handleGoalChange = (goal: string) => {
     setSelectedGoal(goal);
+    // Analytics: Track goal selection
+    trackFeatureUsage('goal_selection', {
+      goal: goal,
+      step: 'wizard_step_3'
+    });
   };
 
   const handleToneChange = (tone: string) => {
     setSelectedTone(tone);
+    // Analytics: Track tone selection
+    trackFeatureUsage('tone_selection', {
+      tone: tone,
+      step: 'wizard_step_4'
+    });
   };
 
   const handleGenerate = () => {
+    // Analytics: Track caption generation start
+    const generationStartTime = Date.now();
+    
+    trackContentGeneration('caption', {
+      status: 'started',
+      platform: selectedPlatform,
+      niche: selectedNiche,
+      goal: selectedGoal,
+      tone: selectedTone,
+      has_media: !!selectedMedia,
+      media_type: selectedMedia?.type || 'text_only',
+      text_only_mode: isTextOnly
+    });
+    
+    trackFeatureUsage('caption_generation', {
+      platform: selectedPlatform,
+      niche: selectedNiche,
+      source: 'caption_wizard'
+    });
+
     setIsGenerating(true);
     setCurrentStep(prev => prev + 1);
+
+    // Store start time for completion tracking
+    sessionStorage.setItem('caption_generation_start', generationStartTime.toString());
   };
   const handleCaptionOverlayModeChange = (mode: 'overlay' | 'below') => {
     // Only change the mode if we're not dealing with a video
@@ -114,19 +162,26 @@ const CaptionGenerator: React.FC = () => {
   };
 
   const handleNext = () => {
+    // Analytics: Track wizard step progression
+    trackButtonClick('wizard_next', `step_${currentStep}`);
+    
     if (currentStep === 0 && !selectedMedia && !isTextOnly) {
+      trackError('validation_error', 'Media upload required', 'caption_generator');
       toast.error(t('toasts.uploadMediaRequired'));
       return;
     }
     if (currentStep === 1 && !selectedNiche) {
+      trackError('validation_error', 'Niche selection required', 'caption_generator');
       toast.error(t('toasts.nicheRequired'));
       return;
     }
     if (currentStep === 2 && !selectedPlatform) {
+      trackError('validation_error', 'Platform selection required', 'caption_generator');
       toast.error(t('toasts.platformRequired'));
       return;
     }
     if (currentStep === 3 && !selectedGoal) {
+      trackError('validation_error', 'Goal selection required', 'caption_generator');
       toast.error(t('toasts.goalRequired'));
       return;
     }

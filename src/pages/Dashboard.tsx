@@ -10,16 +10,53 @@ import { useLongformContent } from '@/hooks/useLongformContent';
 import LongformContentManager from '@/components/LongformContentManager';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackButtonClick, trackFeatureUsage, trackEvent } from '@/utils/analytics';
 
 const Dashboard: React.FC = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Dashboard - EngagePerfect');
+
   const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
-  
+  // Analytics: Track tab changes
+  const handleTabChange = (tabValue: string) => {
+    setActiveTab(tabValue);
+    trackEvent('dashboard_tab_change', {
+      tab: tabValue,
+      user_tier: userProfile?.subscriptionTier
+    });
+  };
+
+  // Analytics: Track navigation actions
+  const handleNavigateToLongform = () => {
+    trackButtonClick('create_content', 'dashboard');
+    trackFeatureUsage('longform_wizard', { source: 'dashboard' });
+    navigate('/longform');
+  };
+
+  const handleNavigateToCaptionGenerator = () => {
+    trackButtonClick('generate_captions', 'dashboard');
+    trackFeatureUsage('caption_generator', { source: 'dashboard' });
+    navigate('/caption-generator');
+  };
+
   // Fetch longform content
   const { longformContent, loading: longformLoading, error: longformError } = useLongformContent(currentUser?.uid || '');
+
+  // Analytics: Track dashboard load
+  useEffect(() => {
+    if (currentUser && userProfile && longformContent) {
+      trackEvent('dashboard_loaded', {
+        user_tier: userProfile.subscriptionTier,
+        longform_content_count: longformContent.length,
+        has_generated_content: longformContent.length > 0
+      });
+    }
+  }, [currentUser, userProfile, longformContent]);
   
   const { t } = useAppTranslation('dashboard');
 
@@ -95,7 +132,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Dashboard Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
@@ -188,7 +225,7 @@ const Dashboard: React.FC = () => {
                 <div className="mt-4 space-y-2">
                   <Button 
                     className="w-full flex items-center gap-2"
-                    onClick={() => navigate('/longform')}
+                    onClick={handleNavigateToLongform}
                   >
                     <PenTool className="h-4 w-4" />
                     {t('content.create', 'Create Article')}
@@ -196,7 +233,7 @@ const Dashboard: React.FC = () => {
                   <Button 
                     variant="outline" 
                     className="w-full flex items-center gap-2"
-                    onClick={() => navigate('/caption-generator')}
+                    onClick={handleNavigateToCaptionGenerator}
                   >
                     <Sparkles className="h-4 w-4" />
                     {t('quickActions.generateCaptions')}

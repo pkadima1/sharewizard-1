@@ -468,7 +468,8 @@
       "difficultyLabel": "Difficulty",
       "priority": "Priority",
       "trafficPotential": "Traffic Potential",
-      "relevance": "Relevance"
+      "relevance": "Relevance",
+      "trendingScore": "Trending Score"
     },
     "difficulty": {
       "easy": "Easy",
@@ -530,6 +531,7 @@
       "clusterKeywordsAdded": "Added {{theme}} cluster keywords!",
       "keywordsExported": "Keywords exported as {{format}}!",
       "customKeywordAdded": "Custom keyword added with enhanced analysis!",
+      "trendsIntegrated": "Google Trends data integrated! Keywords ranked by trending popularity.",
       "generationFailed": "Failed to generate keywords. Please try again."
     },
     "empty": {
@@ -603,6 +605,18 @@
       "product": "Product",
       "guide": "Guide",
       "comparison": "Comparison"
+    },
+    "trending": {
+      "hot": "Hot",
+      "trending": "Trending",
+      "score": "Trending Score"
+    },
+    "trends": {
+      "title": "Google Trends Integration",
+      "integration": "Live Data",
+      "insights": "Trending Insights",
+      "insightsDescription": "Keywords are now ranked by trending popularity. Hot keywords (🔥) indicate high current interest.",
+      "error": "Trends data unavailable"
     }
   },
   "step4": {
@@ -2009,6 +2023,165 @@
       "pdfTitle": "Clean PDF downloaded",
       "pdfError": "PDF generation failed",
       "pdfErrorDesc": "There was an error generating the PDF. Please try again."
+    }
+  },
+  "aiIdeasGenerator": {
+    "title": "AI Ideas Generator",
+    "subtitle": "Generate engaging content ideas powered by advanced AI analysis",
+    "version": "v1.0.0",
+    "aiDisclaimer": {
+      "title": "AI-Powered Generation",
+      "text": "This tool uses advanced AI to analyze trends, keywords, and audience preferences to generate unique content ideas."
+    },
+    "indicators": {
+      "enhancedAi": "Enhanced AI",
+      "keywords": "keywords",
+      "trends": "trends"
+    },
+    "buttons": {
+      "generate": "Generate Ideas",
+      "generating": "Generating...",
+      "generateFirst": "Generate First Ideas",
+      "useIdea": "Use This Idea"
+    },
+    "stages": {
+      "initializing": "Initializing AI...",
+      "analyzing": "Analyzing keywords and trends...",
+      "generating": "Generating content ideas...",
+      "optimizing": "Optimizing for engagement...",
+      "finalizing": "Finalizing results..."
+    },
+    "errors": {
+      "notAuthenticated": "Please log in to generate ideas",
+      "limitReached": "Daily limit reached. Please upgrade your plan for more ideas.",
+      "generationFailed": "Failed to generate ideas. Using fallback templates.",
+      "fallbackMessage": "Using pre-generated templates based on your keywords and niche."
+    },
+    "messages": {
+      "ideasGenerated": "Generated {{count}} unique content ideas",
+      "cachedIdeasLoaded": "Loaded ideas from cache",
+      "ideaSelected": "Selected idea: {{title}}"
+    },
+    "usage": {
+      "requestsRemaining": "requests remaining",
+      "today": "today",
+      "resetDate": "Reset Date"
+    },
+    "status": {
+      "offline": "Offline"
+    },
+    "upgrade": {
+      "title": "Upgrade for More Ideas",
+      "description": "You've reached your daily limit. Upgrade to generate unlimited ideas and access advanced features.",
+      "upgradeButton": "Upgrade Now",
+      "laterButton": "Maybe Later"
+    },
+    "results": {
+      "title": "Generated Ideas"
+    },
+    "analytics": {
+      "title": "Usage Analytics",
+      "totalRequests": "Total Requests",
+      "dailyRequests": "Daily Requests",
+      "requestsRemaining": "Requests Remaining",
+      "resetDate": "Reset Date"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "contentType": {
+      "social_post": "Social Post",
+      "blog_article": "Blog Article"
+    },
+    "keywords": {
+      "label": "Target Keywords"
+    },
+    "metrics": {
+      "engagement": "Engagement",
+      "seo": "SEO Potential",
+      "readTime": "Read Time"
+    },
+    "empty": {
+      "title": "No Ideas Generated Yet",
+      "description": "Click the button below to generate your first AI-powered content ideas."
+    }
+  },
+  "contentIdeaUsageTracker": {
+    "title": "Content Idea Usage",
+    "subtitle": {
+      "free": "Track your content idea generation usage",
+      "premium": "Unlimited content ideas with cost tracking"
+    },
+    "currentUsage": "Current Usage",
+    "remaining": "remaining",
+    "used": "used",
+    "reset": {
+      "trialEnds": "Trial ends in {{days}} days",
+      "resetsIn": "Resets in {{days}} days"
+    },
+    "cost": {
+      "title": "Cost Tracking",
+      "perIdea": "Cost per idea"
+    },
+    "buttons": {
+      "history": "History",
+      "analytics": "Analytics",
+      "upgrade": "Upgrade",
+      "manage": "Manage Plan",
+      "close": "Close",
+      "cancel": "Cancel"
+    },
+    "badges": {
+      "premium": "Premium",
+      "trial": "Trial",
+      "free": "Free"
+    },
+    "warnings": {
+      "limitReached": "Request limit reached",
+      "runningLow": "Running low on requests",
+      "considerUpgrade": "Consider upgrading to continue generating content ideas"
+    },
+    "history": {
+      "title": "Usage History",
+      "description": "View your content idea generation history and performance",
+      "empty": "No usage history found"
+    },
+    "analytics": {
+      "title": "Usage Analytics",
+      "description": "Detailed analytics of your content idea generation",
+      "totalIdeas": "Total Ideas",
+      "totalCost": "Total Cost",
+      "avgEngagement": "Avg Engagement",
+      "topPlatform": "Top Platform",
+      "topPerformers": "Top Performing Ideas",
+      "engagement": "Engagement",
+      "platformBreakdown": "Platform Breakdown"
+    },
+    "upgrade": {
+      "title": "Upgrade Your Plan",
+      "description": "Choose a plan that fits your content creation needs",
+      "flexTitle": "Flex Packs",
+      "flexDescription": "Add more requests without a monthly commitment",
+      "buyFlex": "Buy Flex Pack"
+    },
+    "tooltips": {
+      "shareIdea": "Share this content idea"
+    },
+    "messages": {
+      "sharedToClipboard": "Content idea copied to clipboard",
+      "exported": "Usage data exported as {{format}}"
+    },
+    "errors": {
+      "loginRequired": "Login Required",
+      "mustBeLoggedIn": "You must be logged in to perform this action",
+      "invalidPlan": "Invalid Plan",
+      "planSelectionError": "Please select a valid plan",
+      "upgradeFailed": "Upgrade Failed",
+      "flexPurchaseFailed": "Flex Purchase Failed",
+      "portalError": "Portal Error",
+      "loadHistoryFailed": "Failed to load usage history"
     }
   }
 }

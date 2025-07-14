@@ -1,0 +1,116 @@
+{
+  "googleTrends": {
+    "title": "Tendances Google",
+    "description": "Explorez les sujets tendance et les modèles de recherche",
+    "loading": {
+      "script": "Chargement des tendances Google...",
+      "widget": "Rendu du widget de tendances..."
+    },
+    "errors": {
+      "scriptLoadFailed": "Échec du chargement du script Google Trends",
+      "widgetInitFailed": "Échec de l'initialisation du widget Google Trends",
+      "widgetRenderFailed": "Échec du rendu du widget Google Trends"
+    }
+  },
+  "topicEngine": {
+    "title": "Moteur de Suggestions de Sujets",
+    "description": "Obtenez des suggestions de sujets alimentées par l'IA pour votre contenu",
+    "templates": {
+      "howTo": {
+        "description": "Guides étape par étape et tutoriels"
+      },
+      "ultimateGuide": {
+        "description": "Ressources complètes et guides détaillés"
+      },
+      "waysTo": {
+        "description": "Approches multiples et stratégies"
+      },
+      "bestPractices": {
+        "description": "Méthodes éprouvées et standards de l'industrie"
+      },
+      "caseStudy": {
+        "description": "Exemples concrets et histoires de réussite"
+      },
+      "trending": {
+        "description": "Tendances actuelles et sujets émergents"
+      },
+      "comparison": {
+        "description": "Analyse comparative et alternatives"
+      }
+    },
+    "messages": {
+      "suggestionsGenerated": "Généré {{count}} suggestions de sujets",
+      "generationFailed": "Échec de la génération des suggestions de sujets",
+      "topicSelected": "Sujet sélectionné : {{topic}}",
+      "addedToFavorites": "Ajouté aux favoris",
+      "removedFromFavorites": "Retiré des favoris",
+      "copiedToClipboard": "Sujet copié dans le presse-papiers",
+      "copyFailed": "Échec de la copie du sujet"
+    },
+    "buttons": {
+      "newTopics": "Nouveaux Sujets",
+      "refresh": "Actualiser",
+      "generating": "Génération...",
+      "select": "Sélectionner",
+      "addToFavorites": "Ajouter aux favoris",
+      "removeFromFavorites": "Retirer des favoris",
+      "newTopicsTooltip": "Générer des sujets complètement nouveaux"
+    },
+    "metrics": {
+      "match": "correspondance",
+      "views": "vues"
+    },
+    "competition": {
+      "label": "concurrence",
+      "low": "Faible",
+      "medium": "Moyenne",
+      "high": "Élevée"
+    },
+    "favorites": {
+      "title": "Favoris ({{count}})",
+      "clearAll": "Tout effacer"
+    },
+    "noSuggestions": {
+      "tryRefresh": "Aucune suggestion trouvée. Essayez d'actualiser ou d'ajuster vos critères.",
+      "selectContext": "Sélectionnez une industrie, un public ou entrez des mots-clés pour obtenir des suggestions de sujets."
+    },
+    "loading": {
+      "title": "Génération de Suggestions de Sujets",
+      "description": "Analyse de votre contexte et création de recommandations personnalisées..."
+    },
+    "disclaimer": "Suggestions alimentées par l'IA. Vérifiez toujours et adaptez les sujets à vos besoins spécifiques.",
+    "reasons": {
+      "transformativeImpact": "Met en évidence l'impact transformateur de {{topic}}",
+      "comprehensiveResource": "Ressource complète pour votre public",
+      "currentYearStrategy": "Stratégie de l'année en cours avec feuille de route actionnable",
+      "skillFocused": "Se concentre sur les compétences essentielles de {{topic}}",
+      "problemFocused": "Aborde les points de douleur courants et les solutions",
+      "forwardLooking": "Analyse prospective avec prédictions futures",
+      "financialPerspective": "Perspective financière sur {{topic}} dans {{industry}}",
+      "caseStudies": "Vrais cas d'étude des leaders de {{industry}}",
+      "leadershipInsights": "Aperçus de leadership des experts de l'industrie",
+      "regulatoryPerspective": "Considérations réglementaires et de conformité",
+      "businessValue": "Valeur commerciale et analyse du ROI",
+      "audienceSpecific": "Adapté spécifiquement pour {{audience}}",
+      "trendCapitalizes": "Capitalise sur les tendances actuelles de {{topic}}",
+      "highQuality": "Contenu de haute qualité et durable"
+    },
+    "fallbacks": {
+      "industries": "votre industrie",
+      "professionals": "professionnels",
+      "anyIndustry": "toute industrie",
+      "professional": "professionnel",
+      "companies": "entreprises",
+      "experts": "experts",
+      "yourField": "votre domaine",
+      "industryTrends": "tendances de l'industrie",
+      "industry": "industrie",
+      "anyField": "tout domaine",
+      "theirIndustry": "leur industrie"
+    },
+    "debug": {
+      "topicSelected": "Sujet sélectionné :",
+      "errorGenerating": "Erreur lors de la génération des suggestions de sujets :"
+    }
+  }
+} 

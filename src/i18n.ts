@@ -28,7 +28,7 @@ i18n
       caches: [],
     },
     // Namespace configuration
-    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform'],
+    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform', 'inspiration', 'inspiration-hub'],
     defaultNS: 'common',
     // Backend configuration for loading translations
     backend: {

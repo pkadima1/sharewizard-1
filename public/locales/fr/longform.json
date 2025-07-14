@@ -468,7 +468,8 @@
       "difficultyLabel": "Difficulté",
       "priority": "Priorité",
       "trafficPotential": "Potentiel de Trafic",
-      "relevance": "Pertinence"
+      "relevance": "Pertinence",
+      "trendingScore": "Score de Tendance"
     },
     "difficulty": {
       "easy": "Facile",
@@ -530,6 +531,7 @@
       "clusterKeywordsAdded": "Mots-clés du cluster {{theme}} ajoutés !",
       "keywordsExported": "Mots-clés exportés en {{format}} !",
       "customKeywordAdded": "Mot-clé personnalisé ajouté avec analyse avancée !",
+      "trendsIntegrated": "Données Google Trends intégrées ! Mots-clés classés par popularité tendance.",
       "generationFailed": "Échec de la génération des mots-clés. Veuillez réessayer."
     },
     "empty": {
@@ -603,6 +605,18 @@
       "product": "Produit",
       "guide": "Guide",
       "comparison": "Comparaison"
+    },
+    "trending": {
+      "hot": "Tendance",
+      "trending": "En Tendance",
+      "score": "Score de Tendance"
+    },
+    "trends": {
+      "title": "Intégration Google Trends",
+      "integration": "Données en Temps Réel",
+      "insights": "Aperçus de Tendance",
+      "insightsDescription": "Les mots-clés sont maintenant classés par popularité tendance. Les mots-clés chauds (🔥) indiquent un intérêt actuel élevé.",
+      "error": "Données de tendance indisponibles"
     }
   },
   "step4": {
@@ -1997,6 +2011,89 @@
       "pdfTitle": "PDF propre téléchargé",
       "pdfError": "Échec de la génération PDF",
       "pdfErrorDesc": "Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer."
+    }
+  },
+  "aiIdeasGenerator": {
+    "title": "Générateur d'Idées IA",
+    "subtitle": "Générez des idées de contenu engageantes alimentées par l'analyse IA avancée",
+    "version": "v1.0.0",
+    "aiDisclaimer": {
+      "title": "Génération Alimentée par l'IA",
+      "text": "Cet outil utilise l'IA avancée pour analyser les tendances, mots-clés et préférences d'audience pour générer des idées de contenu uniques."
+    },
+    "indicators": {
+      "enhancedAi": "IA Améliorée",
+      "keywords": "mots-clés",
+      "trends": "tendances"
+    },
+    "buttons": {
+      "generate": "Générer des Idées",
+      "generating": "Génération...",
+      "generateFirst": "Générer les Premières Idées",
+      "useIdea": "Utiliser cette Idée"
+    },
+    "stages": {
+      "initializing": "Initialisation de l'IA...",
+      "analyzing": "Analyse des mots-clés et tendances...",
+      "generating": "Génération d'idées de contenu...",
+      "optimizing": "Optimisation pour l'engagement...",
+      "finalizing": "Finalisation des résultats..."
+    },
+    "errors": {
+      "notAuthenticated": "Veuillez vous connecter pour générer des idées",
+      "limitReached": "Limite quotidienne atteinte. Veuillez mettre à niveau votre plan pour plus d'idées.",
+      "generationFailed": "Échec de la génération d'idées. Utilisation des modèles de secours.",
+      "fallbackMessage": "Utilisation de modèles pré-générés basés sur vos mots-clés et niche."
+    },
+    "messages": {
+      "ideasGenerated": "Généré {{count}} idées de contenu uniques",
+      "cachedIdeasLoaded": "Idées chargées depuis le cache",
+      "ideaSelected": "Idée sélectionnée : {{title}}"
+    },
+    "usage": {
+      "requestsRemaining": "demandes restantes",
+      "today": "aujourd'hui",
+      "resetDate": "Date de Réinitialisation"
+    },
+    "status": {
+      "offline": "Hors ligne"
+    },
+    "upgrade": {
+      "title": "Mettre à Niveau pour Plus d'Idées",
+      "description": "Vous avez atteint votre limite quotidienne. Mettez à niveau pour générer des idées illimitées et accéder aux fonctionnalités avancées.",
+      "upgradeButton": "Mettre à Niveau Maintenant",
+      "laterButton": "Plus Tard"
+    },
+    "results": {
+      "title": "Idées Générées"
+    },
+    "analytics": {
+      "title": "Analytiques d'Utilisation",
+      "totalRequests": "Demandes Totales",
+      "dailyRequests": "Demandes Quotidiennes",
+      "requestsRemaining": "Demandes Restantes",
+      "resetDate": "Date de Réinitialisation"
+    },
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "contentType": {
+      "social_post": "Post Social",
+      "blog_article": "Article de Blog"
+    },
+    "keywords": {
+      "label": "Mots-clés Cibles"
+    },
+    "metrics": {
+      "engagement": "Engagement",
+      "seo": "Potentiel SEO",
+      "readTime": "Temps de Lecture"
+    },
+    "empty": {
+      "title": "Aucune Idée Générée Encore",
+      "description": "Cliquez sur le bouton ci-dessous pour générer vos premières idées de contenu alimentées par l'IA."
     }
   }
 }

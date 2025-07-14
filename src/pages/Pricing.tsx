@@ -10,8 +10,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { useToast } from '@/hooks/use-toast';
 import { getStripePriceId } from '@/lib/subscriptionUtils';
 import { cn } from '@/lib/utils';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackSubscription, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
 
 const Pricing: React.FC = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Pricing - EngagePerfect');
+
   // Set yearly as the default billing cycle
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
   const { currentUser } = useAuth();
@@ -20,8 +25,21 @@ const Pricing: React.FC = () => {
   const { t } = useTranslation('pricing');
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
-  }>({});  const handlePurchase = async (plan: string, priceId: string) => {
+  }>({});  // Analytics: Track billing cycle changes
+  const handleBillingCycleChange = (cycle: 'monthly' | 'yearly') => {
+    setBillingCycle(cycle);
+    trackFeatureUsage('billing_cycle_toggle', {
+      selected_cycle: cycle,
+      previous_cycle: billingCycle
+    });
+  };
+
+  const handlePurchase = async (plan: string, priceId: string) => {
     try {
+      // Analytics: Track subscription attempt
+      trackSubscription('purchase_initiated', plan);
+      trackButtonClick('subscribe', `${plan}_${billingCycle}`);
+      
       setIsLoading(prev => ({
         ...prev,
         [plan]: true
@@ -55,8 +73,16 @@ const Pricing: React.FC = () => {
       // Redirect to the checkout URL
       window.location.href = checkoutUrl;
       
+      // Analytics: Track successful checkout redirect
+      trackSubscription('checkout_redirect_success', plan);
+      
     } catch (error: any) {
       console.error('Error creating checkout session:', error);
+      
+      // Analytics: Track checkout error
+      trackError('checkout_error', error.message, 'pricing_page');
+      trackSubscription('checkout_failed', plan);
+      
       toast({
         title: t('errors.title', 'Error'),
         description: `${t('errors.checkout')}: ${error.message}`,
@@ -101,7 +127,7 @@ const Pricing: React.FC = () => {
                   ? 'bg-violet-600 text-white' 
                   : 'text-adaptive-secondary hover:text-adaptive-primary'
               )} 
-              onClick={() => setBillingCycle('monthly')}
+              onClick={() => handleBillingCycleChange('monthly')}
             >
               {t('billingCycle.monthly')}
             </button>
@@ -112,7 +138,7 @@ const Pricing: React.FC = () => {
                   ? 'bg-violet-600 text-white' 
                   : 'text-adaptive-secondary hover:text-adaptive-primary'
               )} 
-              onClick={() => setBillingCycle('yearly')}
+              onClick={() => handleBillingCycleChange('yearly')}
             >
               {t('billingCycle.yearly')}
             </button>

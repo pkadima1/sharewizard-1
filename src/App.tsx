@@ -3,10 +3,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ChatProvider } from "./contexts/ChatContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { AnalyticsProvider } from "./contexts/AnalyticsContext";
 import RouterConfig from "./RouterConfig";
 import SupportChat from './components/SupportChat';
 import { detectAndSetLanguage } from './utils/languageUtils';
@@ -37,21 +39,25 @@ if (typeof window !== 'undefined') {
 }
 const queryClient = new QueryClient();
 const App = () => <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <LanguageProvider>
-            <ChatProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <RouterConfig />
-                <SupportChat />
-              </TooltipProvider>
-            </ChatProvider>
-          </LanguageProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </ThemeProvider>
+    <HelmetProvider>
+      <ThemeProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <AnalyticsProvider>
+              <LanguageProvider>
+                <ChatProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <Sonner />
+                    <RouterConfig />
+                    <SupportChat />
+                  </TooltipProvider>
+                </ChatProvider>
+              </LanguageProvider>
+            </AnalyticsProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </HelmetProvider>
   </QueryClientProvider>;
 export default App;

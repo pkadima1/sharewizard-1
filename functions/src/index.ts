@@ -46,3 +46,5 @@ export { getContactFormAnalytics } from './contactForm.js';
 //   logger.info("Hello logs!", {structuredData: true});
 //   response.send("Hello from Firebase!");
 // });
+
+export { generateContentIdeas } from "./generateContentIdeas.js";

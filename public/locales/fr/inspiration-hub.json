@@ -1,0 +1,230 @@
+{
+  "page": {
+    "title": "Hub d'Inspiration - Idées de Contenu IA | EngagePerfect",
+    "description": "Découvrez des sujets tendance, générez des idées de contenu et explorez l'inspiration alimentée par l'IA pour vos réseaux sociaux et votre marketing de contenu. Obtenez des suggestions personnalisées selon votre secteur et votre audience.",
+    "keywords": "idées de contenu, sujets tendance, inspiration réseaux sociaux, génération de contenu IA, idées marketing, stratégie de contenu"
+  },
+  "breadcrumbs": {
+    "home": "Accueil",
+    "inspiration": "Hub d'Inspiration"
+  },
+  "hero": {
+    "title": "Hub d'Inspiration",
+    "subtitle": "Découvrez des sujets tendance, générez des mots-clés et obtenez des idées de contenu alimentées par l'IA adaptées à votre niche",
+    "badge": "Nouveau",
+    "features": {
+      "trending": {
+        "title": "Tendances",
+        "description": "Découvrez ce qui est populaire et pertinent dans votre secteur."
+      },
+      "personalized": {
+        "title": "Idées Personnalisées",
+        "description": "Obtenez des idées de contenu adaptées à votre niche et vos objectifs."
+      },
+      "ai": {
+        "title": "Propulsé par l'IA",
+        "description": "Exploitez l'IA avancée pour un contenu unique et de haute qualité."
+      }
+    },
+    "skipButtons": {
+      "captionGenerator": "Aller au Générateur de Légendes",
+      "longformContent": "Aller au Contenu Long-format"
+    }
+  },
+  "quickActions": {
+    "title": "Actions Rapides",
+    "description": "Commencez par une action rapide pour générer du contenu ou explorer les tendances.",
+    "getStarted": "Commencer",
+    "captionGenerator": {
+      "title": "Générateur de Légendes",
+      "description": "Créez des légendes engageantes pour vos posts"
+    },
+    "longformContent": {
+      "title": "Contenu Long-format",
+      "description": "Générez des articles de blog longs et optimisés"
+    },
+    "trendingTopics": {
+      "title": "Sujets Tendance",
+      "description": "Découvrez les sujets populaires du moment"
+    }
+  },
+  "mainSection": {
+    "title": "Hub d'Inspiration",
+    "description": "Découvrez des sujets tendance, générez des mots-clés et obtenez des idées de contenu alimentées par l'IA adaptées à votre niche"
+  },
+  "loading": {
+    "title": "Chargement du Hub d'Inspiration...",
+    "description": "Veuillez patienter pendant que nous chargeons les dernières tendances et idées."
+  },
+  "valueProposition": {
+    "title": "Pourquoi utiliser le Hub d'Inspiration ?",
+    "description": "Gagnez du temps, restez pertinent et développez votre audience avec des idées de contenu alimentées par l'IA.",
+    "benefits": {
+      "speed": "Création de contenu plus rapide",
+      "relevance": "Toujours pertinent pour votre audience",
+      "trends": "Restez à la pointe des tendances",
+      "audience": "Développez votre audience"
+    },
+    "cta": "Commencer la création",
+    "stats": {
+      "title": "Notre Impact",
+      "content": "Contenu généré par l'IA",
+      "users": "Utilisateurs actifs",
+      "satisfaction": "Satisfaction des utilisateurs",
+      "support": "Support 24/7"
+    }
+  },
+  "steps": {
+    "niche": {
+      "title": "Sélection de Niche",
+      "description": "Choisissez votre industrie ou niche"
+    },
+    "keywords": {
+      "title": "Mots-clés et Tendances",
+      "description": "Générez des mots-clés et explorez les tendances"
+    },
+    "ideas": {
+      "title": "Idées IA",
+      "description": "Obtenez des idées de contenu alimentées par l'IA"
+    },
+    "export": {
+      "title": "Export",
+      "description": "Exportez les idées sélectionnées"
+    }
+  },
+  "nicheSelection": {
+    "title": "Choisissez Votre Niche",
+    "description": "Sélectionnez une industrie ou entrez une niche personnalisée pour obtenir des idées de contenu personnalisées",
+    "detectedLocation": "Localisation détectée : {{location}}",
+    "or": "OU",
+    "customIndustry": {
+      "label": "Entrez une Industrie Personnalisée",
+      "placeholder": "ex., Mode Durable, Art Numérique, Soins pour Animaux...",
+      "showExamples": "Afficher les Exemples",
+      "hideExamples": "Masquer les Exemples"
+    },
+    "examples": [
+      "Mode Durable",
+      "Art Numérique",
+      "Soins pour Animaux",
+      "Amélioration de l'Habitat",
+      "Finance Personnelle",
+      "Santé Mentale"
+    ]
+  },
+  "keywordsTrends": {
+    "title": "Mots-clés et Tendances",
+    "description": "Générez des mots-clés pertinents et explorez les sujets tendance pour votre industrie",
+    "industry": "Industrie : {{industry}}",
+    "regionalTrends": "Tendances Régionales"
+  },
+  "aiIdeas": {
+    "title": "Idées de Contenu Alimentées par l'IA",
+    "description": "Obtenez des idées de contenu personnalisées basées sur votre industrie et vos mots-clés",
+    "readyToGenerate": {
+      "title": "Prêt à Générer des Idées ?",
+      "description": "Cliquez sur le bouton ci-dessous pour obtenir des suggestions de contenu alimentées par l'IA"
+    },
+    "generateIdeas": "Générer des Idées",
+    "generating": "Génération...",
+    "generatedIdeas": "Idées Générées",
+    "generateMore": "Générer Plus",
+    "ideasGenerated": "Généré {{count}} idées de contenu alimentées par l'IA !",
+    "generationFailed": "Échec de la génération d'idées. Veuillez réessayer.",
+    "ideaAdded": "Idée ajoutée à votre collection !"
+  },
+  "export": {
+    "title": "Exportez Vos Idées",
+    "description": "Révisez et exportez vos idées de contenu sélectionnées",
+    "noIdeasSelected": {
+      "title": "Aucune Idée Sélectionnée",
+      "description": "Retournez aux étapes précédentes pour générer et sélectionner des idées de contenu"
+    },
+    "selectedIdeas": "Idées Sélectionnées ({{count}})",
+    "exportAll": "Tout Exporter",
+    "exportedIdeas": "Exporté {{count}} idées !",
+    "noIdeasForExport": "Aucune idée sélectionnée pour l'export"
+  },
+  "navigation": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "exportIdeas": "Exporter les Idées"
+  },
+  "progress": {
+    "label": "Progression",
+    "step": "Étape {{current}} sur {{total}}"
+  },
+  "industries": {
+    "marketing": {
+      "name": "Marketing",
+      "description": "Marketing digital, stratégie de contenu, réseaux sociaux"
+    },
+    "technology": {
+      "name": "Technologie",
+      "description": "Logiciels, IA, transformation numérique"
+    },
+    "health": {
+      "name": "Santé et Bien-être",
+      "description": "Fitness, nutrition, santé mentale"
+    },
+    "finance": {
+      "name": "Finance",
+      "description": "Investissement, budgétisation, planification financière"
+    },
+    "education": {
+      "name": "Éducation",
+      "description": "Apprentissage, formation, développement de compétences"
+    },
+    "e-commerce": {
+      "name": "E-commerce",
+      "description": "Vente en ligne, expérience client"
+    },
+    "real-estate": {
+      "name": "Immobilier",
+      "description": "Propriété, investissement, analyse de marché"
+    },
+    "food-cooking": {
+      "name": "Cuisine et Alimentation",
+      "description": "Recettes, arts culinaires, nutrition"
+    },
+    "fitness": {
+      "name": "Fitness",
+      "description": "Entraînements, formation, objectifs de santé"
+    },
+    "travel": {
+      "name": "Voyage",
+      "description": "Destinations, expériences, aventure"
+    }
+  },
+  "contentIdeas": {
+    "ultimateGuide": "Guide Ultime de {{industry}}",
+    "ultimateGuideDescription": "Ressource complète couvrant tous les aspects de votre niche choisie",
+    "trends2024": "Top 10 des Tendances dans {{industry}} pour 2024",
+    "trendsDescription": "Explorez les dernières tendances et innovations dans votre domaine",
+    "masterSkills": "Comment Maîtriser {{skill}}",
+    "masterSkillsDescription": "Tutoriel étape par étape pour maîtriser les compétences essentielles"
+  },
+  "platforms": {
+    "blog": "Blog",
+    "socialMedia": "Réseaux Sociaux",
+    "video": "Vidéo"
+  },
+  "contentTypes": {
+    "guide": "Guide",
+    "trendAnalysis": "Analyse de Tendances",
+    "tutorial": "Tutoriel"
+  },
+  "difficulty": {
+    "easy": "Facile",
+    "medium": "Moyen",
+    "hard": "Difficile"
+  },
+  "metrics": {
+    "engagement": "{{value}}% d'engagement",
+    "difficulty": "{{level}} difficulté"
+  },
+  "actions": {
+    "copy": "Copier",
+    "open": "Ouvrir"
+  }
+} 

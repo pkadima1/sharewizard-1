@@ -370,6 +370,11 @@ const Step3KeywordsSEO: React.FC<Step3Props> = ({ formData, updateFormData }) =>
             selectedKeywords={selectedKeywords}
             onKeywordsChange={handleKeywordsChange}
             maxKeywords={15}
+            enableTrendsIntegration={true}
+            onTrendsData={(trends) => {
+              console.log('Google Trends data received:', trends);
+              // You can process trends data here if needed
+            }}
           />
 
           {/* SEO Impact Preview */}

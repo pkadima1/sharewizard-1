@@ -1231,6 +1231,13 @@ export const downloadPreview = async (
     success: boolean = true
    ): void => {
     try {
+      // Import analytics function dynamically to avoid circular dependencies
+      import('@/utils/analytics').then(({ trackContentShare }) => {
+        trackContentShare(platform, mediaType, success);
+      }).catch((error) => {
+        console.error('Error loading analytics:', error);
+      });
+      
       // Log the share event
       console.log(`Content shared to ${platform}: ${mediaType} (${success ? 'success' : 'failed'})`);
       

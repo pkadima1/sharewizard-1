@@ -25,6 +25,8 @@ import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngi
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import ContextualHelp from '@/components/wizard/smart/ContextualHelp';
 import { useTranslation } from 'react-i18next';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackContentGeneration, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
 
 // Helper function to get translated wizard steps
 const getWizardSteps = (t: any) => [
@@ -114,6 +116,9 @@ const getCtaTypeOptions = (t: any) => [
 ];
 
 const LongFormWizard = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Long-form Content Wizard - EngagePerfect');
+
   const { t } = useTranslation('longform');
   
   // Helper function to format last saved time with proper translation context
@@ -365,12 +370,27 @@ const LongFormWizard = () => {
 
   // Handle moving to the next step
   const handleNext = () => {
+    // Analytics: Track step progression
+    trackButtonClick('wizard_next', `longform_step_${currentStep}`);
+    
     // Mark current step as completed if valid
     if (isStepValid(currentStep)) {
       markStepCompleted(currentStep);
+      
+      // Analytics: Track step completion
+      trackFeatureUsage('wizard_step_completed', {
+        step: currentStep,
+        step_name: WIZARD_STEPS[currentStep],
+        wizard_type: 'longform'
+      });
+      
     } else {
       const errors = getStepErrors(currentStep);
       const errorMessages = errors.map(error => error.message).join('\n');
+      
+      // Analytics: Track validation errors
+      trackError('wizard_validation_error', `Step ${currentStep} validation failed`, 'longform_wizard');
+      
       alert(`${t('wizard.errors.beforeProceed')}\n\n${errorMessages}`);
       return;
     }
@@ -384,6 +404,9 @@ const LongFormWizard = () => {
 
   // Handle moving to the previous step
   const handlePrevious = () => {
+    // Analytics: Track backward navigation
+    trackButtonClick('wizard_previous', `longform_step_${currentStep}`);
+    
     if (currentStep > 0) {
       const prevStep = currentStep - 1;
       setCurrentStep(prevStep);
@@ -423,10 +446,39 @@ const LongFormWizard = () => {
   // Handle generation
   const handleGenerate = () => {
     if (!isFormValid) {
+      trackError('validation_error', 'Form validation failed', 'longform_wizard');
       alert(t('wizard.errors.allRequired'));
       return;
     }
+
+    // Analytics: Track longform content generation start
+    const generationStartTime = Date.now();
+    
+    trackContentGeneration('longform', {
+      status: 'started',
+      topic: formData.topic,
+      audience: formData.audience,
+      industry: formData.industry,
+      content_type: formData.contentType,
+      tone: formData.contentTone,
+      structure: formData.structureFormat,
+      word_count: formData.wordCount,
+      keywords: formData.keywords,
+      include_media: formData.includeMedia,
+      include_images: formData.includeImages,
+      quality_level: formData.qualityLevel
+    });
+
+    trackFeatureUsage('longform_generation', {
+      content_type: formData.contentType,
+      word_count: formData.wordCount,
+      source: 'longform_wizard'
+    });
+
     console.log('Generating content with data:', formData);
+    
+    // Store start time for completion tracking
+    sessionStorage.setItem('longform_generation_start', generationStartTime.toString());
   };
 
   // Keyboard Shortcuts Help Overlay Component

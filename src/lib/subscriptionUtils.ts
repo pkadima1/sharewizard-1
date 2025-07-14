@@ -520,7 +520,7 @@ export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearl
       return 'https://buy.stripe.com/8x29ATfC5cqvd8K1WReAg06'; // Premium Plan Monthly
     case 'premiumYear':
       return 'https://buy.stripe.com/5kQ9ATcpT1LRc4GfNHeAg07'; // Premium Plan Yearly
-      return 'https://buy.stripe.com/premium_year_placeholder'; // Premium Plan Yearly - update with actual Stripe URL
+     // return 'https://buy.stripe.com/premium_year_placeholder'; // Premium Plan Yearly - update with actual Stripe URL
     case 'flexy':
       return 'https://buy.stripe.com/28E4gz2PjeyDd8KatneAg05';
     default:
