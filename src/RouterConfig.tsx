@@ -20,18 +20,8 @@ import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
-import InspirationHubPage from "./pages/inspiration-hub";
 import { useLanguage } from "./contexts/LanguageContext";
 import { trackPageView } from "./utils/analytics";
-
-// Lazy-loaded test components (only in development)
-const TestLongformGeneration = lazy(() => 
-  import('./components/tests/TestLongformGeneration')
-);
-
-const GoogleTrendsTest = lazy(() => 
-  import('./components/examples/GoogleTrendsTest')
-);
 
 // Component to handle language URL detection and redirection
 const LanguageRouteHandler: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -116,7 +106,6 @@ const RouterConfig = () => {
               <Route path="/longform" element={<RootRedirect />} />
               <Route path="/gallery" element={<RootRedirect />} />
               <Route path="/blog" element={<RootRedirect />} />
-              <Route path="/inspiration-hub" element={<RootRedirect />} />
               <Route path="/contact" element={<RootRedirect />} />
               <Route path="/admin" element={<RootRedirect />} />
               
@@ -138,37 +127,12 @@ const RouterConfig = () => {
                     <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
                     <Route path="/gallery" element={<Gallery />} />
                                   <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
-              <Route path="/inspiration-hub" element={<ErrorBoundary><InspirationHubPage /></ErrorBoundary>} />
               <Route path="/contact" element={<Contact />} />
                     
                     {/* Admin routes */}
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
                     
-                    {/* Development-only testing routes */}
-                    {import.meta.env.DEV && (
-                      <>
-                        <Route 
-                          path="/test-longform" 
-                          element={
-                            <ErrorBoundary>
-                              <Suspense fallback={<div className="p-8 text-center">Loading test component...</div>}>
-                                <TestLongformGeneration />
-                              </Suspense>
-                            </ErrorBoundary>
-                          } 
-                        />
-                        <Route 
-                          path="/test-trends" 
-                          element={
-                            <ErrorBoundary>
-                              <Suspense fallback={<div className="p-8 text-center">Loading Google Trends test...</div>}>
-                                <GoogleTrendsTest />
-                              </Suspense>
-                            </ErrorBoundary>
-                          } 
-                        />
-                      </>
-                    )}
+
                     
                     {/* Nested route catch-all for unknown pages */}
                     <Route path="*" element={<NotFound />} />
