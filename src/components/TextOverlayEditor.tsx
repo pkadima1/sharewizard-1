@@ -37,7 +37,7 @@ export const TextOverlayEditor: React.FC<TextOverlayEditorProps> = ({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // Handle emoji selection
-  const handleEmojiSelect = (emoji: any) => {
+  const handleEmojiSelect = (emoji: { native: string }) => {
     const newText = textOverlay + emoji.native;
     setTextOverlay(newText);
     onTextChange(newText);

@@ -41,7 +41,7 @@ const PreviewRepost = () => {
       console.log('Checking for text overlay data in mediaFile:', mediaFile);
       
       // Try to get text overlay data directly from the file
-      // @ts-ignore - custom property for text overlays
+      // @ts-expect-error - custom property for text overlays
       const textOverlayData = mediaFile.textOverlayData;
       
       if (textOverlayData) {
@@ -59,14 +59,14 @@ const PreviewRepost = () => {
           // Try to find a matching file in the cache
           const cacheKeys = Object.keys(window.mediaFileCache || {});
           for (const key of cacheKeys) {
-            // @ts-ignore - custom property
+            // @ts-expect-error - custom property
             const cachedFile = window.mediaFileCache[key];
             
             if (cachedFile && 
                 cachedFile.name === mediaFile.name && 
                 cachedFile.size === mediaFile.size) {
               // Found a matching file in the cache
-              // @ts-ignore - custom property
+              // @ts-expect-error - custom property
               const cachedOverlay = cachedFile.textOverlayData;
               if (cachedOverlay) {
                 console.log('Found text overlay data in cache:', cachedOverlay);
@@ -100,7 +100,7 @@ const PreviewRepost = () => {
             // Add text overlay data to the video element
             if (customTextOverlay) {
               // Add text overlay data to the video element for processing
-              // @ts-ignore - custom property for text overlay
+              // @ts-expect-error - custom property for text overlay
               (video as HTMLVideoElement).textOverlayData = {
                 text: customTextOverlay,
                 position: textPosition,
@@ -110,7 +110,7 @@ const PreviewRepost = () => {
               };
               
               // Also add the original mediaFile as a reference to enable fallback retrieval
-              // @ts-ignore - custom property for reference
+              // @ts-expect-error - custom property for reference
               (video as HTMLVideoElement).mediaFile = mediaFile;
               
               console.log('Added text overlay data to video element:', (video as HTMLVideoElement & { textOverlayData?: any }).textOverlayData);
@@ -135,7 +135,7 @@ const PreviewRepost = () => {
             
             // Store text overlay data in the processed file as well
             if (customTextOverlay) {
-              // @ts-ignore - custom property for text overlay
+              // @ts-expect-error - custom property for text overlay
               file.textOverlayData = {
                 text: customTextOverlay,
                 position: textPosition,

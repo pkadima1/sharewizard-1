@@ -66,9 +66,12 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: unknown) => {
     if (!timestamp) return 'Unknown';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    // Handle Firestore timestamp or regular date
+    const date = (timestamp as { toDate?: () => Date }).toDate ? 
+      (timestamp as { toDate: () => Date }).toDate() : 
+      new Date(timestamp as string | number | Date);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -102,7 +105,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        fileName = `${sanitizedTitle}.md`;
        mimeType = 'text/markdown';
        break;
-     case 'html':
+     case 'html': {
        // Use enhanced formatter for better HTML output
        const formattedContent = formatBlogContent(content.content, {
          darkMode: false,
@@ -150,6 +153,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        fileName = `${sanitizedTitle}.html`;
        mimeType = 'text/html';
        break;
+     }
      case 'txt':
        // Strip markdown formatting for plain text
        fileContent = content.content
@@ -373,8 +377,9 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        title: t('contentManager.download.pdfTitle'),
        description: t('contentManager.download.pdfSuccess', { fileName: sanitizedTitle }),
      });
-   }).catch((error: any) => {
+   }).catch((error: unknown) => {
      console.error('PDF generation failed:', error);
+     const errorMessage = error instanceof Error ? error.message : 'PDF generation failed';
      toast({
        title: t('contentManager.download.pdfError'),
        description: t('contentManager.download.pdfErrorDesc'),
@@ -725,7 +730,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
  };
 
  // Clean copy content generator - neutral colors, no backgrounds
- const generateCleanCopyContent = (content: string, metadata: any, language: string) => {
+ const generateCleanCopyContent = (content: string, metadata: Record<string, unknown>, language: string) => {
    // Use translation system instead of manual language detection
    const authorLabel = t('contentManager.metadata.author') || 'Author';
    const readingTimeLabel = t('contentManager.metadata.readingTime') || 'Reading Time';
@@ -763,9 +768,9 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
            <span>${readingTimeLabel}: ${metadata.readingTime}</span> • 
            <span>${publishedLabel}: ${metadata.publishDate}</span>
          </div>
-         ${metadata.tags.length > 0 ? `
+         ${Array.isArray(metadata.tags) && metadata.tags.length > 0 ? `
            <div style="margin-top: 15px;">
-             ${metadata.tags.map((tag: string) => `
+             ${(metadata.tags as string[]).map((tag: string) => `
                <span style="
                  background: #f0f0f0;
                  color: #333333;

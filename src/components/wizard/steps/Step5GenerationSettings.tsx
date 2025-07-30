@@ -32,11 +32,16 @@ import {
   Star,
   Zap
 } from 'lucide-react';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 interface Step5Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & { 
+    outputFormat?: string; 
+    plagiarismCheck?: boolean;
+    includeImages?: boolean;
+  };
+  updateFormData: (key: string, value: string | number | string[] | boolean) => void;
 }
 
 const Step5GenerationSettings: React.FC<Step5Props> = ({ formData, updateFormData }) => {

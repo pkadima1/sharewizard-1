@@ -20,12 +20,14 @@ i18n
     debug: import.meta.env.DEV,
     // Language detector options
     detection: {
-      // Order of detection methods
-      order: ['path', 'localStorage', 'navigator'],
+      // Order of detection methods - prioritize localStorage over browser detection
+      order: ['localStorage', 'path', 'navigator'],
       // Where to look in the URL path (index 1 means /:lang/...)
       lookupFromPathIndex: 1,
-      // Don't cache the detected language in localStorage (we handle this manually)
-      caches: [],
+      // Enable localStorage caching for language detection
+      caches: ['localStorage'],
+      // localStorage key name
+      lookupLocalStorage: 'i18nextLng',
     },
     // Namespace configuration
     ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform'],

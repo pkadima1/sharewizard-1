@@ -54,54 +54,48 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
   
   const handleShareToSocial = async () => {
     if (!previewRef.current) {
-      toast.error("Conteneur d'aperçu introuvable. Veuillez réessayer.");
+      toast.error("Preview container not found. Please try again.");
       console.error("Preview ref is null:", previewRef.current);
       return;
     }
     
     const sharableContent = previewRef.current.querySelector('#sharable-content');
     if (!sharableContent) {
-      toast.error("Contenu partageable introuvable. Veuillez réessayer.");
+      toast.error("Sharable content not found. Please try again.");
       console.error("Sharable content not found in:", previewRef.current);
       return;
     }
     
     if (!captions[selectedCaption]) {
-      toast.error("Aucune légende sélectionnée à partager");
+      toast.error("No caption selected for sharing");
       return;
     }
     
+    setIsSharing(true);
+    
     try {
-      // Start the sharing process and show the dialog immediately
-      setIsSharing(true);
-      setShowShareDialog(true);
-      setPreparedShareData(null); // Reset any previous data
-      
-      console.log("Starting sharing process for media type:", mediaType);
-      
-      // Prepare the media in the background
-      const prepared = await prepareMediaForSharing(
+      const caption = captions[selectedCaption];
+      const { formattedCaption, title, mediaFile } = await prepareMediaForSharing(
         previewRef,
-        captions[selectedCaption],
+        caption,
         mediaType
       );
       
-      // Update the dialog with prepared content
       setPreparedShareData({
-        title: prepared.title,
-        text: prepared.formattedCaption,
-        file: prepared.mediaFile
+        title,
+        text: formattedCaption,
+        file: mediaFile
       });
       
-      // Dialog stays open for user to click actual share button
+      setShowShareDialog(true);
     } catch (error) {
-      console.error("Error preparing media for sharing:", error);
-      toast.error("Échec de la préparation du contenu pour le partage. Veuillez réessayer.");
-      setShowShareDialog(false);
+      console.error("Error preparing share data:", error);
+      toast.error("Échec de la préparation du partage. Veuillez réessayer.");
     } finally {
       setIsSharing(false);
     }
   };
+
   const handleDownload = () => {
     if (!previewRef.current) {
       toast.error("Preview container not found. Please try again.");
@@ -124,11 +118,12 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
     // Simply set isDownloading to true, and the useEffect will handle the actual download
     setIsDownloading(true);
   };
-  // Use the proper downloadPreview directly from sharingUtils
+
   useEffect(() => {
     const handleDownloadProcess = async () => {
       if (isDownloading && previewRef.current) {
-        try {          const caption = captions[selectedCaption];
+        try {
+          const caption = captions[selectedCaption];
           if (!caption) {
             toast.error("No caption selected for download");
             setIsDownloading(false);
@@ -161,14 +156,15 @@ const CaptionSharingActions: React.FC<CaptionSharingActionsProps> = ({
     
     handleDownloadProcess();
   }, [isDownloading, previewRef, captions, selectedCaption, mediaType, captionOverlayMode, setIsDownloading]);
+
   return (
     <>
       <SocialSharing 
         isEditing={isEditing}
         isSharing={isSharing}
+        isDownloading={isDownloading}
         onShareClick={handleShareToSocial}
-
-
+        onDownloadClick={handleDownload}
         /* ====================commented out for now until full SM platforms integration============*/
        
        // selectedPlatform={selectedPlatform}

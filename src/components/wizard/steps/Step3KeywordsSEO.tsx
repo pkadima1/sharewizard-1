@@ -21,10 +21,11 @@ import {
 } from 'lucide-react';
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import SmartKeywordGenerator from '@/components/wizard/smart/SmartKeywordGenerator';
+import { WizardFormData } from '@/types/components';
 
 interface Step3Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & { optimizedTitle?: string };
+  updateFormData: (key: string, value: string | number | string[]) => void;
 }
 
 const Step3KeywordsSEO: React.FC<Step3Props> = ({ formData, updateFormData }) => {

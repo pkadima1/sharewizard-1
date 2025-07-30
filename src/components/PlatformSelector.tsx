@@ -78,7 +78,7 @@ const PLATFORMS = [
 // Platform sharing message type
 interface PlatformSharingMessage {
   title: string;
-  iconComponent: React.ComponentType<any>;
+  iconComponent: React.ComponentType<{ className?: string }>;
   iconColor: string;
   message: string;
   buttonText: string;
@@ -125,7 +125,7 @@ const PlatformSelector: React.FC<PlatformSelectorProps> = ({
   const { t, ready } = useTranslation('caption-generator');
   
   // Fallback function to prevent showing translation keys
-  const translate = (key: string, options?: any): string => {
+  const translate = (key: string, options?: Record<string, unknown>): string => {
     const translation = t(key, options);
     // Ensure we always return a string
     const translationStr = typeof translation === 'string' ? translation : String(translation);

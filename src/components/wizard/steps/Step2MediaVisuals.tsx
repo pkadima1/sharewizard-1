@@ -13,14 +13,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useToast } from '@/hooks/use-toast';
 import { useAutoSave, getDraftInfo } from '@/hooks/useAutoSave';
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_FILES = 5;
 
 interface Step2Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & { mediaFiles?: File[] };
+  updateFormData: (key: string, value: string | number | string[] | File[]) => void;
 }
 
 const Step2MediaVisuals: React.FC<Step2Props> = ({ formData, updateFormData }) => {

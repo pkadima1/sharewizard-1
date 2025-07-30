@@ -52,6 +52,7 @@ import {
   Loader2,
   RefreshCw
 } from 'lucide-react';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 // SEO scoring weights
@@ -65,11 +66,41 @@ const SEO_WEIGHTS = {
   metaOptimization: 5
 };
 
+// Firebase callable function types
+interface GenerateLongformRequest {
+  topic: string;
+  audience: string;
+  industry: string;
+  primaryKeywords: string[];
+  secondaryKeywords: string[];
+  contentTone: string;
+  contentType: string;
+  structureFormat: string;
+  wordCount: number;
+  includeStats: boolean;
+  ctaType: string;
+  outputFormat: string;
+  plagiarismCheck: boolean;
+  language: string;
+  customIndustry?: string;
+}
+
 // Define the interface for the function response
 interface GenerateLongformResponse {
   success: boolean;
   content?: string;
-  outline?: any;
+  outline?: {
+    meta: Record<string, unknown>;
+    hookOptions: string[];
+    sections: Array<{
+      title: string;
+      wordCount: number;
+      tone: string;
+      keyPoints: string[];
+    }>;
+    seoStrategy: Record<string, unknown>;
+    conclusion: Record<string, unknown>;
+  };
   metadata?: {
     actualWordCount: number;
     outlineGenerationTime: number;
@@ -89,8 +120,8 @@ interface GenerateLongformResponse {
 }
 
 interface Step6Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & Record<string, unknown>;
+  updateFormData: (key: string, value: string | number | string[] | boolean) => void;
   onGenerate: () => void;
   onEditStep: (stepNumber: number) => void;
 }
@@ -116,11 +147,13 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     setGenerationProgress(Math.round(value * 10) / 10); // Round to 1 decimal place
   };
 
-  // Create the callable function
+  // Create the callable function with extended timeout
   const generateLongformContentFunction = httpsCallable<
-    any, 
+    GenerateLongformRequest, 
     GenerateLongformResponse
-  >(functions, 'generateLongformContent');
+  >(functions, 'generateLongformContent', {
+    timeout: 600000 // 10 minutes timeout to match server configuration
+  });
 
   // Initialize export format from formData
   useEffect(() => {
@@ -488,8 +521,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
   const handleGenerate = async () => {
     // Check authentication first
     if (!currentUser) {
-      toast.error(t('step6.generation_login_error'), {
-        description: t('step6.generation_login_description')
+      toast.error(t('step6.generation_errors.generation_login_error'), {
+        description: t('step6.generation_errors.generation_login_description')
       });
       navigate('/login');
       return;
@@ -497,8 +530,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
 
     // Check if user profile is loaded and has sufficient requests
     if (!userProfile) {
-      toast.error(t('step6.loading_profile_error'), {
-        description: t('step6.loading_profile_description')
+      toast.error(t('step6.generation_errors.loading_profile_error'), {
+        description: t('step6.generation_errors.loading_profile_description')
       });
       return;
     }
@@ -506,10 +539,10 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     // Check request limits - Long-form content requires 4 credits
     const requestsRemaining = (userProfile.requests_limit || 0) - (userProfile.requests_used || 0);
     if (requestsRemaining < 4) {
-      toast.error(t('step6.insufficient_credits_error'), {
-        description: t('step6.insufficient_credits_description', { credits: 4, remaining: requestsRemaining }),
+      toast.error(t('step6.generation_errors.insufficient_credits_error'), {
+        description: t('step6.generation_errors.insufficient_credits_description', { credits: 4, remaining: requestsRemaining }),
         action: {
-          label: t('step6.upgrade_plan_action'),
+          label: t('step6.generation_errors.upgrade_plan_action'),
           onClick: () => navigate('/pricing')
         }
       });
@@ -517,12 +550,12 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     }
 
     if (completionChecklist.requiredCompleted < completionChecklist.requiredCount) {
-      toast.error(t('step6.complete_required_items_error'));
+      toast.error(t('step6.generation_errors.complete_required_items_error'));
       return;
     }
     
     let progressUpdateInterval: NodeJS.Timeout | null = null;
-    let contentGenerationInterval: NodeJS.Timeout | null = null;
+    const contentGenerationInterval: NodeJS.Timeout | null = null;
     
     try {
       setIsGenerating(true);
@@ -552,10 +585,10 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         outputFormat: selectedExportFormats[0] || 'markdown',
         ctaType: formData.ctaType || 'none',
         structureNotes: formData.structureNotes || '',
-        mediaUrls: (formData.mediaFiles || []).map((file: any) => file.url || ''),
+        mediaUrls: (formData.mediaFiles || []).map((file: { url?: string }) => file.url || ''),
         // Enhanced Media Integration Fields
-        mediaCaptions: (formData.mediaFiles || []).map((file: any) => file.metadata?.mediaCaption || ''),
-        mediaAnalysis: (formData.mediaFiles || []).map((file: any) => file.metadata?.aiAnalysis || ''),
+        mediaCaptions: (formData.mediaFiles || []).map((file: { metadata?: { mediaCaption?: string } }) => file.metadata?.mediaCaption || ''),
+        mediaAnalysis: (formData.mediaFiles || []).map((file: { metadata?: { aiAnalysis?: string } }) => file.metadata?.aiAnalysis || ''),
         mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto', // auto, manual, or semantic
         // Enhanced GEO optimization parameters
         targetLocation: formData.targetLocation || '',
@@ -569,11 +602,11 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       // Update progress based on typical function execution timeline
       progressUpdateInterval = setInterval(() => {
         setGenerationProgress(prev => {
-          // Fix floating-point precision by using Math.min and proper rounding
-          const newProgress = Math.min(85, Math.round((prev + 0.5) * 10) / 10);
+          // More realistic progress based on actual generation time (~66 seconds)
+          const newProgress = Math.min(90, Math.round((prev + 1.5) * 10) / 10);
           return newProgress;
         });
-      }, 1500); // Slower updates to account for actual generation time
+      }, 1000); // Faster updates for better user experience
       
       setGenerationStage('outline');
 
@@ -593,8 +626,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         setGenerationStage('complete');
         setIsGenerating(false);
         
-        toast.success(t('step6.generation_success'), {
-          description: t('step6.generation_success_description', { 
+        toast.success(t('step6.generation_errors.generation_success'), {
+          description: t('step6.generation_errors.generation_success_description', { 
             wordCount: result.data.metadata?.actualWordCount || formData.wordCount 
           })
         });
@@ -621,7 +654,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         throw new Error("Content generation completed but returned an unexpected response format. Please try again.");
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (progressUpdateInterval) clearInterval(progressUpdateInterval);
       if (contentGenerationInterval) clearInterval(contentGenerationInterval);
       
@@ -633,46 +666,50 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       console.error("Generation error:", error);
       
       // Enhanced error handling with specific messages for common errors
-      let errorMessage = t('step6.generation_unexpected_error');
+      let errorMessage = t('step6.generation_errors.generation_unexpected_error');
       let errorAction = null;
       
       if (error.code) {
         // Handle Firebase error codes
         switch (error.code) {
           case 'functions/cancelled':
-            errorMessage = t('step6.generation_cancelled_error');
+            errorMessage = t('step6.generation_errors.generation_cancelled_error');
             break;
           case 'functions/deadline-exceeded':
-            errorMessage = t('step6.generation_deadline_exceeded_error');
+            errorMessage = t('step6.generation_errors.generation_deadline_exceeded_error');
+            errorAction = {
+              label: t('step6.generation_errors.retry_generation_action'),
+              onClick: () => handleRetryGeneration()
+            };
             break;
           case 'functions/resource-exhausted':
-            errorMessage = t('step6.generation_resource_exhausted_error');
+            errorMessage = t('step6.generation_errors.generation_resource_exhausted_error');
             errorAction = {
-              label: t('step6.upgrade_plan_action'),
+              label: t('step6.generation_errors.upgrade_plan_action'),
               onClick: () => navigate('/pricing')
             };
             break;
           case 'functions/unauthenticated':
           case 'functions/permission-denied':
-            errorMessage = t('step6.generation_permission_denied_error');
+            errorMessage = t('step6.generation_errors.generation_permission_denied_error');
             errorAction = {
-              label: t('step6.log_in_action'),
+              label: t('step6.generation_errors.log_in_action'),
               onClick: () => navigate('/login')
             };
             break;
           case 'functions/internal':
             if (error.message && error.message.includes('insufficient credits')) {
-              errorMessage = t('step6.generation_insufficient_credits_error');
+              errorMessage = t('step6.generation_errors.generation_insufficient_credits_error');
               errorAction = {
-                label: t('step6.upgrade_plan_action'),
+                label: t('step6.generation_errors.upgrade_plan_action'),
                 onClick: () => navigate('/pricing')
               };
             } else {
-              errorMessage = t('step6.generation_internal_error', { message: error.message });
+              errorMessage = t('step6.generation_errors.generation_internal_error', { message: error.message });
             }
             break;
           case 'functions/invalid-argument':
-            errorMessage = t('step6.generation_invalid_argument_error', { message: error.message });
+            errorMessage = t('step6.generation_errors.generation_invalid_argument_error', { message: error.message });
             break;
           default:
             // Use the error message from Firebase if available
@@ -681,20 +718,20 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       } else if (error.message) {
         // Handle non-Firebase errors
         if (error.message.includes('insufficient credits') || error.message.includes('not enough credits')) {
-          errorMessage = t('step6.generation_insufficient_credits_per_generation_error');
+          errorMessage = t('step6.generation_errors.generation_insufficient_credits_per_generation_error');
           errorAction = {
-            label: t('step6.upgrade_plan_action'),
+            label: t('step6.generation_errors.upgrade_plan_action'),
             onClick: () => navigate('/pricing')
           };
         } else {
-          errorMessage = t('step6.generation_failed', { message: error.message });
+          errorMessage = t('step6.generation_errors.generation_failed', { message: error.message });
         }
       }
 
       setGenerationError(errorMessage);
       setIsGenerating(false);
       
-      toast.error(t('step6.generation_failed_error'), {
+      toast.error(t('step6.generation_errors.generation_failed_error'), {
         description: errorMessage,
         action: errorAction
       });

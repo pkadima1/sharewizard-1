@@ -1,12 +1,12 @@
 // MediaUploader.tsx - FIXED VERSION WITH EMBEDDED TEXT EDITOR AND EMOJI PICKER
-import React, { useState, useRef, useCallback, useEffect, MouseEvent, TouchEvent } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { 
   Upload, Camera, X, RotateCw, Crop, Type, RefreshCw, Check,
   Sliders, FileEdit, RotateCcw, Image, FileText, AlertCircle,
-  VideoIcon, Info, Sparkles, SmilePlus, Move
+  VideoIcon, Info, Sparkles, SmilePlus, Move, AlignLeft, AlignCenter, AlignRight
 } from 'lucide-react';
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -62,6 +62,11 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [textRotation, setTextRotation] = useState(0);
+  // NEW: Text alignment and background color states
+  const [textAlignment, setTextAlignment] = useState<'left' | 'center' | 'right'>('center');
+  const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
+  const [textBackgroundOpacity, setTextBackgroundOpacity] = useState(0.7);
+  const [showBackgroundColor, setShowBackgroundColor] = useState(false);
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
   }>({
@@ -83,6 +88,25 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     { name: t('mediaUploader.filters.contrast'), class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.contrastDesc') },
   ];
 
+  // Text alignment options
+  const alignmentOptions = [
+    { value: 'left', icon: <AlignLeft className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.left') },
+    { value: 'center', icon: <AlignCenter className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.center') },
+    { value: 'right', icon: <AlignRight className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.right') },
+  ];
+
+  // Background color presets for quick selection
+  const backgroundPresets = [
+    { color: '#000000', label: t('mediaUploader.textEditor.background.black') },
+    { color: '#ffffff', label: t('mediaUploader.textEditor.background.white') },
+    { color: '#ff0000', label: t('mediaUploader.textEditor.background.red') },
+    { color: '#00ff00', label: t('mediaUploader.textEditor.background.green') },
+    { color: '#0000ff', label: t('mediaUploader.textEditor.background.blue') },
+    { color: '#ffff00', label: t('mediaUploader.textEditor.background.yellow') },
+    { color: '#ff00ff', label: t('mediaUploader.textEditor.background.magenta') },
+    { color: '#00ffff', label: t('mediaUploader.textEditor.background.cyan') },
+  ];
+
   // Clean up stream on unmount
   useEffect(() => {
     return () => {
@@ -93,35 +117,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     };
   }, []);
 
-  // Handle drag events for file drop
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    handleFiles(files);
-  }, []);
-
   // File validation and handling
-  const handleFiles = (files: FileList) => {
+  const handleFiles = useCallback((files: FileList) => {
     if (files.length === 0) return;
 
     const file = files[0];
@@ -149,6 +146,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setSelectedFilter('');
     setTextOverlay('');
     setTextPosition({ x: 50, y: 50 });
+    setTextAlignment('center');
+    setTextBackgroundColor('#000000');
+    setTextBackgroundOpacity(0.7);
+    setShowBackgroundColor(false);
     setIsCropMode(false);
     setCameraError(null);
     setProcessedImageUrl(null);
@@ -156,6 +157,35 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
     onMediaSelect(file);
     toast.success(t('mediaUploader.toasts.uploadSuccess'));
+  }, [onMediaSelect, t]);
+
+  // Drag and drop handlers
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFiles(files);
+    }
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,6 +225,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setRotationAngle(0);
     setTextOverlay('');
     setTextPosition({ x: 50, y: 50 });
+    setTextAlignment('center');
+    setTextBackgroundColor('#000000');
+    setTextBackgroundOpacity(0.7);
+    setShowBackgroundColor(false);
     setIsCropMode(false);
     setProcessedImageUrl(null);
     setShowTextEditor(false);
@@ -264,18 +298,20 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         setIsCapturing(false);
       };
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error accessing camera:', err);
-      setCameraError(err.message || t('mediaUploader.errors.cameraNotSupported'));
+      const errorMessage = err instanceof Error ? err.message : t('mediaUploader.errors.cameraNotSupported');
+      setCameraError(errorMessage);
       setStreamActive(false);
       setIsCapturing(false);
       
-      if (err.name === 'NotAllowedError') {
+      if (err instanceof Error && err.name === 'NotAllowedError') {
         toast.error(t('mediaUploader.toasts.cameraDenied'));
-      } else if (err.name === 'NotFoundError') {
+      } else if (err instanceof Error && err.name === 'NotFoundError') {
         toast.error(t('mediaUploader.toasts.cameraNotFound'));
       } else {
-        toast.error(t('mediaUploader.toasts.cameraError', { error: err.message }));
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        toast.error(t('mediaUploader.toasts.cameraError', { error: errorMessage }));
       }
     }
   };
@@ -334,9 +370,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         setIsCapturing(false);
       }, 'image/jpeg', 0.95);
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error capturing photo:', err);
-      toast.error(t('mediaUploader.toasts.captureError', { error: err.message }));
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(t('mediaUploader.toasts.captureError', { error: errorMessage }));
       setIsCapturing(false);
     }
   };
@@ -412,7 +449,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   };
 
   // Emoji picker handler
-  const handleEmojiSelect = (emoji: any) => {
+  const handleEmojiSelect = (emoji: { native: string }) => {
     setTextOverlay(prev => prev + emoji.native);
     setShowEmojiPicker(false);
   };
@@ -487,36 +524,37 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           lastModified: Date.now()
         });
           // Store text overlay data as a custom property
-        // @ts-ignore - custom property for internal use
-        videoWithOverlay.textOverlayData = {
+        (videoWithOverlay as unknown as Record<string, unknown>).textOverlayData = {
           text: textOverlay,
           position: textPosition,
           color: textColor, 
           size: textSize,
-          rotation: textRotation
+          rotation: textRotation,
+          alignment: textAlignment,
+          backgroundColor: showBackgroundColor ? textBackgroundColor : null,
+          backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
         };
         
         // Store the file in window.mediaFileCache if it exists
         if (typeof window !== 'undefined') {
           const previewBlobUrl = displayUrl || previewUrl;
           if (previewBlobUrl && previewBlobUrl.startsWith('blob:')) {
-            // @ts-ignore - custom property for our internal use
-            if (!window.mediaFileCache) window.mediaFileCache = {};
+            if (!(window as unknown as Record<string, unknown>).mediaFileCache) {
+              (window as unknown as Record<string, unknown>).mediaFileCache = {};
+            }
             
             // Log the text overlay data being stored
             console.log('Storing video with text overlay in cache:', {
               url: previewBlobUrl,
-              textData: (videoWithOverlay as any).textOverlayData
+              textData: (videoWithOverlay as unknown as Record<string, unknown>).textOverlayData
             });
             
-            // @ts-ignore - store the file with its blob URL as the key
-            window.mediaFileCache[previewBlobUrl] = videoWithOverlay;
+            (window as unknown as Record<string, unknown>).mediaFileCache[previewBlobUrl] = videoWithOverlay;
             
             // Also store with the current time to ensure we have a unique reference
             // This helps in case the same URL is reused for different edits
             const timeKey = `${previewBlobUrl}#${Date.now()}`;
-            // @ts-ignore - additional backup storage
-            window.mediaFileCache[timeKey] = videoWithOverlay;
+            (window as unknown as Record<string, unknown>).mediaFileCache[timeKey] = videoWithOverlay;
           }
         }          // Update the selected media with our enhanced version
           onMediaSelect(videoWithOverlay);
@@ -524,7 +562,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           console.log('Video with text overlay saved:', {
             fileName: videoWithOverlay.name,
             textOverlay: textOverlay,
-            hasOverlayData: !!((videoWithOverlay as any).textOverlayData)
+            hasOverlayData: !!((videoWithOverlay as unknown as Record<string, unknown>).textOverlayData)
           });
           
           toast.success(
@@ -589,22 +627,51 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         const scaleFactor = Math.min(canvas.width, canvas.height) / 500; // Base on a reference size
         const scaledTextSize = Math.max(textSize * scaleFactor, 12); // Ensure minimum readability
         
-        ctx.font = `${scaledTextSize}px Arial`;
-        ctx.fillStyle = textColor;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        // Add text shadow for better visibility
-        ctx.shadowColor = 'rgba(0,0,0,0.7)';
-        ctx.shadowBlur = 4 * scaleFactor;
-        ctx.shadowOffsetX = 2 * scaleFactor;
-        ctx.shadowOffsetY = 2 * scaleFactor;
-        
-        // Handle multi-line text by splitting on newlines
+        // Calculate text dimensions for background - use system font to match browser rendering
+        ctx.font = `${scaledTextSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`;
         const lines = textOverlay.split('\n');
         const lineHeight = scaledTextSize * 1.2;
         const totalTextHeight = lines.length * lineHeight;
         
+        // Calculate text width for alignment
+        let maxLineWidth = 0;
+        lines.forEach(line => {
+          const metrics = ctx.measureText(line);
+          maxLineWidth = Math.max(maxLineWidth, metrics.width);
+        });
+        
+        // Draw background if enabled - match preview rendering exactly
+        if (showBackgroundColor) {
+          const padding = 8 * scaleFactor;
+          const bgWidth = maxLineWidth + (padding * 2);
+          const bgHeight = totalTextHeight + (padding * 2);
+          
+          // Calculate background position based on alignment
+          let bgX = 0;
+          if (textAlignment === 'center') {
+            bgX = -bgWidth / 2;
+          } else if (textAlignment === 'right') {
+            bgX = -bgWidth;
+          } else {
+            bgX = 0;
+          }
+          
+          // Use same background color format as preview
+          ctx.fillStyle = `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}`;
+          ctx.fillRect(bgX, -bgHeight / 2, bgWidth, bgHeight);
+        }
+        
+        ctx.fillStyle = textColor;
+        ctx.textAlign = textAlignment;
+        ctx.textBaseline = 'middle';
+        
+        // Add text shadow for better visibility - match preview exactly
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4 * scaleFactor;
+        ctx.shadowOffsetX = 2 * scaleFactor;
+        ctx.shadowOffsetY = 2 * scaleFactor;
+        
+        // Draw each line
         lines.forEach((line, i) => {
           const yOffset = i * lineHeight - (totalTextHeight - lineHeight) / 2;
           ctx.fillText(line, 0, yOffset);
@@ -632,13 +699,15 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           
           // Store text overlay data in a data attribute on the file object for retrieval during sharing
           if (textOverlay) {
-            // @ts-ignore - custom property for our internal use
-            processedFile.textOverlayData = {
+            (processedFile as unknown as Record<string, unknown>).textOverlayData = {
               text: textOverlay,
               position: textPosition,
               color: textColor,
               size: textSize,
-              rotation: textRotation
+              rotation: textRotation,
+              alignment: textAlignment,
+              backgroundColor: showBackgroundColor ? textBackgroundColor : null,
+              backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
             };
             
             console.log('Storing image with text overlay data:', {
@@ -646,28 +715,39 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               position: textPosition,
               color: textColor,
               size: textSize,
-              rotation: textRotation
+              rotation: textRotation,
+              alignment: textAlignment,
+              backgroundColor: showBackgroundColor ? textBackgroundColor : null,
+              backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
             });
           }
           
           // Store the file in window.mediaFileCache if it exists
           if (typeof window !== 'undefined') {
             // Create the cache if it doesn't exist
-            // @ts-ignore - custom property for our internal use
-            if (!window.mediaFileCache) window.mediaFileCache = {};
+            if (!(window as unknown as Record<string, unknown>).mediaFileCache) {
+              (window as unknown as Record<string, unknown>).mediaFileCache = {};
+            }
             
             // Store the file with its blob URL as the key
-            // @ts-ignore - store the file with its blob URL as the key
-            window.mediaFileCache[processedUrl] = processedFile;
+            (window as unknown as Record<string, unknown>).mediaFileCache[processedUrl] = processedFile;
             
             // Also store with a timestamp to ensure uniqueness
             const timeKey = `${processedUrl}#${Date.now()}`;
-            // @ts-ignore - additional backup storage
-            window.mediaFileCache[timeKey] = processedFile;
+            (window as unknown as Record<string, unknown>).mediaFileCache[timeKey] = processedFile;
           }
           
           // Update the selected media with the edited version
           onMediaSelect(processedFile);
+          
+          // Clear the text overlay after saving to prevent duplication
+          setTextOverlay('');
+          setTextPosition({ x: 50, y: 50 });
+          setTextRotation(0);
+          setTextAlignment('center');
+          setTextBackgroundColor('#000000');
+          setTextBackgroundOpacity(0.7);
+          setShowBackgroundColor(false);
           
           if (textOverlay) {
             toast.success(
@@ -686,9 +766,10 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
         }
       }, 'image/jpeg', 0.95);
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving edits:', err);
-      toast.error(t('mediaUploader.toasts.saveError', { error: err.message }));
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(t('mediaUploader.toasts.saveError', { error: errorMessage }));
     } finally {
       setIsLoading(prev => ({ ...prev, saving: false }));
     }
@@ -738,7 +819,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           data[i+2] = Math.min(255, data[i+2] * 1.25);     // blue
         }
         break;
-      case 'contrast-125':
+      case 'contrast-125': {
         const factor = (259 * (125 + 255)) / (255 * (259 - 125));
         for (let i = 0; i < data.length; i += 4) {
           data[i] = Math.min(255, Math.max(0, factor * (data[i] - 128) + 128));         // red
@@ -746,7 +827,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           data[i+2] = Math.min(255, Math.max(0, factor * (data[i+2] - 128) + 128));     // blue
         }
         break;
-      case 'blur-sm':
+      }
+      case 'blur-sm': {
         // Simple blur - in production you'd use a proper convolution kernel
         const tempData = new Uint8ClampedArray(data);
         for (let y = 1; y < height - 1; y++) {
@@ -765,6 +847,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           }
         }
         break;
+      }
     }
     
     ctx.putImageData(imageData, 0, 0);
@@ -873,6 +956,18 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               >
                 <Upload className="h-4 w-4" />
                 {t('mediaUploader.upload.buttonText')}
+              </Button>
+              <Button 
+                onClick={handleCameraClick}
+                disabled={isLoading.camera || isCapturing}
+                className="flex-1 flex items-center justify-center gap-2 py-5 rounded-xl text-base text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                {isLoading.camera || isCapturing ? (
+                  <div className="h-4 w-4 border-2 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Camera className="h-4 w-4" />
+                )}
+                {t('mediaUploader.camera.activate')}
               </Button>
             </div>
 
@@ -1006,8 +1101,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                         {textOverlay && (
                           <div 
                             ref={textDivRef}
-                            className={`absolute cursor-move whitespace-pre-wrap break-words text-center transition-all duration-100
-                              ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
+                            className={`absolute cursor-move whitespace-pre-wrap break-words transition-all duration-100
+                              ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}
+                              ${textAlignment === 'left' ? 'text-left' : textAlignment === 'right' ? 'text-right' : 'text-center'}`}
                             style={{
                               top: `${textPosition.y}%`,
                               left: `${textPosition.x}%`,
@@ -1019,7 +1115,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                               padding: '8px',
                               borderRadius: '4px',
                               zIndex: 20,
-                              backgroundColor: isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
+                              backgroundColor: showBackgroundColor 
+                                ? `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}` 
+                                : isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
                               touchAction: 'none',
                               pointerEvents: 'auto',
                               userSelect: 'none',
@@ -1056,8 +1154,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                       {textOverlay && (
                         <div 
                           ref={textDivRef}
-                          className={`absolute cursor-move whitespace-pre-wrap break-words text-center transition-all duration-100
-                ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
+                          className={`absolute cursor-move whitespace-pre-wrap break-words transition-all duration-100
+                ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}
+                ${textAlignment === 'left' ? 'text-left' : textAlignment === 'right' ? 'text-right' : 'text-center'}`}
                           style={{
                             top: `${textPosition.y}%`,
                             left: `${textPosition.x}%`,
@@ -1069,7 +1168,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                             padding: '8px',
                             borderRadius: '4px',
                             zIndex: 10,
-                            backgroundColor: isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
+                            backgroundColor: showBackgroundColor 
+                              ? `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}` 
+                              : isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
                             touchAction: 'none',
                           }}
                           onPointerDown={handleTextPointerDown}
@@ -1102,14 +1203,18 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 </div>
                 
                 {/* Media editing controls */}
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                <div className="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                   {/* Text overlay indicator - shows when text is applied but editor is closed */}
                   {textOverlay && !showTextEditor && (
-                    <div className="mb-4 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-md flex items-center text-xs">
-                      <Type className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-primary" />
-                      <span className="text-primary">{t('mediaUploader.textEditor.overlayApplied', { text: textOverlay.substring(0, 20) + (textOverlay.length > 20 ? '...' : '') })}</span>
+                    <div className="mb-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Type className="h-4 w-4 flex-shrink-0 text-primary" />
+                        <span className="text-primary font-medium">
+                          {t('mediaUploader.textEditor.overlayApplied', { text: textOverlay.substring(0, 25) + (textOverlay.length > 25 ? '...' : '') })}
+                        </span>
+                      </div>
                       <button 
-                        className="ml-auto bg-primary/10 hover:bg-primary/20 rounded px-1.5 py-0.5 text-primary"
+                        className="bg-primary/10 hover:bg-primary/20 rounded-lg px-3 py-1.5 text-primary text-xs font-medium transition-colors"
                         onClick={() => setShowTextEditor(true)}
                       >
                         {t('mediaUploader.textEditor.edit')}
@@ -1119,9 +1224,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   
                   {/* Video-specific text overlay message */}
                   {isVideo && textOverlay && (
-                    <div className="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                      <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start">
-                        <Info className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                    <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start gap-2">
+                        <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                         <span>{t('mediaUploader.textEditor.videoOverlayNote')}</span>
                       </p>
                     </div>
@@ -1129,34 +1234,36 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   
                   {/* Embedded text editor - appears when text button is clicked (now for both images and videos) */}
                   {showTextEditor && (
-                    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-sm font-medium flex items-center">
-                          <Type className="h-4 w-4 mr-1.5 text-primary" />
+                    <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-4 animate-fadeIn">
+                      {/* Header */}
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-sm font-semibold flex items-center text-gray-800 dark:text-gray-200">
+                          <Type className="h-4 w-4 mr-2 text-primary" />
                           {t('mediaUploader.textEditor.title')}
                         </h3>
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="h-6 w-6 p-0"
+                          className="h-6 w-6 p-0 hover:bg-gray-200 dark:hover:bg-gray-700"
                           onClick={() => setShowTextEditor(false)}
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
                       
-                      <div className="flex flex-col space-y-2">
-                        <div className="flex relative">
+                      {/* Text Input */}
+                      <div className="space-y-3">
+                        <div className="relative">
                           <textarea
                             value={textOverlay}
                             onChange={(e) => setTextOverlay(e.target.value)}
-                            className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
+                            className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-base focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 resize-none"
                             placeholder={t('mediaUploader.textEditor.placeholder')}
                             rows={2}
-                            style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
+                            style={{ minHeight: '60px' }}
                           />
                           <button
-                            className="absolute right-2 bottom-2 text-gray-500 hover:text-primary"
+                            className="absolute right-2 bottom-2 text-gray-400 hover:text-primary transition-colors"
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                             title={t('mediaUploader.textEditor.emojiPicker.buttonTooltip')}
                           >
@@ -1164,13 +1271,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           </button>
                         </div>
                         
-                        {/* Emoji picker - appears inline */}
+                        {/* Emoji picker */}
                         {showEmojiPicker && (
-                          <div className="relative z-10">
-                            <div className="absolute right-0 top-0 w-[320px] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
+                          <div className="relative z-20">
+                            <div className="absolute right-0 top-0 w-[280px] sm:w-[320px] border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg bg-white dark:bg-gray-800">
                               <div className="absolute top-2 right-2 z-10">
                                 <button 
-                                  className="bg-gray-300/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400 rounded-full p-1"
+                                  className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full p-1 hover:bg-gray-200 dark:hover:bg-gray-600"
                                   onClick={() => setShowEmojiPicker(false)}
                                 >
                                   <X className="h-3.5 w-3.5" />
@@ -1204,63 +1311,167 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           </div>
                         )}
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-3">
+
+                      {/* Quick Controls - Mobile First */}
+                      <div className="space-y-4">
+                        {/* Text Alignment - Compact */}
                         <div>
-                          <label className="text-xs text-gray-600 dark:text-gray-400">
-                            {t('mediaUploader.textEditor.textColor')}
+                          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                            {t('mediaUploader.textEditor.textAlignment')}
                           </label>
-                          <div className="flex gap-2 mt-1 items-center">
-                            <input
-                              type="color"
-                              value={textColor}
-                              onChange={(e) => setTextColor(e.target.value)}
-                              className="w-8 h-8 p-0 border rounded"
-                            />
-                            <button
-                              type="button"
-                              className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"
-                              onClick={() => setTextColor('#000000')}
-                              title={t('mediaUploader.textEditor.blackButton')}
-                            >
-                              {t('mediaUploader.textEditor.blackButton')}
-                            </button>
+                          <div className="flex gap-1">
+                            {alignmentOptions.map((option) => (
+                              <button
+                                key={option.value}
+                                onClick={() => setTextAlignment(option.value as 'left' | 'center' | 'right')}
+                                className={cn(
+                                  "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg border transition-all text-sm",
+                                  textAlignment === option.value
+                                    ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 dark:text-primary-400'
+                                    : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400'
+                                )}
+                                title={option.label}
+                              >
+                                {option.icon}
+                                <span className="hidden sm:inline">{option.label}</span>
+                              </button>
+                            ))}
                           </div>
                         </div>
-                        
+
+                        {/* Text Color & Size - Side by Side */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                              {t('mediaUploader.textEditor.textColor')}
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={textColor}
+                                onChange={(e) => setTextColor(e.target.value)}
+                                className="w-8 h-8 p-0 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
+                              />
+                              <button
+                                type="button"
+                                className="px-2 py-1 rounded text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                onClick={() => setTextColor('#000000')}
+                              >
+                                {t('mediaUploader.textEditor.blackButton')}
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                              {t('mediaUploader.textEditor.textSize', { size: textSize })}
+                            </label>
+                            <Slider
+                              value={[textSize]}
+                              min={12}
+                              max={72}
+                              step={1}
+                              onValueChange={(value) => setTextSize(value[0])}
+                              className="py-2"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Background Color - Collapsible */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                              {t('mediaUploader.textEditor.backgroundColor')}
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => setShowBackgroundColor(!showBackgroundColor)}
+                              className={cn(
+                                "text-xs px-3 py-1.5 rounded-lg border transition-all",
+                                showBackgroundColor
+                                  ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 dark:text-primary-400'
+                                  : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500'
+                              )}
+                            >
+                              {showBackgroundColor ? t('mediaUploader.textEditor.background.enabled') : t('mediaUploader.textEditor.background.disabled')}
+                            </button>
+                          </div>
+                          
+                          {showBackgroundColor && (
+                            <div className="space-y-3 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg animate-fadeIn">
+                              {/* Background Color Picker */}
+                              <div className="flex items-center gap-3">
+                                <input
+                                  type="color"
+                                  value={textBackgroundColor}
+                                  onChange={(e) => setTextBackgroundColor(e.target.value)}
+                                  className="w-8 h-8 p-0 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
+                                />
+                                <span className="text-xs text-gray-600 dark:text-gray-400">
+                                  {t('mediaUploader.textEditor.background.customColor')}
+                                </span>
+                              </div>
+                              
+                              {/* Background Color Presets */}
+                              <div>
+                                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                                  {t('mediaUploader.textEditor.background.presets')}
+                                </label>
+                                <div className="grid grid-cols-4 gap-2">
+                                  {backgroundPresets.map((preset) => (
+                                    <button
+                                      key={preset.color}
+                                      onClick={() => setTextBackgroundColor(preset.color)}
+                                      className={cn(
+                                        "w-8 h-8 rounded-lg border-2 transition-all hover:scale-110",
+                                        textBackgroundColor === preset.color
+                                          ? 'border-primary scale-110'
+                                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
+                                      )}
+                                      style={{ backgroundColor: preset.color }}
+                                      title={preset.label}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              
+                              {/* Background Opacity */}
+                              <div>
+                                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                                  {t('mediaUploader.textEditor.background.opacity', { opacity: Math.round(textBackgroundOpacity * 100) })}
+                                </label>
+                                <Slider
+                                  value={[textBackgroundOpacity]}
+                                  min={0.1}
+                                  max={1}
+                                  step={0.1}
+                                  onValueChange={(value) => setTextBackgroundOpacity(value[0])}
+                                  className="py-2"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Text Rotation */}
                         <div>
-                          <label className="text-xs text-gray-600 dark:text-gray-400">
-                            {t('mediaUploader.textEditor.textSize', { size: textSize })}
+                          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                            {t('mediaUploader.textEditor.textRotation', { rotation: textRotation })}
                           </label>
                           <Slider
-                            value={[textSize]}
-                            min={12}
-                            max={72}
+                            value={[textRotation]}
+                            min={-180}
+                            max={180}
                             step={1}
-                            onValueChange={(value) => setTextSize(value[0])}
-                            className="py-1.5"
+                            onValueChange={(value) => setTextRotation(value[0])}
+                            className="py-2"
                           />
                         </div>
                       </div>
                       
-                      {/* Text rotation slider */}
-                      <div className="mt-2">
-                        <label className="text-xs text-gray-600 dark:text-gray-400">
-                          {t('mediaUploader.textEditor.textRotation', { rotation: textRotation })}
-                        </label>
-                        <Slider
-                          value={[textRotation]}
-                          min={-180}
-                          max={180}
-                          step={1}
-                          onValueChange={(value) => setTextRotation(value[0])}
-                          className="py-1.5"
-                        />
-                      </div>
-                      
-                      {/* Add draggable indicator */}
-                      <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
-                        <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+                      {/* Position Hint */}
+                      <div className="flex items-center text-xs text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-lg">
+                        <Move className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
                         <span>{t('mediaUploader.textEditor.positionHint')}</span>
                       </div>
                     </div>
@@ -1268,26 +1479,25 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
                   {!isVideo && (
                     <div className="mb-4">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium flex items-center">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 font-medium flex items-center">
                         <Sliders className="h-3.5 w-3.5 mr-1.5" />
                         {t('mediaUploader.filters.title')}
                       </p>
-                      <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                         {imageFilters.map((filter) => (
                           <button
                             key={filter.name}
                             onClick={() => handleFilterChange(filter.class)}
                             className={cn(
-                              "min-w-[70px] flex-shrink-0 text-xs p-2 rounded-lg border transition-all",
+                              "flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-all text-xs",
                               selectedFilter === filter.class 
                                 ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 shadow-sm' 
-                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600',
-                              "flex flex-col items-center gap-1"
+                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400'
                             )}
                             title={filter.description}
                           >
                             {filter.icon}
-                            <span>{filter.name}</span>
+                            <span className="font-medium">{filter.name}</span>
                           </button>
                         ))}
                       </div>
@@ -1295,81 +1505,67 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   )}
 
                   {/* Edit buttons with improved layout */}
-                  <div className="flex justify-around gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                     {!isVideo && (
                       <>
                         <button 
-                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
+                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                           onClick={handleRotate}
                         >
-                          <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                            <RotateCw className="h-5 w-5" />
-                          </div>
-                          <span className="text-xs mt-1">{t('mediaUploader.controls.rotate')}</span>
+                          <RotateCw className="h-5 w-5" />
+                          <span className="text-xs font-medium">{t('mediaUploader.controls.rotate')}</span>
                         </button>
                         <button 
-                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
+                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                           onClick={handleCounterRotate}
                         >
-                          <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                            <RotateCcw className="h-5 w-5" />
-                          </div>
-                          <span className="text-xs mt-1">{t('mediaUploader.controls.counter')}</span>
+                          <RotateCcw className="h-5 w-5" />
+                          <span className="text-xs font-medium">{t('mediaUploader.controls.counter')}</span>
                         </button>
                         <button 
                           className={cn(
-                            "text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center",
-                            isCropMode ? 'text-primary dark:text-primary' : ''
+                            "flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors",
+                            isCropMode 
+                              ? 'text-primary dark:text-primary bg-primary/10 dark:bg-primary/20' 
+                              : 'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
                           )}
                           onClick={handleCrop}
                         >
-                          <div className={cn(
-                            "p-2 rounded-full", 
-                            isCropMode ? 'bg-primary/10 dark:bg-primary/20' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                          )}>
-                            <Crop className="h-5 w-5" />
-                          </div>
-                          <span className="text-xs mt-1">{t('mediaUploader.controls.crop')}</span>
+                          <Crop className="h-5 w-5" />
+                          <span className="text-xs font-medium">{t('mediaUploader.controls.crop')}</span>
                         </button>
                       </>
                     )}
                     <button 
                       className={cn(
-                        "text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center",
-                        showTextEditor ? 'text-primary dark:text-primary' : ''
+                        "flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors",
+                        showTextEditor 
+                          ? 'text-primary dark:text-primary bg-primary/10 dark:bg-primary/20' 
+                          : 'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
                       )}
                       onClick={handleAddText}
                     >
-                      <div className={cn(
-                        "p-2 rounded-full", 
-                        showTextEditor ? 'bg-primary/10 dark:bg-primary/20' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                      )}>
-                        <Type className="h-5 w-5" />
-                      </div>
-                      <span className="text-xs mt-1">{t('mediaUploader.controls.text')}</span>
+                      <Type className="h-5 w-5" />
+                      <span className="text-xs font-medium">{t('mediaUploader.controls.text')}</span>
                     </button>
                     <button 
-                      className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
+                      className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                       onClick={handleRemoveMedia}
                     >
-                      <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                        <RefreshCw className="h-5 w-5" />
-                      </div>
-                      <span className="text-xs mt-1">{t('mediaUploader.controls.reset')}</span>
+                      <RefreshCw className="h-5 w-5" />
+                      <span className="text-xs font-medium">{t('mediaUploader.controls.reset')}</span>
                     </button>
                     <button 
-                      className={`text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center ${isLoading.saving ? 'opacity-70' : ''}`}
+                      className={`flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors ${isLoading.saving ? 'opacity-70' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
                       onClick={handleSaveEdits}
                       disabled={isLoading.saving}
                     >
-                      <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                        {isLoading.saving ? (
-                          <div className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin"></div>
-                        ) : (
-                          <Check className="h-5 w-5" />
-                        )}
-                      </div>
-                      <span className="text-xs mt-1">{isLoading.saving ? t('mediaUploader.controls.saving') : t('mediaUploader.controls.save')}</span>
+                      {isLoading.saving ? (
+                        <div className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Check className="h-5 w-5" />
+                      )}
+                      <span className="text-xs font-medium">{isLoading.saving ? t('mediaUploader.controls.saving') : t('mediaUploader.controls.save')}</span>
                     </button>
                   </div>
                 </div>

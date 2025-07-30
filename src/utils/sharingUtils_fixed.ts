@@ -299,7 +299,7 @@ function drawStandardCaption(
     ctx.font = 'bold 22px Inter, system-ui, sans-serif';
     
     // Create hashtag text with # symbol
-    let hashtagsText = '';
+    const hashtagsText = '';
     const hashtagLines = [];
     let currentLine = '';
     

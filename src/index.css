@@ -1,10 +1,10 @@
+/* Import the consolidated theme utilities layer here before the tailwind utilities */
+@import './styles/theme-consolidated.css';
+@import './styles/carousel.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import the consolidated theme utilities layer here after the tailwind utilities */
-@import './styles/theme-consolidated.css';
-@import './styles/carousel.css';
 
 @layer base {
   :root {

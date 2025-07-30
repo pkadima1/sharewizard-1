@@ -1161,6 +1161,15 @@
       "imageSuggestions": "Suggestions d'images {{status}}",
       "stats": "Statistiques & données {{status}}",
       "seoOptimization": "Optimisation SEO {{status}}"
+    },
+    "cta": {
+      "options": {
+        "subscribe": "S'abonner",
+        "bookCall": "Prendre un rendez-vous",
+        "download": "Télécharger gratuitement",
+        "visitWebsite": "Visiter le site web",
+        "none": "Aucun"
+      }
     }
   },
   "step6": {
@@ -1399,6 +1408,93 @@
       "media_integration_no_media": "Aucune intégration média",
       "meta_optimization_industry_audience_defined": "Secteur et audience définis",
       "meta_optimization_missing_meta": "Métadonnées manquantes"
+    },
+    "generation_errors": {
+      "generation_unexpected_error": "Erreur inattendue lors de la génération",
+      "generation_internal_error": "Erreur interne du serveur lors de la génération",
+      "generation_failed_error": "Échec de la génération du contenu",
+      "generation_cancelled_error": "Génération annulée",
+      "generation_deadline_exceeded_error": "Délai de génération dépassé",
+      "generation_resource_exhausted_error": "Ressources insuffisantes pour la génération",
+      "generation_permission_denied_error": "Permission refusée pour la génération",
+      "generation_insufficient_credits_error": "Crédits insuffisants pour la génération",
+      "generation_invalid_argument_error": "Arguments invalides pour la génération",
+      "generation_insufficient_credits_per_generation_error": "Crédits insuffisants pour cette génération",
+      "generation_failed": "La génération a échoué",
+      "generation_login_error": "Veuillez vous connecter pour générer du contenu",
+      "generation_login_description": "L'authentification est requise pour générer du contenu",
+      "generation_success": "Contenu généré avec succès",
+      "generation_success_description": "Votre contenu de {{wordCount}} mots a été généré",
+      "loading_profile_error": "Erreur de chargement du profil",
+      "loading_profile_description": "Impossible de charger votre profil utilisateur",
+      "insufficient_credits_error": "Crédits insuffisants",
+      "insufficient_credits_description": "Vous avez {{remaining}} crédits, mais il en faut {{credits}} pour le contenu long",
+      "complete_required_items_error": "Veuillez compléter tous les éléments requis",
+      "upgrade_plan_action": "Mettre à niveau le plan",
+      "log_in_action": "Se connecter",
+      "retry_generation_action": "Réessayer la génération",
+      "error_recovery": {
+        "gemini_truncated": {
+          "title": "Contenu Incomplet",
+          "description": "La génération du contenu a été interrompue. Nous essayons une approche simplifiée.",
+          "action": "Réessayer avec un sujet plus court"
+        },
+        "gemini_invalid_json": {
+          "title": "Erreur de Format",
+          "description": "Le format de réponse n'est pas valide. Nous utilisons un modèle de secours.",
+          "action": "Réessayer la génération"
+        },
+        "gemini_overloaded": {
+          "title": "Service Occupé",
+          "description": "Le service de génération est temporairement surchargé. Utilisation du modèle de secours.",
+          "action": "Réessayer dans quelques minutes"
+        },
+        "openai_rate_limit": {
+          "title": "Limite de Vitesse",
+          "description": "Trop de demandes. Veuillez attendre un moment avant de réessayer.",
+          "retryAfter": 5000
+        },
+        "openai_content_filter": {
+          "title": "Contenu Non Autorisé",
+          "description": "Le contenu généré ne respecte pas nos directives. Veuillez modifier votre demande.",
+          "action": "Modifier les paramètres"
+        },
+        "network_timeout": {
+          "title": "Délai de Connexion",
+          "description": "La connexion a expiré. Vérifiez votre connexion internet et réessayez.",
+          "action": "Vérifier la connexion"
+        },
+        "quota_exceeded": {
+          "title": "Quota Dépassé",
+          "description": "Vous avez atteint votre limite de générations. Mettez à niveau votre plan.",
+          "action": "Mettre à niveau"
+        },
+        "media_processing_failed": {
+          "title": "Erreur de Média",
+          "description": "Impossible de traiter vos fichiers média. Vérifiez le format et la taille.",
+          "action": "Vérifier les fichiers"
+        },
+        "authentication_error": {
+          "title": "Erreur d'Authentification",
+          "description": "Veuillez vous reconnecter pour continuer.",
+          "action": "Se reconnecter"
+        },
+        "validation_error": {
+          "title": "Données Invalides",
+          "description": "Veuillez vérifier et corriger les informations saisies.",
+          "action": "Corriger les données"
+        },
+        "unknown_error": {
+          "title": "Erreur Inattendue",
+          "description": "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support.",
+          "action": "Contacter le support"
+        },
+        "fallback_success": {
+          "title": "Contenu de Secours Généré",
+          "description": "Contenu généré avec le modèle de secours en raison d'une erreur technique.",
+          "action": "Continuer avec ce contenu"
+        }
+      }
     },
     "completion_checklist": {
       "topic": "Sujet défini",
@@ -1933,7 +2029,7 @@
         ],
         "estimatedTime": "1-2 minutes"
       }
-    }
+    
   },
   "words": "mots",
   "wordsShort": "mots",

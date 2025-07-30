@@ -120,11 +120,12 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error starting trial:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Failed to start trial: ${error.message}`,
+        description: `Failed to start trial: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
@@ -157,11 +158,12 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
 
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error upgrading plan:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Failed to upgrade plan: ${error.message}`,
+        description: `Failed to upgrade plan: ${errorMessage}`,
         variant: "destructive",
       });
     }
@@ -186,11 +188,12 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
       const priceId = getStripePriceId('flexy', 'monthly');
       const url = await createFlexCheckout(currentUser.uid, priceId, selectedQuantity);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error purchasing Flex pack:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Failed to purchase Flex pack: ${error.message}`,
+        description: `Failed to purchase Flex pack: ${errorMessage}`,
         variant: "destructive",
       });
     }
@@ -200,11 +203,12 @@ const planLimits = PLAN_LIMITS[subscriptionTier] || PLAN_LIMITS.free;
   const handleOpenPortal = async () => {
     try {
       window.location.href = STRIPE_CUSTOMER_PORTAL_URL;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error opening customer portal:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Failed to open customer portal: ${error.message}`,
+        description: `Failed to open customer portal: ${errorMessage}`,
         variant: "destructive",
       });
     }

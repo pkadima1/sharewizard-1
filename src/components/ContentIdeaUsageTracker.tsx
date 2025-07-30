@@ -306,11 +306,12 @@ const ContentIdeaUsageTracker: React.FC<ContentIdeaUsageTrackerProps> = ({
 
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error upgrading plan:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: t('contentIdeaUsageTracker.errors.upgradeFailed'),
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -331,11 +332,12 @@ const ContentIdeaUsageTracker: React.FC<ContentIdeaUsageTrackerProps> = ({
       const priceId = getStripePriceId('flexy', 'monthly');
       const url = await createFlexCheckout(currentUser.uid, priceId, selectedQuantity);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error purchasing Flex pack:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: t('contentIdeaUsageTracker.errors.flexPurchaseFailed'),
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -344,11 +346,12 @@ const ContentIdeaUsageTracker: React.FC<ContentIdeaUsageTrackerProps> = ({
   const handleOpenPortal = async () => {
     try {
       window.location.href = STRIPE_CUSTOMER_PORTAL_URL;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error opening customer portal:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: t('contentIdeaUsageTracker.errors.portalError'),
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     }

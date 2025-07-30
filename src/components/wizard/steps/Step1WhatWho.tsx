@@ -12,10 +12,11 @@ import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngine';
 import { useAutoSave, getDraftInfo } from '@/hooks/useAutoSave';
 import { useToast } from '@/hooks/use-toast';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 // Helper function to get industry options with translations
-const getIndustryOptions = (t: any) => [
+const getIndustryOptions = (t: (key: string) => string) => [
   { 
     value: 'Marketing', 
     label: t('step1.industries.marketing'),
@@ -85,8 +86,8 @@ const getIndustryOptions = (t: any) => [
 ];
 
 interface Step1Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & { customIndustry?: string };
+  updateFormData: (key: string, value: string | number | string[]) => void;
 }
 
 const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {

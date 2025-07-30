@@ -258,11 +258,33 @@
       "textColor": "Text Color",
       "textSize": "Text Size: {{size}}px",
       "textRotation": "Text Rotation: {{rotation}}°",
+      "textAlignment": "Text Alignment",
+      "backgroundColor": "Background Color",
       "positionHint": "Click and drag the text on the image to position it",
       "blackButton": "Black",
       "edit": "Edit",
       "overlayApplied": "Text overlay applied: \"{{text}}\"",
       "videoOverlayNote": "Text overlays on videos will be saved with the video metadata and displayed during playback and sharing. No need to re-encode the video.",
+      "alignment": {
+        "left": "Left",
+        "center": "Center",
+        "right": "Right"
+      },
+      "background": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "customColor": "Custom Color",
+        "presets": "Quick Colors",
+        "opacity": "Opacity: {{opacity}}%",
+        "black": "Black",
+        "white": "White",
+        "red": "Red",
+        "green": "Green",
+        "blue": "Blue",
+        "yellow": "Yellow",
+        "magenta": "Magenta",
+        "cyan": "Cyan"
+      },
       "emojiPicker": {
         "buttonTooltip": "Add emoji",
         "searchPlaceholder": "Search emojis...",

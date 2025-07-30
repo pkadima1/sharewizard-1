@@ -181,7 +181,7 @@ export const generateCaptionsV3 = onCall({
   region: "us-central1",
   concurrency: isProduction ? 80 : 10,
   labels: {
-    version: "v3",
+    version: "v3-0-0",
     service: "caption-generation",
     environment: isProduction ? "production" : "development"
   }

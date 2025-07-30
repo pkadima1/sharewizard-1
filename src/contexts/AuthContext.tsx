@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { 
   User, 
   createUserWithEmailAndPassword, 
@@ -36,10 +36,12 @@ import {
   getStripePriceId 
 } from '@/lib/subscriptionUtils';
 import { createSubscriptionCheckout } from '@/lib/stripe';
+import { UserProfile, Subscription } from '@/types/core';
+import { createAppError } from '@/utils/typeGuards';
 
 interface AuthContextType {
   currentUser: User | null;
-  userProfile: any | null;
+  userProfile: UserProfile | null;
   loading: boolean;
   signUp: (email: string, password: string, username: string) => Promise<UserCredential>;
   login: (email: string, password: string) => Promise<UserCredential>;
@@ -54,12 +56,12 @@ interface AuthContextType {
     usagePercentage: number;
   }>;
   activateFreeTrial: (selectedPlan: 'basicMonth' | 'basicYear', selectedCycle: 'monthly' | 'yearly') => Promise<boolean>;
-  subscription: any | null;
+  subscription: Subscription | null;
 }
 
 interface AdditionalUserData {
   displayName?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,12 +76,12 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<any | null>(null);
-  const [subscription, setSubscription] = useState<any | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const createUserProfile = async (user: User, additionalData: AdditionalUserData = {}) => {
+  const createUserProfile = useCallback(async (user: User, additionalData: AdditionalUserData = {}) => {
     if (!user) return;
     
     const userRef = doc(db, 'users', user.uid);
@@ -107,30 +109,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             title: "Profile created",
             description: "Your user profile has been created successfully",
           });
-        } catch (error: any) {
-          console.error("Error creating user profile:", error);
+        } catch (error: unknown) {
+          const appError = createAppError(error);
+          console.error("Error creating user profile:", appError.message);
           toast({
             title: "Error",
-            description: `Failed to create user profile: ${error.message || 'Check Firestore rules'}`,
+            description: `Failed to create user profile: ${appError.message || 'Check Firestore rules'}`,
             variant: "destructive",
           });
-          throw error;
+          throw appError;
         }
       }
       
       const userDoc = await getDoc(userRef);
       if (userDoc.exists()) {
-        setUserProfile({ id: userDoc.id, ...userDoc.data() });
+        const userData = userDoc.data() as Omit<UserProfile, 'id'>;
+        setUserProfile({ id: userDoc.id, ...userData });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error in profile creation flow:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Permission denied - check Firestore rules';
       toast({
         title: "Error",
-        description: `Profile creation failed: ${error.message || 'Permission denied - check Firestore rules'}`,
+        description: `Profile creation failed: ${errorMessage}`,
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
 
   const incrementRequestUsage = async (): Promise<boolean> => {
     if (!currentUser || !userProfile) {
@@ -168,7 +173,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const updatedUserDoc = await getDoc(userRef);
       if (updatedUserDoc.exists()) {
-        const userData = updatedUserDoc.data();
+        const userData = updatedUserDoc.data() as Omit<UserProfile, 'id'>;
         setUserProfile({ id: updatedUserDoc.id, ...userData });
         
         if (userData.requests_used >= userData.requests_limit) {
@@ -182,11 +187,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return true;
       }
       return false;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error tracking request usage:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Error",
-        description: `Failed to track request usage: ${error.message}`,
+        description: `Failed to track request usage: ${errorMessage}`,
         variant: "destructive",
       });
       return false;
@@ -230,11 +236,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         return false;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error activating trial:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Error",
-        description: `Failed to activate trial: ${error.message}`,
+        description: `Failed to activate trial: ${errorMessage}`,
         variant: "destructive",
       });
       return false;
@@ -262,11 +269,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         message: planCheck.message,
         usagePercentage: planCheck.usagePercentage
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error checking request availability:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         canMakeRequest: false,
-        message: `Error: ${error.message}`,
+        message: `Error: ${errorMessage}`,
         usagePercentage: 0
       };
     }
@@ -293,9 +301,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       return await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user not found error appropriately
-      if (error.code === 'auth/user-not-found') {
+      if (error instanceof Error && 'code' in error && error.code === 'auth/user-not-found') {
         throw new Error("Account not found. Please sign up first.");
       }
       throw error;
@@ -342,18 +350,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userDoc = await getDoc(userRef);
       
       if (userDoc.exists()) {
-        const userData = userDoc.data();
+        const userData = userDoc.data() as Omit<UserProfile, 'id'>;
         setUserProfile({ id: userDoc.id, ...userData });
         return true;
       } else {
         console.warn("User profile not found in Firestore during refresh");
         return false;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error refreshing user profile:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Check your connection';
       toast({
         title: "Error",
-        description: `Failed to refresh profile: ${error.message || 'Check your connection'}`,
+        description: `Failed to refresh profile: ${errorMessage}`,
         variant: "destructive",
       });
       return false;
@@ -371,11 +380,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
 
       unsubscribeFromSubscription = onSnapshot(activeSubscriptionsQuery, async (snapshot) => {
-        const subscriptionData = snapshot.docs[0]?.data();
+        const subscriptionDoc = snapshot.docs[0];
         
-        if (subscriptionData) {
+        if (subscriptionDoc) {
+          const subscriptionData = subscriptionDoc.data();
           console.log("Active subscription found:", subscriptionData);
-          setSubscription(subscriptionData);
+          
+          // Transform Firestore data to match Subscription interface
+          const subscription: Subscription = {
+            id: subscriptionDoc.id,
+            userId: currentUser.uid,
+            status: subscriptionData.status as 'active' | 'canceled' | 'past_due' | 'unpaid',
+            plan: subscriptionData.role as 'basic' | 'premium' | 'flexy',
+            cycle: subscriptionData.interval as 'monthly' | 'yearly',
+            currentPeriodStart: subscriptionData.current_period_start,
+            currentPeriodEnd: subscriptionData.current_period_end,
+            cancelAtPeriodEnd: subscriptionData.cancel_at_period_end || false,
+            stripeSubscriptionId: subscriptionData.stripe_subscription_id || subscriptionData.id,
+            stripeCustomerId: subscriptionData.stripe_customer_id || currentUser.uid
+          };
+          
+          setSubscription(subscription);
 
           const userRef = doc(db, 'users', currentUser.uid);
           const userDoc = await getDoc(userRef);
@@ -439,14 +464,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
             const updatedUserDoc = await getDoc(userRef);
             if (updatedUserDoc.exists()) {
-              setUserProfile({ id: updatedUserDoc.id, ...updatedUserDoc.data() });
+              const userData = updatedUserDoc.data() as Omit<UserProfile, 'id'>;
+              setUserProfile({ id: updatedUserDoc.id, ...userData });
             }
           }
         } else {
           console.log("No active subscription found");
           setSubscription(null);
         }
-      }, (error) => {
+      }, (error: unknown) => {
         console.error("Error getting subscription:", error);
       });
     }
@@ -456,7 +482,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         unsubscribeFromSubscription();
       }
     };
-  }, [currentUser]);  useEffect(() => {
+  }, [currentUser, toast, createUserProfile]);
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       
@@ -466,7 +493,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const userDoc = await getDoc(userRef);
           
           if (userDoc.exists()) {
-            setUserProfile({ id: userDoc.id, ...userDoc.data() });
+            const userData = userDoc.data() as Omit<UserProfile, 'id'>;
+            setUserProfile({ id: userDoc.id, ...userData });
           } else {
             // In emulator mode, automatically create a development profile
             if (isUsingEmulators) {
@@ -477,11 +505,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               console.warn("User exists in Firebase Auth but has no profile in Firestore");
             }
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("Error fetching user profile:", error);
+          const errorMessage = error instanceof Error ? error.message : 'Check your connection';
           toast({
             title: "Error",
-            description: `Failed to load profile: ${error.message || 'Check your connection'}`,
+            description: `Failed to load profile: ${errorMessage}`,
             variant: "destructive",
           });
         }

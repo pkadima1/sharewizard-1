@@ -52,8 +52,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     return {
       title: t(`contextualHelp.steps.${stepKey}.title`, ''),
       tips: t(`contextualHelp.steps.${stepKey}.tips`, { returnObjects: true }) as string[] || [],
-      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as any[] || [],
-      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as any[] || [],
+      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as Array<{ title: string; content: string }> || [],
+      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as Array<{ title: string; url: string; duration: string }> || [],
       estimatedTime: t(`contextualHelp.steps.${stepKey}.estimatedTime`, '')
     };
   };
@@ -61,7 +61,7 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
   const helpContent = getHelpContent(currentStep);
 
   // Track help engagement
-  const trackEngagement = (action: string, data?: any) => {
+  const trackEngagement = (action: string, data?: Record<string, unknown>) => {
     console.log(t('debug.helpEngagement'), action, data);
     
     // Update local state
@@ -96,7 +96,7 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     setExpandedSections(newExpanded);
   };
 
-  const handleVideoClick = (video: any) => {
+  const handleVideoClick = (video: { title: string; url: string; duration: string }) => {
     trackEngagement('video_clicked', { title: video.title, url: video.url });
     // In a real app, you'd open the video in a modal or new tab
     window.open(video.url, '_blank');

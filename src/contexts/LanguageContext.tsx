@@ -37,20 +37,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         i18n.changeLanguage(urlLang);
       }
     } else {
-      // Check localStorage first
-      const savedLanguage = localStorage.getItem('i18nextLng');
-      
-      if (savedLanguage && supportedLangCodes.includes(savedLanguage)) {
-        // If language is already saved and supported, use it
-        i18n.changeLanguage(savedLanguage);
+      // Let i18n handle the language detection automatically
+      // It will check localStorage first, then fall back to browser language
+      const detectedLang = i18n.language;
+      if (detectedLang && supportedLangCodes.includes(detectedLang)) {
+        // If i18n detected a supported language, use it
+        if (detectedLang !== currentLanguage) {
+          i18n.changeLanguage(detectedLang);
+        }
       } else {
-        // Otherwise detect from browser
-        const browserLang = navigator.language.split('-')[0];
-        // Check if browser language is supported
-        const isSupported = defaultLanguages.some(lang => lang.code === browserLang);
-        // If browser language is supported, use it. Otherwise fall back to default (en)
-        const langToUse = isSupported ? browserLang : 'en';
-        i18n.changeLanguage(langToUse);
+        // Fall back to English if no valid language detected
+        i18n.changeLanguage('en');
       }
     }
   }, [location.pathname, currentLanguage]);
@@ -60,7 +57,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const handleLanguageChanged = (lng: string) => {
       setCurrentLanguage(lng);
       document.documentElement.lang = lng;
-      localStorage.setItem('i18nextLng', lng);
+      // i18n will automatically save to localStorage, so we don't need to do it manually
     };
 
     i18n.on('languageChanged', handleLanguageChanged);

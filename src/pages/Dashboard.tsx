@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
         console.error("Error clearing trial pending status:", error);
       });
     }
-  }, [location, currentUser, navigate, toast]);
+  }, [location.pathname, location.search, currentUser, navigate, toast]);
 
   if (!currentUser || !userProfile) {
     return <div>{t('loading', 'Loading...')}</div>;

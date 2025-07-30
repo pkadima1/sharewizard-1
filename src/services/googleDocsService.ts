@@ -275,13 +275,13 @@ export const exportToGoogleDocs = async (content: LongformContent): Promise<void
  */
 const prepareContentForGoogleDocs = (content: LongformContent): { html: string; text: string } => {
   // Step 1: Clean and normalize the markdown content
-  let normalizedContent = content.content
+  const normalizedContent = content.content
     .replace(/\r\n/g, '\n')  // Normalize line endings
     .replace(/\r/g, '\n')    // Handle old Mac line endings
     .trim();
 
   // Step 2: Convert markdown to clean HTML that Google Docs handles perfectly
-  let htmlContent = normalizedContent
+  const htmlContent = normalizedContent
     // Headers with proper hierarchy (process longest first to avoid conflicts)
     .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
@@ -320,7 +320,7 @@ const prepareContentForGoogleDocs = (content: LongformContent): { html: string; 
     .join('\n\n');
 
   // Step 3: Create plain text version for clipboard fallback
-  let textContent = normalizedContent
+  const textContent = normalizedContent
     // Remove markdown formatting for plain text
     .replace(/^#{1,6}\s+/gm, '')  // Remove header markers
     .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold markers

@@ -38,11 +38,11 @@ export const createCaptionedVideo = async (
       } else {
         // Try to get text overlay data from the mediaFile property if it exists
         // This happens when text overlays are added in the previous step
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property
         const mediaFileData = videoElement.mediaFile?.textOverlayData;
         if (mediaFileData) {
           console.log('Found text overlay data in mediaFile property:', mediaFileData);
-          // @ts-ignore - adding property to videoElement
+          // @ts-expect-error - adding property to videoElement
           videoElement.textOverlayData = mediaFileData;
         }
       }
@@ -102,7 +102,7 @@ export const createCaptionedVideo = async (
         let combinedStream: MediaStream;
 
         try {
-          const videoStream = (originalVideo as any).captureStream();
+          const videoStream = (originalVideo as HTMLVideoElement & { captureStream(): MediaStream }).captureStream();
           const audioTracks = videoStream.getAudioTracks();
 
           if (audioTracks.length > 0) {
@@ -925,7 +925,7 @@ export const sharePreview = async (
           }
         };
         if (userEvent) {
-          let sharePromise: Promise<any>;
+          let sharePromise: Promise<void>;
           try {
             if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
               sharePromise = navigator.share({

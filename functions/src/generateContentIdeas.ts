@@ -23,7 +23,6 @@ const db = getFirestore();
 
 // Usage limits and cost tracking
 const FREE_TIER_DAILY_LIMIT = 3;
-const CONTENT_IDEAS_REQUEST_COST = 1;
 
 // TypeScript interfaces
 interface GenerateContentIdeasRequest {
@@ -405,7 +404,7 @@ export const generateContentIdeas = onCall({
   region: "us-central1",
   concurrency: process.env.NODE_ENV === 'production' ? 80 : 10,
   labels: {
-    version: "v1.0.0",
+    version: "v1-0-0",
     service: "content-ideas-generation",
     environment: process.env.NODE_ENV === 'production' ? "production" : "development"
   }

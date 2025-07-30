@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Share, Instagram, Facebook, Twitter, Linkedin, Youtube, Music } from 'lucide-react';
+import { Share, Download, Instagram, Facebook, Twitter, Linkedin, Youtube, Music } from 'lucide-react';
 import { toast } from "sonner";
 import { shareToPlatform } from '@/utils/socialMediaUtils';
 import { MediaType } from '@/types/mediaTypes';
@@ -9,9 +9,19 @@ import { MediaType } from '@/types/mediaTypes';
 interface SocialSharingProps {
   isEditing: boolean;
   isSharing: boolean;
+  isDownloading?: boolean;
   onShareClick: () => void;  // Simplified - no event needed with new approach
+  onDownloadClick?: () => void;  // New download handler
   selectedPlatform?: string;
-  caption?: any;
+  caption?: {
+    title: string;
+    caption: string;
+    cta: string;
+    hashtags: string[];
+    platform: string;
+    tone: string;
+    wordCount: number;
+  };
   mediaType?: MediaType;
   previewUrl?: string | null;
 }
@@ -19,13 +29,16 @@ interface SocialSharingProps {
 const SocialSharing: React.FC<SocialSharingProps> = ({
   isEditing,
   isSharing,
+  isDownloading = false,
   onShareClick,
+  onDownloadClick,
   selectedPlatform = '',
   caption,
   mediaType = 'text-only', // Default to text-only to satisfy TypeScript
   previewUrl
 }) => {
   if (isEditing) return null;
+  
   const handleDirectShare = async (platform: string) => {
     try {
       toast.info(`Préparation du partage sur ${platform}...`);
@@ -78,34 +91,59 @@ const SocialSharing: React.FC<SocialSharingProps> = ({
   return (
     <div className="space-y-3">
       <h2 className="font-medium dark:text-white">Télécharger pour Partager sur la Plateforme de Médias Sociaux Préférée</h2>
-        {/* Selected platform share button - prominently displayed if a platform is selected */}      {selectedPlatformDetails && (
-        <Button
-          className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
-          onClick={() => handleDirectShare(selectedPlatformDetails.name)}
-          disabled={isSharing}
-        >
-          {isSharing ? (
-            <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
-          ) : (
-            <selectedPlatformDetails.icon className="h-4 w-4 mr-2" />
-          )}
-          Share to {selectedPlatformDetails.name}
-        </Button>
-      )}
       
-      {/* Fallback browser sharing option */}
-      <Button
-        className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-        onClick={() => handleDirectShare('Browser')}
-        disabled={isSharing}
-      >
-        {isSharing ? (
-          <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
-        ) : (
-          <Share className="h-4 w-4 mr-2" />
+      {/* Mobile-first responsive button layout */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {/* Share Button - Full width on mobile, half width on desktop */}
+        <div className="flex-1">
+          {/* Selected platform share button - prominently displayed if a platform is selected */}
+          {selectedPlatformDetails ? (
+            <Button
+              className={`w-full text-white ${selectedPlatformDetails.color} mb-2`}
+              onClick={() => handleDirectShare(selectedPlatformDetails.name)}
+              disabled={isSharing}
+            >
+              {isSharing ? (
+                <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+              ) : (
+                <selectedPlatformDetails.icon className="h-4 w-4 mr-2" />
+              )}
+              Share to {selectedPlatformDetails.name}
+            </Button>
+          ) : (
+            <Button
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+              onClick={() => handleDirectShare('Browser')}
+              disabled={isSharing}
+            >
+              {isSharing ? (
+                <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+              ) : (
+                <Share className="h-4 w-4 mr-2" />
+              )}
+              Partage Direct via Navigateur (WhatsApp, Telegram, etc.)
+            </Button>
+          )}
+        </div>
+
+        {/* Download Button - Full width on mobile, half width on desktop */}
+        {onDownloadClick && (
+          <div className="flex-1">
+            <Button
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              onClick={onDownloadClick}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <div className="h-4 w-4 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              Télécharger
+            </Button>
+          </div>
         )}
-        Partage Direct via Navigateur (WhatsApp, Telegram, etc.)
-      </Button>
+      </div>
       
       {/* ====================commented out for now until full SM platforms integration============*/}
 

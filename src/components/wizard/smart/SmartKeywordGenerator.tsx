@@ -333,7 +333,7 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
     };
     
     for (const [intent, pattern] of Object.entries(intentPatterns)) {
-      if (pattern.test(keyword)) return intent as any;
+      if (pattern.test(keyword)) return intent as 'informational' | 'transactional' | 'commercial' | 'navigational';
     }
     return 'informational';
   };
@@ -550,7 +550,7 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
     let mimeType = '';
 
     switch (format) {
-      case 'csv':
+      case 'csv': {
         const csvHeaders = `${t('smartKeywordGenerator.csvHeaders.keyword')},${t('smartKeywordGenerator.csvHeaders.type')},${t('smartKeywordGenerator.csvHeaders.difficulty')},${t('smartKeywordGenerator.csvHeaders.monthlySearches')},${t('smartKeywordGenerator.csvHeaders.competition')},${t('smartKeywordGenerator.csvHeaders.searchIntent')},${t('smartKeywordGenerator.csvHeaders.cpc')},${t('smartKeywordGenerator.csvHeaders.rankingProbability')}\n`;
         const csvRows = filteredKeywords.map(kw => 
           `"${kw.keyword}","${kw.type}","${kw.difficulty}",${kw.monthlySearches},${kw.competition},"${kw.searchIntent}",${kw.cpc},${kw.rankingProbability}`
@@ -559,18 +559,21 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
         filename = `keywords-${Date.now()}.csv`;
         mimeType = 'text/csv';
         break;
+      }
       
-      case 'json':
+      case 'json': {
         content = JSON.stringify({ keywords: filteredKeywords, exportDate: new Date().toISOString() }, null, 2);
         filename = `keywords-${Date.now()}.json`;
         mimeType = 'application/json';
         break;
+      }
       
-      case 'semrush':
+      case 'semrush': {
         content = filteredKeywords.map(kw => kw.keyword).join('\n');
         filename = `semrush-keywords-${Date.now()}.txt`;
         mimeType = 'text/plain';
         break;
+      }
     }
 
     const blob = new Blob([content], { type: mimeType });
@@ -724,7 +727,7 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
                   <Label className="text-xs font-medium">{t('smartKeywordGenerator.filters.keywordType')}</Label>
                   <select
                     value={filters.type}
-                    onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value as any }))}
+                    onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value as 'all' | 'primary' | 'secondary' | 'long-tail' }))}
                     className="w-full px-2 py-1 text-sm border rounded-md bg-background"
                   >
                     <option value="all">{t('smartKeywordGenerator.filters.allTypes')}</option>
@@ -738,7 +741,7 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
                   <Label className="text-xs font-medium">{t('smartKeywordGenerator.filters.searchIntent')}</Label>
                   <select
                     value={filters.intent}
-                    onChange={(e) => setFilters(prev => ({ ...prev, intent: e.target.value as any }))}
+                    onChange={(e) => setFilters(prev => ({ ...prev, intent: e.target.value as 'all' | 'informational' | 'commercial' | 'transactional' | 'navigational' }))}
                     className="w-full px-2 py-1 text-sm border rounded-md bg-background"
                   >
                     <option value="all">{t('smartKeywordGenerator.filters.allIntents')}</option>
@@ -753,7 +756,7 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
                   <Label className="text-xs font-medium">{t('smartKeywordGenerator.filters.difficulty')}</Label>
                   <select
                     value={filters.difficulty}
-                    onChange={(e) => setFilters(prev => ({ ...prev, difficulty: e.target.value as any }))}
+                    onChange={(e) => setFilters(prev => ({ ...prev, difficulty: e.target.value as 'all' | 'easy' | 'medium' | 'hard' }))}
                     className="w-full px-2 py-1 text-sm border rounded-md bg-background"
                   >
                     <option value="all">{t('smartKeywordGenerator.filters.allDifficulties')}</option>

@@ -37,6 +37,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { getOpenAIKey, getGeminiKey } from "../config/secrets.js";
 import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
+import { 
+  errorRecovery, 
+  createErrorContext, 
+  incrementRetry,
+  ContentGenerationException
+} from "../utils/errorHandlers.js";
 
 // Request cost constants
 const BLOG_REQUEST_COST = 4; // Blog generation costs 4 requests due to complex two-stage AI process
@@ -81,11 +87,11 @@ const initializeAIServices = () => {
   }
 };
 
-// Enhanced retry mechanism with exponential backoff and better error handling
+// Enhanced retry mechanism with intelligent error handling
 const retryWithBackoff = async <T>(
   operation: () => Promise<T>, 
-  maxRetries = config.retryAttempts, 
-  baseDelay = 500 // Reduced initial delay
+  maxRetries = 2, // Reduced from 3-4 to 2 for faster fallback
+  baseDelay = 1000 // Increased initial delay to reduce API pressure
 ): Promise<T> => {
   let lastError: Error;
   
@@ -94,10 +100,19 @@ const retryWithBackoff = async <T>(
       return await operation();
     } catch (error) {
       lastError = error as Error;
-        // Don't retry on certain error types
+      
+      // Don't retry on certain error types
       if (error instanceof HttpsError && 
           (error.code === "unauthenticated" || error.code === "permission-denied")) {
         throw error;
+      }
+      
+      // Don't retry on API overload errors - go straight to fallback
+      if (lastError.message.includes("overloaded") || 
+          lastError.message.includes("503 Service Unavailable") ||
+          lastError.message.includes("rate limit")) {
+        console.warn("API overload detected, skipping retries and using fallback");
+        throw lastError;
       }
       
       // Log retry attempt for debugging
@@ -115,8 +130,8 @@ const retryWithBackoff = async <T>(
       
       // Calculate delay with jitter for better distribution
       const delay = Math.min(
-        baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
-        10000 // Cap at 10 seconds
+        baseDelay * Math.pow(2, attempt) + Math.random() * 2000,
+        8000 // Reduced cap to 8 seconds
       );
       
       console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms`);
@@ -296,33 +311,85 @@ const checkUsageLimits = async (uid: string) => {
   };
 };
 
-// Enhanced outline generation with better error handling and improved fallback
-const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
-  const geminiPrompt = buildGeminiPrompt(promptData);
-    // Try Gemini with enhanced error handling
+// Optimized Gemini configuration for reliability
+const getOptimizedGeminiConfig = (genAI: GoogleGenerativeAI, isSimplified: boolean = false) => {
+  return genAI.getGenerativeModel({ 
+    model: "gemini-2.0-flash-001",
+    generationConfig: {
+      temperature: 0.3, // Further reduced for better reliability
+      topK: 10, // Reduced to minimize API pressure
+      topP: 0.7, // Reduced for more predictable output
+      maxOutputTokens: isSimplified ? 2000 : 4000, // Reduced token limits
+      responseMimeType: "application/json"
+    }
+  });
+};
+
+// Build simplified prompt for fallback scenarios
+const buildSimplifiedGeminiPrompt = (promptData: any): string => {
+  const languageInstruction = promptData.lang === 'fr'
+    ? "IMPORTANT: Toutes les instructions et le contenu doivent être rédigés en français."
+    : "IMPORTANT: All instructions and content must be written in English.";
+  
+  return `${languageInstruction}
+
+You are an expert content strategist creating a simplified outline for ${promptData.wordCount}-word ${promptData.contentType} about "${promptData.topic}" for ${promptData.audience} in ${promptData.industry}.
+
+TONE: ${promptData.contentTone}
+KEYWORDS: ${promptData.keywords.join(", ")}
+STRUCTURE: ${promptData.structureFormat}
+
+Create a concise JSON outline with this structure:
+{
+  "meta": {
+    "estimatedReadingTime": "X minutes",
+    "primaryEmotion": "emotion to evoke",
+    "keyValueProposition": "main benefit"
+  },
+  "hookOptions": [
+    "Hook option 1",
+    "Hook option 2",
+    "Hook option 3"
+  ],
+  "sections": [
+    {
+      "title": "Section Title",
+      "wordCount": 200,
+      "tone": "section tone",
+      "keyPoints": ["Point 1", "Point 2", "Point 3"],
+      "humanElements": {
+        "storyOpportunity": "story type to include",
+        "emotionalConnection": "emotional connection",
+        "practicalValue": "concrete takeaway"
+      }
+    }
+  ],
+  "seoStrategy": {
+    "metaDescription": "150-160 char description",
+    "primaryKeyword": "main keyword"
+  },
+  "conclusion": {
+    "approach": "conclusion strategy",
+    "emotionalGoal": "final feeling"
+  }
+}`;
+};
+
+// Enhanced generateOutline function with comprehensive error recovery
+const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any, userId?: string) => {
+  const context = createErrorContext('generateOutline', userId, { promptData });
+  
   try {
-    return await retryWithBackoff(async () => {    
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash-001",
-        generationConfig: {
-          temperature: 0.6, // Slightly lower for more consistent output
-          topK: 40,
-          topP: 0.9, // Increase for better completion
-          maxOutputTokens: 8000, // Significantly increased token limit for complex JSON
-          responseMimeType: "application/json"
-        }
-      });
+    // First attempt: Full featured prompt
+    return await retryWithBackoff(async () => {
+      const model = getOptimizedGeminiConfig(genAI, false);
+      const fullPrompt = buildGeminiPrompt(promptData);
       
-      const result = await model.generateContent(geminiPrompt);
+      const result = await model.generateContent(fullPrompt);
       const response = result.response.text();
       
-      if (!response || response.length < 50) { // Lower threshold
-        throw new Error("Gemini response too short or empty");
-      }
-      
-      // Check if the response is likely truncated based on length and structure
-      if (response.length > 2000 && !response.includes('"enhancedSeoStrategy"')) {
-        console.warn("Response may be incomplete - missing expected JSON sections");
+      if (!response || response.length < 100) {
+        throw new Error("Gemini response too short");
       }
       
       // Enhanced JSON parsing with cleanup and truncation detection
@@ -379,14 +446,83 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
           }
         }
         
-        // If all JSON parsing fails, fall back to structured outline
-        console.warn("Gemini JSON parsing failed, using fallback outline");
+        // If all JSON parsing fails, throw error to trigger fallback
         throw new Error("JSON parsing failed, using fallback");
       }
     });
   } catch (error) {
-    console.warn("Gemini failed completely, using enhanced fallback outline:", error instanceof Error ? error.message : String(error));
-    return createFallbackOutline(promptData);
+    console.warn("Full prompt failed, trying simplified approach:", error instanceof Error ? error.message : String(error));
+    
+    // Use enhanced error recovery system
+    try {
+      const updatedContext = incrementRetry(context);
+      return await errorRecovery.handleError(error, updatedContext);
+    } catch (recoveryError) {
+      if (recoveryError instanceof ContentGenerationException) {
+        throw recoveryError;
+      }
+      
+      // Fallback: Simplified prompt with reduced tokens
+      try {
+        return await retryWithBackoff(async () => {
+          const model = getOptimizedGeminiConfig(genAI, true);
+          const simplifiedPrompt = buildSimplifiedGeminiPrompt(promptData);
+          
+          const result = await model.generateContent(simplifiedPrompt);
+          const response = result.response.text();
+          
+          if (!response || response.length < 50) {
+            throw new Error("Simplified prompt also failed");
+          }
+          
+          // Enhanced JSON parsing for simplified response
+          let cleanedResponse = response.trim();
+          cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+          
+          try {
+            return JSON.parse(cleanedResponse);
+          } catch (parseError) {
+            console.error("Simplified JSON Parse Error:", parseError);
+            
+            // Try to extract JSON from simplified response
+            const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              try {
+                // Fix common JSON issues for simplified response
+                const fixedJson = jsonMatch[0]
+                  .replace(/([{,]\s*)(\w+):/g, '$1"$2":')
+                  .replace(/:\s*'([^']*)'/g, ':"$1"')
+                  .replace(/,\s*}/g, '}')
+                  .replace(/,\s*]/g, ']')
+                  .replace(/"\s*$/, '"}')
+                  .replace(/,\s*$/, '');
+                
+                return JSON.parse(fixedJson);
+              } catch (secondParseError) {
+                console.error("Simplified second parse attempt failed:", secondParseError);
+              }
+            }
+            
+            throw new Error("Simplified JSON parsing failed");
+          }
+        });
+      } catch (fallbackError) {
+        console.warn("Both prompts failed, using template fallback");
+        
+        // Final error recovery attempt
+        try {
+          const finalContext = incrementRetry(incrementRetry(context));
+          return await errorRecovery.handleError(fallbackError, finalContext);
+        } catch (finalError) {
+          if (finalError instanceof ContentGenerationException) {
+            throw finalError;
+          }
+          
+          // Ultimate fallback
+          return createFallbackOutline(promptData);
+        }
+      }
+    }
   }
 };
 
@@ -1681,12 +1817,18 @@ export const generateLongformContent = onCall({
   cors: [
     "localhost:5173",
     "localhost:5174",
+    "localhost:8080",
     /engperfecthlc\.web\.app$/,
     /engperfecthlc\.firebaseapp\.com$/,
-    /engageperfect\.com$/
+    /engageperfect\.com$/,
+    /www\.engageperfect\.com$/,
+    /preview--.*\.lovable\.app$/,
+    /.*\.lovable\.app$/,
+    /.*\.lovableproject\.com$/,
+    ...(process.env.NODE_ENV !== 'production' ? ["*"] : [])
   ],
   maxInstances: config.maxInstances,
-  timeoutSeconds: 540, // Increased to 9 minutes for complex generation
+  timeoutSeconds: 300, // 5 minutes - optimized for typical generation time
   memory: config.memory,
   minInstances: isProduction ? 1 : 0,
   region: "us-central1"
@@ -1767,88 +1909,168 @@ export const generateLongformContent = onCall({
     // Step 6: Generate outline with Gemini
     console.log("[LongForm] Stage 1: Generating outline...");
     const outlineStartTime = Date.now();
-    const outline = await generateOutline(genAI, promptData);
-    const outlineTime = Date.now() - outlineStartTime;
-    console.log(`[LongForm] Outline generated in ${outlineTime}ms`);
     
-    // Step 7: Generate content with GPT
-    console.log("[LongForm] Stage 2: Generating content...");
-    const contentStartTime = Date.now();
-    const generatedContent = await generateContent(openai, outline, promptData);
-    const contentTime = Date.now() - contentStartTime;
-    console.log(`[LongForm] Content generated in ${contentTime}ms`);
-    
-    // Step 8: Create content record
-    contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
-      const contentData = {
-      id: contentId,
-      uid: uid,
-      moduleType: "longform",
-      inputs: promptData,
-      outline: outline,
-      content: generatedContent,      metadata: {
-        actualWordCount: generatedContent.split(/\s+/).filter(word => word.length > 0).length, // More accurate word count
-        estimatedReadingTime: Math.ceil(generatedContent.split(/\s+/).filter(word => word.length > 0).length / 200),
-        generatedAt: FieldValue.serverTimestamp(),        generationTime: Date.now() - startTime,
-        outlineGenerationTime: outlineTime,
-        contentGenerationTime: contentTime,
-        version: "2.2.0", // Updated version with enhanced prompts
-        // New enhanced metadata fields
-        readingLevel: promptData.readingLevel || "General",
-        hasReferences: promptData.includeReferences || false,
-        contentPersonality: promptData.writingPersonality || "Professional",
-        contentEmotion: outline.meta?.primaryEmotion || "Informative",
-        topics: outline.meta?.topics || promptData.keywords?.slice(0, 5) || [promptData.topic],
-        metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
-        metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
-        contentQuality: {
-          hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
-          hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
-          seoOptimized: !!outline.seoStrategy?.primaryKeyword,
-          structureComplexity: outline.sections?.length || 0
-        },
-        lang,
-      },
-      status: "completed"
-    };
-    
-    // Step 9: Store content and update usage in transaction
-    await db.runTransaction(async (transaction) => {
-      const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
-      const userRef = db.collection("users").doc(uid);
+    try {
+      const outline = await generateOutline(genAI, promptData, uid);
+      const outlineTime = Date.now() - outlineStartTime;
+      console.log(`[LongForm] Outline generated in ${outlineTime}ms`);
       
-      // Store content
-      transaction.set(contentRef, contentData);      // Update usage based on plan type - Blog generation costs 4 requests
-      if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
-        transaction.update(userRef, {
-          flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
-        });
-      } else {
-        transaction.update(userRef, {
-          requests_used: FieldValue.increment(BLOG_REQUEST_COST)
-        });
+      // Step 7: Generate content with GPT
+      console.log("[LongForm] Stage 2: Generating content...");
+      const contentStartTime = Date.now();
+      const generatedContent = await generateContent(openai, outline, promptData);
+      const contentTime = Date.now() - contentStartTime;
+      console.log(`[LongForm] Content generated in ${contentTime}ms`);
+      
+      // Step 8: Create content record
+      contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
+      const contentData = {
+        id: contentId,
+        uid: uid,
+        moduleType: "longform",
+        inputs: promptData,
+        outline: outline,
+        content: generatedContent,
+        metadata: {
+          actualWordCount: generatedContent.split(/\s+/).filter(word => word.length > 0).length, // More accurate word count
+          estimatedReadingTime: Math.ceil(generatedContent.split(/\s+/).filter(word => word.length > 0).length / 200),
+          generatedAt: FieldValue.serverTimestamp(),
+          generationTime: Date.now() - startTime,
+          outlineGenerationTime: outlineTime,
+          contentGenerationTime: contentTime,
+          version: "2.2.0", // Updated version with enhanced prompts
+          // New enhanced metadata fields
+          readingLevel: promptData.readingLevel || "General",
+          hasReferences: promptData.includeReferences || false,
+          contentPersonality: promptData.writingPersonality || "Professional",
+          contentEmotion: outline.meta?.primaryEmotion || "Informative",
+          topics: outline.meta?.topics || promptData.keywords?.slice(0, 5) || [promptData.topic],
+          metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
+          metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
+          contentQuality: {
+            hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
+            hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
+            seoOptimized: !!outline.seoStrategy?.primaryKeyword,
+            structureComplexity: outline.sections?.length || 0
+          },
+          lang,
+        },
+        status: "completed"
+      };
+      
+      // Step 9: Store content and update usage in transaction
+      await db.runTransaction(async (transaction) => {
+        const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
+        const userRef = db.collection("users").doc(uid);
+        
+        // Store content
+        transaction.set(contentRef, contentData);
+        
+        // Update usage based on plan type - Blog generation costs 4 requests
+        if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
+          transaction.update(userRef, {
+            flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
+          });
+        } else {
+          transaction.update(userRef, {
+            requests_used: FieldValue.increment(BLOG_REQUEST_COST)
+          });
+        }
+      });
+      
+      // Step 10: Calculate remaining requests - Blog generation costs 4 requests
+      const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
+      
+      console.log(`[LongForm] Content generation completed in ${Date.now() - startTime}ms`);
+      
+      // Step 11: Return success response
+      return {
+        success: true,
+        contentId: contentId,
+        content: generatedContent,
+        outline: outline,
+        metadata: contentData.metadata,
+        requestsRemaining: remainingRequests,
+        message: "Long-form content generated successfully!"
+      };
+      
+    } catch (outlineError) {
+      // Handle outline generation errors with enhanced error recovery
+      console.error("[LongForm] Outline generation error:", outlineError);
+      
+      if (outlineError instanceof ContentGenerationException) {
+        // Return user-friendly error response
+        return {
+          success: false,
+          error: outlineError.code,
+          userMessage: outlineError.userMessage,
+          retryAfter: outlineError.retryAfter,
+          message: outlineError.userMessage?.description || "Une erreur s'est produite lors de la génération"
+        };
       }
-    });    // Step 10: Calculate remaining requests - Blog generation costs 4 requests
-    const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
-    
-    console.log(`[LongForm] Content generation completed in ${Date.now() - startTime}ms`);
-    
-    // Step 11: Return success response
-    return {
-      success: true,
-      contentId: contentId,
-      content: generatedContent,
-      outline: outline,
-      metadata: contentData.metadata,
-      requestsRemaining: remainingRequests,
-      message: "Long-form content generated successfully!"
-    };
-    
+      
+      // For other errors, try to provide fallback content
+      console.log("[LongForm] Attempting fallback content generation...");
+      const fallbackOutline = createFallbackOutline(promptData);
+      const fallbackContent = await generateContent(openai, fallbackOutline, promptData);
+      
+      // Store fallback content
+      contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
+      const fallbackData = {
+        id: contentId,
+        uid: uid,
+        moduleType: "longform",
+        inputs: promptData,
+        outline: fallbackOutline,
+        content: fallbackContent,
+        metadata: {
+          actualWordCount: fallbackContent.split(/\s+/).filter(word => word.length > 0).length,
+          estimatedReadingTime: Math.ceil(fallbackContent.split(/\s+/).filter(word => word.length > 0).length / 200),
+          generatedAt: FieldValue.serverTimestamp(),
+          generationTime: Date.now() - startTime,
+          version: "2.2.0",
+          fallback: true,
+          originalError: outlineError instanceof Error ? outlineError.message : String(outlineError),
+          lang,
+        },
+        status: "completed"
+      };
+      
+      await db.runTransaction(async (transaction) => {
+        const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
+        const userRef = db.collection("users").doc(uid);
+        
+        transaction.set(contentRef, fallbackData);
+        
+        if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
+          transaction.update(userRef, {
+            flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
+          });
+        } else {
+          transaction.update(userRef, {
+            requests_used: FieldValue.increment(BLOG_REQUEST_COST)
+          });
+        }
+      });
+      
+      const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
+      
+      return {
+        success: true,
+        contentId: contentId,
+        content: fallbackContent,
+        outline: fallbackOutline,
+        metadata: fallbackData.metadata,
+        requestsRemaining: remainingRequests,
+        message: "Contenu généré avec le modèle de secours en raison d'une erreur technique.",
+        fallback: true
+      };
+    }
   } catch (error) {
     console.error("[LongForm] Function error:", error);
     
     // Enhanced error logging
-    if (contentId && request.auth?.uid) {
+    if (contentId && request.auth && request.auth.uid) {
       try {
         await db.collection("users").doc(request.auth.uid).collection("longform-content").doc(contentId).set({
           status: "failed",

@@ -115,6 +115,9 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
 }) => {
   const { t, ready } = useTranslation('caption-generator', { useSuspense: false });
   
+  // State for preview text example - must be at top level
+  const [showTonePreview, setShowTonePreview] = useState(false);
+  
   // Don't render until translations are ready
   if (!ready) {
     return (
@@ -143,9 +146,6 @@ const ToneSelector: React.FC<ToneSelectorProps> = ({
   
   // Get selected tone details
   const selectedToneDetails = CONTENT_TONES.find(tone => tone.id === selectedTone);
-  
-  // State for preview text example
-  const [showTonePreview, setShowTonePreview] = useState(false);
   
   // Sort tones by priority
   const sortedTones = [...CONTENT_TONES].sort((a, b) => a.priority - b.priority);

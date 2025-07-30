@@ -11,7 +11,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { AnalyticsProvider } from "./contexts/AnalyticsContext";
 import RouterConfig from "./RouterConfig";
 import SupportChat from './components/SupportChat';
-import { detectAndSetLanguage } from './utils/languageUtils';
+import { detectAndSetLanguage, forceResetToEnglish, debugLanguageDetection } from './utils/languageUtils';
 
 // Import testing utilities for debugging text overlays
 // This will expose debugging functions to the window object
@@ -27,13 +27,21 @@ import {
 
 // Make text overlay utilities globally available for use in other components
 if (typeof window !== 'undefined') {
-  // @ts-ignore - adding to window
+  // @ts-expect-error - adding to window
   window.drawCustomTextOverlay = drawCustomTextOverlay;
-  // @ts-ignore - adding to window
+  // @ts-expect-error - adding to window
   window.getTextOverlayDataFromElement = getTextOverlayDataFromElement;
   
   // Ensure media file cache is initialized
   initializeMediaFileCache();
+  
+  // Add language debug utilities to window for debugging
+  // @ts-expect-error - adding to window
+  window.debugLanguageDetection = debugLanguageDetection;
+  // @ts-expect-error - adding to window
+  window.forceResetToEnglish = forceResetToEnglish;
+  // @ts-expect-error - adding to window
+  window.detectAndSetLanguage = detectAndSetLanguage;
   
   // Don't initialize language detection here - it will be handled by the LanguageProvider
 }
