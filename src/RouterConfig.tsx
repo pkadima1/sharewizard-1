@@ -60,10 +60,14 @@ const RootRedirect: React.FC = () => {
     if (location.pathname === '/') {
       navigate(`/${currentLanguage}/home`, { replace: true });
     } else {
-      // For other paths, just add the language prefix
-      navigate(`/${currentLanguage}${location.pathname}`, { replace: true });
+      // For other paths, just add the language prefix and preserve state
+      const targetPath = `/${currentLanguage}${location.pathname}`;
+      navigate(targetPath, { 
+        replace: true,
+        state: location.state // Preserve the navigation state
+      });
     }
-  }, [currentLanguage, navigate, location.pathname]);
+  }, [currentLanguage, navigate, location.pathname, location.state]);
 
   return null;
 };

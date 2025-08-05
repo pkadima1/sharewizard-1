@@ -68,6 +68,60 @@ export const debugLanguageDetection = () => {
 };
 
 /**
+ * Test specific translation keys that were causing issues
+ */
+export const testTranslationKeys = () => {
+  const currentLang = i18n.language;
+  const testKeys = [
+    'cta.options.subscribe',
+    'cta.options.bookCall', 
+    'cta.options.download',
+    'cta.options.visitWebsite',
+    'cta.options.none'
+  ];
+  
+  console.log(`Testing translation keys for language: ${currentLang}`);
+  
+  testKeys.forEach(key => {
+    const translation = i18n.t(key, { ns: 'longform' });
+    console.log(`${key}: ${translation}`);
+  });
+  
+  return testKeys.map(key => ({
+    key,
+    translation: i18n.t(key, { ns: 'longform' }),
+    exists: i18n.exists(key, { ns: 'longform' })
+  }));
+};
+
+/**
+ * Test if translation files are accessible at the correct URLs
+ */
+export const testTranslationFileAccess = async () => {
+  const languages = ['en', 'fr'];
+  const namespaces = ['common', 'longform'];
+  
+  console.log('Testing translation file accessibility...');
+  
+  for (const lang of languages) {
+    for (const ns of namespaces) {
+      const url = `/locales/${lang}/${ns}.json`;
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`✅ ${url} - Loaded successfully (${Object.keys(data).length} keys)`);
+        } else {
+          console.error(`❌ ${url} - HTTP ${response.status}: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error(`❌ ${url} - Network error:`, error);
+      }
+    }
+  }
+};
+
+/**
  * Returns the flag image path for a language code
  */
 export const getLanguageFlag = (code: string) => {

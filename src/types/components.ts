@@ -69,6 +69,16 @@ export interface WizardFormData {
   localSeoKeywords?: string[];
   culturalContext?: string;
   lang: 'en' | 'fr';
+  
+  // Additional properties for form data
+  tone: string;
+  structure: any[];
+  structureNotes: string;
+  optimizedTitle: string;
+  includeImages: boolean;
+  includeMedia?: boolean;
+  qualityLevel?: string;
+  customIndustry?: string;
 }
 
 export interface WizardStep {

@@ -8,6 +8,7 @@
  */
 
 import { LongformContent } from '@/hooks/useLongformContent';
+import i18n from 'i18next';
 
 /**
  * Convert markdown content to clean, Google Docs-friendly HTML
@@ -280,8 +281,41 @@ const prepareContentForGoogleDocs = (content: LongformContent): { html: string; 
     .replace(/\r/g, '\n')    // Handle old Mac line endings
     .trim();
 
-  // Step 2: Convert markdown to clean HTML that Google Docs handles perfectly
-  const htmlContent = normalizedContent
+  // Step 2: Advanced title deduplication to prevent duplicate titles
+  const title = content.inputs.topic;
+  let deduplicatedContent = normalizedContent;
+  
+  // Remove the title if it appears as the first heading in the content
+  const titleVariations = [
+    // Exact match
+    new RegExp(`^#\\s*${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'im'),
+    // With subtitle variations
+    new RegExp(`^#\\s*${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[:\\-–—]\\s*.*$`, 'im'),
+    // Flexible whitespace matching
+    new RegExp(`^#\\s*${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\s+/g, '\\s+')}\\s*$`, 'im'),
+    // Case-insensitive with subtitle
+    new RegExp(`^#\\s*${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\s+/g, '\\s+')}\\s*[:\\-–—]\\s*.*$`, 'im'),
+    // Similarity matching (80% word overlap)
+    new RegExp(`^#\\s*([^\\n]+)$`, 'im')
+  ];
+
+  // Check if the first heading is a title variation
+  const firstHeadingMatch = deduplicatedContent.match(/^#\s*([^\n]+)$/im);
+  if (firstHeadingMatch) {
+    const firstHeading = firstHeadingMatch[1].trim();
+    
+    // Check for exact match or high similarity
+    const isTitleVariation = titleVariations.some(regex => regex.test(`# ${firstHeading}`)) ||
+      calculateSimilarity(firstHeading, title) > 0.8;
+    
+    if (isTitleVariation) {
+      // Remove the first heading if it's a title variation
+      deduplicatedContent = deduplicatedContent.replace(/^#\s*[^\n]+\s*\n?/im, '');
+    }
+  }
+
+  // Step 3: Convert markdown to clean HTML that Google Docs handles perfectly
+  const htmlContent = deduplicatedContent
     // Headers with proper hierarchy (process longest first to avoid conflicts)
     .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
@@ -319,8 +353,8 @@ const prepareContentForGoogleDocs = (content: LongformContent): { html: string; 
     .filter(p => p)
     .join('\n\n');
 
-  // Step 3: Create plain text version for clipboard fallback
-  const textContent = normalizedContent
+  // Step 4: Create plain text version for clipboard fallback
+  const textContent = deduplicatedContent
     // Remove markdown formatting for plain text
     .replace(/^#{1,6}\s+/gm, '')  // Remove header markers
     .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold markers
@@ -335,37 +369,236 @@ const prepareContentForGoogleDocs = (content: LongformContent): { html: string; 
 };
 
 /**
+ * Calculate similarity between two strings (for title deduplication)
+ */
+const calculateSimilarity = (str1: string, str2: string): number => {
+  const words1 = str1.toLowerCase().split(/\s+/);
+  const words2 = str2.toLowerCase().split(/\s+/);
+  
+  const commonWords = words1.filter(word => words2.includes(word));
+  const totalWords = Math.max(words1.length, words2.length);
+  
+  return totalWords > 0 ? commonWords.length / totalWords : 0;
+};
+
+/**
  * Create a complete document package with both HTML and text versions
  */
 const createGoogleDocsDocument = (formattedContent: { html: string; text: string }, content: LongformContent) => {
   const title = content.inputs.topic;
   
-  // Create a complete HTML document optimized for Google Docs
+  // Create a complete HTML document optimized for Google Docs with production-ready formatting
   const htmlDocument = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <style>
+    /* Mobile-first responsive design */
+    * {
+      box-sizing: border-box;
+    }
+    
     body { 
-      font-family: Arial, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       max-width: 8.5in; 
       margin: 0 auto; 
-      padding: 1in; 
+      padding: 1in;
+      line-height: 1.6; 
+      color: #333;
+      background: white;
+      font-size: 16px;
+    }
+    
+    /* Typography and spacing */
+    h1 { 
+      color: #1a73e8; 
+      font-size: 28px; 
+      margin: 32px 0 20px 0; 
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    
+    h2 { 
+      color: #333; 
+      font-size: 22px; 
+      margin: 28px 0 16px 0; 
+      font-weight: 600;
+      text-align: left;
+      line-height: 1.3;
+    }
+    
+    h3 { 
+      color: #555; 
+      font-size: 18px; 
+      margin: 24px 0 12px 0; 
+      font-weight: 600;
+      text-align: left;
+      line-height: 1.4;
+    }
+    
+    h4 { 
+      color: #666; 
+      font-size: 16px; 
+      margin: 20px 0 10px 0; 
+      font-weight: 600;
+      text-align: left;
+      line-height: 1.4;
+    }
+    
+    p { 
+      margin: 16px 0; 
+      line-height: 1.7; 
+      font-size: 16px;
+      color: #333;
+    }
+    
+    ul, ol { 
+      margin: 20px 0; 
+      padding-left: 24px; 
+    }
+    
+    li { 
+      margin: 8px 0; 
       line-height: 1.6; 
       color: #333;
     }
-    h1 { color: #1a73e8; font-size: 24px; margin: 24px 0 16px 0; font-weight: bold; }
-    h2 { color: #333; font-size: 20px; margin: 20px 0 12px 0; font-weight: bold; }
-    h3 { color: #555; font-size: 16px; margin: 16px 0 8px 0; font-weight: bold; }
-    h4 { color: #666; font-size: 14px; margin: 14px 0 6px 0; font-weight: bold; }
-    p { margin: 12px 0; line-height: 1.6; }
-    ul { margin: 16px 0; padding-left: 24px; }
-    ol { margin: 16px 0; padding-left: 24px; }
-    li { margin: 4px 0; line-height: 1.5; }
-    strong { font-weight: bold; }
-    em { font-style: italic; }
-    a { color: #1a73e8; text-decoration: underline; }
+    
+    strong { 
+      font-weight: 600; 
+      color: #1a73e8;
+    }
+    
+    em { 
+      font-style: italic; 
+      color: #555;
+    }
+    
+    a { 
+      color: #1a73e8; 
+      text-decoration: underline; 
+      transition: color 0.2s ease;
+    }
+    
+    a:hover {
+      color: #1557b0;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.5in;
+        font-size: 15px;
+      }
+      
+      h1 {
+        font-size: 24px;
+        margin: 24px 0 16px 0;
+      }
+      
+      h2 {
+        font-size: 20px;
+        margin: 20px 0 12px 0;
+      }
+      
+      h3 {
+        font-size: 16px;
+        margin: 16px 0 8px 0;
+      }
+      
+      h4 {
+        font-size: 14px;
+        margin: 14px 0 6px 0;
+      }
+      
+      p {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      
+      ul, ol {
+        padding-left: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 0.25in;
+        font-size: 14px;
+      }
+      
+      h1 {
+        font-size: 22px;
+        margin: 20px 0 14px 0;
+      }
+      
+      h2 {
+        font-size: 18px;
+        margin: 18px 0 10px 0;
+      }
+      
+      h3 {
+        font-size: 15px;
+        margin: 14px 0 6px 0;
+      }
+      
+      h4 {
+        font-size: 13px;
+        margin: 12px 0 4px 0;
+      }
+      
+      p {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        margin: 0;
+        padding: 0.5in;
+        font-size: 12pt;
+        line-height: 1.4;
+      }
+      
+      h1 {
+        font-size: 18pt;
+        margin: 24pt 0 12pt 0;
+      }
+      
+      h2 {
+        font-size: 14pt;
+        margin: 18pt 0 6pt 0;
+      }
+      
+      h3 {
+        font-size: 12pt;
+        margin: 12pt 0 6pt 0;
+      }
+      
+      h4 {
+        font-size: 11pt;
+        margin: 10pt 0 4pt 0;
+      }
+      
+      p {
+        margin: 12pt 0;
+        font-size: 11pt;
+      }
+      
+      ul, ol {
+        margin: 16pt 0;
+        padding-left: 20pt;
+      }
+      
+      li {
+        margin: 6pt 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -382,48 +615,11 @@ const createGoogleDocsDocument = (formattedContent: { html: string; text: string
 };
 
 /**
- * Create a data URL that Google Docs can import directly - DEPRECATED
- * Keeping for compatibility but updating to use new structure
+ * Enhanced clipboard copy with multiple fallback methods for maximum reliability
  */
-const createGoogleDocsDataUrl = (content: string, title: string): string => {
-  const htmlDocument = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>${title}</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 8.5in; 
-      margin: 0 auto; 
-      padding: 1in; 
-      line-height: 1.6; 
-    }
-    h1 { color: #1a73e8; font-size: 24px; margin: 24px 0 16px 0; }
-    h2 { color: #333; font-size: 20px; margin: 20px 0 12px 0; }
-    h3 { color: #555; font-size: 16px; margin: 16px 0 8px 0; }
-    p { margin: 16px 0; }
-    ul { margin: 16px 0; padding-left: 24px; }
-    li { margin: 4px 0; }
-  </style>
-</head>
-<body>
-  ${content}
-</body>
-</html>`;
-
-  return 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlDocument);
-};
-
-/**
- * REVOLUTIONARY: Open Google Docs with content already loaded + AUTOMATED PASTE
- * Uses advanced techniques to minimize user interaction
- */
-const openGoogleDocsWithContent = async (documentData: { html: string; text: string; title: string }, title: string): Promise<void> => {
+const enhancedClipboardCopy = async (documentData: { html: string; text: string; title: string }): Promise<boolean> => {
   try {
-    console.log('Starting automated Google Docs export...');
-    
-    // Step 1: Copy content to clipboard with rich formatting
+    // Method 1: Modern Clipboard API with rich HTML
     if (navigator.clipboard && navigator.clipboard.write) {
       try {
         const htmlBlob = new Blob([documentData.html], { type: 'text/html' });
@@ -435,138 +631,131 @@ const openGoogleDocsWithContent = async (documentData: { html: string; text: str
         });
         
         await navigator.clipboard.write([clipboardItem]);
-        console.log('✅ Content copied to clipboard with HTML formatting');
-        
-      } catch (clipboardError) {
-        console.warn('Rich clipboard failed, trying text-only:', clipboardError);
-        await navigator.clipboard.writeText(documentData.text);
-        console.log('✅ Content copied to clipboard as plain text');
+        console.log('✅ Enhanced clipboard copy successful with HTML formatting');
+        return true;
+      } catch (error) {
+        console.warn('Rich clipboard failed, trying text-only:', error);
       }
     }
     
-    // Step 2: Open Google Docs with pre-named document
-    const googleDocsUrl = `https://docs.google.com/document/create?title=${encodeURIComponent(title + ' - Auto Import')}`;
-    console.log('Opening Google Docs with automation:', googleDocsUrl);
-    
-    const docsWindow = window.open(googleDocsUrl, '_blank', 'width=1200,height=800');
-    
-    if (docsWindow) {
-      // Step 3: Attempt automated paste with multiple strategies
-      await attemptAutomatedPaste(docsWindow, documentData, title);
-      console.log('✅ Google Docs opened with automation attempts');
-    } else {
-      throw new Error('Failed to open Google Docs window - popup may be blocked');
+    // Method 2: Text-only clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(documentData.text);
+        console.log('✅ Enhanced clipboard copy successful with text-only');
+        return true;
+      } catch (error) {
+        console.warn('Text clipboard failed:', error);
+      }
     }
     
+    // Method 3: Legacy execCommand (deprecated but widely supported)
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = documentData.text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        console.log('✅ Enhanced clipboard copy successful with execCommand');
+        return true;
+      }
+    } catch (error) {
+      console.warn('execCommand failed:', error);
+    }
+    
+    // Method 4: Create temporary element with HTML content
+    try {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = documentData.html;
+      tempDiv.style.position = 'fixed';
+      tempDiv.style.left = '-999999px';
+      tempDiv.style.top = '-999999px';
+      document.body.appendChild(tempDiv);
+      
+      const range = document.createRange();
+      range.selectNodeContents(tempDiv);
+      
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        const successful = document.execCommand('copy');
+        selection.removeAllRanges();
+        document.body.removeChild(tempDiv);
+        
+        if (successful) {
+          console.log('✅ Enhanced clipboard copy successful with HTML element');
+          return true;
+        }
+      }
+    } catch (error) {
+      console.warn('HTML element copy failed:', error);
+    }
+    
+    console.error('All clipboard methods failed');
+    return false;
+    
   } catch (error) {
-    console.error('Automated export failed, using fallback:', error);
+    console.error('Enhanced clipboard copy error:', error);
+    return false;
+  }
+};
+
+/**
+ * SMART: Show instructions first, then open Google Docs on user action
+ * User clicks "Go to Google Docs" button to actually open the tab
+ */
+const openGoogleDocsWithContent = async (documentData: { html: string; text: string; title: string }, title: string): Promise<void> => {
+  try {
+    console.log('Starting smart Google Docs export...');
+    
+    // Step 1: Copy content to clipboard with enhanced reliability
+    const clipboardSuccess = await enhancedClipboardCopy(documentData);
+    
+    if (clipboardSuccess) {
+      console.log('✅ Content successfully copied to clipboard');
+    } else {
+      console.warn('⚠️ Clipboard copy failed, will show manual instructions');
+    }
+    
+    // Step 2: Show instructions first (don't open Google Docs yet)
+    setTimeout(() => {
+      showSimpleInstructions(title, documentData, clipboardSuccess);
+    }, 500);
+    
+    console.log('✅ Instructions shown - waiting for user to click "Go to Google Docs"');
+    
+  } catch (error) {
+    console.error('Smart export failed, using fallback:', error);
     await exportToGoogleDocsTraditional({ inputs: { topic: title } } as LongformContent);
   }
 };
 
 /**
- * ADVANCED: Attempt to automate the paste process using multiple strategies
+ * SIMPLE: Show intuitive instructions that open Google Docs on button click
+ * Clean, straightforward guidance for the Google Docs workflow
  */
-const attemptAutomatedPaste = async (docsWindow: Window, documentData: { html: string; text: string; title: string }, title: string): Promise<void> => {
-  // Strategy 1: Immediate automation attempt
-  setTimeout(async () => {
-    try {
-      // Focus the Google Docs window
-      docsWindow.focus();
-      
-      // Try to simulate Ctrl+V programmatically (limited by browser security)
-      if (docsWindow.document) {
-        // Method 1: Try to dispatch keyboard events
-        const pasteEvent = new KeyboardEvent('keydown', {
-          key: 'v',
-          code: 'KeyV',
-          ctrlKey: true,
-          bubbles: true,
-          cancelable: true
-        });
-        
-        // Try to dispatch to the document body when it's ready
-        const attemptPaste = () => {
-          if (docsWindow.document.body) {
-            docsWindow.document.body.dispatchEvent(pasteEvent);
-            console.log('🤖 Attempted automated paste via keyboard event');
-          }
-        };
-        
-        // Wait for Google Docs to load, then attempt paste
-        setTimeout(attemptPaste, 3000);
-        setTimeout(attemptPaste, 5000); // Retry
-        setTimeout(attemptPaste, 7000); // Final retry
-      }
-    } catch (error) {
-      console.log('Automated paste method 1 failed:', error);
-    }
-  }, 1000);
-
-  // Strategy 2: Advanced automation with iframe detection
-  setTimeout(async () => {
-    try {
-      if (docsWindow && !docsWindow.closed) {
-        // Try to find and focus the editor area
-        const focusEditor = () => {
-          try {
-            // Google Docs loads content in iframes, try to access them
-            const frames = docsWindow.frames;
-            for (let i = 0; i < frames.length; i++) {
-              try {
-                const frame = frames[i];
-                if (frame.document && frame.document.body) {
-                  frame.focus();
-                  
-                  // Try execCommand paste (deprecated but might work)
-                  try {
-                    frame.document.execCommand('paste');
-                    console.log('🤖 Attempted execCommand paste in frame', i);
-                  } catch (e) {
-                    console.log('execCommand failed in frame', i);
-                  }
-                  
-                  // Try keyboard simulation in frame
-                  const frameEvent = new KeyboardEvent('keydown', {
-                    key: 'v',
-                    code: 'KeyV',
-                    ctrlKey: true,
-                    bubbles: true,
-                    cancelable: true
-                  });
-                  frame.document.body.dispatchEvent(frameEvent);
-                }
-              } catch (frameError) {
-                // Cross-origin restrictions expected
-              }
-            }
-          } catch (error) {
-            console.log('Frame access failed (expected due to CORS)');
-          }
-        };
-        
-        setTimeout(focusEditor, 4000);
-        setTimeout(focusEditor, 6000);
-        setTimeout(focusEditor, 8000);
-      }
-    } catch (error) {
-      console.log('Automated paste method 2 failed:', error);
-    }
-  }, 2000);
-
-  // Strategy 3: Smart user guidance with automated features
-  setTimeout(() => {
-    if (docsWindow && !docsWindow.closed) {
-      showSmartAutomationInstructions(title, documentData.text.substring(0, 200) + '...', docsWindow);
-    }
-  }, 2500);
-};
-
-/**
- * Smart automation instructions that help user complete the final step
- */
-const showSmartAutomationInstructions = (title: string, contentPreview: string, docsWindow: Window): void => {
+const showSimpleInstructions = (title: string, documentData: { html: string; text: string; title: string }, clipboardSuccess: boolean): void => {
   const overlay = document.createElement('div');
+  
+  // Get translations using i18n
+  const t = (key: string, options?: any) => i18n.t(key, options);
+  
+  const statusColor = clipboardSuccess ? '#34a853' : '#fbbc04';
+  const statusIcon = clipboardSuccess ? '✅' : '⚠️';
+  const statusText = clipboardSuccess ? t('common:googleDocs.contentCopied') : t('common:googleDocs.manualCopyNeeded');
+  const statusDescription = clipboardSuccess ? t('common:googleDocs.contentCopiedReady') : t('common:googleDocs.pleaseManualCopy');
+  const statusTag = clipboardSuccess ? t('common:googleDocs.autoReady') : t('common:googleDocs.manualNeeded');
+  
   overlay.innerHTML = `
     <div style="
       position: fixed;
@@ -581,178 +770,189 @@ const showSmartAutomationInstructions = (title: string, contentPreview: string, 
       justify-content: center;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       backdrop-filter: blur(6px);
+      padding: 20px;
+      box-sizing: border-box;
     ">
       <div style="
         background: white;
-        padding: 50px;
-        border-radius: 24px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-        max-width: 650px;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        max-width: 100%;
+        width: 100%;
+        max-width: 450px;
         text-align: center;
-        animation: slideInScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        border: 3px solid #4285f4;
+        animation: slideInScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 3px solid ${statusColor};
         position: relative;
         overflow: hidden;
       ">
-        <!-- Animated background -->
+        <!-- Status indicator -->
         <div style="
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
-          height: 6px;
-          background: linear-gradient(90deg, #4285f4, #34a853, #fbbc04, #ea4335);
+          height: 4px;
+          background: linear-gradient(90deg, ${statusColor}, #4285f4);
           animation: pulse 2s ease-in-out infinite;
         "></div>
         
-        <div style="
-          width: 100px;
-          height: 100px;
-          background: linear-gradient(135deg, #4285f4, #34a853, #fbbc04);
-          border-radius: 50%;
-          margin: 0 auto 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 40px;
-          box-shadow: 0 10px 30px rgba(66, 133, 244, 0.4);
-          animation: bounce 1s ease-in-out infinite alternate;
-        ">🚀</div>
-        
-        <h2 style="
-          margin: 0 0 20px 0;
-          color: #1a73e8;
-          font-size: 32px;
-          font-weight: 800;
-        ">Almost Magic! ✨</h2>
-        
-        <p style="
-          margin: 0 0 25px 0;
-          color: #5f6368;
-          font-size: 18px;
-          line-height: 1.5;
-        ">Google Docs opened with "<strong>${title}</strong>"<br>
-        <span style="font-size: 16px; color: #34a853;">Content is copied & automation attempted!</span></p>
-        
-        <div style="
-          background: #f8f9fa;
-          border: 1px solid #e8eaed;
-          border-radius: 16px;
-          padding: 20px;
-          margin: 25px 0;
-          text-align: left;
-          max-height: 100px;
-          overflow: hidden;
-        ">
+        <!-- Content -->
+        <div style="padding: 40px 30px;">
           <div style="
-            color: #1a73e8;
-            font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 14px;
-          ">📄 Content Preview:</div>
-          <div style="
-            color: #3c4043;
-            font-size: 14px;
-            line-height: 1.4;
-            font-family: 'Georgia', serif;
-          ">${contentPreview}</div>
-        </div>
-        
-        <div style="
-          background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
-          border: 3px solid #34a853;
-          border-radius: 20px;
-          padding: 30px;
-          margin: 30px 0;
-          text-align: left;
-          position: relative;
-        ">
-          <div style="
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: #34a853;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-          ">AUTO-PASTE ACTIVE</div>
-          
-          <div style="
-            color: #137333;
-            font-weight: 800;
-            margin-bottom: 15px;
-            font-size: 18px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, ${statusColor}, #4285f4);
+            border-radius: 50%;
+            margin: 0 auto 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
-          ">
-            ⚡ Smart Automation:
-          </div>
-          <div style="
-            color: #137333;
-            font-size: 16px;
-            line-height: 1.6;
-          ">
-            🤖 <strong>Auto-paste attempts in progress...</strong><br>
-            📋 If content doesn't appear automatically, just press 
-            <kbd style="
-              background: white;
-              color: #137333;
-              padding: 8px 16px;
-              border-radius: 8px;
-              font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
-              font-weight: bold;
-              border: 3px solid #34a853;
-              margin: 0 4px;
-              font-size: 14px;
-              box-shadow: 0 2px 5px rgba(52, 168, 83, 0.3);
-            ">Ctrl+V</kbd> 
-            in Google Docs!
-          </div>
-        </div>
-        
-        <div style="margin: 30px 0; display: flex; gap: 15px; justify-content: center;">
-          <button onclick="this.focusGoogleDocs()" style="
-            background: linear-gradient(135deg, #4285f4, #1a73e8);
-            color: white;
-            border: none;
-            padding: 18px 35px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(66, 133, 244, 0.4);
-          " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 30px rgba(66, 133, 244, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 20px rgba(66, 133, 244, 0.4)'">
-            🎯 Focus Google Docs
-          </button>
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 0 8px 25px rgba(52, 168, 83, 0.3);
+            animation: bounce 1s ease-in-out infinite alternate;
+          ">${statusIcon}</div>
           
-          <button onclick="this.parentElement.parentElement.remove()" style="
-            background: linear-gradient(135deg, #34a853, #2d7d32);
-            color: white;
-            border: none;
-            padding: 18px 35px;
-            border-radius: 25px;
+          <h2 style="
+            margin: 0 0 20px 0;
+            color: #1a73e8;
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+          ">${t('common:googleDocs.readyForGoogleDocs')}</h2>
+          
+          <p style="
+            margin: 0 0 25px 0;
+            color: #5f6368;
             font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(52, 168, 83, 0.4);
-          " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 30px rgba(52, 168, 83, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 20px rgba(52, 168, 83, 0.4)'">
-            Perfect! Done ✨
-          </button>
-        </div>
-        
-        <div style="
-          color: #9aa0a6;
-          font-size: 13px;
-          margin-top: 20px;
-          line-height: 1.4;
-        ">
-          🎯 <strong>Pro Tip:</strong> Most browsers auto-paste successfully!<br>
-          📱 The content includes rich formatting and is collaboration-ready!
+            line-height: 1.5;
+          ">${t('common:googleDocs.contentReadyToExport', { title })}</p>
+          
+          <!-- Status Card -->
+          <div style="
+            background: ${clipboardSuccess ? '#e8f5e8' : '#fff3cd'};
+            border: 2px solid ${statusColor};
+            border-radius: 16px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            position: relative;
+          ">
+            <div style="
+              position: absolute;
+              top: -10px;
+              right: 15px;
+              background: ${statusColor};
+              color: white;
+              padding: 4px 12px;
+              border-radius: 15px;
+              font-size: 11px;
+              font-weight: bold;
+            ">${statusTag}</div>
+            
+            <div style="
+              color: ${clipboardSuccess ? '#137333' : '#856404'};
+              font-weight: 700;
+              margin-bottom: 12px;
+              font-size: 16px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            ">
+              ${statusIcon} ${statusText}
+            </div>
+            <div style="
+              color: ${clipboardSuccess ? '#137333' : '#856404'};
+              font-size: 14px;
+              line-height: 1.5;
+            ">
+              ${statusDescription}
+            </div>
+          </div>
+          
+          <!-- Simple Instructions -->
+          <div style="
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border: 2px solid #2196f3;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+          ">
+            <div style="
+              color: #1565c0;
+              font-weight: 700;
+              margin-bottom: 15px;
+              font-size: 18px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+            ">
+              ${t('common:googleDocs.nextSteps')}
+            </div>
+            <div style="
+              color: #1565c0;
+              font-size: 16px;
+              line-height: 1.6;
+            ">
+              <div style="margin-bottom: 15px;">
+                <strong>1.</strong> ${t('common:googleDocs.step1ClickGoToDocs')}
+              </div>
+              <div style="margin-bottom: 15px;">
+                <strong>2.</strong> ${t('common:googleDocs.step2PressCtrlV')}
+              </div>
+              <div style="
+                color: #137333;
+                font-weight: 600;
+                font-size: 14px;
+              ">
+                ${t('common:googleDocs.contentWillPaste')}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div style="margin: 30px 0; display: flex; gap: 15px; justify-content: center;">
+            <button onclick="this.goToGoogleDocs()" style="
+              background: linear-gradient(135deg, #4285f4, #1a73e8);
+              color: white;
+              border: none;
+              padding: 16px 32px;
+              border-radius: 25px;
+              font-size: 16px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: all 0.3s;
+              box-shadow: 0 5px 20px rgba(66, 133, 244, 0.4);
+            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 30px rgba(66, 133, 244, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 20px rgba(66, 133, 244, 0.4)'">
+              ${t('common:googleDocs.goToGoogleDocs')}
+            </button>
+            
+            <button onclick="this.closePopup()" style="
+              background: linear-gradient(135deg, #34a853, #2d7d32);
+              color: white;
+              border: none;
+              padding: 16px 32px;
+              border-radius: 25px;
+              font-size: 16px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: all 0.3s;
+              box-shadow: 0 5px 20px rgba(52, 168, 83, 0.4);
+            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 30px rgba(52, 168, 83, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 20px rgba(52, 168, 83, 0.4)'">
+              ${t('common:googleDocs.perfectDone')}
+            </button>
+          </div>
+          
+          <div style="
+            color: #9aa0a6;
+            font-size: 12px;
+            margin-top: 20px;
+            line-height: 1.4;
+          ">
+            ${t('common:googleDocs.proTip')} <strong>${t('common:googleDocs.richFormattingReady')}</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -761,7 +961,7 @@ const showSmartAutomationInstructions = (title: string, contentPreview: string, 
       @keyframes slideInScale {
         from {
           opacity: 0;
-          transform: translateY(-40px) scale(0.8);
+          transform: translateY(-30px) scale(0.9);
         }
         to {
           opacity: 1;
@@ -771,7 +971,7 @@ const showSmartAutomationInstructions = (title: string, contentPreview: string, 
       
       @keyframes bounce {
         from { transform: translateY(0px); }
-        to { transform: translateY(-10px); }
+        to { transform: translateY(-8px); }
       }
       
       @keyframes pulse {
@@ -781,46 +981,42 @@ const showSmartAutomationInstructions = (title: string, contentPreview: string, 
     </style>
   `;
   
-  // Add focus functionality to the button
-  const focusButton = overlay.querySelector('button');
-  if (focusButton) {
-    (focusButton as any).focusGoogleDocs = () => {
-      if (docsWindow && !docsWindow.closed) {
-        docsWindow.focus();
-        // Additional automation attempt when user clicks focus
-        setTimeout(() => {
-          try {
-            if (docsWindow.document && docsWindow.document.body) {
-              const pasteEvent = new KeyboardEvent('keydown', {
-                key: 'v',
-                code: 'KeyV',
-                ctrlKey: true,
-                bubbles: true,
-                cancelable: true
-              });
-              docsWindow.document.body.dispatchEvent(pasteEvent);
-            }
-          } catch (error) {
-            console.log('Manual focus paste attempt failed:', error);
-          }
-        }, 500);
+  // Add navigation functionality to the "Go to Google Docs" button
+  const goButton = overlay.querySelector('button');
+  if (goButton) {
+    (goButton as any).goToGoogleDocs = () => {
+      // Open Google Docs in new tab and focus it
+      const googleDocsUrl = `https://docs.google.com/document/create?title=${encodeURIComponent(title + ' - Auto Import')}`;
+      console.log('Opening Google Docs in new tab:', googleDocsUrl);
+      
+      const docsTab = window.open(googleDocsUrl, '_blank');
+      
+      if (docsTab) {
+        // Focus the Google Docs tab
+        docsTab.focus();
+        // Close the instructions overlay
+        overlay.remove();
+        console.log('✅ Google Docs opened and focused, instructions closed');
+      } else {
+        console.error('Failed to open Google Docs tab');
       }
+    };
+  }
+  
+  // Add close functionality to the "Perfect! Done" button
+  const doneButton = overlay.querySelectorAll('button')[1];
+  if (doneButton) {
+    (doneButton as any).closePopup = () => {
+      // Close the instructions overlay
+      overlay.remove();
+      console.log('✅ Popup closed by user');
     };
   }
   
   document.body.appendChild(overlay);
   
-  // Auto-remove after 20 seconds
-  setTimeout(() => {
-    if (overlay.parentElement) {
-      overlay.style.opacity = '0';
-      overlay.style.transform = 'scale(0.9)';
-      overlay.style.transition = 'all 0.4s ease-out';
-      setTimeout(() => overlay.remove(), 400);
-    }
-  }, 20000);
-  
-  // Remove on escape key
+  // NO auto-close - instructions stay open until user action
+  // Only close on escape key or manual close
   const handleEscape = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && overlay.parentElement) {
       overlay.remove();

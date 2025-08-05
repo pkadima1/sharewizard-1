@@ -96,6 +96,8 @@ interface SmartKeywordGeneratorProps {
   onKeywordsChange?: (keywords: string[]) => void;
   maxKeywords?: number;
   className?: string;
+  enableTrendsIntegration?: boolean;
+  onTrendsData?: (trends: any) => void;
 }
 
 // Enhanced industry knowledge base
@@ -179,7 +181,9 @@ const SmartKeywordGenerator: React.FC<SmartKeywordGeneratorProps> = ({
   selectedKeywords = [],
   onKeywordsChange,
   maxKeywords = 15,
-  className = ''
+  className = '',
+  enableTrendsIntegration = false,
+  onTrendsData
 }) => {
   const { t } = useTranslation('longform');
   

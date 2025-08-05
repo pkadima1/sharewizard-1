@@ -13,7 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info, CheckCircle2, Clock, SkipForward, AlertTriangle, Keyboard, X, Command } from 'lucide-react';
 import Step1WhatWho from '@/components/wizard/steps/Step1WhatWho';
-import Step2MediaVisuals from '@/components/wizard/steps/Step2MediaVisuals';
+// import Step2MediaVisuals from '@/components/wizard/steps/Step2MediaVisuals';
 import Step3KeywordsSEO from '@/components/wizard/steps/Step3KeywordsSEO';
 import Step4ToneStructure from '@/components/wizard/steps/Step4ToneStructure';
 import Step5GenerationSettings from '@/components/wizard/steps/Step5GenerationSettings';
@@ -27,6 +27,7 @@ import ContextualHelp from '@/components/wizard/smart/ContextualHelp';
 import { useTranslation } from 'react-i18next';
 import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
 import { trackContentGeneration, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
+import { WizardFormData } from '@/types/components';
 
 // Helper function to get translated wizard steps
 const getWizardSteps = (t: any) => [
@@ -36,12 +37,12 @@ const getWizardSteps = (t: any) => [
     estimatedTime: 4,
     description: t('wizard.steps.whatWho.description')
   },
-  { 
-    name: t('wizard.steps.mediaVisuals.name'), 
-    optional: false, 
-    estimatedTime: 3,
-    description: t('wizard.steps.mediaVisuals.description')
-  },
+  // { 
+  //   name: t('wizard.steps.mediaVisuals.name'), 
+  //   optional: false, 
+  //   estimatedTime: 3,
+  //   description: t('wizard.steps.mediaVisuals.description')
+  // },
   { 
     name: t('wizard.steps.seoKeywords.name'), 
     optional: false, 
@@ -195,8 +196,29 @@ const LongFormWizard = () => {
     structureFormat: '',
     includeStats: false,
     ctaType: '',
-    outputFormat: 'markdown',
+    outputFormat: 'markdown' as const,
     plagiarismCheck: true,
+    // Add missing properties
+    includeMedia: false,
+    qualityLevel: 'medium',
+    // Add other required properties from WizardFormData interface
+    mediaUrls: [],
+    mediaCaptions: [],
+    mediaAnalysis: [],
+    includeReferences: false,
+    tocRequired: false,
+    summaryRequired: false,
+    structuredData: false,
+    enableMetadataBlock: false,
+    writingPersonality: '',
+    readingLevel: '',
+    targetLocation: '',
+    geographicScope: 'global' as const,
+    marketFocus: [],
+    localSeoKeywords: [],
+    culturalContext: '',
+    lang: 'en' as const,
+    customIndustry: ''
   });
   const navigate = useNavigate();
   const safeNavigate = useSafeNavigation();
@@ -553,33 +575,33 @@ const LongFormWizard = () => {
     switch (currentStep) {
       case 0: // What & Who (Topic + Audience)
         stepComponent = (
-          <Step1WhatWho formData={formData} updateFormData={updateFormData} />
+          <Step1WhatWho formData={formData as WizardFormData & { customIndustry?: string }} updateFormData={updateFormData} />
         );
         break;
-      case 1: // Media & Visuals
+      // case 1: // Media & Visuals
+      //   stepComponent = (
+      //     <Step2MediaVisuals formData={formData} updateFormData={updateFormData} />
+      //   );
+      //   break;
+      case 1: // SEO & Keywords
         stepComponent = (
-          <Step2MediaVisuals formData={formData} updateFormData={updateFormData} />
+          <Step3KeywordsSEO formData={formData as WizardFormData & { optimizedTitle?: string }} updateFormData={updateFormData} />
         );
         break;
-      case 2: // SEO & Keywords
-        stepComponent = (
-          <Step3KeywordsSEO formData={formData} updateFormData={updateFormData} />
-        );
-        break;
-      case 3: // Structure & Tone
+      case 2: // Structure & Tone
         stepComponent = (
           <Step4ToneStructure formData={formData} updateFormData={updateFormData} />
         );
         break;
-      case 4: // Generation Settings
+      case 3: // Generation Settings
         stepComponent = (
-          <Step5GenerationSettings formData={formData} updateFormData={updateFormData} />
+          <Step5GenerationSettings formData={formData as WizardFormData & { outputFormat?: string; plagiarismCheck?: boolean; includeImages?: boolean }} updateFormData={updateFormData} />
         );
         break;
-      case 5: // Review & Generate
+      case 4: // Review & Generate
         stepComponent = (
           <Step6ReviewGenerate 
-            formData={formData} 
+            formData={formData as WizardFormData & Record<string, unknown>} 
             updateFormData={updateFormData} 
             onGenerate={handleGenerate}
             onEditStep={setCurrentStep} 

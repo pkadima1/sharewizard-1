@@ -1111,12 +1111,16 @@ ${data.includeReferences ? `📚 **ENHANCED REFERENCES & CREDIBILITY (EEAT + GEO
 - Balance international research with regional market data` : ""}
 
 ${data.mediaUrls.length > 0 ? `🖼️ **ENHANCED MEDIA INTEGRATION (AUTHORITY + GEO):**
-- Follow the mediaStrategy from the outline for optimal image placement and credibility
-- CRITICAL: Use the exact image placeholder format: ![Alt Text](image-${data.mediaUrls.map((_: any, i: number) => i + 1).join('|image-')})
-- Available images: ${data.mediaUrls.length} uploaded media files
+- CRITICAL: You MUST include the provided images in your content using the exact URLs below
+- Available images: ${data.mediaUrls.length} uploaded media files with URLs:
+${data.mediaUrls.map((url: string, i: number) => `  Image ${i + 1}: ${url}`).join('\n')}
 ${data.mediaCaptions.length > 0 ? `- Image captions provided: ${data.mediaCaptions.map((caption: string, i: number) => `Image ${i + 1}: "${caption}"`).join(', ')}` : ''}
 ${data.mediaAnalysis.length > 0 ? `- AI Analysis available: ${data.mediaAnalysis.map((analysis: string, i: number) => `Image ${i + 1}: "${analysis}"`).join(', ')}` : ''}
-- Place images strategically to support expertise demonstration and geographic relevance
+- MANDATORY: Include at least one image reference per major section with authority context
+- REQUIRED: Start with a header image using the first URL provided
+- REQUIRED: Place images strategically throughout the content to support key points
+- Format: ![Expert analysis of [topic] implementation](${data.mediaUrls[0]}), ![Regional market data visualization](${data.mediaUrls[1]}), etc.
+- Caption format: *Expert insight: [Caption explaining relevance with credibility indicators]*
 - Use SEO-optimized alt text with EEAT keywords and geographic modifiers
 - Include engaging captions that build authority and reference specific locations/markets
 - Reference images naturally in the text flow with expert commentary
@@ -1126,10 +1130,8 @@ ${data.mediaAnalysis.length > 0 ? `- AI Analysis available: ${data.mediaAnalysis
   data.mediaPlacementStrategy === 'manual' ? 'Follow exact placement specifications from media analysis with authority and location considerations' :
   'Use semantic analysis to place images where they best support expertise demonstration and geographic context'
 }
-- MANDATORY: Include at least one image reference per major section with authority context
-- Format: ![Expert analysis of [topic] implementation](image-1), ![Regional market data visualization](image-2), etc.
-- Caption format: *Expert insight: [Caption explaining relevance with credibility indicators]*
-- Include geographic context in image descriptions where relevant` : ""}
+- CRITICAL: You MUST use the actual URLs provided above, NOT placeholder references
+- CRITICAL: Include a header image at the beginning of your content using the first URL` : ""}
 
 ${data.outputFormat === "html" ? `📘 **ENHANCED STRUCTURED DATA (Schema.org + EEAT + GEO):**
 - Add comprehensive JSON-LD for BlogPosting schema at the beginning of the HTML content

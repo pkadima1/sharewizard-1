@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { 
   Upload, Camera, X, RotateCw, Crop, Type, RefreshCw, Check,
   Sliders, FileEdit, RotateCcw, Image, FileText, AlertCircle,
-  VideoIcon, Info, Sparkles, SmilePlus, Move, AlignLeft, AlignCenter, AlignRight
+  VideoIcon, Info, Sparkles, SmilePlus, Move, AlignLeft,
+  AlignCenter, AlignRight
 } from 'lucide-react';
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,8 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   const [textPosition, setTextPosition] = useState({ x: 50, y: 50 }); // percentage position
   const [isTextDragging, setIsTextDragging] = useState(false);
   const [rotationAngle, setRotationAngle] = useState(0);
+  const [textAlignment, setTextAlignment] = useState<'left' | 'center' | 'right'>('center');
+  const [textBackgroundColor, setTextBackgroundColor] = useState('rgba(0,0,0,0.6)');
   const [isCropMode, setIsCropMode] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('');
   const [streamActive, setStreamActive] = useState(false);
@@ -62,11 +65,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [textRotation, setTextRotation] = useState(0);
-  // NEW: Text alignment and background color states
-  const [textAlignment, setTextAlignment] = useState<'left' | 'center' | 'right'>('center');
-  const [textBackgroundColor, setTextBackgroundColor] = useState('#000000');
-  const [textBackgroundOpacity, setTextBackgroundOpacity] = useState(0.7);
-  const [showBackgroundColor, setShowBackgroundColor] = useState(false);
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
   }>({
@@ -86,25 +84,6 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     { name: t('mediaUploader.filters.blur'), class: 'blur-sm', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.blurDesc') },
     { name: t('mediaUploader.filters.brightness'), class: 'brightness-125', icon: <Sparkles className="h-3 w-3" />, description: t('mediaUploader.filters.brightnessDesc') },
     { name: t('mediaUploader.filters.contrast'), class: 'contrast-125', icon: <Sliders className="h-3 w-3" />, description: t('mediaUploader.filters.contrastDesc') },
-  ];
-
-  // Text alignment options
-  const alignmentOptions = [
-    { value: 'left', icon: <AlignLeft className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.left') },
-    { value: 'center', icon: <AlignCenter className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.center') },
-    { value: 'right', icon: <AlignRight className="h-4 w-4" />, label: t('mediaUploader.textEditor.alignment.right') },
-  ];
-
-  // Background color presets for quick selection
-  const backgroundPresets = [
-    { color: '#000000', label: t('mediaUploader.textEditor.background.black') },
-    { color: '#ffffff', label: t('mediaUploader.textEditor.background.white') },
-    { color: '#ff0000', label: t('mediaUploader.textEditor.background.red') },
-    { color: '#00ff00', label: t('mediaUploader.textEditor.background.green') },
-    { color: '#0000ff', label: t('mediaUploader.textEditor.background.blue') },
-    { color: '#ffff00', label: t('mediaUploader.textEditor.background.yellow') },
-    { color: '#ff00ff', label: t('mediaUploader.textEditor.background.magenta') },
-    { color: '#00ffff', label: t('mediaUploader.textEditor.background.cyan') },
   ];
 
   // Clean up stream on unmount
@@ -147,9 +126,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setTextOverlay('');
     setTextPosition({ x: 50, y: 50 });
     setTextAlignment('center');
-    setTextBackgroundColor('#000000');
-    setTextBackgroundOpacity(0.7);
-    setShowBackgroundColor(false);
+    setTextBackgroundColor('rgba(0,0,0,0.6)');
     setIsCropMode(false);
     setCameraError(null);
     setProcessedImageUrl(null);
@@ -226,9 +203,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     setTextOverlay('');
     setTextPosition({ x: 50, y: 50 });
     setTextAlignment('center');
-    setTextBackgroundColor('#000000');
-    setTextBackgroundOpacity(0.7);
-    setShowBackgroundColor(false);
+    setTextBackgroundColor('rgba(0,0,0,0.6)');
     setIsCropMode(false);
     setProcessedImageUrl(null);
     setShowTextEditor(false);
@@ -475,13 +450,18 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     // Use videoRef for video, imageRef for image
     const ref = isVideo ? videoRef : imageRef;
     if (!ref.current) return;
+    
     const mediaRect = ref.current.getBoundingClientRect();
     const textRect = textDivRef.current.getBoundingClientRect();
+    
+    // Simple percentage calculation relative to the image itself
     const newX = ((e.clientX - dragOffset.current.x - mediaRect.left) / mediaRect.width) * 100;
     const newY = ((e.clientY - dragOffset.current.y - mediaRect.top) / mediaRect.height) * 100;
+    
     const textWidthPercent = (textRect.width / mediaRect.width) * 100;
     const textHeightPercent = (textRect.height / mediaRect.height) * 100;
     const paddingPercent = 2;
+    
     const clampedX = Math.max(
       (textWidthPercent / 2) + paddingPercent,
       Math.min(100 - (textWidthPercent / 2) - paddingPercent, newX)
@@ -490,6 +470,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       (textHeightPercent / 2) + paddingPercent,
       Math.min(100 - (textHeightPercent / 2) - paddingPercent, newY)
     );
+    
     setTextPosition({
       x: clampedX,
       y: clampedY
@@ -501,6 +482,26 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
     textDivRef.current.releasePointerCapture(e.pointerId);
     setIsTextDragging(false);
   };
+  // Helper function to calculate preview text size that matches canvas scaling
+  const getPreviewTextSize = () => {
+    if (!imageRef.current) return textSize;
+    
+    const img = imageRef.current;
+    const containerRect = img.getBoundingClientRect();
+    const naturalWidth = img.naturalWidth || 1;
+    const naturalHeight = img.naturalHeight || 1;
+    
+    // Calculate the scale factor between displayed size and natural size
+    const displayScale = Math.min(containerRect.width / naturalWidth, containerRect.height / naturalHeight);
+    
+    // Apply the same scaling logic as in the canvas
+    const scaleFactor = Math.min(naturalWidth, naturalHeight) / 500;
+    const scaledTextSize = Math.max(textSize * scaleFactor, 12);
+    
+    // Scale it down for the preview
+    return scaledTextSize * displayScale;
+  };
+
   // Apply all edits and save to canvas
   const handleSaveEdits = () => {
     if (!selectedMedia) {
@@ -531,8 +532,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           size: textSize,
           rotation: textRotation,
           alignment: textAlignment,
-          backgroundColor: showBackgroundColor ? textBackgroundColor : null,
-          backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
+          backgroundColor: textBackgroundColor
         };
         
         // Store the file in window.mediaFileCache if it exists
@@ -616,65 +616,93 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
       if (textOverlay) {
         ctx.save();
         
-        // Calculate pixel positions from percentages
+        // Calculate pixel positions from percentages - ensuring exact match with preview
         const x = (textPosition.x / 100) * canvas.width;
         const y = (textPosition.y / 100) * canvas.height;
         
+        // Move to the text position
         ctx.translate(x, y);
+        
+        // Apply text rotation
         ctx.rotate((textRotation * Math.PI) / 180);
         
-        // Use the exact font size proportional to image dimensions
-        const scaleFactor = Math.min(canvas.width, canvas.height) / 500; // Base on a reference size
-        const scaledTextSize = Math.max(textSize * scaleFactor, 12); // Ensure minimum readability
+        // Calculate font size using the same logic as preview
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 500;
+        const scaledTextSize = Math.max(textSize * scaleFactor, 12);
         
-        // Calculate text dimensions for background - use system font to match browser rendering
-        ctx.font = `${scaledTextSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`;
+        // Set font properties
+        ctx.font = `${scaledTextSize}px Arial`;
+        ctx.textBaseline = 'middle';
+        
+        // Handle multi-line text
         const lines = textOverlay.split('\n');
         const lineHeight = scaledTextSize * 1.2;
         const totalTextHeight = lines.length * lineHeight;
         
-        // Calculate text width for alignment
-        let maxLineWidth = 0;
-        lines.forEach(line => {
-          const metrics = ctx.measureText(line);
-          maxLineWidth = Math.max(maxLineWidth, metrics.width);
-        });
+        // Calculate text metrics for proper alignment
+        const textMetrics = lines.map(line => ctx.measureText(line));
+        const maxLineWidth = Math.max(...textMetrics.map(m => m.width));
+        const padding = 8 * scaleFactor;
         
-        // Draw background if enabled - match preview rendering exactly
-        if (showBackgroundColor) {
-          const padding = 8 * scaleFactor;
-          const bgWidth = maxLineWidth + (padding * 2);
-          const bgHeight = totalTextHeight + (padding * 2);
+        // Draw background if not transparent
+        if (textBackgroundColor !== 'transparent') {
+          ctx.save();
+          ctx.fillStyle = textBackgroundColor;
           
-          // Calculate background position based on alignment
-          let bgX = 0;
-          if (textAlignment === 'center') {
-            bgX = -bgWidth / 2;
-          } else if (textAlignment === 'right') {
-            bgX = -bgWidth;
-          } else {
-            bgX = 0;
+          // Calculate background rectangle position based on text alignment
+          let bgX, bgWidth;
+          switch (textAlignment) {
+            case 'left':
+              bgX = -padding;
+              bgWidth = maxLineWidth + padding * 2;
+              break;
+            case 'right':
+              bgX = -maxLineWidth - padding;
+              bgWidth = maxLineWidth + padding * 2;
+              break;
+            case 'center':
+            default:
+              bgX = -maxLineWidth / 2 - padding;
+              bgWidth = maxLineWidth + padding * 2;
+              break;
           }
           
-          // Use same background color format as preview
-          ctx.fillStyle = `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}`;
-          ctx.fillRect(bgX, -bgHeight / 2, bgWidth, bgHeight);
+          const bgY = -totalTextHeight / 2 - padding;
+          const bgHeight = totalTextHeight + padding * 2;
+          
+          ctx.fillRect(bgX, bgY, bgWidth, bgHeight);
+          ctx.restore();
         }
         
+        // Set text color and shadow
         ctx.fillStyle = textColor;
-        ctx.textAlign = textAlignment;
-        ctx.textBaseline = 'middle';
-        
-        // Add text shadow for better visibility - match preview exactly
-        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowColor = 'rgba(0,0,0,0.7)';
         ctx.shadowBlur = 4 * scaleFactor;
         ctx.shadowOffsetX = 2 * scaleFactor;
         ctx.shadowOffsetY = 2 * scaleFactor;
         
-        // Draw each line
+        // Draw each line of text with proper alignment
         lines.forEach((line, i) => {
           const yOffset = i * lineHeight - (totalTextHeight - lineHeight) / 2;
-          ctx.fillText(line, 0, yOffset);
+          
+          // Calculate x offset based on alignment (since we're not using ctx.textAlign)
+          let xOffset = 0;
+          const lineWidth = textMetrics[i].width;
+          
+          switch (textAlignment) {
+            case 'left':
+              xOffset = 0;
+              break;
+            case 'right':
+              xOffset = -lineWidth;
+              break;
+            case 'center':
+            default:
+              xOffset = -lineWidth / 2;
+              break;
+          }
+          
+          ctx.fillText(line, xOffset, yOffset);
         });
         
         ctx.restore();
@@ -706,8 +734,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               size: textSize,
               rotation: textRotation,
               alignment: textAlignment,
-              backgroundColor: showBackgroundColor ? textBackgroundColor : null,
-              backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
+              backgroundColor: textBackgroundColor
             };
             
             console.log('Storing image with text overlay data:', {
@@ -717,8 +744,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
               size: textSize,
               rotation: textRotation,
               alignment: textAlignment,
-              backgroundColor: showBackgroundColor ? textBackgroundColor : null,
-              backgroundOpacity: showBackgroundColor ? textBackgroundOpacity : null
+              backgroundColor: textBackgroundColor
             });
           }
           
@@ -745,9 +771,7 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
           setTextPosition({ x: 50, y: 50 });
           setTextRotation(0);
           setTextAlignment('center');
-          setTextBackgroundColor('#000000');
-          setTextBackgroundOpacity(0.7);
-          setShowBackgroundColor(false);
+          setTextBackgroundColor('rgba(0,0,0,0.6)');
           
           if (textOverlay) {
             toast.success(
@@ -1102,22 +1126,20 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           <div 
                             ref={textDivRef}
                             className={`absolute cursor-move whitespace-pre-wrap break-words transition-all duration-100
-                              ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}
-                              ${textAlignment === 'left' ? 'text-left' : textAlignment === 'right' ? 'text-right' : 'text-center'}`}
+                              ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
                             style={{
                               top: `${textPosition.y}%`,
                               left: `${textPosition.x}%`,
                               transform: `translate(-50%, -50%) rotate(${textRotation}deg)`,
                               color: textColor,
-                              fontSize: `${textSize}px`,
+                              fontSize: `${getPreviewTextSize()}px`,
                               textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                              textAlign: textAlignment,
                               maxWidth: '90%',
-                              padding: '8px',
-                              borderRadius: '4px',
+                              padding: textBackgroundColor !== 'transparent' ? '8px 12px' : '8px',
+                              borderRadius: '6px',
+                              backgroundColor: textBackgroundColor,
                               zIndex: 20,
-                              backgroundColor: showBackgroundColor 
-                                ? `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}` 
-                                : isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
                               touchAction: 'none',
                               pointerEvents: 'auto',
                               userSelect: 'none',
@@ -1143,52 +1165,52 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                     </div>
                   ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
-                      <img 
-                        ref={imageRef}
-                        src={displayUrl}
-                        alt="Preview" 
-                        className={`${selectedFilter} transition-all rounded-md shadow-sm max-h-[350px] relative`}
-                        style={imageStyle}
-                      />
-                      {/* Draggable text overlay for image */}
-                      {textOverlay && (
-                        <div 
-                          ref={textDivRef}
-                          className={`absolute cursor-move whitespace-pre-wrap break-words transition-all duration-100
-                ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}
-                ${textAlignment === 'left' ? 'text-left' : textAlignment === 'right' ? 'text-right' : 'text-center'}`}
-                          style={{
-                            top: `${textPosition.y}%`,
-                            left: `${textPosition.x}%`,
-                            transform: `translate(-50%, -50%) rotate(${textRotation}deg)`,
-                            color: textColor,
-                            fontSize: `${textSize}px`,
-                            textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-                            maxWidth: '90%',
-                            padding: '8px',
-                            borderRadius: '4px',
-                            zIndex: 10,
-                            backgroundColor: showBackgroundColor 
-                              ? `${textBackgroundColor}${Math.round(textBackgroundOpacity * 255).toString(16).padStart(2, '0')}` 
-                              : isTextDragging ? 'rgba(0,0,0,0.1)' : 'transparent',
-                            touchAction: 'none',
-                          }}
-                          onPointerDown={handleTextPointerDown}
-                          onPointerMove={handleTextPointerMove}
-                          onPointerUp={handleTextPointerUp}
-                        >
-                          {textOverlay}
-                          {isTextDragging && (
-                            <>
-                              <div className="absolute inset-0 bg-blue-500/10 border border-blue-500/40 rounded pointer-events-none"></div>
-                              <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
-                              <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
-                              <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
-                              <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
-                            </>
-                          )}
-                        </div>
-                      )}
+                      <div className="relative">
+                        <img 
+                          ref={imageRef}
+                          src={displayUrl}
+                          alt="Preview" 
+                          className={`${selectedFilter} transition-all rounded-md shadow-sm max-h-[350px] relative`}
+                          style={imageStyle}
+                        />
+                        {/* Draggable text overlay for image */}
+                        {textOverlay && (
+                          <div 
+                            ref={textDivRef}
+                            className={`absolute cursor-move whitespace-pre-wrap break-words transition-all duration-100
+                  ${isTextDragging ? 'opacity-90 scale-105 shadow-xl ring-2 ring-primary/40' : ''}`}
+                            style={{
+                              top: `${textPosition.y}%`,
+                              left: `${textPosition.x}%`,
+                              transform: `translate(-50%, -50%) rotate(${textRotation}deg)`,
+                              color: textColor,
+                              fontSize: `${getPreviewTextSize()}px`,
+                              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                              textAlign: textAlignment,
+                              maxWidth: '90%',
+                              padding: textBackgroundColor !== 'transparent' ? '8px 12px' : '8px',
+                              borderRadius: '6px',
+                              backgroundColor: textBackgroundColor,
+                              zIndex: 10,
+                              touchAction: 'none',
+                            }}
+                            onPointerDown={handleTextPointerDown}
+                            onPointerMove={handleTextPointerMove}
+                            onPointerUp={handleTextPointerUp}
+                          >
+                            {textOverlay}
+                            {isTextDragging && (
+                              <>
+                                <div className="absolute inset-0 bg-blue-500/10 border border-blue-500/40 rounded pointer-events-none"></div>
+                                <div className="absolute -top-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-blue-500 rounded-full"></div>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
                       {/* Crop overlay */}
                       {isCropMode && (
                         <div className="absolute inset-0 border-2 border-dashed border-primary bg-black bg-opacity-50 rounded-md">
@@ -1203,18 +1225,14 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                 </div>
                 
                 {/* Media editing controls */}
-                <div className="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                   {/* Text overlay indicator - shows when text is applied but editor is closed */}
                   {textOverlay && !showTextEditor && (
-                    <div className="mb-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <Type className="h-4 w-4 flex-shrink-0 text-primary" />
-                        <span className="text-primary font-medium">
-                          {t('mediaUploader.textEditor.overlayApplied', { text: textOverlay.substring(0, 25) + (textOverlay.length > 25 ? '...' : '') })}
-                        </span>
-                      </div>
+                    <div className="mb-4 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-md flex items-center text-xs">
+                      <Type className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 text-primary" />
+                      <span className="text-primary">{t('mediaUploader.textEditor.overlayApplied', { text: textOverlay.substring(0, 20) + (textOverlay.length > 20 ? '...' : '') })}</span>
                       <button 
-                        className="bg-primary/10 hover:bg-primary/20 rounded-lg px-3 py-1.5 text-primary text-xs font-medium transition-colors"
+                        className="ml-auto bg-primary/10 hover:bg-primary/20 rounded px-1.5 py-0.5 text-primary"
                         onClick={() => setShowTextEditor(true)}
                       >
                         {t('mediaUploader.textEditor.edit')}
@@ -1224,9 +1242,9 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   
                   {/* Video-specific text overlay message */}
                   {isVideo && textOverlay && (
-                    <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start gap-2">
-                        <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+                    <div className="mb-4 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
+                      <p className="text-xs text-blue-600 dark:text-blue-400 flex items-start">
+                        <Info className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                         <span>{t('mediaUploader.textEditor.videoOverlayNote')}</span>
                       </p>
                     </div>
@@ -1234,36 +1252,34 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   
                   {/* Embedded text editor - appears when text button is clicked (now for both images and videos) */}
                   {showTextEditor && (
-                    <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl space-y-4 animate-fadeIn">
-                      {/* Header */}
-                      <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-sm font-semibold flex items-center text-gray-800 dark:text-gray-200">
-                          <Type className="h-4 w-4 mr-2 text-primary" />
+                    <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-3 animate-fadeIn">
+                      <div className="flex justify-between items-center mb-2">
+                        <h3 className="text-sm font-medium flex items-center">
+                          <Type className="h-4 w-4 mr-1.5 text-primary" />
                           {t('mediaUploader.textEditor.title')}
                         </h3>
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="h-6 w-6 p-0 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          className="h-6 w-6 p-0"
                           onClick={() => setShowTextEditor(false)}
                         >
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
                       
-                      {/* Text Input */}
-                      <div className="space-y-3">
-                        <div className="relative">
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex relative">
                           <textarea
                             value={textOverlay}
                             onChange={(e) => setTextOverlay(e.target.value)}
-                            className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-base focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 resize-none"
+                            className="w-full p-3 rounded-xl border border-gray-300 bg-white text-black text-base sm:text-lg focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all placeholder-gray-400 shadow-sm"
                             placeholder={t('mediaUploader.textEditor.placeholder')}
                             rows={2}
-                            style={{ minHeight: '60px' }}
+                            style={{ minHeight: '48px', maxHeight: '120px', resize: 'vertical' }}
                           />
                           <button
-                            className="absolute right-2 bottom-2 text-gray-400 hover:text-primary transition-colors"
+                            className="absolute right-2 bottom-2 text-gray-500 hover:text-primary"
                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                             title={t('mediaUploader.textEditor.emojiPicker.buttonTooltip')}
                           >
@@ -1271,13 +1287,13 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           </button>
                         </div>
                         
-                        {/* Emoji picker */}
+                        {/* Emoji picker - appears inline */}
                         {showEmojiPicker && (
-                          <div className="relative z-20">
-                            <div className="absolute right-0 top-0 w-[280px] sm:w-[320px] border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg bg-white dark:bg-gray-800">
+                          <div className="relative z-10">
+                            <div className="absolute right-0 top-0 w-[320px] border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
                               <div className="absolute top-2 right-2 z-10">
                                 <button 
-                                  className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full p-1 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                  className="bg-gray-300/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-400 rounded-full p-1"
                                   onClick={() => setShowEmojiPicker(false)}
                                 >
                                   <X className="h-3.5 w-3.5" />
@@ -1311,167 +1327,167 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                           </div>
                         )}
                       </div>
-
-                      {/* Quick Controls - Mobile First */}
-                      <div className="space-y-4">
-                        {/* Text Alignment - Compact */}
+                      
+                      <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                            {t('mediaUploader.textEditor.textAlignment')}
+                          <label className="text-xs text-gray-600 dark:text-gray-400">
+                            {t('mediaUploader.textEditor.textColor')}
                           </label>
-                          <div className="flex gap-1">
-                            {alignmentOptions.map((option) => (
-                              <button
-                                key={option.value}
-                                onClick={() => setTextAlignment(option.value as 'left' | 'center' | 'right')}
-                                className={cn(
-                                  "flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg border transition-all text-sm",
-                                  textAlignment === option.value
-                                    ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 dark:text-primary-400'
-                                    : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400'
-                                )}
-                                title={option.label}
-                              >
-                                {option.icon}
-                                <span className="hidden sm:inline">{option.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Text Color & Size - Side by Side */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                              {t('mediaUploader.textEditor.textColor')}
-                            </label>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="color"
-                                value={textColor}
-                                onChange={(e) => setTextColor(e.target.value)}
-                                className="w-8 h-8 p-0 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
-                              />
-                              <button
-                                type="button"
-                                className="px-2 py-1 rounded text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                                onClick={() => setTextColor('#000000')}
-                              >
-                                {t('mediaUploader.textEditor.blackButton')}
-                              </button>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                              {t('mediaUploader.textEditor.textSize', { size: textSize })}
-                            </label>
-                            <Slider
-                              value={[textSize]}
-                              min={12}
-                              max={72}
-                              step={1}
-                              onValueChange={(value) => setTextSize(value[0])}
-                              className="py-2"
+                          <div className="flex gap-2 mt-1 items-center">
+                            <input
+                              type="color"
+                              value={textColor}
+                              onChange={(e) => setTextColor(e.target.value)}
+                              className="w-8 h-8 p-0 border rounded"
                             />
-                          </div>
-                        </div>
-
-                        {/* Background Color - Collapsible */}
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                              {t('mediaUploader.textEditor.backgroundColor')}
-                            </label>
                             <button
                               type="button"
-                              onClick={() => setShowBackgroundColor(!showBackgroundColor)}
-                              className={cn(
-                                "text-xs px-3 py-1.5 rounded-lg border transition-all",
-                                showBackgroundColor
-                                  ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 dark:text-primary-400'
-                                  : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500'
-                              )}
+                              className="ml-2 px-2 py-1 rounded border text-xs bg-black text-white border-gray-300 hover:bg-gray-800"
+                              onClick={() => setTextColor('#000000')}
+                              title={t('mediaUploader.textEditor.blackButton')}
                             >
-                              {showBackgroundColor ? t('mediaUploader.textEditor.background.enabled') : t('mediaUploader.textEditor.background.disabled')}
+                              {t('mediaUploader.textEditor.blackButton')}
                             </button>
                           </div>
-                          
-                          {showBackgroundColor && (
-                            <div className="space-y-3 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg animate-fadeIn">
-                              {/* Background Color Picker */}
-                              <div className="flex items-center gap-3">
-                                <input
-                                  type="color"
-                                  value={textBackgroundColor}
-                                  onChange={(e) => setTextBackgroundColor(e.target.value)}
-                                  className="w-8 h-8 p-0 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
-                                />
-                                <span className="text-xs text-gray-600 dark:text-gray-400">
-                                  {t('mediaUploader.textEditor.background.customColor')}
-                                </span>
-                              </div>
-                              
-                              {/* Background Color Presets */}
-                              <div>
-                                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-                                  {t('mediaUploader.textEditor.background.presets')}
-                                </label>
-                                <div className="grid grid-cols-4 gap-2">
-                                  {backgroundPresets.map((preset) => (
-                                    <button
-                                      key={preset.color}
-                                      onClick={() => setTextBackgroundColor(preset.color)}
-                                      className={cn(
-                                        "w-8 h-8 rounded-lg border-2 transition-all hover:scale-110",
-                                        textBackgroundColor === preset.color
-                                          ? 'border-primary scale-110'
-                                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                                      )}
-                                      style={{ backgroundColor: preset.color }}
-                                      title={preset.label}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                              
-                              {/* Background Opacity */}
-                              <div>
-                                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-                                  {t('mediaUploader.textEditor.background.opacity', { opacity: Math.round(textBackgroundOpacity * 100) })}
-                                </label>
-                                <Slider
-                                  value={[textBackgroundOpacity]}
-                                  min={0.1}
-                                  max={1}
-                                  step={0.1}
-                                  onValueChange={(value) => setTextBackgroundOpacity(value[0])}
-                                  className="py-2"
-                                />
-                              </div>
-                            </div>
-                          )}
                         </div>
-
-                        {/* Text Rotation */}
+                        
                         <div>
-                          <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                            {t('mediaUploader.textEditor.textRotation', { rotation: textRotation })}
+                          <label className="text-xs text-gray-600 dark:text-gray-400">
+                            {t('mediaUploader.textEditor.textSize', { size: textSize })}
                           </label>
                           <Slider
-                            value={[textRotation]}
-                            min={-180}
-                            max={180}
+                            value={[textSize]}
+                            min={12}
+                            max={72}
                             step={1}
-                            onValueChange={(value) => setTextRotation(value[0])}
-                            className="py-2"
+                            onValueChange={(value) => setTextSize(value[0])}
+                            className="py-1.5"
                           />
                         </div>
                       </div>
                       
-                      {/* Position Hint */}
-                      <div className="flex items-center text-xs text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-lg">
-                        <Move className="h-3.5 w-3.5 mr-2 flex-shrink-0" />
+                      {/* Text rotation slider */}
+                      <div className="mt-2">
+                        <label className="text-xs text-gray-600 dark:text-gray-400">
+                          {t('mediaUploader.textEditor.textRotation', { rotation: textRotation })}
+                        </label>
+                        <Slider
+                          value={[textRotation]}
+                          min={-180}
+                          max={180}
+                          step={1}
+                          onValueChange={(value) => setTextRotation(value[0])}
+                          className="py-1.5"
+                        />
+                      </div>
+                      
+                      {/* Text alignment and background controls */}
+                      <div className="grid grid-cols-2 gap-3 mt-3">
+                        <div>
+                          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                            {t('mediaUploader.textEditor.textAlignment')}
+                          </label>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setTextAlignment('left')}
+                              className={cn(
+                                "flex-1 px-2 py-1.5 rounded text-xs border transition-all flex items-center justify-center",
+                                textAlignment === 'left' 
+                                  ? 'border-primary bg-primary/10 text-primary-600' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="Align left"
+                            >
+                              <AlignLeft className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setTextAlignment('center')}
+                              className={cn(
+                                "flex-1 px-2 py-1.5 rounded text-xs border transition-all flex items-center justify-center",
+                                textAlignment === 'center' 
+                                  ? 'border-primary bg-primary/10 text-primary-600' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="Align center"
+                            >
+                              <AlignCenter className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setTextAlignment('right')}
+                              className={cn(
+                                "flex-1 px-2 py-1.5 rounded text-xs border transition-all flex items-center justify-center",
+                                textAlignment === 'right' 
+                                  ? 'border-primary bg-primary/10 text-primary-600' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="Align right"
+                            >
+                              <AlignRight className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                            {t('mediaUploader.textEditor.backgroundColor')}
+                          </label>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setTextBackgroundColor('transparent')}
+                              className={cn(
+                                "flex-1 px-2 py-1.5 rounded text-xs border transition-all",
+                                textBackgroundColor === 'transparent' 
+                                  ? 'border-primary bg-primary/10 text-primary-600' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="No background"
+                            >
+                              None
+                            </button>
+                            <input
+                              type="color"
+                              value={textBackgroundColor === 'transparent' ? '#ffffff' : textBackgroundColor}
+                              onChange={(e) => setTextBackgroundColor(e.target.value)}
+                              className="w-8 h-8 p-0 border rounded cursor-pointer"
+                              title="Pick background color"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setTextBackgroundColor('rgba(255,255,255,0.8)')}
+                              className={cn(
+                                "px-2 py-1.5 rounded text-xs border transition-all bg-white/80 text-gray-800",
+                                textBackgroundColor === 'rgba(255,255,255,0.8)' 
+                                  ? 'border-primary' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="Semi-transparent white"
+                            >
+                              White
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setTextBackgroundColor('rgba(0,0,0,0.6)')}
+                              className={cn(
+                                "px-2 py-1.5 rounded text-xs border transition-all bg-black/60 text-white",
+                                textBackgroundColor === 'rgba(0,0,0,0.6)' 
+                                  ? 'border-primary' 
+                                  : 'border-gray-300 hover:border-gray-400'
+                              )}
+                              title="Semi-transparent black"
+                            >
+                              Black
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Add draggable indicator */}
+                      <div className="flex items-center text-xs text-primary-500 mt-2 bg-primary-50 dark:bg-primary-900/20 p-2 rounded-md">
+                        <Move className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
                         <span>{t('mediaUploader.textEditor.positionHint')}</span>
                       </div>
                     </div>
@@ -1479,25 +1495,26 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
 
                   {!isVideo && (
                     <div className="mb-4">
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 font-medium flex items-center">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium flex items-center">
                         <Sliders className="h-3.5 w-3.5 mr-1.5" />
                         {t('mediaUploader.filters.title')}
                       </p>
-                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                      <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin">
                         {imageFilters.map((filter) => (
                           <button
                             key={filter.name}
                             onClick={() => handleFilterChange(filter.class)}
                             className={cn(
-                              "flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-all text-xs",
+                              "min-w-[70px] flex-shrink-0 text-xs p-2 rounded-lg border transition-all",
                               selectedFilter === filter.class 
                                 ? 'border-primary bg-primary/10 text-primary-600 dark:bg-primary/20 shadow-sm' 
-                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600',
+                              "flex flex-col items-center gap-1"
                             )}
                             title={filter.description}
                           >
                             {filter.icon}
-                            <span className="font-medium">{filter.name}</span>
+                            <span>{filter.name}</span>
                           </button>
                         ))}
                       </div>
@@ -1505,67 +1522,81 @@ const MediaUploader: React.FC<MediaUploaderProps> = ({
                   )}
 
                   {/* Edit buttons with improved layout */}
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                  <div className="flex justify-around gap-2">
                     {!isVideo && (
                       <>
                         <button 
-                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
                           onClick={handleRotate}
                         >
-                          <RotateCw className="h-5 w-5" />
-                          <span className="text-xs font-medium">{t('mediaUploader.controls.rotate')}</span>
+                          <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <RotateCw className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.rotate')}</span>
                         </button>
                         <button 
-                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                          className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
                           onClick={handleCounterRotate}
                         >
-                          <RotateCcw className="h-5 w-5" />
-                          <span className="text-xs font-medium">{t('mediaUploader.controls.counter')}</span>
+                          <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                            <RotateCcw className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.counter')}</span>
                         </button>
                         <button 
                           className={cn(
-                            "flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors",
-                            isCropMode 
-                              ? 'text-primary dark:text-primary bg-primary/10 dark:bg-primary/20' 
-                              : 'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                            "text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center",
+                            isCropMode ? 'text-primary dark:text-primary' : ''
                           )}
                           onClick={handleCrop}
                         >
-                          <Crop className="h-5 w-5" />
-                          <span className="text-xs font-medium">{t('mediaUploader.controls.crop')}</span>
+                          <div className={cn(
+                            "p-2 rounded-full", 
+                            isCropMode ? 'bg-primary/10 dark:bg-primary/20' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                          )}>
+                            <Crop className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs mt-1">{t('mediaUploader.controls.crop')}</span>
                         </button>
                       </>
                     )}
                     <button 
                       className={cn(
-                        "flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors",
-                        showTextEditor 
-                          ? 'text-primary dark:text-primary bg-primary/10 dark:bg-primary/20' 
-                          : 'text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                        "text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center",
+                        showTextEditor ? 'text-primary dark:text-primary' : ''
                       )}
                       onClick={handleAddText}
                     >
-                      <Type className="h-5 w-5" />
-                      <span className="text-xs font-medium">{t('mediaUploader.controls.text')}</span>
+                      <div className={cn(
+                        "p-2 rounded-full", 
+                        showTextEditor ? 'bg-primary/10 dark:bg-primary/20' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                      )}>
+                        <Type className="h-5 w-5" />
+                      </div>
+                      <span className="text-xs mt-1">{t('mediaUploader.controls.text')}</span>
                     </button>
                     <button 
-                      className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                      className="text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center"
                       onClick={handleRemoveMedia}
                     >
-                      <RefreshCw className="h-5 w-5" />
-                      <span className="text-xs font-medium">{t('mediaUploader.controls.reset')}</span>
+                      <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        <RefreshCw className="h-5 w-5" />
+                      </div>
+                      <span className="text-xs mt-1">{t('mediaUploader.controls.reset')}</span>
                     </button>
                     <button 
-                      className={`flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors ${isLoading.saving ? 'opacity-70' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                      className={`text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary flex flex-col items-center ${isLoading.saving ? 'opacity-70' : ''}`}
                       onClick={handleSaveEdits}
                       disabled={isLoading.saving}
                     >
-                      {isLoading.saving ? (
-                        <div className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <Check className="h-5 w-5" />
-                      )}
-                      <span className="text-xs font-medium">{isLoading.saving ? t('mediaUploader.controls.saving') : t('mediaUploader.controls.save')}</span>
+                      <div className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                        {isLoading.saving ? (
+                          <div className="h-5 w-5 border-2 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <Check className="h-5 w-5" />
+                        )}
+                      </div>
+                      <span className="text-xs mt-1">{isLoading.saving ? t('mediaUploader.controls.saving') : t('mediaUploader.controls.save')}</span>
                     </button>
                   </div>
                 </div>

@@ -528,7 +528,7 @@ export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearl
   }
 };
 
-export const STRIPE_CUSTOMER_PORTAL_URL = 'https://billing.stripe.com/p/login/test_aEU16H9FrcFScKc144';
+export const STRIPE_CUSTOMER_PORTAL_URL = 'https://billing.stripe.com/p/login/7sYdR961v2PV9WyfNHeAg00';
 
 export const clearTrialPending = async (userId: string): Promise<boolean> => {
   try {

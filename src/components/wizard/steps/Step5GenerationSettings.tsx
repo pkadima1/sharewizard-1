@@ -118,21 +118,21 @@ const Step5GenerationSettings: React.FC<Step5Props> = ({ formData, updateFormDat
       label: t('step5.outputFormat.markdown.label'),
       icon: FileText,
       description: t('step5.outputFormat.markdown.desc'),
-      features: [t('step5.outputFormat.markdown.cleanFormatting'), t('step5.outputFormat.markdown.githubCompatible'), t('step5.outputFormat.markdown.easyToEdit')]
+      features: ['cleanFormatting', 'githubCompatible', 'easyToEdit']
     },
     {
       value: 'html',
       label: t('step5.outputFormat.html.label'),
       icon: Globe,
       description: t('step5.outputFormat.html.desc'),
-      features: [t('step5.outputFormat.html.webReady'), t('step5.outputFormat.html.seoOptimized'), t('step5.outputFormat.html.styledOutput')]
+      features: ['webReady', 'seoOptimized', 'styledOutput']
     },
     {
       value: 'gdocs',
       label: t('step5.outputFormat.gdocs.label'),
       icon: Download,
       description: t('step5.outputFormat.gdocs.desc'),
-      features: [t('step5.outputFormat.gdocs.teamCollab'), t('step5.outputFormat.gdocs.commentSystem'), t('step5.outputFormat.gdocs.versionHistory')]
+      features: ['teamCollab', 'commentSystem', 'versionHistory']
     }
   ], [t]);
 
@@ -155,18 +155,7 @@ const Step5GenerationSettings: React.FC<Step5Props> = ({ formData, updateFormDat
     }
   }), [t]);
 
-  // Mapping from feature string to translation key
-  const FEATURE_TRANSLATION_KEYS: Record<string, string> = {
-    'Clean formatting': 'cleanFormatting',
-    'GitHub compatible': 'githubCompatible',
-    'Easy to edit': 'easyToEdit',
-    'Web-ready': 'webReady',
-    'SEO optimized': 'seoOptimized',
-    'Styled output': 'styledOutput',
-    'Team collaboration': 'teamCollab',
-    'Comment system': 'commentSystem',
-    'Version history': 'versionHistory',
-  };
+
 
   // Initialize default values
   useEffect(() => {
@@ -384,15 +373,12 @@ const Step5GenerationSettings: React.FC<Step5Props> = ({ formData, updateFormDat
                   {t(`step5.outputFormat.${format.value}.desc`)}
                 </p>
                 <div className="space-y-1">
-                  {format.features.map((feature, index) => {
-                    const key = FEATURE_TRANSLATION_KEYS[feature] || feature;
-                    return (
-                      <div key={index} className="flex items-center gap-1 text-xs text-green-700 dark:text-green-300">
-                        <CheckCircle2 className="h-3 w-3" />
-                        <span>{t(`step5.outputFormat.${format.value}.${key}`)}</span>
-                      </div>
-                    );
-                  })}
+                  {format.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-1 text-xs text-green-700 dark:text-green-300">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>{t(`step5.outputFormat.${format.value}.${feature}`)}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}

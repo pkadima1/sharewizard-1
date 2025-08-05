@@ -20,7 +20,8 @@ const PreviewRepost = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { caption: initialCaption, gen, mediaFile } = location.state || {};
-    const [currentCaption, setCurrentCaption] = useState(initialCaption);
+  
+  const [currentCaption, setCurrentCaption] = useState(initialCaption);
 
   const { currentUser } = useAuth();
 
@@ -38,38 +39,31 @@ const PreviewRepost = () => {
     // Extract text overlay data from file if it exists
   useEffect(() => {
     if (mediaFile) {
-      console.log('Checking for text overlay data in mediaFile:', mediaFile);
       
       // Try to get text overlay data directly from the file
-      // @ts-expect-error - custom property for text overlays
-      const textOverlayData = mediaFile.textOverlayData;
+      const textOverlayData = (mediaFile as any).textOverlayData;
       
       if (textOverlayData) {
-        console.log('Found text overlay data directly on file:', textOverlayData);
         setCustomTextOverlay(textOverlayData.text || '');
         setTextPosition(textOverlayData.position || { x: 50, y: 25 });
         setTextColor(textOverlayData.color || '#ffffff');
         setTextSize(textOverlayData.size || 36);
         setTextRotation(textOverlayData.rotation || 0);
       } else {
-        console.log('No direct text overlay data found on file, checking cache...');
         
         // Check if the file is in the mediaFileCache
         if (typeof window !== 'undefined' && window.mediaFileCache) {
           // Try to find a matching file in the cache
           const cacheKeys = Object.keys(window.mediaFileCache || {});
           for (const key of cacheKeys) {
-            // @ts-expect-error - custom property
-            const cachedFile = window.mediaFileCache[key];
+            const cachedFile = (window.mediaFileCache as any)[key];
             
             if (cachedFile && 
                 cachedFile.name === mediaFile.name && 
                 cachedFile.size === mediaFile.size) {
               // Found a matching file in the cache
-              // @ts-expect-error - custom property
               const cachedOverlay = cachedFile.textOverlayData;
               if (cachedOverlay) {
-                console.log('Found text overlay data in cache:', cachedOverlay);
                 setCustomTextOverlay(cachedOverlay.text || '');
                 setTextPosition(cachedOverlay.position || { x: 50, y: 25 });
                 setTextColor(cachedOverlay.color || '#ffffff');
@@ -84,92 +78,48 @@ const PreviewRepost = () => {
     }
   }, [mediaFile]);
 
-  const previewRef = useRef<HTMLDivElement>(null);
-  const mediaContainerRef = useRef<HTMLDivElement>(null);
-
-  const [processedVideoFile, setProcessedVideoFile] = useState<File | null>(null);
-  const [processing, setProcessing] = useState(false);  // Auto-process video with caption when video is added or caption changes
-  useEffect(() => {
-    if (mediaFile && mediaFile.type.startsWith('video')) {
-      setProcessing(true);
-      setProcessedVideoFile(null);
-      setTimeout(async () => {
-        const video = document.querySelector('#preview-video');
-        if (video) {
-          try {
-            // Add text overlay data to the video element
-            if (customTextOverlay) {
-              // Add text overlay data to the video element for processing
-              // @ts-expect-error - custom property for text overlay
-              (video as HTMLVideoElement).textOverlayData = {
-                text: customTextOverlay,
-                position: textPosition,
-                color: textColor,
-                size: textSize,
-                rotation: textRotation
-              };
-              
-              // Also add the original mediaFile as a reference to enable fallback retrieval
-              // @ts-expect-error - custom property for reference
-              (video as HTMLVideoElement).mediaFile = mediaFile;
-              
-              console.log('Added text overlay data to video element:', (video as HTMLVideoElement & { textOverlayData?: any }).textOverlayData);
-              
-              // Set data attribute as an additional backup for text overlay data
-              try {
-                const textOverlayJson = JSON.stringify({
-                  text: customTextOverlay,
-                  position: textPosition,
-                  color: textColor,
-                  size: textSize,
-                  rotation: textRotation
-                });
-                (video as HTMLVideoElement).setAttribute('data-text-overlay', textOverlayJson);
-              } catch (e) {
-                console.warn('Failed to set data-text-overlay attribute:', e);
-              }
-            }
-            
-            const captionedBlob = await createCaptionedVideo(video as HTMLVideoElement, currentCaption, 'modern');
-            const file = new File([captionedBlob], `video-${Date.now()}.mp4`, { type: 'video/mp4' });
-            
-            // Store text overlay data in the processed file as well
-            if (customTextOverlay) {
-              // @ts-expect-error - custom property for text overlay
-              file.textOverlayData = {
-                text: customTextOverlay,
-                position: textPosition,
-                color: textColor,
-                size: textSize,
-                rotation: textRotation
-              };
-              
-              // Store processed file in mediaFileCache for better retrieval
-              if (typeof window !== 'undefined' && window.mediaFileCache) {
-                const blobUrl = URL.createObjectURL(file);
-                // @ts-ignore - accessing our custom property
-                window.mediaFileCache[blobUrl] = file;
-                console.log('Stored processed video in mediaFileCache:', blobUrl);
-              }
-            }
-            
-            setProcessedVideoFile(file);
-          } catch (err) {
-            console.error('Failed to process video:', err);
-            toast.error('Failed to process video with caption.');
-          } finally {
-            setProcessing(false);
-          }
-        } else {
-          setProcessing(false);
-        }
-      }, 500); // Give time for video to render
-    }
-  }, [mediaFile, currentCaption, customTextOverlay, textPosition, textColor, textSize, textRotation]);
-
+  // Improved validation with better error messages
   if (!currentCaption || !gen) {
-    return <div className="p-4">Invalid preview data.</div>;
+    return (
+      <div className="container mx-auto p-4 mt-20">
+        <div className="flex justify-between items-center mb-4">
+          <Button onClick={() => navigate(-1)} variant="outline">Back</Button>
+          <h1 className="text-2xl font-bold">Preview Post</h1>
+          <div></div>
+        </div>
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold mb-2">Invalid Preview Data</h2>
+          <p className="text-muted-foreground mb-4">
+            {!currentCaption && !gen ? 'No caption or generation data found.' :
+             !currentCaption ? 'No caption data found.' :
+             'No generation data found.'}
+          </p>
+          <Button onClick={() => navigate(-1)}>Go Back</Button>
+        </div>
+      </div>
+    );
   }
+
+  // Validate caption structure
+  if (!currentCaption.title || !currentCaption.caption || !currentCaption.hashtags) {
+    return (
+      <div className="container mx-auto p-4 mt-20">
+        <div className="flex justify-between items-center mb-4">
+          <Button onClick={() => navigate(-1)} variant="outline">Back</Button>
+          <h1 className="text-2xl font-bold">Preview Post</h1>
+          <div></div>
+        </div>
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold mb-2">Invalid Caption Data</h2>
+          <p className="text-muted-foreground mb-4">
+            The caption data is missing required fields (title, caption, or hashtags).
+          </p>
+          <Button onClick={() => navigate(-1)}>Go Back</Button>
+        </div>
+      </div>
+    );
+  }
+
   // Helper to render caption text on image for download/sharing
   const renderImageWithOverlay = async () => {
     return new Promise<Blob | null>((resolve) => {
@@ -293,6 +243,83 @@ const PreviewRepost = () => {
       img.src = URL.createObjectURL(mediaFile);
     });
   };
+
+  const previewRef = useRef<HTMLDivElement>(null);
+  const mediaContainerRef = useRef<HTMLDivElement>(null);
+
+  const [processedVideoFile, setProcessedVideoFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);  // Auto-process video with caption when video is added or caption changes
+  useEffect(() => {
+    if (mediaFile && mediaFile.type.startsWith('video')) {
+      setProcessing(true);
+      setProcessedVideoFile(null);
+      setTimeout(async () => {
+        const video = document.querySelector('#preview-video');
+        if (video) {
+          try {
+            // Add text overlay data to the video element
+            if (customTextOverlay) {
+              // Add text overlay data to the video element for processing
+              (video as any).textOverlayData = {
+                text: customTextOverlay,
+                position: textPosition,
+                color: textColor,
+                size: textSize,
+                rotation: textRotation
+              };
+              
+              // Also add the original mediaFile as a reference to enable fallback retrieval
+              (video as any).mediaFile = mediaFile;
+              
+              
+              // Set data attribute as an additional backup for text overlay data
+              try {
+                const textOverlayJson = JSON.stringify({
+                  text: customTextOverlay,
+                  position: textPosition,
+                  color: textColor,
+                  size: textSize,
+                  rotation: textRotation
+                });
+                (video as HTMLVideoElement).setAttribute('data-text-overlay', textOverlayJson);
+              } catch (e) {
+                console.warn('Failed to set data-text-overlay attribute:', e);
+              }
+            }
+            
+            const captionedBlob = await createCaptionedVideo(video as HTMLVideoElement, currentCaption, 'modern');
+            const file = new File([captionedBlob], `video-${Date.now()}.mp4`, { type: 'video/mp4' });
+            
+            // Store text overlay data in the processed file as well
+            if (customTextOverlay) {
+              (file as any).textOverlayData = {
+                text: customTextOverlay,
+                position: textPosition,
+                color: textColor,
+                size: textSize,
+                rotation: textRotation
+              };
+              
+              // Store processed file in mediaFileCache for better retrieval
+              if (typeof window !== 'undefined' && window.mediaFileCache) {
+                const blobUrl = URL.createObjectURL(file);
+                (window.mediaFileCache as any)[blobUrl] = file;
+              }
+            }
+            
+            setProcessedVideoFile(file);
+          } catch (err) {
+            console.error('Failed to process video:', err);
+            toast.error('Failed to process video with caption.');
+          } finally {
+            setProcessing(false);
+          }
+        } else {
+          setProcessing(false);
+        }
+      }, 500); // Give time for video to render
+    }
+  }, [mediaFile, currentCaption, customTextOverlay, textPosition, textColor, textSize, textRotation]);
 
   const handleShareOrDownload = async (action: 'share' | 'download', userEvent?: React.MouseEvent) => {
     const targetUserId = currentUser?.uid || gen.userId;
@@ -463,26 +490,24 @@ const PreviewRepost = () => {
         location.state.mediaFile = updatedFile;
       }
       
-      // Store in the media file cache for better retrieval
-      if (typeof window !== 'undefined') {
-        // Initialize cache if needed
-        // @ts-ignore - custom property
-        if (!window.mediaFileCache) window.mediaFileCache = {};
-        
-        // Create a blob URL for this file to use as a key
-        const blobUrl = URL.createObjectURL(updatedFile);
-        
-        // Store in the cache with multiple keys for better retrieval chances
-        // @ts-ignore - custom property
-        window.mediaFileCache[blobUrl] = updatedFile;
-        
-        // Also store with a timestamp to ensure uniqueness
-        const timeKey = `${blobUrl}#${Date.now()}`;
-        // @ts-ignore - custom property
-        window.mediaFileCache[timeKey] = updatedFile;
-        
-        console.log('Stored file with text overlay in cache:', blobUrl);
-      }
+              // Store in the media file cache for better retrieval
+        if (typeof window !== 'undefined') {
+          // Initialize cache if needed
+          // @ts-ignore - custom property
+          if (!window.mediaFileCache) window.mediaFileCache = {};
+          
+          // Create a blob URL for this file to use as a key
+          const blobUrl = URL.createObjectURL(updatedFile);
+          
+          // Store in the cache with multiple keys for better retrieval chances
+          // @ts-ignore - custom property
+          window.mediaFileCache[blobUrl] = updatedFile;
+          
+          // Also store with a timestamp to ensure uniqueness
+          const timeKey = `${blobUrl}#${Date.now()}`;
+          // @ts-ignore - custom property
+          window.mediaFileCache[timeKey] = updatedFile;
+        }
       
       // If it's a video, update the video element with the text overlay data
       if (mediaFile.type.startsWith('video')) {
@@ -501,8 +526,6 @@ const PreviewRepost = () => {
           // Also store the reference to the media file
           // @ts-ignore - custom property
           videoElement.mediaFile = updatedFile;
-          
-          console.log('Updated video element with text overlay data');
         }
         
         // Trigger video reprocessing
@@ -568,9 +591,9 @@ const PreviewRepost = () => {
       </div>
 
       {/* Sharable content area */}
-      <div ref={previewRef} id="sharable-content" className="relative w-full max-w-md mx-auto bg-background rounded-4xl overflow-hidden shadow-lg">        {/* Media Preview (Image or Video) */}
+        <div ref={previewRef} id="sharable-content" className="relative w-full max-w-lg mx-auto overflow-hidden" style={{ border: '1px solid transparent', backgroundColor: 'transparent' }}>        {/* Media Preview (Image or Video) */}
         {mediaFile && mediaFile.type.startsWith('image') && (
-          <div className="w-full max-w-md mx-auto">
+          <div className="w-full max-w-lg mx-auto">
             <div className="relative w-full" ref={mediaContainerRef}>
               <img
                 src={URL.createObjectURL(mediaFile)}
@@ -595,7 +618,7 @@ const PreviewRepost = () => {
               {/* Caption Overlay */}
               {showCaptionOverlay && !isEditingText ? (
                 <div
-                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg"
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4"
                   style={{ width: '100%' }}
                 >
                   <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
@@ -606,7 +629,7 @@ const PreviewRepost = () => {
               
               {/* Caption shown below image when overlay is disabled */}
               {!showCaptionOverlay && !isEditingText ? (
-                <div className="w-full bg-card text-card-foreground p-4 rounded-lg shadow-md mt-2">
+                <div className="w-full text-card-foreground p-4" style={{ backgroundColor: 'transparent' }}>
                   {currentCaption.title && <h2 className="text-xl font-bold mb-2">{currentCaption.title}</h2>}
                   <p className="whitespace-pre-wrap text-base mb-2">
                     {currentCaption.caption}
@@ -670,7 +693,7 @@ const PreviewRepost = () => {
             
             {/* Always show caption overlay for video */}
             {!isEditingText && !processing && (
-              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4 rounded-b-lg">
+              <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/[.7] to-transparent text-white p-4">
                 <h2 className="font-bold text-2xl mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.title}</h2>
                 <div className="text-lg mb-2" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.caption}</div>
                 <div className="text-base text-gray-300 font-medium" style={{ whiteSpace: 'pre-wrap' }}>{currentCaption.hashtags.map(tag => `#${tag}`).join(' ')}</div>
@@ -679,7 +702,7 @@ const PreviewRepost = () => {
             
             {/* Text Overlay Editor */}
             {showTextOverlayEditor && (
-              <div className="absolute top-0 left-0 right-0 bg-background/90 backdrop-blur-sm z-30 p-3 rounded-lg border border-border shadow-lg">
+              <div className="absolute top-0 left-0 right-0 bg-background/90 backdrop-blur-sm z-30 p-3 border border-border">
                 <TextOverlayEditor
                   onTextChange={setCustomTextOverlay}
                   onColorChange={setTextColor}
@@ -712,7 +735,7 @@ const PreviewRepost = () => {
 
         {/* Text-only post display or Edit mode */}
         {!mediaFile && (
-          <div className={`mx-auto my-8 max-w-lg p-6 rounded-2xl shadow-lg bg-card text-card-foreground preview-caption-card ${isEditingText ? '' : ''}`}>
+          <div className={`mx-auto my-8 max-w-xl p-6 text-card-foreground preview-caption-card ${isEditingText ? '' : ''}`} style={{ backgroundColor: 'transparent' }}>
             {isEditingText ? (
               // Edit mode UI for text-only
               <div className="flex flex-col gap-4">

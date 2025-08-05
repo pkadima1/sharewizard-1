@@ -1269,7 +1269,7 @@
       "titleNeedsOptimization": "Le titre doit être optimisé"
     },
     "export": {
-      "markdown": "Markdown",
+      "markdown": "Markdown (.md)",
       "markdown.desc": "Format texte léger, idéal pour les développeurs et la documentation.",
       "html": "HTML",
       "html.desc": "Prêt pour le web avec balises méta SEO.",
@@ -2046,7 +2046,14 @@
     "markdown": "Markdown (.md)",
     "html": "HTML (.html)",
     "txt": "Texte (.txt)",
-    "pdf": "PDF (.pdf)"
+    "pdf": "PDF (.pdf)",
+    "gdocs": "Google Docs",
+    "word": "OneDrive Word",
+    "auto": "Auto",
+    "autoPaste": "(Collage Auto)",
+    "collaborative": "(Collaboratif)",
+    "enhanced": "(Amélioré)",
+    "pageSafe": "(Sûr pour Page)"
   },
   "contentManager": {
     "actions": {
@@ -2063,7 +2070,12 @@
       "txt": "Texte (.txt)",
       "pdf": "PDF (.pdf)",
       "gdocs": "Google Docs",
-      "word": "OneDrive Word"
+      "word": "OneDrive Word",
+      "auto": "Auto",
+      "autoPaste": "(Collage Auto)",
+      "collaborative": "(Collaboratif)",
+      "enhanced": "(Amélioré)",
+      "pageSafe": "(Sûr pour Page)"
     },
     "errors": {
       "exportError": "Erreur d'Export",
@@ -2092,7 +2104,9 @@
       "author": "Auteur",
       "readingTime": "Temps de lecture",
       "published": "Publié le",
-      "aiContentCreator": "Créateur de Contenu IA"
+      "aiContentCreator": "Créateur de Contenu IA",
+      "tone": "Ton",
+      "version": "Version"
     },
     "copy": {
       "success": "Contenu propre copié !",
@@ -2109,7 +2123,7 @@
       "pdfErrorDesc": "Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer."
     }
   },
-  "aiIdeasGenerator": {
+    "aiIdeasGenerator": {
     "title": "Générateur d'Idées IA",
     "subtitle": "Générez des idées de contenu engageantes alimentées par l'analyse IA avancée",
     "version": "v1.0.0",
@@ -2192,4 +2206,5 @@
       "description": "Cliquez sur le bouton ci-dessous pour générer vos premières idées de contenu alimentées par l'IA."
     }
   }
+}
 }

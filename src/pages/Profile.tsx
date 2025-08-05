@@ -35,6 +35,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Import the Generation type from the hook
 import { Generation } from '@/hooks/useUserGenerations';
@@ -72,6 +73,7 @@ const Profile: React.FC = () => {
   
   // IMPORTANT: Single declaration of currentUser at component level
   const { currentUser, refreshUserProfile } = useAuth();
+  const { currentLanguage } = useLanguage();
   
   const { generations, loading: generationsLoading } = useUserGenerations(currentUser?.uid);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -192,13 +194,30 @@ const Profile: React.FC = () => {
 
   function goToPreview(selectedCaption: {gen: Generation, caption: any}, mediaFile: File | null) {
     setRepostModalOpen(false);
+    
     navigate('/preview-repost', {
       state: {
-        caption: selectedCaption.caption,
+        caption: selectedCaption.caption, // This is already the caption object
         gen: selectedCaption.gen,
         mediaFile,
       },
     });
+  }
+
+  // Test function to directly navigate to preview with sample data
+  function testPreviewNavigation() {
+    if (generations.length > 0) {
+      const testGen = generations[0];
+      const testCaption = testGen.output[0];
+      
+      navigate('/preview-repost', {
+        state: {
+          caption: testCaption,
+          gen: testGen,
+          mediaFile: null,
+        },
+      });
+    }
   }
 
   useEffect(() => {

@@ -83,8 +83,8 @@ const Dashboard: React.FC = () => {
     // Check if user just completed content generation
     if (location.state?.newContentGenerated) {
       toast({
-        title: "Content Generated Successfully!",
-        description: "Your long-form content has been generated and is ready for download.",
+        title: t('toast.contentGenerated.title'),
+        description: t('toast.contentGenerated.description'),
         variant: "default",
       });
       
@@ -101,12 +101,12 @@ const Dashboard: React.FC = () => {
     if (checkoutCanceled && currentUser) {
       // Clear any trial pending status if checkout was canceled
       clearTrialPending(currentUser.uid).then(() => {
-        // If checkout was canceled, show a notification to the user
-        toast({
-          title: "Checkout canceled",
-          description: "Your subscription process was canceled. No changes were made to your account.",
-          variant: "default",
-        });
+              // If checkout was canceled, show a notification to the user
+      toast({
+        title: t('toast.checkoutCanceled.title'),
+        description: t('toast.checkoutCanceled.description'),
+        variant: "default",
+      });
         
         // Clean up the URL by removing the parameter
         navigate('/dashboard', { replace: true });
@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
   }, [location.pathname, location.search, currentUser, navigate, toast]);
 
   if (!currentUser || !userProfile) {
-    return <div>{t('loading', 'Loading...')}</div>;
+    return <div>{t('loading')}</div>;
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('overview.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            {t('overview.welcome', { name: currentUser.displayName || t('user', 'User') })}
+            {t('overview.welcome', { name: currentUser.displayName || t('user') })}
           </p>
         </div>
 

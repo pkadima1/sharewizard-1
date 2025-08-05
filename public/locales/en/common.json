@@ -96,6 +96,24 @@
   },
   "sharing": {
   },
+  "googleDocs": {
+    "readyForGoogleDocs": "Ready for Google Docs! 🚀",
+    "contentReadyToExport": "Your content \"{{title}}\" is ready to export!",
+    "contentCopied": "Content Copied!",
+    "manualCopyNeeded": "Manual Copy Needed",
+    "contentCopiedReady": "Your content is copied and ready to paste!",
+    "pleaseManualCopy": "Please manually copy the content first.",
+    "autoReady": "AUTO-READY",
+    "manualNeeded": "MANUAL NEEDED",
+    "nextSteps": "🎯 Next Steps:",
+    "step1ClickGoToDocs": "Click \"Go to Google Docs\" below",
+    "step2PressCtrlV": "Press Ctrl+V (or Cmd+V on Mac)",
+    "contentWillPaste": "✨ Your content will paste with full formatting!",
+    "goToGoogleDocs": "🎯 Go to Google Docs",
+    "perfectDone": "Perfect! Done ✨",
+    "proTip": "🚀 Pro Tip:",
+    "richFormattingReady": "The content includes rich formatting and is collaboration-ready!"
+  },
   "carousel": {
     "title": "See What You Can Create",
     "loading": "Loading amazing content...",
@@ -241,32 +259,30 @@
     "fillRequired": "Please fill in all required fields."
   },
   "blog": {
-    "title": "Real blogs. Instantly written. Authentically you.",
-    "subtitle": "Each article here was crafted in seconds with EngagePerfect — tuned to sound like you, not a machine.",
+    "title": "Real articles. Written in an instant. Authentically you.",
+    "subtitle": "Every article here was created in seconds with EngagePerfect — tuned to reflect your voice, not a machine's.",
     "stats": {
       "articles": "Articles",
-      "aiPoweredContent": "EngagePerfect AI-Powered Content",
-      "updatedRegularly": "Updated Regularly"
+      "aiPoweredContent": "Content by EngagePerfect AI",
+      "updatedRegularly": "Updated regularly"
     },
     "search": {
       "placeholder": "Search articles, topics, or keywords...",
       "noResults": "No articles found matching your search."
     },
     "filters": {
-      "allCategories": "All Categories",
+      "allCategories": "All categories",
       "category": "Category"
     },
     "article": {
       "readTime": "min read",
-      "readArticle": "Read Article",
+      "readArticle": "Read article",
       "generatedOn": "Generated on",
       "words": "words",
       "seo": "SEO",
-      "preview": "Preview",
-      "close": "Close"
-    },
-    "loading": "Loading articles...",
-    "error": "Failed to load articles. Please try again later.",
-    "noArticles": "No articles available at the moment."
-  }
+      "author": "Author"
+    }
+  },
+  "user": "User",
+  "resetToEnglish": "Reset to English"
 }

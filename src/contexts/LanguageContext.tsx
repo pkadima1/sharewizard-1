@@ -14,13 +14,13 @@ const defaultLanguages = [
 ];
 
 const LanguageContext = createContext<LanguageContextType>({
-  currentLanguage: 'en',
+  currentLanguage: 'fr',
   changeLanguage: () => {},
   supportedLanguages: defaultLanguages,
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'fr');
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -46,8 +46,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           i18n.changeLanguage(detectedLang);
         }
       } else {
-        // Fall back to English if no valid language detected
-        i18n.changeLanguage('en');
+        // Fall back to French if no valid language detected
+        i18n.changeLanguage('fr');
       }
     }
   }, [location.pathname, currentLanguage]);

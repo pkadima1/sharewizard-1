@@ -1979,7 +1979,12 @@
       "txt": "Text (.txt)",
       "pdf": "PDF (.pdf)",
       "gdocs": "Google Docs",
-      "word": "OneDrive Word"
+      "word": "OneDrive Word",
+      "auto": "Auto",
+      "autoPaste": "(Auto-Paste)",
+      "collaborative": "(Collaborative)",
+      "enhanced": "(Enhanced)",
+      "pageSafe": "(Page-Safe)"
     },
     "errors": {
       "exportError": "Export Error",
@@ -2008,7 +2013,9 @@
       "author": "Author",
       "readingTime": "Reading Time",
       "published": "Published",
-      "aiContentCreator": "AI Content Creator"
+      "aiContentCreator": "AI Content Creator",
+      "tone": "Tone",
+      "version": "Version"
     },
     "copy": {
       "success": "Clean content copied!",

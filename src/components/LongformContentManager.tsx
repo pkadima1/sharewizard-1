@@ -56,6 +56,31 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
   const { toast } = useToast();
   const { t } = useAppTranslation('longform');
 
+  // Fallback translation function for critical UI elements
+  const getTranslation = (key: string, fallback: string) => {
+    const translation = t(key);
+    return translation === key ? fallback : translation;
+  };
+
+  // Debug: Check if translations are loading properly
+  React.useEffect(() => {
+    // Test a few key translations to see if they're working
+    const testKeys = [
+      'contentManager.metadata.minRead',
+      'contentManager.actions.preview',
+      'contentManager.export.gdocs'
+    ];
+    
+    testKeys.forEach(key => {
+      const translation = t(key);
+      if (translation === key) {
+        console.warn(`❌ Translation missing for key: ${key}`);
+      } else {
+        console.log(`✅ Translation found for key: ${key} -> ${translation}`);
+      }
+    });
+  }, [t]);
+
   // Mobile-optimized preview detection
   const [isMobileView, setIsMobileView] = useState(false);
   
@@ -192,8 +217,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    URL.revokeObjectURL(url);
 
    toast({
-     title: t('contentManager.download.started'),
-     description: t('contentManager.download.success', { fileName }),
+     title: getTranslation('contentManager.download.started', 'Téléchargement commencé'),
+     description: getTranslation('contentManager.download.success', `${fileName} a été téléchargé avec succès.`),
    });
  };
 
@@ -374,15 +399,15 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    html2pdf().set(opt).from(element).save().then(() => {
      console.log('PDF generated from HTML content successfully');
      toast({
-       title: t('contentManager.download.pdfTitle'),
-       description: t('contentManager.download.pdfSuccess', { fileName: sanitizedTitle }),
+       title: getTranslation('contentManager.download.pdfTitle', 'PDF propre téléchargé'),
+       description: getTranslation('contentManager.download.pdfSuccess', `${sanitizedTitle}.pdf a été téléchargé avec succès.`),
      });
    }).catch((error: unknown) => {
      console.error('PDF generation failed:', error);
      const errorMessage = error instanceof Error ? error.message : 'PDF generation failed';
      toast({
-       title: t('contentManager.download.pdfError'),
-       description: t('contentManager.download.pdfErrorDesc'),
+       title: getTranslation('contentManager.download.pdfError', 'Échec de la génération PDF'),
+       description: getTranslation('contentManager.download.pdfErrorDesc', 'Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer.'),
        variant: "destructive",
      });
    });
@@ -534,8 +559,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      await html2pdf().set(optAlt).from(element).save();
      
      toast({
-       title: t('contentManager.download.pdfTitle'),
-       description: t('contentManager.download.pdfSuccess', { fileName: `${sanitizedTitle}-alt` }),
+       title: getTranslation('contentManager.download.pdfTitle', 'PDF propre téléchargé'),
+       description: getTranslation('contentManager.download.pdfSuccess', `${sanitizedTitle}-alt.pdf a été téléchargé avec succès.`),
      });
    } catch (error) {
      console.error('Alternative PDF generation failed:', error);
@@ -589,8 +614,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    try {
      // Show immediate feedback about automation
      toast({
-       title: t('contentManager.gdocs.autoOpening'),
-       description: t('contentManager.gdocs.preparing'),
+       title: getTranslation('contentManager.gdocs.autoOpening', '🤖 Ouverture Auto de Google Docs...'),
+       description: getTranslation('contentManager.gdocs.preparing', 'Préparation de votre contenu avec tentatives de collage automatisé'),
      });
 
      await exportToGoogleDocs(content);
@@ -598,8 +623,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      // Enhanced success feedback
      setTimeout(() => {
        toast({
-         title: t('contentManager.gdocs.magicProgress'),
-         description: t('contentManager.gdocs.opened'),
+         title: getTranslation('contentManager.gdocs.magicProgress', '🚀 Magie en Cours !'),
+         description: getTranslation('contentManager.gdocs.opened', 'Google Docs ouvert avec automatisation intelligente. Le contenu devrait se coller automatiquement ou appuyez simplement sur Ctrl+V !'),
          duration: 10000,
          action: (
            <Button 
@@ -609,7 +634,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
            >
              <ExternalLink className="h-3 w-3" />
-             {t('contentManager.gdocs.focusGdocs')}
+             {getTranslation('contentManager.gdocs.focusGdocs', 'Focuser Google Docs')}
            </Button>
          ),
        });
@@ -618,8 +643,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    } catch (error) {
      console.error('Google Docs export error:', error);
      toast({
-       title: t('contentManager.errors.exportError'),
-       description: t('contentManager.errors.automationFailed'),
+       title: getTranslation('contentManager.errors.exportError', 'Erreur d\'Export'),
+       description: getTranslation('contentManager.errors.automationFailed', 'L\'automatisation a échoué. Retour à l\'option de téléchargement manuel.'),
        variant: "destructive",
        action: (
          <Button 
@@ -629,7 +654,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
            className="flex items-center gap-1"
          >
            <Download className="h-3 w-3" />
-           {t('contentManager.gdocs.downloadHtml')}
+           {getTranslation('contentManager.gdocs.downloadHtml', 'Télécharger HTML')}
          </Button>
        ),
      });
@@ -641,8 +666,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      await exportToOneDriveWord(content);
 
      toast({
-       title: "📄 OneDrive Word Export Started!",
-       description: "Word document downloaded and OneDrive opened. Follow the upload instructions.",
+       title: "📄 Export OneDrive Word Démarré !",
+       description: "Document Word téléchargé et OneDrive ouvert. Suivez les instructions de téléchargement.",
        action: (
          <Button 
            variant="outline" 
@@ -651,7 +676,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
            className="flex items-center gap-1"
          >
            <ExternalLink className="h-3 w-3" />
-           Open OneDrive
+           Ouvrir OneDrive
          </Button>
        ),
      });
@@ -659,8 +684,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    } catch (error) {
      console.error('OneDrive Word export error:', error);
      toast({
-       title: t('contentManager.errors.exportError'),
-       description: t('contentManager.errors.wordError'),
+       title: getTranslation('contentManager.errors.exportError', 'Erreur d\'Export'),
+       description: getTranslation('contentManager.errors.wordError', 'Échec de la préparation de l\'export OneDrive Word. Veuillez réessayer.'),
        variant: "destructive",
      });
    }
@@ -708,23 +733,23 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      
      navigator.clipboard.write([clipboardItem]).then(() => {
        toast({
-         title: t('contentManager.copy.success'),
-         description: t('contentManager.copy.description'),
+         title: getTranslation('contentManager.copy.success', 'Contenu propre copié !'),
+         description: getTranslation('contentManager.copy.description', 'Contenu formaté propre avec texte noir copié. Parfait pour coller dans n\'importe quel document.'),
        });
      }).catch(() => {
        // Fallback to plain text
        navigator.clipboard.writeText(content.content);
        toast({
-         title: t('contentManager.actions.copy'),
-         description: t('contentManager.copy.fallback'),
+         title: getTranslation('contentManager.actions.copy', 'Copier'),
+         description: getTranslation('contentManager.copy.fallback', 'Contenu copié dans le presse-papiers (texte brut de secours).'),
        });
      });
    } else {
      // Fallback for older browsers
      navigator.clipboard.writeText(content.content);
      toast({
-       title: t('contentManager.actions.copy'),
-       description: t('contentManager.copy.error'),
+       title: getTranslation('contentManager.actions.copy', 'Copier'),
+       description: getTranslation('contentManager.copy.error', 'Contenu copié dans le presse-papiers.'),
      });
    }
  };
@@ -732,9 +757,9 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
  // Clean copy content generator - neutral colors, no backgrounds
  const generateCleanCopyContent = (content: string, metadata: Record<string, unknown>, language: string) => {
    // Use translation system instead of manual language detection
-   const authorLabel = t('contentManager.metadata.author') || 'Author';
-   const readingTimeLabel = t('contentManager.metadata.readingTime') || 'Reading Time';
-   const publishedLabel = t('contentManager.metadata.published') || 'Published';
+   const authorLabel = getTranslation('contentManager.metadata.author', 'Auteur');
+   const readingTimeLabel = getTranslation('contentManager.metadata.readingTime', 'Temps de lecture');
+   const publishedLabel = getTranslation('contentManager.metadata.published', 'Publié le');
    
    return `
      <div style="
@@ -934,11 +959,11 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                </Badge>
                <Badge variant="outline" className="flex items-center gap-1">
                  <Clock className="h-3 w-3" />
-                 {item.metadata.estimatedReadingTime} {t('contentManager.metadata.minRead')}
+                 {item.metadata.estimatedReadingTime} {getTranslation('contentManager.metadata.minRead', 'min de lecture')}
                </Badge>
                <Badge variant="outline" className="flex items-center gap-1">
                  <FileText className="h-3 w-3" />
-                 {item.metadata.actualWordCount.toLocaleString()} {t('contentManager.metadata.words')}
+                 {item.metadata.actualWordCount.toLocaleString()} {getTranslation('contentManager.metadata.words', 'mots')}
                </Badge>
                {item.metadata.contentQuality.seoOptimized && (
                  <Badge variant="outline" className="flex items-center gap-1">
@@ -953,8 +978,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  <Calendar className="h-3 w-3" />
                  {formatDate(item.metadata.generatedAt)}
                </span>
-               <span>Tone: {item.inputs.contentTone}</span>
-               <span>v{item.metadata.version}</span>
+               <span>{getTranslation('contentManager.metadata.tone', 'Ton')}: {item.inputs.contentTone}</span>
+               <span>{getTranslation('contentManager.metadata.version', 'Version')} {item.metadata.version}</span>
              </div>
 
              {/* Content Preview */}
@@ -967,48 +992,48 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
          </div>
 
          <div className="flex flex-wrap gap-2">
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => openPreview(item)}
-             className="flex items-center gap-1"
-           >
-             <Eye className="h-4 w-4" />
-             {t('contentManager.actions.preview')}
-           </Button>
+                        <Button
+               variant="outline"
+               size="sm"
+               onClick={() => openPreview(item)}
+               className="flex items-center gap-1"
+             >
+               <Eye className="h-4 w-4" />
+               {getTranslation('contentManager.actions.preview', 'Aperçu')}
+             </Button>
            
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => copyToClipboard(item)}
-             className="flex items-center gap-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200 dark:bg-green-950 dark:hover:bg-green-900 dark:border-green-800 dark:text-green-300"
-             title="Copy clean, formatted content with black text (perfect for documents)"
-           >
-             <Copy className="h-4 w-4" />
-             {t('contentManager.actions.copyClean')}
-           </Button>
+                        <Button
+               variant="outline"
+               size="sm"
+               onClick={() => copyToClipboard(item)}
+               className="flex items-center gap-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200 dark:bg-green-950 dark:hover:bg-green-900 dark:border-green-800 dark:text-green-300"
+               title="Copy clean, formatted content with black text (perfect for documents)"
+             >
+               <Copy className="h-4 w-4" />
+               {getTranslation('contentManager.actions.copyClean', 'Copier Propre')}
+             </Button>
 
            {/* Collaborative Export Buttons */}
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => downloadContent(item, 'gdoc')}
-             className="flex items-center gap-1 bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 text-blue-700 border-blue-200 dark:from-green-950 dark:to-blue-950 dark:hover:from-green-900 dark:hover:to-blue-900 dark:border-blue-800 dark:text-blue-300 shadow-sm"
-             title="Open Google Docs with automated paste (Almost zero-click collaboration!)"
-           >
-             <FileEdit className="h-4 w-4" />
-             🤖 {t('contentManager.export.gdocs')} Auto
-           </Button>
+                        <Button
+               variant="outline"
+               size="sm"
+               onClick={() => downloadContent(item, 'gdoc')}
+               className="flex items-center gap-1 bg-gradient-to-r from-green-50 to-blue-50 hover:from-green-100 hover:to-blue-100 text-blue-700 border-blue-200 dark:from-green-950 dark:to-blue-950 dark:hover:from-green-900 dark:hover:to-blue-900 dark:border-blue-800 dark:text-blue-300 shadow-sm"
+               title="Open Google Docs with automated paste (Almost zero-click collaboration!)"
+             >
+               <FileEdit className="h-4 w-4" />
+               🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.auto', 'Auto')}
+             </Button>
            
-           <Button
-             variant="outline"
-             size="sm"
-             onClick={() => downloadContent(item, 'word')}
-             className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
-           >
-             <FileEdit className="h-4 w-4" />
-             {t('contentManager.export.word')}
-           </Button>
+                        <Button
+               variant="outline"
+               size="sm"
+               onClick={() => downloadContent(item, 'word')}
+               className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+             >
+               <FileEdit className="h-4 w-4" />
+               {getTranslation('contentManager.export.word', 'OneDrive Word')}
+             </Button>
 
            {/* Regular Download Options */}
            <DropdownMenu>
@@ -1019,40 +1044,40 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  className="flex items-center gap-1"
                >
                  <Download className="h-4 w-4" />
-                 {t('contentManager.actions.download')}
+                 {getTranslation('contentManager.actions.download', 'Télécharger')}
                  <ChevronDown className="h-3 w-3" />
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
                <DropdownMenuItem onClick={() => downloadContent(item, 'markdown')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.markdown')}
+                 {getTranslation('contentManager.export.markdown', 'Markdown (.md)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'html')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.html')}
+                 {getTranslation('contentManager.export.html', 'HTML (.html)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'txt')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.txt')}
+                 {getTranslation('contentManager.export.txt', 'Texte (.txt)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'pdf')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.pdf')} (Enhanced)
+                 {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.enhanced', '(Amélioré)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadAsPDFAlternative(item)}>
                  <Download className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.pdf')} (Page-Safe)
+                 {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.pageSafe', '(Sûr pour Page)')}
                </DropdownMenuItem>
                <DropdownMenuSeparator />
-               <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
-                 <Share2 className="h-4 w-4 mr-2" />
-                 🤖 {t('contentManager.export.gdocs')} (Auto-Paste)
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => downloadContent(item, 'word')}>
-                 <Share2 className="h-4 w-4 mr-2" />
-                 {t('contentManager.export.word')} (Collaborative)
-               </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
+                     <Share2 className="h-4 w-4 mr-2" />
+                     🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.autoPaste', '(Collage Auto)')}
+                   </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => downloadContent(item, 'word')}>
+                     <Share2 className="h-4 w-4 mr-2" />
+                     {getTranslation('contentManager.export.word', 'OneDrive Word')} {getTranslation('contentManager.export.collaborative', '(Collaboratif)')}
+                   </DropdownMenuItem>
              </DropdownMenuContent>
            </DropdownMenu>
          </div>
@@ -1068,16 +1093,16 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                {selectedContent?.inputs.topic}
              </span>
              <div className={`flex ${isMobileView ? 'flex-col gap-2' : 'gap-3'}`}>
-               <Button
-                 variant="outline"
-                 size={isMobileView ? "sm" : "sm"}
-                 onClick={() => selectedContent && copyToClipboard(selectedContent)}
-                 className={`flex items-center ${isMobileView ? 'justify-center gap-2 w-full' : 'gap-2'} bg-green-50 hover:bg-green-100 border-green-200 text-green-700 dark:bg-green-950 dark:hover:bg-green-900 dark:border-green-800 dark:text-green-300 shadow-sm transition-all duration-200`}
-                 title="Copy clean, formatted content with black text (perfect for documents)"
-               >
-                 <Copy className="h-4 w-4" />
-                 {t('contentManager.actions.copyClean')}
-               </Button>
+                                <Button
+                   variant="outline"
+                   size={isMobileView ? "sm" : "sm"}
+                   onClick={() => selectedContent && copyToClipboard(selectedContent)}
+                   className={`flex items-center ${isMobileView ? 'justify-center gap-2 w-full' : 'gap-2'} bg-green-50 hover:bg-green-100 border-green-200 text-green-700 dark:bg-green-950 dark:hover:bg-green-900 dark:border-green-800 dark:text-green-300 shadow-sm transition-all duration-200`}
+                   title="Copy clean, formatted content with black text (perfect for documents)"
+                 >
+                   <Copy className="h-4 w-4" />
+                   {getTranslation('contentManager.actions.copyClean', 'Copier Propre')}
+                 </Button>
                
                <DropdownMenu>
                  <DropdownMenuTrigger asChild>
@@ -1087,39 +1112,39 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                      className={`flex items-center ${isMobileView ? 'justify-center gap-2 w-full' : 'gap-2'} bg-green-50 hover:bg-green-100 border-green-200 text-green-700 dark:bg-green-950 dark:hover:bg-green-900 dark:border-green-800 dark:text-green-300 shadow-sm transition-all duration-200`}
                    >
                      <Download className="h-4 w-4" />
-                     {t('contentManager.actions.export')}
+                     {getTranslation('contentManager.actions.export', 'Exporter')}
                      <ChevronDown className="h-3 w-3" />
                    </Button>
                  </DropdownMenuTrigger>
                  <DropdownMenuContent align="end">
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'gdoc')}>
                      <FileEdit className="h-4 w-4 mr-2" />
-                     🤖 {t('contentManager.export.gdocs')} (Auto-Paste)
+                     🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.autoPaste', '(Collage Auto)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'word')}>
                      <FileEdit className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.word')} (Collaborative)
+                     {getTranslation('contentManager.export.word', 'OneDrive Word')} {getTranslation('contentManager.export.collaborative', '(Collaboratif)')}
                    </DropdownMenuItem>
                    <DropdownMenuSeparator />
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'markdown')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.markdown')}
+                     {getTranslation('contentManager.export.markdown', 'Markdown (.md)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'html')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.html')}
+                     {getTranslation('contentManager.export.html', 'HTML (.html)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'txt')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.txt')}
+                     {getTranslation('contentManager.export.txt', 'Texte (.txt)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'pdf')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.pdf')} (Enhanced)
+                     {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.enhanced', '(Amélioré)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadAsPDFAlternative(selectedContent)}>
                      <Download className="h-4 w-4 mr-2" />
-                     {t('contentManager.export.pdf')} (Page-Safe)
+                     {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.pageSafe', '(Sûr pour Page)')}
                    </DropdownMenuItem>
                  </DropdownMenuContent>
                </DropdownMenu>
@@ -1132,10 +1157,10 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                    {selectedContent.inputs.contentType.replace('-', ' ')}
                  </Badge>
                  <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
-                   📊 {selectedContent.metadata.actualWordCount.toLocaleString()} {t('contentManager.metadata.words')}
+                   📊 {selectedContent.metadata.actualWordCount.toLocaleString()} {getTranslation('contentManager.metadata.words', 'mots')}
                  </Badge>
-                 <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
-                   ⏱️ {selectedContent.metadata.estimatedReadingTime} {t('contentManager.metadata.minRead')}
+                 <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
+                   ⏱️ {selectedContent.metadata.estimatedReadingTime} {getTranslation('contentManager.metadata.minRead', 'min de lecture')}
                  </Badge>
                  <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
                    🎯 {selectedContent.inputs.contentTone} tone

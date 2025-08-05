@@ -44,14 +44,14 @@ const Navbar: React.FC = () => {
     try {
       await logout();
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out",
+        title: t('auth.logout.success'),
+        description: t('auth.logout.description'),
       });
       navigateLocalized('/login');
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to log out",
+        title: t('auth.logout.error'),
+        description: t('auth.logout.errorDescription'),
         variant: "destructive",
       });
     }
@@ -217,7 +217,7 @@ const Navbar: React.FC = () => {
                   <DropdownMenuContent align="end" className="w-56 mt-1">
                     <DropdownMenuLabel>
                       <div className="flex flex-col">
-                        <span className="font-medium">{currentUser.displayName || 'User'}</span>
+                        <span className="font-medium">{currentUser.displayName || t('common.user')}</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{currentUser.email}</span>
                       </div>
                     </DropdownMenuLabel>

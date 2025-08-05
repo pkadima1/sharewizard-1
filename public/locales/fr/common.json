@@ -95,6 +95,24 @@
     "to": "vers"
   },
   "sharing": {},
+  "googleDocs": {
+    "readyForGoogleDocs": "Prêt pour Google Docs ! 🚀",
+    "contentReadyToExport": "Votre contenu \"{{title}}\" est prêt à exporter !",
+    "contentCopied": "Contenu copié !",
+    "manualCopyNeeded": "Copie manuelle requise",
+    "contentCopiedReady": "Votre contenu est copié et prêt à coller !",
+    "pleaseManualCopy": "Veuillez copier manuellement le contenu d'abord.",
+    "autoReady": "AUTO-PRÊT",
+    "manualNeeded": "MANUEL REQUIS",
+    "nextSteps": "🎯 Étapes suivantes :",
+    "step1ClickGoToDocs": "Cliquez sur \"Aller à Google Docs\" ci-dessous",
+    "step2PressCtrlV": "Appuyez sur Ctrl+V (ou Cmd+V sur Mac)",
+    "contentWillPaste": "✨ Votre contenu se collera avec un formatage complet !",
+    "goToGoogleDocs": "🎯 Aller à Google Docs",
+    "perfectDone": "Parfait ! Terminé ✨",
+    "proTip": "🚀 Conseil Pro :",
+    "richFormattingReady": "Le contenu inclut un formatage riche et est prêt pour la collaboration !"
+  },
   "carousel": {
     "title": "Voir ce que vous pouvez créer",
     "loading": "Chargement du contenu incroyable...",
@@ -241,7 +259,7 @@
   },
   "blog": {
     "title": "Des vrais articles. Écrits en un instant. Authentiquement vous.",
-    "subtitle": "Chaque article ici a été créé en quelques secondes avec EngagePerfect — ajusté pour refléter votre voix, pas celle d’une machine.",
+    "subtitle": "Chaque article ici a été créé en quelques secondes avec EngagePerfect — ajusté pour refléter votre voix, pas celle d'une machine.",
     "stats": {
       "articles": "Articles",
       "aiPoweredContent": "Contenu par EngagePerfect AI",
@@ -263,5 +281,7 @@
       "seo": "SEO",
       "author": "Auteur"
     }
-  }
+  },
+  "user": "Utilisateur",
+  "resetToEnglish": "Réinitialiser en anglais"
 }

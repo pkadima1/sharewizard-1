@@ -12,15 +12,15 @@ i18n
   .use(initReactI18next)
   // Initialize the i18n configuration
   .init({
-    // Default language
-    fallbackLng: 'en',
+    // Default language - French as primary, English as fallback
+    fallbackLng: 'fr',
     // Available languages
     supportedLngs: ['en', 'fr'],
     // Debug mode for development
     debug: import.meta.env.DEV,
     // Language detector options
     detection: {
-      // Order of detection methods - prioritize localStorage over browser detection
+      // Order of detection methods - prioritize localStorage, then French, then browser detection
       order: ['localStorage', 'path', 'navigator'],
       // Where to look in the URL path (index 1 means /:lang/...)
       lookupFromPathIndex: 1,
@@ -35,6 +35,59 @@ i18n
     // Backend configuration for loading translations
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Add request options for better error handling
+      requestOptions: {
+        cache: 'no-cache'
+      },
+      // Add cache busting for development
+      reloadInterval: import.meta.env.DEV ? 1000 : false,
+      // Add custom request function to try alternative paths
+      request: (options, url, payload, callback) => {
+        const originalUrl = url;
+        
+        // Try the original URL first
+        fetch(url, { cache: 'no-cache' })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            // If original fails, try alternative paths
+            const alternativePaths = [
+              `/public${url}`,
+              `${url.replace('/locales/', '/public/locales/')}`,
+              `${url.replace('/locales/', '/src/locales/')}`
+            ];
+            
+            console.log('Trying alternative paths for:', url);
+            
+            // Try each alternative path
+            return Promise.race(
+              alternativePaths.map(path => 
+                fetch(path, { cache: 'no-cache' })
+                  .then(response => {
+                    if (response.ok) {
+                      console.log('✅ Found translation file at:', path);
+                      return response.json();
+                    }
+                    throw new Error(`Failed to load from ${path}`);
+                  })
+              )
+            );
+          })
+          .then(data => {
+            callback(null, {
+              data: data,
+              status: 200
+            });
+          })
+          .catch(error => {
+            console.error('❌ Failed to load translation file:', originalUrl, error);
+            callback(error, {
+              data: {},
+              status: 404
+            });
+          });
+      }
     },
     // Interpolation options
     interpolation: {
@@ -44,6 +97,12 @@ i18n
     react: {
       useSuspense: true,
     },
+    // Enable returnObjects to fix object access warnings
+    returnObjects: true,
+    // Key separator for nested keys
+    keySeparator: '.',
+    // Namespace separator
+    nsSeparator: ':',
   });
 
 export default i18n;
