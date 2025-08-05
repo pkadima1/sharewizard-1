@@ -31,7 +31,6 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import html2pdf from 'html2pdf.js';
 import { 
   exportToGoogleDocs, 
   exportToOneDriveWord,
@@ -39,6 +38,8 @@ import {
 } from '@/services/googleDocsService';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
 import { formatBlogContent, generateModernArticle } from '@/utils/blogFormatter';
+import { generateProfessionalPDF, getAvailableTemplates, PDFGenerationOptions } from '@/utils/pdfGenerator';
+import PDFTemplateSelector from '@/components/ui/pdf-template-selector';
 
 interface LongformContentManagerProps {
   content: LongformContent[];
@@ -53,6 +54,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
 }) => {
   const [selectedContent, setSelectedContent] = useState<LongformContent | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
+  const [pdfContent, setPdfContent] = useState<LongformContent | null>(null);
   const { toast } = useToast();
   const { t } = useAppTranslation('longform');
 
@@ -167,7 +170,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    <div class="article-header">
      <h1 class="article-title">${content.inputs.topic}</h1>
      <div class="article-meta">
-       ${content.metadata.actualWordCount} words • ${content.metadata.estimatedReadingTime} min read
+       ${content.metadata.actualWordCount} ${getTranslation('contentManager.metadata.words', 'mots')} • ${content.metadata.estimatedReadingTime} ${getTranslation('contentManager.metadata.minRead', 'min de lecture')}
      </div>
    </div>
    <div class="article-content">
@@ -190,13 +193,9 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        mimeType = 'text/plain';
        break;
      case 'pdf':
-       // Try improved PDF generation first, fallback to alternative if needed
-       try {
-         downloadAsPDF(content);
-       } catch (error) {
-         console.warn('Primary PDF generation failed, trying alternative method:', error);
-         downloadAsPDFAlternative(content);
-       }
+       // Open professional PDF generator dialog
+       setPdfContent(content);
+       setPdfDialogOpen(true);
        return;
      case 'gdoc':
        exportToGoogleDocsNew(content);
@@ -222,393 +221,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    });
  };
 
- const downloadAsPDF = (content: LongformContent) => {
-   const sanitizedTitle = content.inputs.topic.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-   
-   // Use the same HTML generation logic as the HTML download but optimized for PDF
-   const formattedContent = formatBlogContent(content.content, {
-     darkMode: false,
-     mobileFirst: true,
-     enhancedReadability: true,
-     titleToRemove: content.inputs.topic
-   });
-   
-   // Create PDF-optimized HTML structure
-   const pdfHtml = `<!DOCTYPE html>
-<html>
-<head>
-   <meta charset="UTF-8">
-   <title>${content.inputs.topic}</title>
-   <style>
-       * {
-         box-sizing: border-box;
-         margin: 0;
-         padding: 0;
-       }
-       
-       body { 
-         font-family: Georgia, 'Times New Roman', serif;
-         max-width: 100%;
-         margin: 0;
-         padding: 15mm;
-         line-height: 1.6;
-         color: #333;
-         background: #ffffff;
-         font-size: 11pt;
-       }
-       
-       h1, h2, h3, h4, h5, h6 { 
-         color: #2563eb;
-         margin-top: 1.5em;
-         margin-bottom: 0.5em;
-         page-break-after: avoid;
-         font-family: Arial, Helvetica, sans-serif;
-       }
-       
-       h1 { font-size: 1.8em; margin-top: 0; }
-       h2 { font-size: 1.5em; }
-       h3 { font-size: 1.3em; }
-       h4 { font-size: 1.1em; }
-       
-       p { 
-         margin-bottom: 1em;
-         orphans: 2;
-         widows: 2;
-         text-align: left;
-       }
-       
-       ul, ol {
-         margin: 0.8em 0;
-         padding-left: 1.5em;
-       }
-       
-       li {
-         margin-bottom: 0.3em;
-         line-height: 1.5;
-       }
-       
-       strong { font-weight: bold; }
-       em { font-style: italic; }
-       
-       blockquote {
-         margin: 1em 0;
-         padding: 0.8em 1em;
-         border-left: 3pt solid #2563eb;
-         background: #f8f9fa;
-         font-style: italic;
-       }
-       
-       code {
-         font-family: 'Courier New', monospace;
-         background: #f1f1f1;
-         padding: 2pt 4pt;
-         border-radius: 2pt;
-         font-size: 0.9em;
-       }
-       
-       pre {
-         background: #f8f9fa;
-         padding: 1em;
-         border-radius: 4pt;
-         margin: 1em 0;
-         overflow-x: auto;
-         border: 1pt solid #e9ecef;
-       }
-       
-       pre code {
-         background: transparent;
-         padding: 0;
-       }
-       
-       table {
-         width: 100%;
-         border-collapse: collapse;
-         margin: 1em 0;
-       }
-       
-       th, td {
-         border: 1pt solid #ddd;
-         padding: 8pt;
-         text-align: left;
-       }
-       
-       th {
-         background: #f8f9fa;
-         font-weight: bold;
-       }
-       
-       hr {
-         border: none;
-         height: 1pt;
-         background: #ddd;
-         margin: 2em 0;
-       }
-       
-       a {
-         color: #2563eb;
-         text-decoration: underline;
-       }
-       
-       /* Print optimizations */
-       @media print {
-         body {
-           padding: 0;
-           margin: 0;
-         }
-       }
-   </style>
-</head>
-<body>
-   ${formattedContent}
-</body>
-</html>`;
 
-   // Create a temporary element with the PDF-optimized HTML
-   const element = document.createElement('div');
-   element.innerHTML = pdfHtml;
-
-   const opt = {
-     margin: [8, 8, 8, 8],
-     filename: `${sanitizedTitle}.pdf`,
-     image: { 
-       type: 'jpeg', 
-       quality: 0.88
-     },
-     html2canvas: { 
-       scale: 1.2,
-       useCORS: true,
-       allowTaint: false,
-       windowWidth: 794,
-       windowHeight: 1123,
-       backgroundColor: '#ffffff',
-       logging: false,
-       letterRendering: true
-     },
-     jsPDF: { 
-       unit: 'mm',
-       format: 'a4', 
-       orientation: 'portrait',
-       compress: true
-     },
-     pagebreak: {
-       mode: ['css'],
-       avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-     }
-   };
-
-   html2pdf().set(opt).from(element).save().then(() => {
-     console.log('PDF generated from HTML content successfully');
-     toast({
-       title: getTranslation('contentManager.download.pdfTitle', 'PDF propre téléchargé'),
-       description: getTranslation('contentManager.download.pdfSuccess', `${sanitizedTitle}.pdf a été téléchargé avec succès.`),
-     });
-   }).catch((error: unknown) => {
-     console.error('PDF generation failed:', error);
-     const errorMessage = error instanceof Error ? error.message : 'PDF generation failed';
-     toast({
-       title: getTranslation('contentManager.download.pdfError', 'Échec de la génération PDF'),
-       description: getTranslation('contentManager.download.pdfErrorDesc', 'Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer.'),
-       variant: "destructive",
-     });
-   });
- };
-
- // Alternative PDF generation - Optimized for print efficiency
- const downloadAsPDFAlternative = async (content: LongformContent) => {
-   const sanitizedTitle = content.inputs.topic.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-   
-   try {
-     // Use the same HTML formatting as the HTML download for perfect consistency
-     const formattedContent = formatBlogContent(content.content, {
-       darkMode: false,
-       mobileFirst: true,
-       enhancedReadability: true,
-       titleToRemove: content.inputs.topic
-     });
-     
-     const element = document.createElement('div');
-     element.innerHTML = `
-       <div class="pdf-container-alt">
-         <style>
-           .pdf-container-alt { 
-             font-family: Arial, Helvetica, sans-serif; 
-             line-height: 1.35; 
-             font-size: 10pt; 
-             max-width: 100%; 
-             margin: 0; 
-             padding: 12mm;
-             color: #333;
-             height: auto;
-             box-sizing: border-box;
-           }
-           h1 { 
-             font-size: 14pt;
-             font-weight: bold;
-             margin: 12pt 0 6pt 0;
-             page-break-after: avoid;
-             page-break-inside: avoid;
-             color: #2c3e50;
-             line-height: 1.2;
-           }
-           h2 { 
-             font-size: 12pt;
-             font-weight: bold;
-             margin: 10pt 0 5pt 0;
-             page-break-after: avoid;
-             page-break-inside: avoid;
-             color: #34495e;
-             line-height: 1.2;
-           }
-           h3 { 
-             font-size: 11pt;
-             font-weight: bold;
-             margin: 8pt 0 4pt 0;
-             page-break-after: avoid;
-             page-break-inside: avoid;
-             color: #34495e;
-             line-height: 1.2;
-           }
-           h4 { 
-             font-size: 10pt;
-             font-weight: bold;
-             margin: 6pt 0 3pt 0;
-             page-break-after: avoid;
-             page-break-inside: avoid;
-             color: #4a5568;
-           }
-           p { 
-             orphans: 2; 
-             widows: 2; 
-             margin: 0 0 6pt 0;
-             text-align: left;
-             line-height: 1.35;
-             page-break-inside: avoid;
-           }
-           ul, ol {
-             margin: 4pt 0;
-             padding-left: 15pt;
-             page-break-inside: avoid;
-           }
-           li {
-             margin-bottom: 2pt;
-             line-height: 1.3;
-             page-break-inside: avoid;
-           }
-           strong {
-             font-weight: bold;
-           }
-           em {
-             font-style: italic;
-           }
-           /* Tight spacing for efficiency */
-           h1 + p, h2 + p, h3 + p, h4 + p {
-             margin-top: 0;
-           }
-           p + h1 { margin-top: 10pt; }
-           p + h2 { margin-top: 8pt; }
-           p + h3 { margin-top: 6pt; }
-           p + h4 { margin-top: 4pt; }
-           /* Compact list spacing */
-           ul + p, ol + p, p + ul, p + ol {
-             margin-top: 4pt;
-           }
-           /* Remove excessive breaks */
-           br {
-             line-height: 0.5;
-           }
-           /* Efficient content sections */
-           .content-section {
-             page-break-inside: avoid;
-             margin-bottom: 8pt;
-           }
-           .content-section:last-child {
-             margin-bottom: 0;
-           }
-         </style>
-         <div class="content-body">
-           ${formattedContent}
-         </div>
-       </div>
-     `;
-
-     const optAlt = {
-       margin: [8, 8, 8, 8], // Smaller margins for more content
-       filename: `${sanitizedTitle}-alt.pdf`,
-       image: { type: 'jpeg', quality: 0.85 },
-       html2canvas: { 
-         scale: 1.5, // Lower scale for efficiency
-         windowWidth: 794,  // A4 width in pixels at 96 DPI
-         windowHeight: 1123, // A4 height in pixels at 96 DPI
-         backgroundColor: '#ffffff',
-         logging: false,
-         useCORS: true
-       },
-       jsPDF: { 
-         unit: 'mm', 
-         format: 'a4', 
-         orientation: 'portrait',
-         compress: true
-       },
-       pagebreak: { 
-         mode: ['css', 'legacy'],
-         avoid: ['h1', 'h2', 'h3', 'h4', 'ul', 'ol', '.content-section']
-       }
-     };
-
-     console.log('Generating efficient alternative PDF...');
-     await html2pdf().set(optAlt).from(element).save();
-     
-     toast({
-       title: getTranslation('contentManager.download.pdfTitle', 'PDF propre téléchargé'),
-       description: getTranslation('contentManager.download.pdfSuccess', `${sanitizedTitle}-alt.pdf a été téléchargé avec succès.`),
-     });
-   } catch (error) {
-     console.error('Alternative PDF generation failed:', error);
-     // Fallback to original method
-     downloadAsPDF(content);
-   }
- };
-
- // Helper function to format content efficiently for print - NO CHUNKING
- const formatContentForPrint = (content: string): string => {
-   // Split content into sections by headers to add logical breaks
-   const sections = content.split(/(?=^#+ )/gm).filter(section => section.trim());
-   
-   return sections.map(section => {
-     // Process each section as a cohesive unit
-     const formattedSection = section
-       // Headers
-       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-       .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
-       // Text formatting
-       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-       // Lists - improved handling
-       .replace(/^\* (.+)$/gm, '<li>$1</li>')
-       .replace(/^- (.+)$/gm, '<li>$1</li>')
-       .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-       // Group consecutive list items into ul tags
-       .replace(/(<li>.*?<\/li>\s*)+/gm, '<ul>$&</ul>')
-       // Convert line breaks to paragraphs efficiently
-       .split('\n\n')
-       .map(para => {
-         para = para.trim();
-         if (!para) return '';
-         // Don't wrap headers or lists in paragraphs
-         if (para.match(/^<(h[1-6]|ul)/)) return para;
-         // Already wrapped content
-         if (para.includes('</')) return para;
-         return `<p>${para}</p>`;
-       })
-       .filter(para => para)
-       .join('\n');
-       
-     // Wrap section in a container for better page break control
-     return `<div class="content-section">${formattedSection}</div>`;
-   }).join('\n');
- };
 
  const exportToGoogleDocsNew = async (content: LongformContent) => {
    try {
@@ -846,6 +459,34 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    setPreviewOpen(true);
  };
 
+ const handlePDFGeneration = async (options: PDFGenerationOptions) => {
+   if (!pdfContent) return;
+   
+   try {
+     toast({
+       title: getTranslation('contentManager.pdf.generating', '🎨 Génération PDF Professionnel...'),
+       description: getTranslation('contentManager.pdf.preparing', 'Création d\'un document de qualité publication avec le template sélectionné.'),
+     });
+
+     await generateProfessionalPDF(pdfContent, options);
+     
+     toast({
+       title: getTranslation('contentManager.pdf.success', '✅ PDF Professionnel Créé !'),
+       description: getTranslation('contentManager.pdf.downloaded', 'Document de qualité publication téléchargé avec succès.'),
+     });
+     
+     setPdfDialogOpen(false);
+     setPdfContent(null);
+   } catch (error) {
+     console.error('Professional PDF generation failed:', error);
+     toast({
+       title: getTranslation('contentManager.pdf.error', '❌ Erreur de Génération PDF'),
+       description: getTranslation('contentManager.pdf.errorDesc', 'Il y a eu une erreur lors de la génération du PDF professionnel. Veuillez réessayer.'),
+       variant: "destructive",
+     });
+   }
+ };
+
  // Memoized formatted content for modern preview
  const formattedPreviewContent = useMemo(() => {
    if (!selectedContent) return '';
@@ -1063,11 +704,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'pdf')}>
                  <Download className="h-4 w-4 mr-2" />
-                 {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.enhanced', '(Amélioré)')}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => downloadAsPDFAlternative(item)}>
-                 <Download className="h-4 w-4 mr-2" />
-                 {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.pageSafe', '(Sûr pour Page)')}
+                 {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.professional', '(Professionnel)')}
                </DropdownMenuItem>
                <DropdownMenuSeparator />
                                   <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
@@ -1140,11 +777,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'pdf')}>
                      <Download className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.enhanced', '(Amélioré)')}
-                   </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => selectedContent && downloadAsPDFAlternative(selectedContent)}>
-                     <Download className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.pageSafe', '(Sûr pour Page)')}
+                     {getTranslation('contentManager.export.pdf', 'PDF (.pdf)')} {getTranslation('contentManager.export.professional', '(Professionnel)')}
                    </DropdownMenuItem>
                  </DropdownMenuContent>
                </DropdownMenu>
@@ -1185,6 +818,45 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
              />
            )}
          </div>
+       </DialogContent>
+     </Dialog>
+
+     {/* Professional PDF Generator Dialog */}
+     <Dialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen}>
+       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+         <DialogHeader>
+           <DialogTitle className="flex items-center gap-2">
+             <Download className="h-5 w-5" />
+             {getTranslation('contentManager.pdf.title', 'Générateur PDF Professionnel')}
+           </DialogTitle>
+           <DialogDescription>
+             {getTranslation('contentManager.pdf.description', 'Choisissez un template et personnalisez votre PDF pour un résultat de qualité publication.')}
+           </DialogDescription>
+         </DialogHeader>
+         
+         {pdfContent && (
+           <div className="mt-6">
+             <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+               <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                 {getTranslation('contentManager.pdf.contentInfo', 'Contenu Sélectionné:')}
+               </h4>
+               <p className="text-sm text-blue-700 dark:text-blue-300">
+                 <strong>{pdfContent.inputs.topic}</strong>
+               </p>
+               <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                 {pdfContent.metadata.actualWordCount} {getTranslation('contentManager.metadata.words', 'mots')} • 
+                 {pdfContent.metadata.estimatedReadingTime} {getTranslation('contentManager.metadata.minRead', 'min de lecture')} • 
+                 {pdfContent.inputs.contentType.replace('-', ' ')}
+               </p>
+             </div>
+             
+             <PDFTemplateSelector
+               onGenerate={handlePDFGeneration}
+               availableTemplates={getAvailableTemplates()}
+               defaultTemplate="business"
+             />
+           </div>
+         )}
        </DialogContent>
      </Dialog>
    </div>
