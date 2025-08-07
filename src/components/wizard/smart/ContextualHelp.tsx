@@ -28,6 +28,8 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { createSupportEmail, sendContactEmail } from '@/lib/emailUtils';
+import { toast } from '@/hooks/use-toast';
 
 interface ContextualHelpProps {
   currentStep: number;
@@ -50,8 +52,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     return {
       title: t(`contextualHelp.steps.${stepKey}.title`, ''),
       tips: t(`contextualHelp.steps.${stepKey}.tips`, { returnObjects: true }) as string[] || [],
-      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as any[] || [],
-      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as any[] || [],
+      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as Array<{ title: string; content: string }> || [],
+      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as Array<{ title: string; url: string; duration: string }> || [],
       estimatedTime: t(`contextualHelp.steps.${stepKey}.estimatedTime`, '')
     };
   };
@@ -59,7 +61,7 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
   const helpContent = getHelpContent(currentStep);
 
   // Track help engagement
-  const trackEngagement = (action: string, data?: any) => {
+  const trackEngagement = (action: string, data?: Record<string, unknown>) => {
     console.log(t('debug.helpEngagement'), action, data);
     
     // Update local state
@@ -94,16 +96,45 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     setExpandedSections(newExpanded);
   };
 
-  const handleVideoClick = (video: any) => {
+  const handleVideoClick = (video: { title: string; url: string; duration: string }) => {
     trackEngagement('video_clicked', { title: video.title, url: video.url });
     // In a real app, you'd open the video in a modal or new tab
     window.open(video.url, '_blank');
   };
 
-  const handleSupportContact = () => {
+  const handleSupportContact = async () => {
     trackEngagement('support_contacted', { step: currentStep });
-    // In a real app, you'd open a support modal or chat
-    alert(t('contextualHelp.supportAlert'));
+    
+    try {
+      // Create support email with context
+      const supportEmail = createSupportEmail(
+        'User requested support from contextual help',
+        { 
+          currentStep, 
+          helpEngagement,
+          timestamp: new Date().toISOString()
+        }
+      );
+
+      // Send the email
+      const success = await sendContactEmail(supportEmail);
+      
+      if (success) {
+        toast({
+          title: "Support Request Sent",
+          description: "Your support request has been sent to our team. We'll get back to you soon!",
+        });
+      } else {
+        throw new Error('Failed to send email');
+      }
+    } catch (error) {
+      console.error('Support contact error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send support request. Please try emailing us directly at engageperfect@gmail.com",
+        variant: "destructive"
+      });
+    }
   };
 
   const ExampleSection: React.FC<{ examples: { good: string[], bad: string[] } }> = ({ examples }) => (

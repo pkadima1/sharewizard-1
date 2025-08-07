@@ -22,16 +22,18 @@ const isLocalhost = typeof window !== 'undefined' &&
 
 const isDevelopment = import.meta.env.DEV || isLocalhost;
 
-// Determine if Firebase emulators should be used
-// Default to using emulators in development, but allow override with env variable
-const useEmulators = isDevelopment && 
-  (import.meta.env.VITE_USE_EMULATORS !== 'false');
+// Force emulator usage in development
+const useEmulators = isDevelopment;
 
 // Export for use in other modules
 export const isUsingEmulators = useEmulators;
 
 console.log(`🔥 Firebase initialized in ${isDevelopment ? 'development' : 'production'} mode`);
 console.log(`🔧 ${useEmulators ? 'Using emulators' : 'Using production services'}`);
+console.log(`🌐 Hostname: ${typeof window !== 'undefined' ? window.location.hostname : 'server'}`);
+console.log(`🔧 DEV mode: ${import.meta.env.DEV}`);
+console.log(`🔧 isLocalhost: ${isLocalhost}`);
+console.log(`🔧 useEmulators: ${useEmulators}`);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -47,18 +49,20 @@ if (useEmulators) {
   try {
     // Only connect to Functions emulator for local development
     connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-    console.log("✅ Connected to Functions emulator");
+    console.log("✅ Connected to Functions emulator on 127.0.0.1:5001");
     
     // Use production Auth and Firestore for real user data
     console.log("🌐 Using production Auth and Firestore with real user data");
     
     // Uncomment these lines if you want to use emulated services instead:
-    // connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    // connectFirestoreEmulator(db, "127.0.0.1", 8081);
     // connectAuthEmulator(auth, "http://127.0.0.1:9099");
     // connectStorageEmulator(storage, "127.0.0.1", 9199);
   } catch (e) {
     console.error("❌ Failed to connect to emulators:", e);
   }
+} else {
+  console.log("🌐 Using production Firebase services");
 }
 
 // Initialize Analytics conditionally

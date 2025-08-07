@@ -29,6 +29,7 @@
     "allPlatforms": "Toutes les Plateformes",
     "allGoals": "Tous les Objectifs",
     "newestFirst": "Plus Récent d'Abord",
+    "oldestFirst": "Plus Ancien d'Abord",
     "longform": "Contenu long",
     "captions": "Légendes",
     "viewAll": "Voir les {{count}} articles →"
@@ -72,6 +73,40 @@
   "captions": {
     "subtitle": "Gérez vos légendes générées par l'IA pour les réseaux sociaux",
     "managementComingSoon": "Gestion des légendes à venir",
-    "historyComingSoon": "L'historique et la gestion des légendes seront bientôt disponibles ici."
+    "historyComingSoon": "L'historique et la gestion des légendes seront bientôt disponibles ici.",
+    "loading": "Chargement de vos légendes...",
+    "error": "Erreur lors du chargement des légendes",
+    "noCaptons": "Aucune légende pour le moment",
+    "noCaptionsDesc": "Commencez à créer des légendes avec notre générateur IA pour les voir ici.",
+    "copy": "Copier la première légende",
+    "copied": "Légende copiée",
+    "copiedDesc": "La légende a été copiée dans le presse-papiers",
+    "copyError": "Échec de la copie",
+    "copyErrorDesc": "Impossible de copier la légende dans le presse-papiers",
+    "download": "Télécharger",
+    "downloaded": "Légende téléchargée",
+    "downloadedDesc": "La légende a été téléchargée sous forme de fichier texte",
+    "niche": "Niche",
+    "variations": "variations",
+    "variation": "Variation",
+    "of": "de",
+    "allTones": "Tous les Tons",
+    "noResults": "Aucune légende trouvée",
+    "noResultsDesc": "Essayez d'ajuster vos filtres ou créez de nouvelles légendes pour les voir ici.",
+    "platforms": {
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    },
+    "tones": {
+      "professional": "Professionnel",
+      "casual": "Décontracté",
+      "humorous": "Humoristique",
+      "inspirational": "Inspirant",
+      "persuasive": "Persuasif"
+    }
   }
 }

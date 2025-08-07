@@ -13,7 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Info, CheckCircle2, Clock, SkipForward, AlertTriangle, Keyboard, X, Command } from 'lucide-react';
 import Step1WhatWho from '@/components/wizard/steps/Step1WhatWho';
-import Step2MediaVisuals from '@/components/wizard/steps/Step2MediaVisuals';
+// import Step2MediaVisuals from '@/components/wizard/steps/Step2MediaVisuals';
 import Step3KeywordsSEO from '@/components/wizard/steps/Step3KeywordsSEO';
 import Step4ToneStructure from '@/components/wizard/steps/Step4ToneStructure';
 import Step5GenerationSettings from '@/components/wizard/steps/Step5GenerationSettings';
@@ -25,6 +25,9 @@ import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngi
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import ContextualHelp from '@/components/wizard/smart/ContextualHelp';
 import { useTranslation } from 'react-i18next';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackContentGeneration, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
+import { WizardFormData } from '@/types/components';
 
 // Helper function to get translated wizard steps
 const getWizardSteps = (t: any) => [
@@ -34,12 +37,12 @@ const getWizardSteps = (t: any) => [
     estimatedTime: 4,
     description: t('wizard.steps.whatWho.description')
   },
-  { 
-    name: t('wizard.steps.mediaVisuals.name'), 
-    optional: false, 
-    estimatedTime: 3,
-    description: t('wizard.steps.mediaVisuals.description')
-  },
+  // { 
+  //   name: t('wizard.steps.mediaVisuals.name'), 
+  //   optional: false, 
+  //   estimatedTime: 3,
+  //   description: t('wizard.steps.mediaVisuals.description')
+  // },
   { 
     name: t('wizard.steps.seoKeywords.name'), 
     optional: false, 
@@ -114,6 +117,9 @@ const getCtaTypeOptions = (t: any) => [
 ];
 
 const LongFormWizard = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Long-form Content Wizard - EngagePerfect');
+
   const { t } = useTranslation('longform');
   
   // Helper function to format last saved time with proper translation context
@@ -190,8 +196,29 @@ const LongFormWizard = () => {
     structureFormat: '',
     includeStats: false,
     ctaType: '',
-    outputFormat: 'markdown',
+    outputFormat: 'markdown' as const,
     plagiarismCheck: true,
+    // Add missing properties
+    includeMedia: false,
+    qualityLevel: 'medium',
+    // Add other required properties from WizardFormData interface
+    mediaUrls: [],
+    mediaCaptions: [],
+    mediaAnalysis: [],
+    includeReferences: false,
+    tocRequired: false,
+    summaryRequired: false,
+    structuredData: false,
+    enableMetadataBlock: false,
+    writingPersonality: '',
+    readingLevel: '',
+    targetLocation: '',
+    geographicScope: 'global' as const,
+    marketFocus: [],
+    localSeoKeywords: [],
+    culturalContext: '',
+    lang: 'en' as const,
+    customIndustry: ''
   });
   const navigate = useNavigate();
   const safeNavigate = useSafeNavigation();
@@ -365,12 +392,27 @@ const LongFormWizard = () => {
 
   // Handle moving to the next step
   const handleNext = () => {
+    // Analytics: Track step progression
+    trackButtonClick('wizard_next', `longform_step_${currentStep}`);
+    
     // Mark current step as completed if valid
     if (isStepValid(currentStep)) {
       markStepCompleted(currentStep);
+      
+      // Analytics: Track step completion
+      trackFeatureUsage('wizard_step_completed', {
+        step: currentStep,
+        step_name: WIZARD_STEPS[currentStep],
+        wizard_type: 'longform'
+      });
+      
     } else {
       const errors = getStepErrors(currentStep);
       const errorMessages = errors.map(error => error.message).join('\n');
+      
+      // Analytics: Track validation errors
+      trackError('wizard_validation_error', `Step ${currentStep} validation failed`, 'longform_wizard');
+      
       alert(`${t('wizard.errors.beforeProceed')}\n\n${errorMessages}`);
       return;
     }
@@ -384,6 +426,9 @@ const LongFormWizard = () => {
 
   // Handle moving to the previous step
   const handlePrevious = () => {
+    // Analytics: Track backward navigation
+    trackButtonClick('wizard_previous', `longform_step_${currentStep}`);
+    
     if (currentStep > 0) {
       const prevStep = currentStep - 1;
       setCurrentStep(prevStep);
@@ -423,10 +468,39 @@ const LongFormWizard = () => {
   // Handle generation
   const handleGenerate = () => {
     if (!isFormValid) {
+      trackError('validation_error', 'Form validation failed', 'longform_wizard');
       alert(t('wizard.errors.allRequired'));
       return;
     }
+
+    // Analytics: Track longform content generation start
+    const generationStartTime = Date.now();
+    
+    trackContentGeneration('longform', {
+      status: 'started',
+      topic: formData.topic,
+      audience: formData.audience,
+      industry: formData.industry,
+      content_type: formData.contentType,
+      tone: formData.contentTone,
+      structure: formData.structureFormat,
+      word_count: formData.wordCount,
+      keywords: formData.keywords,
+      include_media: formData.includeMedia,
+      include_images: formData.includeImages,
+      quality_level: formData.qualityLevel
+    });
+
+    trackFeatureUsage('longform_generation', {
+      content_type: formData.contentType,
+      word_count: formData.wordCount,
+      source: 'longform_wizard'
+    });
+
     console.log('Generating content with data:', formData);
+    
+    // Store start time for completion tracking
+    sessionStorage.setItem('longform_generation_start', generationStartTime.toString());
   };
 
   // Keyboard Shortcuts Help Overlay Component
@@ -501,33 +575,33 @@ const LongFormWizard = () => {
     switch (currentStep) {
       case 0: // What & Who (Topic + Audience)
         stepComponent = (
-          <Step1WhatWho formData={formData} updateFormData={updateFormData} />
+          <Step1WhatWho formData={formData as WizardFormData & { customIndustry?: string }} updateFormData={updateFormData} />
         );
         break;
-      case 1: // Media & Visuals
+      // case 1: // Media & Visuals
+      //   stepComponent = (
+      //     <Step2MediaVisuals formData={formData} updateFormData={updateFormData} />
+      //   );
+      //   break;
+      case 1: // SEO & Keywords
         stepComponent = (
-          <Step2MediaVisuals formData={formData} updateFormData={updateFormData} />
+          <Step3KeywordsSEO formData={formData as WizardFormData & { optimizedTitle?: string }} updateFormData={updateFormData} />
         );
         break;
-      case 2: // SEO & Keywords
-        stepComponent = (
-          <Step3KeywordsSEO formData={formData} updateFormData={updateFormData} />
-        );
-        break;
-      case 3: // Structure & Tone
+      case 2: // Structure & Tone
         stepComponent = (
           <Step4ToneStructure formData={formData} updateFormData={updateFormData} />
         );
         break;
-      case 4: // Generation Settings
+      case 3: // Generation Settings
         stepComponent = (
-          <Step5GenerationSettings formData={formData} updateFormData={updateFormData} />
+          <Step5GenerationSettings formData={formData as WizardFormData & { outputFormat?: string; plagiarismCheck?: boolean; includeImages?: boolean }} updateFormData={updateFormData} />
         );
         break;
-      case 5: // Review & Generate
+      case 4: // Review & Generate
         stepComponent = (
           <Step6ReviewGenerate 
-            formData={formData} 
+            formData={formData as WizardFormData & Record<string, unknown>} 
             updateFormData={updateFormData} 
             onGenerate={handleGenerate}
             onEditStep={setCurrentStep} 

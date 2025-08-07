@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { httpsCallable, HttpsCallableResult } from "firebase/functions";
 import { functions } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   Info, 
   CheckCircle2, 
@@ -51,6 +52,7 @@ import {
   Loader2,
   RefreshCw
 } from 'lucide-react';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 // SEO scoring weights
@@ -64,11 +66,42 @@ const SEO_WEIGHTS = {
   metaOptimization: 5
 };
 
+// Firebase callable function types
+interface GenerateLongformRequest {
+  topic: string;
+  audience: string;
+  industry: string;
+  primaryKeywords: string[];
+  secondaryKeywords: string[];
+  contentTone: string;
+  contentType: string;
+  structureFormat: string;
+  wordCount: number;
+  includeStats: boolean;
+  ctaType: string;
+  outputFormat: string;
+  plagiarismCheck: boolean;
+  language: string;
+  customIndustry?: string;
+}
+
 // Define the interface for the function response
 interface GenerateLongformResponse {
-  content: string;
-  outline: any;
-  metadata: {
+  success: boolean;
+  content?: string;
+  outline?: {
+    meta: Record<string, unknown>;
+    hookOptions: string[];
+    sections: Array<{
+      title: string;
+      wordCount: number;
+      tone: string;
+      keyPoints: string[];
+    }>;
+    seoStrategy: Record<string, unknown>;
+    conclusion: Record<string, unknown>;
+  };
+  metadata?: {
     actualWordCount: number;
     outlineGenerationTime: number;
     contentGenerationTime: number;
@@ -78,12 +111,17 @@ interface GenerateLongformResponse {
       seoOptimized: boolean;
       structureComplexity: number;
     }
-  }
+  };
+  message?: string;
+  error?: string;
+  requestsRemaining?: number;
+  contentId?: string;
+  hasUsage?: boolean;
 }
 
 interface Step6Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & Record<string, unknown>;
+  updateFormData: (key: string, value: string | number | string[] | boolean) => void;
   onGenerate: () => void;
   onEditStep: (stepNumber: number) => void;
 }
@@ -102,12 +140,20 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
   
   const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
+  const { currentLanguage } = useLanguage();
 
-  // Create the callable function
+  // Helper function to ensure progress is always rounded
+  const updateProgress = (value: number) => {
+    setGenerationProgress(Math.round(value * 10) / 10); // Round to 1 decimal place
+  };
+
+  // Create the callable function with extended timeout
   const generateLongformContentFunction = httpsCallable<
-    any, 
+    GenerateLongformRequest, 
     GenerateLongformResponse
-  >(functions, 'generateLongformContent');
+  >(functions, 'generateLongformContent', {
+    timeout: 600000 // 10 minutes timeout to match server configuration
+  });
 
   // Initialize export format from formData
   useEffect(() => {
@@ -401,10 +447,63 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      toast.success(t('step6.copy_link_copied'), {
+        description: t('step6.link_copied_description')
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error(t('step6.copy_failed'), {
+        description: t('step6.copy_failed_description')
+      });
     }
+  };
+
+  // Handle social sharing
+  const handleSocialShare = (platform: 'twitter' | 'facebook') => {
+    if (!shareUrl) {
+      toast.error(t('step6.generate_link_first'));
+      return;
+    }
+
+    const shareText = t('step6.social_share_text', { 
+      topic: formData.topic || 'content',
+      app: 'EngagePerfect'
+    });
+
+    let shareUrlFinal = '';
+    
+    switch (platform) {
+      case 'twitter':
+        shareUrlFinal = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'facebook':
+        shareUrlFinal = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+        break;
+      default:
+        return;
+    }
+
+    // Open in new window
+    window.open(shareUrlFinal, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  };
+
+  // Handle email sharing
+  const handleEmailShare = () => {
+    if (!shareUrl) {
+      toast.error(t('step6.generate_link_first'));
+      return;
+    }
+
+    const subject = t('step6.email_subject', { topic: formData.topic || 'content' });
+    const body = t('step6.email_body', { 
+      topic: formData.topic || 'content',
+      url: shareUrl,
+      app: 'EngagePerfect'
+    });
+
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
   };
 
   // Estimated generation time
@@ -414,15 +513,16 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     const complexityMultiplier = (formData.includeStats ? 1.3 : 1) * (formData.plagiarismCheck ? 1.2 : 1);
     const formatMultiplier = selectedExportFormats.length * 0.3 + 0.7;
     
-    return Math.round(baseTime * wordMultiplier * complexityMultiplier * formatMultiplier * 10) / 10;
+    const calculatedTime = baseTime * wordMultiplier * complexityMultiplier * formatMultiplier;
+    return Math.round(calculatedTime * 10) / 10; // Round to 1 decimal place
   }, [formData, selectedExportFormats]);
 
   // Handle the generation process
   const handleGenerate = async () => {
     // Check authentication first
     if (!currentUser) {
-      toast.error(t('step6.generation_login_error'), {
-        description: t('step6.generation_login_description')
+      toast.error(t('step6.generation_errors.generation_login_error'), {
+        description: t('step6.generation_errors.generation_login_description')
       });
       navigate('/login');
       return;
@@ -430,8 +530,8 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
 
     // Check if user profile is loaded and has sufficient requests
     if (!userProfile) {
-      toast.error(t('step6.loading_profile_error'), {
-        description: t('step6.loading_profile_description')
+      toast.error(t('step6.generation_errors.loading_profile_error'), {
+        description: t('step6.generation_errors.loading_profile_description')
       });
       return;
     }
@@ -439,10 +539,10 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     // Check request limits - Long-form content requires 4 credits
     const requestsRemaining = (userProfile.requests_limit || 0) - (userProfile.requests_used || 0);
     if (requestsRemaining < 4) {
-      toast.error(t('step6.insufficient_credits_error'), {
-        description: t('step6.insufficient_credits_description', { credits: 4, remaining: requestsRemaining }),
+      toast.error(t('step6.generation_errors.insufficient_credits_error'), {
+        description: t('step6.generation_errors.insufficient_credits_description', { credits: 4, remaining: requestsRemaining }),
         action: {
-          label: t('step6.upgrade_plan_action'),
+          label: t('step6.generation_errors.upgrade_plan_action'),
           onClick: () => navigate('/pricing')
         }
       });
@@ -450,17 +550,17 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
     }
 
     if (completionChecklist.requiredCompleted < completionChecklist.requiredCount) {
-      toast.error(t('step6.complete_required_items_error'));
+      toast.error(t('step6.generation_errors.complete_required_items_error'));
       return;
     }
     
     let progressUpdateInterval: NodeJS.Timeout | null = null;
-    let contentGenerationInterval: NodeJS.Timeout | null = null;
+    const contentGenerationInterval: NodeJS.Timeout | null = null;
     
     try {
       setIsGenerating(true);
       setGenerationError(null);
-      setGenerationProgress(10);
+      updateProgress(10);
       setGenerationStage('outline');
 
       // Prepare the data for the function call
@@ -476,119 +576,140 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
         optimizedTitle: formData.optimizedTitle || formData.topic,
         includeImages: formData.includeImages || false,
         includeStats: formData.includeStats || false,
+        includeReferences: formData.includeReferences || false,
+        tocRequired: formData.tocRequired || false,
+        summaryRequired: formData.summaryRequired || false,
+        structuredData: formData.structuredData || false,
+        enableMetadataBlock: formData.enableMetadataBlock || false,
         plagiarismCheck: formData.plagiarismCheck !== false,
         outputFormat: selectedExportFormats[0] || 'markdown',
         ctaType: formData.ctaType || 'none',
         structureNotes: formData.structureNotes || '',
-        mediaUrls: (formData.mediaFiles || []).map(file => file.url || ''),
+        mediaUrls: (formData.mediaFiles || []).map((file: { url?: string }) => file.url || ''),
         // Enhanced Media Integration Fields
-        mediaCaptions: (formData.mediaFiles || []).map(file => file.metadata?.mediaCaption || ''),
-        mediaAnalysis: (formData.mediaFiles || []).map(file => file.metadata?.aiAnalysis || ''),
-        mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto' // auto, manual, or semantic
+        mediaCaptions: (formData.mediaFiles || []).map((file: { metadata?: { mediaCaption?: string } }) => file.metadata?.mediaCaption || ''),
+        mediaAnalysis: (formData.mediaFiles || []).map((file: { metadata?: { aiAnalysis?: string } }) => file.metadata?.aiAnalysis || ''),
+        mediaPlacementStrategy: formData.mediaPlacementStrategy || 'auto', // auto, manual, or semantic
+        // Enhanced GEO optimization parameters
+        targetLocation: formData.targetLocation || '',
+        geographicScope: formData.geographicScope || 'global',
+        marketFocus: formData.marketFocus || [],
+        localSeoKeywords: formData.localSeoKeywords || [],
+        culturalContext: formData.culturalContext || '',
+        lang: currentLanguage
       };
 
       // Update progress based on typical function execution timeline
       progressUpdateInterval = setInterval(() => {
         setGenerationProgress(prev => {
-          // Outline generation typically takes ~30% of the total time
-          if (generationStage === 'outline' && prev < 30) return prev + 1;
-          // Content generation takes ~65% of the total time
-          if (generationStage === 'content' && prev < 95) return prev + 0.5;
-          // Keep progress steady if we're at the expected stage limit
-          return prev;
+          // More realistic progress based on actual generation time (~66 seconds)
+          const newProgress = Math.min(90, Math.round((prev + 1.5) * 10) / 10);
+          return newProgress;
         });
-      }, 800); // Slightly faster updates for smoother progress      // Call the Firebase function
+      }, 1000); // Faster updates for better user experience
+      
+      setGenerationStage('outline');
+
+      // Call the Firebase function
       const result = await generateLongformContentFunction(functionData);
       
-      // Update progress and stage based on function response
-      setGenerationStage('content');
-      setGenerationProgress(50);
-      
-      // Update progress to simulate content generation phase
-      contentGenerationInterval = setInterval(() => {
-        setGenerationProgress(prev => {
-          if (prev < 95) return prev + 1;
-          return prev;
-        });
-      }, 1000);
-      
-      // Short delay to simulate content processing
-      setTimeout(() => {
-        if (progressUpdateInterval) clearInterval(progressUpdateInterval);
-        if (contentGenerationInterval) clearInterval(contentGenerationInterval);
-        
-        // Handle success - Only show success if we actually have content
-        if (result.data && result.data.content) {
-          setGenerationResult(result.data);
-          setGenerationProgress(100);
-          setGenerationStage('complete');
-          
-          toast.success(t('step6.generation_success'), {
-            description: t('step6.generation_success_description', { wordCount: result.data.metadata?.actualWordCount || formData.wordCount })
-          });
-
-          // Navigate to the dashboard longform tab
-          setTimeout(() => {
-            navigate('/dashboard?tab=longform', { 
-              state: { 
-                newContentGenerated: true,
-                generationCompleted: true
-              } 
-            });
-          }, 2000);
-        } else {
-          // Handle case where function succeeded but no content was returned
-          throw new Error("Content generation completed but no content was returned. This may be due to insufficient credits or a processing error.");
-        }
-      }, 1500);
-
-    } catch (error: any) {
+      // Clear progress intervals immediately after function completes
       if (progressUpdateInterval) clearInterval(progressUpdateInterval);
       if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+      
+      console.log("Function result:", result); // Debug log
+      
+      // Handle success - The backend returns success: true and content in result.data
+      if (result.data && result.data.success && result.data.content) {
+        setGenerationResult(result.data);
+        updateProgress(100);
+        setGenerationStage('complete');
+        setIsGenerating(false);
+        
+        toast.success(t('step6.generation_errors.generation_success'), {
+          description: t('step6.generation_errors.generation_success_description', { 
+            wordCount: result.data.metadata?.actualWordCount || formData.wordCount 
+          })
+        });
+
+        // Navigate to the dashboard longform tab
+        setTimeout(() => {
+          navigate('/dashboard?tab=longform', { 
+            state: { 
+              newContentGenerated: true,
+              generationCompleted: true,
+              contentId: result.data.contentId
+            } 
+          });
+        }, 2000);
+      } else if (result.data && result.data.hasUsage === false) {
+        // Handle insufficient credits case
+        throw new Error(result.data.message || "Insufficient credits to generate content.");
+      } else if (result.data && result.data.success === false) {
+        // Handle case where function returned an error response
+        throw new Error(result.data.message || "Content generation failed. Please try again.");
+      } else {
+        // Handle unexpected response format
+        console.error("Unexpected response format:", result);
+        throw new Error("Content generation completed but returned an unexpected response format. Please try again.");
+      }
+
+    } catch (error: unknown) {
+      if (progressUpdateInterval) clearInterval(progressUpdateInterval);
+      if (contentGenerationInterval) clearInterval(contentGenerationInterval);
+      
+      // Reset generation state
+      setIsGenerating(false);
+      updateProgress(0);
+      setGenerationStage(null);
       
       console.error("Generation error:", error);
       
       // Enhanced error handling with specific messages for common errors
-      let errorMessage = t('step6.generation_unexpected_error');
+      let errorMessage = t('step6.generation_errors.generation_unexpected_error');
       let errorAction = null;
       
       if (error.code) {
         // Handle Firebase error codes
         switch (error.code) {
           case 'functions/cancelled':
-            errorMessage = t('step6.generation_cancelled_error');
+            errorMessage = t('step6.generation_errors.generation_cancelled_error');
             break;
           case 'functions/deadline-exceeded':
-            errorMessage = t('step6.generation_deadline_exceeded_error');
+            errorMessage = t('step6.generation_errors.generation_deadline_exceeded_error');
+            errorAction = {
+              label: t('step6.generation_errors.retry_generation_action'),
+              onClick: () => handleRetryGeneration()
+            };
             break;
           case 'functions/resource-exhausted':
-            errorMessage = t('step6.generation_resource_exhausted_error');
+            errorMessage = t('step6.generation_errors.generation_resource_exhausted_error');
             errorAction = {
-              label: t('step6.upgrade_plan_action'),
+              label: t('step6.generation_errors.upgrade_plan_action'),
               onClick: () => navigate('/pricing')
             };
             break;
           case 'functions/unauthenticated':
           case 'functions/permission-denied':
-            errorMessage = t('step6.generation_permission_denied_error');
+            errorMessage = t('step6.generation_errors.generation_permission_denied_error');
             errorAction = {
-              label: t('step6.log_in_action'),
+              label: t('step6.generation_errors.log_in_action'),
               onClick: () => navigate('/login')
             };
             break;
           case 'functions/internal':
             if (error.message && error.message.includes('insufficient credits')) {
-              errorMessage = t('step6.generation_insufficient_credits_error');
+              errorMessage = t('step6.generation_errors.generation_insufficient_credits_error');
               errorAction = {
-                label: t('step6.upgrade_plan_action'),
+                label: t('step6.generation_errors.upgrade_plan_action'),
                 onClick: () => navigate('/pricing')
               };
             } else {
-              errorMessage = t('step6.generation_internal_error', { message: error.message });
+              errorMessage = t('step6.generation_errors.generation_internal_error', { message: error.message });
             }
             break;
           case 'functions/invalid-argument':
-            errorMessage = t('step6.generation_invalid_argument_error', { message: error.message });
+            errorMessage = t('step6.generation_errors.generation_invalid_argument_error', { message: error.message });
             break;
           default:
             // Use the error message from Firebase if available
@@ -597,20 +718,20 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
       } else if (error.message) {
         // Handle non-Firebase errors
         if (error.message.includes('insufficient credits') || error.message.includes('not enough credits')) {
-          errorMessage = t('step6.generation_insufficient_credits_per_generation_error');
+          errorMessage = t('step6.generation_errors.generation_insufficient_credits_per_generation_error');
           errorAction = {
-            label: t('step6.upgrade_plan_action'),
+            label: t('step6.generation_errors.upgrade_plan_action'),
             onClick: () => navigate('/pricing')
           };
         } else {
-          errorMessage = t('step6.generation_failed', { message: error.message });
+          errorMessage = t('step6.generation_errors.generation_failed', { message: error.message });
         }
       }
 
       setGenerationError(errorMessage);
       setIsGenerating(false);
       
-      toast.error(t('step6.generation_failed_error'), {
+      toast.error(t('step6.generation_errors.generation_failed_error'), {
         description: errorMessage,
         action: errorAction
       });
@@ -760,7 +881,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
               </div>
               <Progress value={publishReadinessScore.total} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {t('step6.publish_readiness_description')}
+                {t('step6.publish_readiness_description_text')}
               </p>
             </div>
           </Card>
@@ -961,6 +1082,7 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={handleEmailShare}
                     className="flex items-center gap-2"
                   >
                     <Mail className="h-4 w-4" />
@@ -969,40 +1091,59 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                 </div>
 
                 {shareModalOpen && (
-                  <div className="p-3 bg-muted/50 rounded-md space-y-2">
-                    <Label className="text-xs font-medium">{t('step6.shareable_link_label')}</Label>
+                  <div className="p-4 bg-muted/50 rounded-lg space-y-3 border">
+                    <Label className="text-sm font-medium">{t('step6.shareable_link_label')}</Label>
                     <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={shareUrl}
-                        readOnly
-                        className="flex-1 px-2 py-1 text-xs border rounded"
-                      />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <input
+                            type="text"
+                            value={shareUrl}
+                            readOnly
+                            onClick={(e) => e.currentTarget.select()}
+                            className="flex-1 px-3 py-2 text-sm border rounded-md bg-background font-mono text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
+                            placeholder="Generating link..."
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Click to select all text</p>
+                        </TooltipContent>
+                      </Tooltip>
                       <Button
                         size="sm"
                         onClick={handleCopyLink}
-                        className={`flex items-center gap-1 ${copied ? 'bg-green-600' : ''}`}
+                        className={`flex items-center gap-2 min-w-[80px] ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
                       >
                         {copied ? (
                           <>
-                            <CheckCircle2 className="h-3 w-3" />
+                            <CheckCircle2 className="h-4 w-4" />
                             {t('step6.copy_link_copied')}
                           </>
                         ) : (
                           <>
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-4 w-4" />
                             {t('step6.copy_link_button')}
                           </>
                         )}
                       </Button>
                     </div>
-                    <div className="flex gap-2 pt-2">
-                      <Button size="sm" variant="outline" className="flex items-center gap-1">
-                        <Twitter className="h-3 w-3" />
+                    <div className="flex gap-2 pt-2 border-t">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleSocialShare('twitter')}
+                      >
+                        <Twitter className="h-4 w-4" />
                         {t('step6.twitter_button')}
                       </Button>
-                      <Button size="sm" variant="outline" className="flex items-center gap-1">
-                        <Facebook className="h-3 w-3" />
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex items-center gap-2"
+                        onClick={() => handleSocialShare('facebook')}
+                      >
+                        <Facebook className="h-4 w-4" />
                         {t('step6.facebook_button')}
                       </Button>
                     </div>
@@ -1071,9 +1212,9 @@ const Step6ReviewGenerate: React.FC<Step6Props> = ({ formData, updateFormData, o
                           ? t('step6.generating_content_description')
                           : t('step6.finalizing_content_description')}
                     </span>
-                    <span>{generationProgress}%</span>
+                    <span>{Math.round(generationProgress)}%</span>
                   </div>
-                  <Progress value={generationProgress} className="h-2" />
+                  <Progress value={Math.round(generationProgress)} className="h-2" />
                 </div>
                   <p className="text-sm text-muted-foreground">
                   {generationStage === 'outline' 

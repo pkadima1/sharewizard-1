@@ -32,8 +32,15 @@ interface ChatMessage {
   userId?: string;
 }
 
+interface ChatUserInfo {
+  firstName: string;
+  email: string;
+  topic: string;
+}
+
 interface SupportChatRequest {
   messages: Array<{ role: 'user' | 'assistant', content: string }>;
+  userInfo?: ChatUserInfo;
 }
 
 interface SupportChatResponse {
@@ -128,7 +135,7 @@ async function checkRateLimit(uid: string): Promise<boolean> {
 /**
  * Store chat message in Firestore
  */
-async function storeChatMessage(uid: string, message: ChatMessage): Promise<void> {
+async function storeChatMessage(uid: string, message: ChatMessage, userInfo?: ChatUserInfo): Promise<void> {
   try {
     const chatRef = db.collection('supportChats').doc(uid).collection('messages');
     await chatRef.add({
@@ -136,7 +143,19 @@ async function storeChatMessage(uid: string, message: ChatMessage): Promise<void
       timestamp: FieldValue.serverTimestamp(),
       userId: uid
     });
-  } catch (error) {    console.error('[SupportChat] Error storing message:', error);
+    
+    // Store/update user info in the main chat document if provided
+    if (userInfo) {
+      const mainChatDoc = db.collection('supportChats').doc(uid);
+      await mainChatDoc.set({
+        userId: uid,
+        userInfo: userInfo,
+        lastActivity: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+  } catch (error) {    
+    console.error('[SupportChat] Error storing message:', error);
     // Don't throw here - storage failure shouldn't break the chat
   }
 }
@@ -171,16 +190,52 @@ export async function getChatHistory(uid: string, limit: number = 10): Promise<C
 }
 
 /**
+ * Get topic-specific context for better AI responses
+ */
+function getTopicContext(topic: string): string {
+  const topicContexts: Record<string, string> = {
+    'account_setup': 'Help with account creation, profile setup, and initial configuration.',
+    'subscription_billing': 'Assist with subscription plans, billing issues, payment methods, and plan changes.',
+    'caption_generator': 'Guide through the caption generation wizard, media upload, niche selection, and output customization.',
+    'longform_content': 'Support for long-form content creation, blog wizard, article generation, and content optimization.',
+    'technical_issue': 'Troubleshoot technical problems, bugs, performance issues, and platform functionality.',
+    'feature_request': 'Collect and explain feature requests, provide workarounds, and timeline information.',
+    'general_question': 'Answer general questions about EngagePerfect features, capabilities, and usage.',
+    'other': 'Provide general support and direct to appropriate resources.'
+  };
+  
+  return topicContexts[topic] || topicContexts['other'];
+}
+
+/**
  * Generate AI response using OpenAI
  */
-async function generateAIResponse(messages: Array<{ role: 'user' | 'assistant', content: string }>): Promise<string> {
+async function generateAIResponse(
+  messages: Array<{ role: 'user' | 'assistant', content: string }>,
+  userInfo?: ChatUserInfo
+): Promise<string> {
   try {
     const openaiKey = await getOpenAIKey();
     const openai = new OpenAI({ apiKey: openaiKey });
     
+    // Create personalized system prompt if user info is available
+    let systemPrompt = SYSTEM_PROMPT;
+    if (userInfo) {
+      const topicContext = getTopicContext(userInfo.topic);
+      systemPrompt = `${SYSTEM_PROMPT}
+
+CURRENT USER CONTEXT:
+- Name: ${userInfo.firstName}
+- Email: ${userInfo.email}
+- Primary Topic: ${userInfo.topic}
+- Topic Help: ${topicContext}
+
+Please address the user by their first name and provide targeted assistance based on their specific topic of interest.`;
+    }
+    
     // Prepare messages for OpenAI (include system prompt)
     const openAIMessages: Array<{ role: 'system' | 'user' | 'assistant', content: string }> = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: systemPrompt },
       ...messages.slice(-6) // Keep last 6 messages for context (to stay within token limits)
     ];
     
@@ -303,10 +358,10 @@ export const supportChat = onCall({
     await storeChatMessage(uid, {
       role: lastUserMessage.role,
       content: lastUserMessage.content
-    });
+    }, data.userInfo);
     
     // Step 6: Generate AI response
-    const aiReply = await generateAIResponse(data.messages);
+    const aiReply = await generateAIResponse(data.messages, data.userInfo);
     
     // Step 7: Store AI response
     await storeChatMessage(uid, {

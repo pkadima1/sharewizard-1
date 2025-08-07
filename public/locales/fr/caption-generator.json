@@ -258,11 +258,33 @@
       "textColor": "Couleur du texte",
       "textSize": "Taille du texte : {{size}}px",
       "textRotation": "Rotation du texte : {{rotation}}°",
+      "textAlignment": "Alignement du texte",
+      "backgroundColor": "Couleur d'arrière-plan",
       "positionHint": "Cliquez et faites glisser le texte sur l'image pour le positionner",
       "blackButton": "Noir",
       "edit": "Modifier",
       "overlayApplied": "Superposition de texte appliquée : \"{{text}}\"",
       "videoOverlayNote": "Les superpositions de texte sur les vidéos seront enregistrées avec les métadonnées de la vidéo et affichées pendant la lecture et le partage. Pas besoin de ré-encoder la vidéo.",
+      "alignment": {
+        "left": "Gauche",
+        "center": "Centre",
+        "right": "Droite"
+      },
+      "background": {
+        "enabled": "Activé",
+        "disabled": "Désactivé",
+        "customColor": "Couleur personnalisée",
+        "presets": "Couleurs rapides",
+        "opacity": "Opacité : {{opacity}}%",
+        "black": "Noir",
+        "white": "Blanc",
+        "red": "Rouge",
+        "green": "Vert",
+        "blue": "Bleu",
+        "yellow": "Jaune",
+        "magenta": "Magenta",
+        "cyan": "Cyan"
+      },
       "emojiPicker": {
         "buttonTooltip": "Ajouter un emoji",
         "searchPlaceholder": "Rechercher des emojis...",

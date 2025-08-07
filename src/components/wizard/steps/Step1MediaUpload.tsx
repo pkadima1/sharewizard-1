@@ -36,10 +36,18 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
 
   // Initialize component with formData if it exists
   useEffect(() => {
-    if (formData.mediaFiles) {
-      setFiles(formData.mediaFiles);
+    if (formData.mediaFiles && Array.isArray(formData.mediaFiles)) {
+      // Ensure files have the correct structure
+      const normalizedFiles = formData.mediaFiles.map(file => ({
+        ...file,
+        id: file.id || file.name,
+        mediaPlacement: file.mediaPlacement || file.metadata?.mediaPlacement || 'inline',
+        mediaCaption: file.mediaCaption || file.metadata?.mediaCaption || '',
+        uploadedAt: file.uploadedAt || new Date().toISOString()
+      }));
+      setFiles(normalizedFiles);
     }
-  }, []);
+  }, [formData.mediaFiles]);
 
   // Update parent form when files change
   useEffect(() => {
@@ -175,17 +183,23 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
               // Upload completed successfully
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
               
-              // Create metadata object
+              // Create metadata object with direct properties for compatibility
               const newFile = {
+                id: fileName,
                 name: file.name,
                 size: file.size,
                 type: file.type,
                 url: downloadURL,
                 storagePath: `longform-images/${fileName}`,
+                uploadedAt: new Date().toISOString(),
+                // Direct properties for compatibility with Step2MediaVisuals
+                mediaPlacement: 'inline', // Default value, can be changed by user
+                mediaCaption: '',          // Empty by default, can be filled by user
+                // Keep metadata for backward compatibility
                 metadata: {
-                  mediaPlacement: 'inline', // Default value, can be changed by user
-                  mediaCaption: '',          // Empty by default, can be filled by user
-                  format: file.type         // Store original format
+                  mediaPlacement: 'inline',
+                  mediaCaption: '',
+                  format: file.type
                 }
               };
 
@@ -227,7 +241,11 @@ const Step1MediaUpload = ({ formData, updateFormData }) => {
 
   const handleMetadataChange = (index, field, value) => {
     const newFiles = [...files];
-    newFiles[index].metadata[field] = value;
+    // Update both direct property and metadata for compatibility
+    newFiles[index][field] = value;
+    if (newFiles[index].metadata) {
+      newFiles[index].metadata[field] = value;
+    }
     setFiles(newFiles);
   };
 

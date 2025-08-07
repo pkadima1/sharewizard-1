@@ -7,19 +7,69 @@ import { Upload, Camera, PenTool, Sparkles, FileText, BookOpen } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import { clearTrialPending } from '@/lib/subscriptionUtils';
 import { useLongformContent } from '@/hooks/useLongformContent';
+import { useUserGenerations } from '@/hooks/useUserGenerations';
 import LongformContentManager from '@/components/LongformContentManager';
+import CaptionContentManager from '@/components/CaptionContentManager';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackButtonClick, trackFeatureUsage, trackEvent } from '@/utils/analytics';
 
 const Dashboard: React.FC = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Dashboard - EngagePerfect');
+
   const { currentUser, userProfile, refreshUserProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
-  
+  // Analytics: Track tab changes
+  const handleTabChange = (tabValue: string) => {
+    setActiveTab(tabValue);
+    trackEvent('dashboard_tab_change', {
+      tab: tabValue,
+      user_tier: userProfile?.plan_type
+    });
+  };
+
+  // Analytics: Track navigation actions
+  const handleNavigateToLongform = () => {
+    trackButtonClick('create_content', 'dashboard');
+    trackFeatureUsage('longform_wizard', { source: 'dashboard' });
+    navigate('/longform');
+  };
+
+  const handleNavigateToCaptionGenerator = () => {
+    trackButtonClick('generate_captions', 'dashboard');
+    trackFeatureUsage('caption_generator', { source: 'dashboard' });
+    navigate('/caption-generator');
+  };
+
   // Fetch longform content
   const { longformContent, loading: longformLoading, error: longformError } = useLongformContent(currentUser?.uid || '');
+
+  // Fetch user generations (for captions)
+  const { generations, loading: generationsLoading } = useUserGenerations(currentUser?.uid || '');
+
+  // Analytics: Track dashboard load
+  useEffect(() => {
+    if (currentUser && userProfile && longformContent && generations) {
+      // Filter generations to only count caption generations
+      const captionGenerations = generations.filter(gen => 
+        gen.output && Array.isArray(gen.output) && gen.output.length > 0 &&
+        gen.output[0].caption && gen.output[0].title
+      );
+      
+      trackEvent('dashboard_loaded', {
+        user_tier: userProfile?.plan_type || 'free',
+        longform_content_count: longformContent.length,
+        caption_content_count: captionGenerations.length,
+        total_content_count: longformContent.length + captionGenerations.length,
+        has_generated_content: longformContent.length > 0 || captionGenerations.length > 0
+      });
+    }
+  }, [currentUser, userProfile, longformContent, generations]);
   
   const { t } = useAppTranslation('dashboard');
 
@@ -46,8 +96,8 @@ const Dashboard: React.FC = () => {
     // Check if user just completed content generation
     if (location.state?.newContentGenerated) {
       toast({
-        title: "Content Generated Successfully!",
-        description: "Your long-form content has been generated and is ready for download.",
+        title: t('toast.contentGenerated.title'),
+        description: t('toast.contentGenerated.description'),
         variant: "default",
       });
       
@@ -64,12 +114,12 @@ const Dashboard: React.FC = () => {
     if (checkoutCanceled && currentUser) {
       // Clear any trial pending status if checkout was canceled
       clearTrialPending(currentUser.uid).then(() => {
-        // If checkout was canceled, show a notification to the user
-        toast({
-          title: "Checkout canceled",
-          description: "Your subscription process was canceled. No changes were made to your account.",
-          variant: "default",
-        });
+              // If checkout was canceled, show a notification to the user
+      toast({
+        title: t('toast.checkoutCanceled.title'),
+        description: t('toast.checkoutCanceled.description'),
+        variant: "default",
+      });
         
         // Clean up the URL by removing the parameter
         navigate('/dashboard', { replace: true });
@@ -77,10 +127,10 @@ const Dashboard: React.FC = () => {
         console.error("Error clearing trial pending status:", error);
       });
     }
-  }, [location, currentUser, navigate, toast]);
+  }, [location.pathname, location.search, currentUser, navigate, toast]);
 
   if (!currentUser || !userProfile) {
-    return <div>{t('loading', 'Loading...')}</div>;
+    return <div>{t('loading')}</div>;
   }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -90,16 +140,16 @@ const Dashboard: React.FC = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('overview.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            {t('overview.welcome', { name: currentUser.displayName || t('user', 'User') })}
+            {t('overview.welcome', { name: currentUser.displayName || t('user') })}
           </p>
         </div>
 
         {/* Dashboard Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              {t('content.longform')}
+              {t('overview.title')}
             </TabsTrigger>
             <TabsTrigger value="longform" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
@@ -113,6 +163,17 @@ const Dashboard: React.FC = () => {
             <TabsTrigger value="captions" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               {t('content.captions')}
+              {(() => {
+                const captionGenerations = generations.filter(gen => 
+                  gen.output && Array.isArray(gen.output) && gen.output.length > 0 &&
+                  gen.output[0].caption && gen.output[0].title
+                );
+                return captionGenerations.length > 0 && (
+                  <span className="ml-1 bg-blue-500 text-white text-xs rounded-full px-2 py-0.5">
+                    {captionGenerations.length}
+                  </span>
+                );
+              })()}
             </TabsTrigger>
           </TabsList>
 
@@ -188,7 +249,7 @@ const Dashboard: React.FC = () => {
                 <div className="mt-4 space-y-2">
                   <Button 
                     className="w-full flex items-center gap-2"
-                    onClick={() => navigate('/longform')}
+                    onClick={handleNavigateToLongform}
                   >
                     <PenTool className="h-4 w-4" />
                     {t('content.create', 'Create Article')}
@@ -196,7 +257,7 @@ const Dashboard: React.FC = () => {
                   <Button 
                     variant="outline" 
                     className="w-full flex items-center gap-2"
-                    onClick={() => navigate('/caption-generator')}
+                    onClick={handleNavigateToCaptionGenerator}
                   >
                     <Sparkles className="h-4 w-4" />
                     {t('quickActions.generateCaptions')}
@@ -294,11 +355,11 @@ const Dashboard: React.FC = () => {
               </Button>
             </div>
             
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-medium mb-2">{t('captions.managementComingSoon', 'Caption Management Coming Soon')}</h3>
-              <p className="text-sm">{t('captions.historyComingSoon', 'Caption history and management features will be available here.')}</p>
-            </div>
+            <CaptionContentManager 
+              generations={generations}
+              loading={generationsLoading}
+              error={null}
+            />
           </TabsContent>
         </Tabs>
       </main>

@@ -44,14 +44,14 @@ const Navbar: React.FC = () => {
     try {
       await logout();
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out",
+        title: t('auth.logout.success'),
+        description: t('auth.logout.description'),
       });
       navigateLocalized('/login');
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to log out",
+        title: t('auth.logout.error'),
+        description: t('auth.logout.errorDescription'),
         variant: "destructive",
       });
     }
@@ -145,6 +145,16 @@ const Navbar: React.FC = () => {
               {t('nav.gallery')}
             </Link>
             <Link 
+              to={getLocalizedPath('contact')} 
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                isActive('/contact') 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              {t('nav.contact')}
+            </Link>
+            <Link 
               to={getLocalizedPath('features')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                 isActive('/features') 
@@ -207,7 +217,7 @@ const Navbar: React.FC = () => {
                   <DropdownMenuContent align="end" className="w-56 mt-1">
                     <DropdownMenuLabel>
                       <div className="flex flex-col">
-                        <span className="font-medium">{currentUser.displayName || 'User'}</span>
+                        <span className="font-medium">{currentUser.displayName || t('common.user')}</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{currentUser.email}</span>
                       </div>
                     </DropdownMenuLabel>
@@ -326,6 +336,17 @@ const Navbar: React.FC = () => {
                 {t('nav.gallery')}
               </Link>
               <Link 
+                to={getLocalizedPath('contact')} 
+                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                  isActive('/contact') 
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('nav.contact')}
+              </Link>
+              <Link 
                 to={getLocalizedPath('features')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/features') 
@@ -334,7 +355,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t('nav.features')}
+                {/* Features */}
               </Link>
               <Link 
                 to={getLocalizedPath('blog')} 
@@ -345,7 +366,7 @@ const Navbar: React.FC = () => {
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t('nav.blog')}
+                {/* Blog */}
               </Link>
               {currentUser && (
                 <>

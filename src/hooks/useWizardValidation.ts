@@ -226,15 +226,15 @@ export function getFieldDisplayName(field: string, t?: (key: string) => string):
     }
   }
   
-  // Fallback to hardcoded English
+  // Fallback to French translations (since the app defaults to French)
   const fieldNames: Record<string, string> = {
-    topic: 'Topic',
-    audience: 'Target Audience',
-    keywords: 'Keywords',
-    contentType: 'Content Type',
-    contentTone: 'Content Tone',
-    industry: 'Industry',
-    structureFormat: 'Structure Format'
+    topic: 'Sujet',
+    audience: 'Public Cible',
+    keywords: 'Mots-clés',
+    contentType: 'Type de Contenu',
+    contentTone: 'Ton du Contenu',
+    industry: 'Secteur',
+    structureFormat: 'Format de Structure'
   };
   
   return fieldNames[field] || field;

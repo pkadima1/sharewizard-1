@@ -8,6 +8,7 @@
     "caption_generator": "Caption Generator",
     "blog_wizard": "Long-form Content",
     "gallery": "Gallery",
+    "contact": "Contact",
     "logout": "Logout",
     "profile": "Profile",
     "adminDashboard": "Admin Dashboard",
@@ -37,6 +38,7 @@
     "tryFree": "Try for Free",
     "upgrade": "Upgrade",
     "subscribe": "Subscribe",
+    "subscribing": "Subscribing...",
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
@@ -94,6 +96,24 @@
   },
   "sharing": {
   },
+  "googleDocs": {
+    "readyForGoogleDocs": "Ready for Google Docs! 🚀",
+    "contentReadyToExport": "Your content \"{{title}}\" is ready to export!",
+    "contentCopied": "Content Copied!",
+    "manualCopyNeeded": "Manual Copy Needed",
+    "contentCopiedReady": "Your content is copied and ready to paste!",
+    "pleaseManualCopy": "Please manually copy the content first.",
+    "autoReady": "AUTO-READY",
+    "manualNeeded": "MANUAL NEEDED",
+    "nextSteps": "🎯 Next Steps:",
+    "step1ClickGoToDocs": "Click \"Go to Google Docs\" below",
+    "step2PressCtrlV": "Press Ctrl+V (or Cmd+V on Mac)",
+    "contentWillPaste": "✨ Your content will paste with full formatting!",
+    "goToGoogleDocs": "🎯 Go to Google Docs",
+    "perfectDone": "Perfect! Done ✨",
+    "proTip": "🚀 Pro Tip:",
+    "richFormattingReady": "The content includes rich formatting and is collaboration-ready!"
+  },
   "carousel": {
     "title": "See What You Can Create",
     "loading": "Loading amazing content...",
@@ -125,7 +145,35 @@
     "subtitle": "Always here to help",
     "typing": "Assistant is typing...",
     "placeholder": "Type your message...",
-    "footer": "Powered by AI • Response time ~2-3 seconds"
+    "footer": "Powered by AI • Response time ~2-3 seconds",
+    "userInfo": {
+      "title": "Let's Get Started",
+      "subtitle": "Please provide some basic information so we can help you better.",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "firstNameRequired": "First name is required",
+      "firstNameMinLength": "First name must be at least 2 characters",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address", 
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "topic": "What do you need help with?",
+      "topicPlaceholder": "Select a topic",
+      "topicRequired": "Please select a topic",
+      "startChat": "Start Chat",
+      "starting": "Starting Chat...",
+      "privacy": "Your information is used only to provide better support and is kept confidential."
+    },
+    "topics": {
+      "accountSetup": "Account Setup",
+      "subscriptionBilling": "Subscription & Billing",
+      "captionGenerator": "Caption Generator Help",
+      "longformContent": "Long-form Content Help",
+      "technicalIssue": "Technical Issue",
+      "featureRequest": "Feature Request",
+      "generalQuestion": "General Question",
+      "other": "Other"
+    }
   },
   "days_remaining": "{{count}} days remaining",
   "days_remaining_one": "1 day remaining",
@@ -140,5 +188,101 @@
   "optional": "Optional",
   "words": "words",
   "wordsShort": "w",
-  "seo": "SEO"
+  "seo": "SEO",
+  "contact": {
+    "getInTouch": {
+      "title": {
+        "get": "Got a question?",
+        "touch": "Let's talk!"
+      },
+      "subtitle": "Ready to transform your content strategy? Let’s explore how EngagePerfect can help you stay authentic, stand out, and grow — without the content burnout."
+    },
+    "form": {
+      "title": "Send us a message",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "emailAddress": "Email Address",
+      "emailPlaceholder": "Your email address",
+      "company": "Company (Optional)",
+      "companyPlaceholder": "Your company name",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your project and how we can help...",
+      "sendMessage": "Send Message",
+      "sending": "Sending..."
+    },
+    "info": {
+      "title": "Contact Information",
+      "email": "Email",
+      "ukOffice": "UK Office",
+      "euOffice": "EU Office",
+      "phone": "Phone & WhatsApp",
+      "whatsapp": {
+        "title": "Quick Support via WhatsApp",
+        "description": "Get instant help with our WhatsApp support team",
+        "button": "Start WhatsApp Chat"
+      }
+    },
+    "hours": {
+      "title": "Office Hours",
+      "mondayFriday": "Monday - Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "closed": "Closed"
+    },
+    "response": {
+      "title": {
+        "well": "We'll Respond",
+        "quickly": "Quickly"
+      },
+      "subtitle": "Our team typically responds to inquiries within 2-4 hours during business hours.",
+      "times": {
+        "twoHours": "2hrs",
+        "fourHours": "4hrs",
+        "twentyFourHours": "24hrs"
+      },
+      "types": {
+        "sales": "Sales Inquiries",
+        "general": "General Questions",
+        "technical": "Technical Support"
+      }
+    },
+    "success": "Message Sent!",
+    "successMessage": "Thank you for your message. We'll get back to you soon!",
+    "successWithWhatsApp": "Thank you for contacting us! We'll get back to you soon. You can also chat with us directly on WhatsApp for faster support.",
+    "whatsappSuggestion": {
+      "title": "Need Immediate Help?",
+      "description": "Chat with us on WhatsApp for instant support!",
+      "button": "Open WhatsApp"
+    },
+    "error": "Error",
+    "errorMessage": "Failed to send message. Please try again or email us directly.",
+    "fillRequired": "Please fill in all required fields."
+  },
+  "blog": {
+    "title": "Real articles. Written in an instant. Authentically you.",
+    "subtitle": "Every article here was created in seconds with EngagePerfect — tuned to reflect your voice, not a machine's.",
+    "stats": {
+      "articles": "Articles",
+      "aiPoweredContent": "Content by EngagePerfect AI",
+      "updatedRegularly": "Updated regularly"
+    },
+    "search": {
+      "placeholder": "Search articles, topics, or keywords...",
+      "noResults": "No articles found matching your search."
+    },
+    "filters": {
+      "allCategories": "All categories",
+      "category": "Category"
+    },
+    "article": {
+      "readTime": "min read",
+      "readArticle": "Read article",
+      "generatedOn": "Generated on",
+      "words": "words",
+      "seo": "SEO",
+      "author": "Author"
+    }
+  },
+  "user": "User",
+  "resetToEnglish": "Reset to English"
 }

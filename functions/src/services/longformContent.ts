@@ -37,6 +37,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { getOpenAIKey, getGeminiKey } from "../config/secrets.js";
 import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
+import { 
+  errorRecovery, 
+  createErrorContext, 
+  incrementRetry,
+  ContentGenerationException
+} from "../utils/errorHandlers.js";
 
 // Request cost constants
 const BLOG_REQUEST_COST = 4; // Blog generation costs 4 requests due to complex two-stage AI process
@@ -52,13 +58,13 @@ const CONFIG = {
     timeoutSeconds: 180,
     memory: "256MiB" as const,
     maxInstances: 5,
-    retryAttempts: 2
+    retryAttempts: 3 // Increased for better reliability
   },
   production: {
     timeoutSeconds: 300,
     memory: "512MiB" as const,
     maxInstances: 20,
-    retryAttempts: 3
+    retryAttempts: 4 // Increased for better reliability
   }
 };
 
@@ -81,11 +87,11 @@ const initializeAIServices = () => {
   }
 };
 
-// Enhanced retry mechanism with exponential backoff and better error handling
+// Enhanced retry mechanism with intelligent error handling
 const retryWithBackoff = async <T>(
   operation: () => Promise<T>, 
-  maxRetries = config.retryAttempts, 
-  baseDelay = 500 // Reduced initial delay
+  maxRetries = 2, // Reduced from 3-4 to 2 for faster fallback
+  baseDelay = 1000 // Increased initial delay to reduce API pressure
 ): Promise<T> => {
   let lastError: Error;
   
@@ -94,10 +100,27 @@ const retryWithBackoff = async <T>(
       return await operation();
     } catch (error) {
       lastError = error as Error;
-        // Don't retry on certain error types
+      
+      // Don't retry on certain error types
       if (error instanceof HttpsError && 
           (error.code === "unauthenticated" || error.code === "permission-denied")) {
         throw error;
+      }
+      
+      // Don't retry on API overload errors - go straight to fallback
+      if (lastError.message.includes("overloaded") || 
+          lastError.message.includes("503 Service Unavailable") ||
+          lastError.message.includes("rate limit")) {
+        console.warn("API overload detected, skipping retries and using fallback");
+        throw lastError;
+      }
+      
+      // Log retry attempt for debugging
+      if (attempt < maxRetries) {
+        console.warn(`Retry attempt ${attempt + 1}/${maxRetries} after ${baseDelay * Math.pow(2, attempt)}ms`);
+        if (lastError.message.includes("JSON parsing failed")) {
+          console.warn("JSON parsing error detected, retrying with fresh generation...");
+        }
       }
       
       // For the last attempt, throw the error
@@ -107,8 +130,8 @@ const retryWithBackoff = async <T>(
       
       // Calculate delay with jitter for better distribution
       const delay = Math.min(
-        baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
-        10000 // Cap at 10 seconds
+        baseDelay * Math.pow(2, attempt) + Math.random() * 2000,
+        8000 // Reduced cap to 8 seconds
       );
       
       console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms`);
@@ -215,6 +238,35 @@ const validateInputs = (data: any) => {
   if (data.readingLevel && data.readingLevel.length > 20) {
     errors.push("readingLevel must be no more than 20 characters");
   }
+
+  // Enhanced GEO optimization validation
+  if (data.targetLocation !== undefined && typeof data.targetLocation !== "string") {
+    errors.push("targetLocation must be a string value");
+  }
+  
+  if (data.targetLocation && data.targetLocation.length > 100) {
+    errors.push("targetLocation must be no more than 100 characters");
+  }
+
+  if (data.geographicScope && !["local", "regional", "national", "global"].includes(data.geographicScope)) {
+    errors.push("geographicScope must be 'local', 'regional', 'national', or 'global'");
+  }
+
+  if (data.marketFocus && (!Array.isArray(data.marketFocus) || data.marketFocus.length > 10)) {
+    errors.push("marketFocus must be an array with no more than 10 market regions");
+  }
+
+  if (data.localSeoKeywords && (!Array.isArray(data.localSeoKeywords) || data.localSeoKeywords.length > 15)) {
+    errors.push("localSeoKeywords must be an array with no more than 15 location-based keywords");
+  }
+
+  if (data.culturalContext !== undefined && typeof data.culturalContext !== "string") {
+    errors.push("culturalContext must be a string value");
+  }
+
+  if (data.culturalContext && data.culturalContext.length > 200) {
+    errors.push("culturalContext must be no more than 200 characters");
+  }
   
   if (errors.length > 0) {
     throw new HttpsError("invalid-argument", `Validation errors: ${errors.join(", ")}`);
@@ -259,41 +311,113 @@ const checkUsageLimits = async (uid: string) => {
   };
 };
 
-// Enhanced outline generation with better error handling and improved fallback
-const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
-  const geminiPrompt = buildGeminiPrompt(promptData);
-    // Try Gemini with enhanced error handling
+// Optimized Gemini configuration for reliability
+const getOptimizedGeminiConfig = (genAI: GoogleGenerativeAI, isSimplified: boolean = false) => {
+  return genAI.getGenerativeModel({ 
+    model: "gemini-2.0-flash-001",
+    generationConfig: {
+      temperature: 0.3, // Further reduced for better reliability
+      topK: 10, // Reduced to minimize API pressure
+      topP: 0.7, // Reduced for more predictable output
+      maxOutputTokens: isSimplified ? 2000 : 4000, // Reduced token limits
+      responseMimeType: "application/json"
+    }
+  });
+};
+
+// Build simplified prompt for fallback scenarios
+const buildSimplifiedGeminiPrompt = (promptData: any): string => {
+  const languageInstruction = promptData.lang === 'fr'
+    ? "IMPORTANT: Toutes les instructions et le contenu doivent être rédigés en français."
+    : "IMPORTANT: All instructions and content must be written in English.";
+  
+  return `${languageInstruction}
+
+You are an expert content strategist creating a simplified outline for ${promptData.wordCount}-word ${promptData.contentType} about "${promptData.topic}" for ${promptData.audience} in ${promptData.industry}.
+
+TONE: ${promptData.contentTone}
+KEYWORDS: ${promptData.keywords.join(", ")}
+STRUCTURE: ${promptData.structureFormat}
+
+Create a concise JSON outline with this structure:
+{
+  "meta": {
+    "estimatedReadingTime": "X minutes",
+    "primaryEmotion": "emotion to evoke",
+    "keyValueProposition": "main benefit"
+  },
+  "hookOptions": [
+    "Hook option 1",
+    "Hook option 2",
+    "Hook option 3"
+  ],
+  "sections": [
+    {
+      "title": "Section Title",
+      "wordCount": 200,
+      "tone": "section tone",
+      "keyPoints": ["Point 1", "Point 2", "Point 3"],
+      "humanElements": {
+        "storyOpportunity": "story type to include",
+        "emotionalConnection": "emotional connection",
+        "practicalValue": "concrete takeaway"
+      }
+    }
+  ],
+  "seoStrategy": {
+    "metaDescription": "150-160 char description",
+    "primaryKeyword": "main keyword"
+  },
+  "conclusion": {
+    "approach": "conclusion strategy",
+    "emotionalGoal": "final feeling"
+  }
+}`;
+};
+
+// Enhanced generateOutline function with comprehensive error recovery
+const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any, userId?: string) => {
+  const context = createErrorContext('generateOutline', userId, { promptData });
+  
   try {
-    return await retryWithBackoff(async () => {    
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.0-flash-001",
-        generationConfig: {
-          temperature: 0.6, // Slightly lower for more consistent output
-          topK: 40,
-          topP: 0.9, // Increase for better completion
-          maxOutputTokens: 3000, // Increase token limit
-          responseMimeType: "application/json"
-        }
-      });
+    // First attempt: Full featured prompt
+    return await retryWithBackoff(async () => {
+      const model = getOptimizedGeminiConfig(genAI, false);
+      const fullPrompt = buildGeminiPrompt(promptData);
       
-      const result = await model.generateContent(geminiPrompt);
+      const result = await model.generateContent(fullPrompt);
       const response = result.response.text();
       
-      if (!response || response.length < 50) { // Lower threshold
-        throw new Error("Gemini response too short or empty");
+      if (!response || response.length < 100) {
+        throw new Error("Gemini response too short");
       }
       
-      // Enhanced JSON parsing with cleanup
+      // Enhanced JSON parsing with cleanup and truncation detection
       let cleanedResponse = response.trim();
       
       // Remove markdown code blocks if present
       cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
       
+      // Check if response appears to be truncated
+      const isTruncated = cleanedResponse.length > 1000 && 
+        (!cleanedResponse.endsWith('}') && !cleanedResponse.endsWith('}"}'));
+      
+      if (isTruncated) {
+        console.warn("Response appears to be truncated, attempting completion...");
+        // Try to find the last complete object boundary
+        const lastCompleteObject = cleanedResponse.lastIndexOf('},{');
+        if (lastCompleteObject > 0) {
+          cleanedResponse = cleanedResponse.substring(0, lastCompleteObject + 1) + ']}}';
+        }
+      }
+      
       try {
         return JSON.parse(cleanedResponse);
       } catch (parseError) {
         console.error("JSON Parse Error:", parseError);
-        console.error("Raw response:", response);
+        console.error("Raw response length:", response.length);
+        console.error("Raw response (first 500 chars):", response.substring(0, 500));
+        console.error("Raw response (last 500 chars):", response.substring(Math.max(0, response.length - 500)));
         
         // Try to extract JSON from response with more aggressive cleanup
         const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
@@ -304,7 +428,17 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
               .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Add quotes to keys
               .replace(/:\s*'([^']*)'/g, ':"$1"') // Replace single quotes with double
               .replace(/,\s*}/g, '}') // Remove trailing commas
-              .replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+              .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
+              .replace(/"\s*$/, '"}') // Fix unterminated strings
+              .replace(/,\s*$/, ''); // Remove trailing commas at end
+            
+            // If still truncated, try to close the JSON properly
+            if (!fixedJson.endsWith('}')) {
+              const openBraces = (fixedJson.match(/\{/g) || []).length;
+              const closeBraces = (fixedJson.match(/\}/g) || []).length;
+              const missingBraces = openBraces - closeBraces;
+              fixedJson += '}'.repeat(missingBraces);
+            }
             
             return JSON.parse(fixedJson);
           } catch (secondParseError) {
@@ -312,14 +446,83 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any) => {
           }
         }
         
-        // If all JSON parsing fails, fall back to structured outline
-        console.warn("Gemini JSON parsing failed, using fallback outline");
+        // If all JSON parsing fails, throw error to trigger fallback
         throw new Error("JSON parsing failed, using fallback");
       }
     });
   } catch (error) {
-    console.warn("Gemini failed completely, using enhanced fallback outline:", error instanceof Error ? error.message : String(error));
-    return createFallbackOutline(promptData);
+    console.warn("Full prompt failed, trying simplified approach:", error instanceof Error ? error.message : String(error));
+    
+    // Use enhanced error recovery system
+    try {
+      const updatedContext = incrementRetry(context);
+      return await errorRecovery.handleError(error, updatedContext);
+    } catch (recoveryError) {
+      if (recoveryError instanceof ContentGenerationException) {
+        throw recoveryError;
+      }
+      
+      // Fallback: Simplified prompt with reduced tokens
+      try {
+        return await retryWithBackoff(async () => {
+          const model = getOptimizedGeminiConfig(genAI, true);
+          const simplifiedPrompt = buildSimplifiedGeminiPrompt(promptData);
+          
+          const result = await model.generateContent(simplifiedPrompt);
+          const response = result.response.text();
+          
+          if (!response || response.length < 50) {
+            throw new Error("Simplified prompt also failed");
+          }
+          
+          // Enhanced JSON parsing for simplified response
+          let cleanedResponse = response.trim();
+          cleanedResponse = cleanedResponse.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+          
+          try {
+            return JSON.parse(cleanedResponse);
+          } catch (parseError) {
+            console.error("Simplified JSON Parse Error:", parseError);
+            
+            // Try to extract JSON from simplified response
+            const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              try {
+                // Fix common JSON issues for simplified response
+                const fixedJson = jsonMatch[0]
+                  .replace(/([{,]\s*)(\w+):/g, '$1"$2":')
+                  .replace(/:\s*'([^']*)'/g, ':"$1"')
+                  .replace(/,\s*}/g, '}')
+                  .replace(/,\s*]/g, ']')
+                  .replace(/"\s*$/, '"}')
+                  .replace(/,\s*$/, '');
+                
+                return JSON.parse(fixedJson);
+              } catch (secondParseError) {
+                console.error("Simplified second parse attempt failed:", secondParseError);
+              }
+            }
+            
+            throw new Error("Simplified JSON parsing failed");
+          }
+        });
+      } catch (fallbackError) {
+        console.warn("Both prompts failed, using template fallback");
+        
+        // Final error recovery attempt
+        try {
+          const finalContext = incrementRetry(incrementRetry(context));
+          return await errorRecovery.handleError(fallbackError, finalContext);
+        } catch (finalError) {
+          if (finalError instanceof ContentGenerationException) {
+            throw finalError;
+          }
+          
+          // Ultimate fallback
+          return createFallbackOutline(promptData);
+        }
+      }
+    }
   }
 };
 
@@ -362,6 +565,9 @@ const generateContent = async (openai: OpenAI, outline: any, promptData: any) =>
  * Focuses on emotional resonance, practical value, and authentic expertise demonstration
  */
 const buildGeminiPrompt = (data: any): string => {
+  const languageInstruction = data.lang === 'fr'
+    ? "IMPORTANT: Toutes les instructions et le contenu doivent être rédigés en français."
+    : "IMPORTANT: All instructions and content must be written in English.";
   const toneInstructions = getToneInstructions(data.contentTone);
   
   // Structure-specific instructions for new content formats
@@ -437,9 +643,86 @@ STRUCTURE-SPECIFIC REQUIREMENTS (${structureFormat}):
     }
   };
 
-  return `You are an expert content strategist and editorial consultant with 15 years of experience in ${data.industry} content creation.
+  // Enhanced EEAT and GEO optimization instructions
+  const getEEATGeoInstructions = (): string => {
+    return `
+🏆 **ENHANCED EEAT + GEO OPTIMIZATION REQUIREMENTS:**
+
+📊 **EXPERIENCE (E) - Personal/Professional Experience:**
+- Include specific years of experience in ${data.industry}
+- Reference real-world case studies and client examples
+- Mention specific projects, outcomes, and measurable results
+- Include "I have seen" or "In my X years of experience" statements
+- Reference specific tools, software, and methodologies used
+- Include failure stories and lessons learned from actual experience
+
+🎓 **EXPERTISE (E) - Subject Matter Authority:**
+- Demonstrate deep technical knowledge of ${data.industry}
+- Reference specific certifications, qualifications, or credentials
+- Include advanced techniques that only experts would know
+- Use precise industry terminology and jargon appropriately
+- Reference cutting-edge trends and future predictions
+- Include specific metrics, benchmarks, and industry standards
+- Mention collaborations with other industry experts
+
+🏛️ **AUTHORITATIVENESS (A) - Industry Recognition:**
+- Reference speaking at industry conferences or events
+- Mention published articles, research, or thought leadership
+- Include citations from recognized industry authorities
+- Reference partnerships with established brands/organizations
+- Mention media appearances or interviews
+- Include awards, recognition, or industry acknowledgments
+- Reference being quoted or cited by other experts
+
+🔒 **TRUSTWORTHINESS (T) - Credibility Signals:**
+- Include transparent methodology and process explanations
+- Reference peer-reviewed studies and academic research
+- Mention compliance with industry standards and regulations
+- Include disclaimers and limitations where appropriate
+- Reference data sources and methodology transparency
+- Include contact information and credentials accessibility
+- Mention professional associations and ethical guidelines
+
+🌍 **GEO OPTIMIZATION - Geographic/Local SEO (CRITICAL MISSING ELEMENT):**
+- Include location-specific references relevant to ${data.audience}
+- Mention regional industry trends and market conditions
+- Reference local regulations, laws, or compliance requirements
+- Include city/state/country-specific examples and case studies
+- Mention local industry events, conferences, or organizations
+- Reference regional competitors or market leaders
+- Include location-based statistics and market data
+- Mention timezone considerations for global audiences
+- Reference cultural considerations for international markets
+- Include local business practices and cultural nuances
+- Mention geographic-specific challenges or opportunities
+- Reference regional economic factors affecting the industry
+
+📍 **LOCATION-SPECIFIC CONTENT ENHANCEMENT:**
+- Integrate geographic keywords naturally (${data.industry} + location terms)
+- Include "near me" search optimization opportunities
+- Reference local industry hubs and business centers
+- Mention regional supply chains or distribution networks
+- Include location-based seasonal considerations
+- Reference local market size and growth projections
+- Mention geographic barriers or advantages
+- Include regional pricing variations and market dynamics
+
+🗺️ **GLOBAL PERSPECTIVE WITH LOCAL RELEVANCE:**
+- Compare international best practices with local implementations
+- Reference global trends affecting local markets
+- Include cross-cultural considerations for international businesses
+- Mention time zone challenges for global operations
+- Reference international compliance and regulatory differences
+- Include global supply chain considerations
+- Mention currency and economic factors affecting the industry`;
+  };
+
+  return `${languageInstruction}\n\n` +
+    `You are an expert content strategist and editorial consultant with 15 years of experience in ${data.industry} content creation, specializing in EEAT-optimized content that demonstrates real expertise and geographic market understanding.
 
 ${toneInstructions}
+
+${getEEATGeoInstructions()}
 
 CONTEXT & REQUIREMENTS:
 • Topic: "${data.topic}"
@@ -451,134 +734,173 @@ CONTEXT & REQUIREMENTS:
 • Tone: ${data.contentTone}
 • Keywords to include: ${data.keywords.join(", ")}
 ${data.structureNotes ? `• Additional Structure Notes: ${data.structureNotes}` : ""}
-${data.includeStats ? "• MUST include relevant statistics and data points" : ""}
-${data.includeReferences ? "• MUST include credible external sources and references" : ""}
+${data.includeStats ? "• MUST include relevant statistics and data points with geographic breakdowns where applicable" : ""}
+${data.includeReferences ? "• MUST include credible external sources and references with geographic diversity" : ""}
 ${data.mediaUrls.length > 0 ? `
 • Media Assets: ${data.mediaUrls.length} images provided
 • Placement Strategy: ${data.mediaPlacementStrategy}
 • Media Analysis: ${data.mediaAnalysis.length > 0 ? "AI descriptions available for optimal placement" : "Basic media integration"}
-• Alt Text Requirements: Generate SEO-friendly alt text for each image
+• Alt Text Requirements: Generate SEO-friendly alt text for each image with geographic relevance where appropriate
 ` : ""}
 
 ${getStructureInstructions(data.structureFormat)}
 
 YOUR TASK:
-Create a comprehensive content outline that serves as a blueprint for writing ${data.wordCount}-word ${data.contentType} content. This outline will be used by a skilled writer to create engaging, human-centered content that follows the ${data.structureFormat} structure format.
+Create a comprehensive content outline that serves as a blueprint for writing ${data.wordCount}-word ${data.contentType} content that follows the ${data.structureFormat} structure format. This outline will be used by a skilled writer to create engaging, human-centered content that demonstrates EEAT expertise and geographic market understanding.
 
 OUTLINE REQUIREMENTS:
-1. **Hook & Opening Strategy**: Provide 2-3 opening hook options (story, question, statistic, or bold statement)
+1. **Hook & Opening Strategy**: Provide 2-3 opening hook options (story, question, statistic, or bold statement) with EEAT credibility signals
 2. **Detailed Section Breakdown**: Create sections appropriate for ${data.structureFormat} format with:
-   - Section titles (H2 level)
+   - Section titles (H2 level) with geographic relevance where appropriate
    - 2-3 subsection points (H3 level) per section where appropriate
-   - Key messages and talking points
+   - Key messages and talking points with EEAT authority
    - Suggested word count per section
    - Emotional tone guidance for each section
+   - Geographic considerations and local market insights
 
 3. **Human Elements Integration**: For each section, specify:
-   - Personal anecdotes or story opportunities
-   - Emotional connection points
-   - Relatable examples from ${data.audience}'s experience
-   - Industry-specific references that resonate
+   - Personal anecdotes or story opportunities with specific experience references
+   - Emotional connection points that build trust and authority
+   - Relatable examples from ${data.audience}'s experience with geographic context
+   - Industry-specific references that resonate with local markets
 
-📌 **Reader Journey Mapping**: For each section, define the reader's emotional state and what transformation or insight they should gain.
+📌 **Reader Journey Mapping**: For each section, define the reader's emotional state and what transformation or insight they should gain, including trust-building elements.
 
 4. **Content Enrichment Ideas**:
-   ${data.includeStats ? "- Specific types of statistics/data to research and include" : ""}
-   ${data.includeReferences ? "- Types of authoritative sources to reference (.gov, .edu, industry leaders)" : ""}
-   - Expert quotes or industry insights to reference
-   - Common pain points of ${data.audience} to address
-   - Actionable tips that provide immediate value
+   ${data.includeStats ? "- Specific types of statistics/data to research and include with geographic breakdowns" : ""}
+   ${data.includeReferences ? "- Types of authoritative sources to reference (.gov, .edu, industry leaders) with geographic diversity" : ""}
+   - Expert quotes or industry insights to reference with credibility indicators
+   - Common pain points of ${data.audience} to address with geographic considerations
+   - Actionable tips that provide immediate value with local market relevance
    ${data.mediaUrls.length > 0 ? `- Strategic media placement recommendations for ${data.mediaUrls.length} visual assets
-   - SEO-optimized alt text suggestions for each image
-   - Visual content integration that enhances narrative flow` : ""}
+   - SEO-optimized alt text suggestions for each image with geographic relevance
+   - Visual content integration that enhances narrative flow and builds authority` : ""}
 
-5. **SEO & Structure Optimization**:
-   - Natural keyword integration strategy
-   - Internal linking opportunities
-   - Meta description suggestion (150-160 chars)
-   - Featured snippet optimization approach
-   ${data.outputFormat === "html" ? "- Schema.org BlogPosting structured data requirements" : ""}
+5. **Enhanced SEO & Structure Optimization**:
+   - Natural keyword integration strategy with geographic modifiers
+   - Internal linking opportunities with geographic and topical relevance
+   - Meta description suggestion (150-160 chars) with location relevance
+   - Featured snippet optimization approach with EEAT signals
+   - Local SEO considerations and "near me" optimization opportunities
+   - Geographic keyword variations and location-based search intent
+   ${data.outputFormat === "html" ? "- Schema.org BlogPosting structured data requirements with geographic markup" : ""}
 
 6. **Conclusion Strategy**: 
-   - Summary approach that reinforces key value
-   ${data.ctaType !== "none" ? `- ${data.ctaType} call-to-action integration` : "- Natural conclusion without sales pitch"}
-   - Final emotional resonance goal
+   - Summary approach that reinforces key value and establishes authority
+   ${data.ctaType !== "none" ? `- ${data.ctaType} call-to-action integration with trust signals` : "- Natural conclusion without sales pitch but with credibility reinforcement"}
+   - Final emotional resonance goal with lasting trust impression
 
 7. **Voice & Personality Guidelines**:
-   - Specific ${data.contentTone} tone characteristics
-   - ${data.audience}-appropriate language level
-   - Personality traits to inject (humor, authority, empathy, etc.)
-   ${data.writingPersonality ? `- Embody the personality of a ${data.writingPersonality} expert in writing style and approach` : ""}
+   - Specific ${data.contentTone} tone characteristics with authority signals
+   - ${data.audience}-appropriate language level with expert credibility
+   - Personality traits to inject (expertise, authority, trustworthiness, local understanding)
+   ${data.writingPersonality ? `- Embody the personality of a ${data.writingPersonality} expert with proven track record` : ""}
 
-CRITICAL: This outline should enable a writer to create content that feels authentically human, not AI-generated. Focus on emotional resonance, practical value, and genuine connection with ${data.audience}.
+🔍 **CRITICAL EEAT + GEO INTEGRATION**: This outline should enable a writer to create content that:
+- Demonstrates genuine expertise through specific examples and experience
+- Establishes authoritativeness through credible references and industry recognition
+- Builds trustworthiness through transparency and ethical practices
+- Shows deep understanding of geographic markets and local considerations
+- Optimizes for both global reach and local relevance
 
 Return ONLY a well-structured JSON object with this exact format:
 {
   "meta": {
     "estimatedReadingTime": "X minutes",
     "primaryEmotion": "specific emotion to evoke",
-    "keyValueProposition": "main benefit reader gets"
+    "keyValueProposition": "main benefit reader gets",
+    "authorityLevel": "expertise demonstrated (beginner/intermediate/expert/authority)",
+    "geographicScope": "geographic markets addressed (local/regional/national/global)",
+    "trustFactors": ["specific trust signals to include"]
+  },
+  "eevatOptimization": {
+    "experienceSignals": ["specific experience indicators to include"],
+    "expertiseMarkers": ["technical knowledge demonstrations"],
+    "authorityIndicators": ["industry recognition references"],
+    "trustworthinessElements": ["credibility and transparency signals"],
+    "geographicRelevance": ["location-specific considerations and markets"]
   },
   "hookOptions": [
-    "Hook option 1...",
-    "Hook option 2...",
-    "Hook option 3..."
+    "Hook option 1 with authority signal...",
+    "Hook option 2 with geographic relevance...",
+    "Hook option 3 with expertise demonstration..."
   ],
   "sections": [
     {
       "title": "Section Title",
       "wordCount": 200,
       "tone": "specific tone for this section",
-      "keyPoints": ["Point 1", "Point 2", "Point 3"],      "humanElements": {
-        "storyOpportunity": "specific story type to include",
-        "emotionalConnection": "how to connect emotionally",
-        "practicalValue": "concrete takeaway for reader"
-      },${data.includeReferences ? `      "referenceOpportunities": {
-        "authoritySourceTypes": "types of .gov, .edu, or industry authority sources to include",
-        "integrationStrategy": "how to naturally weave sources into content flow"
+      "keyPoints": ["Point 1", "Point 2", "Point 3"],
+      "eevatElements": {
+        "experienceReference": "specific experience or case study to mention",
+        "expertiseDemo": "technical knowledge to demonstrate",
+        "authoritySignal": "industry recognition or credential to reference",
+        "trustBuilder": "transparency or credibility element to include",
+        "geoRelevance": "geographic market consideration or local insight"
+      },
+      "humanElements": {
+        "storyOpportunity": "specific story type to include with credibility",
+        "emotionalConnection": "how to connect emotionally while building trust",
+        "practicalValue": "concrete takeaway for reader with expert backing"
+      },${data.includeReferences ? `
+      "referenceOpportunities": {
+        "authoritySourceTypes": "types of .gov, .edu, or industry authority sources with geographic diversity",
+        "integrationStrategy": "how to naturally weave sources into content flow for maximum credibility",
+        "geoSpecificSources": "location-relevant sources and regional authorities"
       },` : ""}${data.mediaUrls.length > 0 ? `
       "mediaPlacement": {
         "recommendedImages": ["suggest which of the ${data.mediaUrls.length} images work best for this section"],
-        "placementRationale": "why these specific images enhance this section's message",
-        "altTextSuggestions": ["SEO-friendly alt text for each recommended image"],
-        "captionIdeas": ["engaging caption suggestions that tie images to content"]
+        "placementRationale": "why these specific images enhance authority and geographic relevance",
+        "altTextSuggestions": ["SEO-friendly alt text with geographic and expertise keywords"],
+        "captionIdeas": ["engaging caption suggestions that build credibility and local relevance"]
       },` : ""}
       "subsections": [
         {
           "subtitle": "Subsection Title",
           "focusArea": "what this subsection accomplishes",
-          "wordCount": 100
+          "wordCount": 100,
+          "eevatFocus": "specific EEAT or geographic element to emphasize"
         }
       ]
     }
   ],
-  "seoStrategy": {
-    "metaDescription": "150-160 char meta description",
+  "enhancedSeoStrategy": {
+    "metaDescription": "150-160 char meta description with authority and geographic signals",
     "primaryKeyword": "main keyword from list",
-    "keywordDensity": "natural integration approach",
-    "featuredSnippetTarget": "what type of snippet to target"
-  },  "conclusion": {
-    "approach": "how to conclude powerfully",
-    "emotionalGoal": "final feeling to leave reader with",
-    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}"  }${data.includeReferences ? `,
-  "referencesSection": {
-    "sourceCount": "3-7 sources recommended",
-    "sourceTypes": "mix of .gov, .edu, and authoritative industry sources",
-    "formattingStyle": "clean list with clickable links and brief descriptions"
+    "geographicKeywords": ["location-based keyword variations"],
+    "authorityKeywords": ["expertise and credibility-related terms"],
+    "keywordDensity": "natural integration approach with EEAT and geographic terms",
+    "featuredSnippetTarget": "what type of snippet to target with authority signals",
+    "localSeoOpportunities": ["near me and location-based optimization chances"],
+    "schemaMarkup": "recommended schema types for enhanced SERP presence"
+  },
+  "conclusion": {
+    "approach": "how to conclude powerfully with authority reinforcement",
+    "emotionalGoal": "final feeling to leave reader with including trust and confidence",
+    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}",
+    "credibilityReinforcement": "final authority and trust signals to include"
+  }${data.includeReferences ? `,
+  "enhancedReferencesSection": {
+    "sourceCount": "5-10 sources recommended for maximum authority",
+    "sourceTypes": "mix of .gov, .edu, industry authorities, and geographic sources",
+    "formattingStyle": "clean list with clickable links and credibility descriptions",
+    "geographicDiversity": "ensure sources represent relevant geographic markets",
+    "authorityDistribution": "balance of high-authority vs specialized sources"
   }` : ""}${data.mediaUrls.length > 0 ? `,
-  "mediaStrategy": {
-    "overallPlacementApproach": "${data.mediaPlacementStrategy} placement strategy for optimal content flow",
+  "enhancedMediaStrategy": {
+    "overallPlacementApproach": "${data.mediaPlacementStrategy} placement strategy for optimal authority and geographic relevance",
     "imageCount": ${data.mediaUrls.length},
     "strategicPlacements": [
       {
         "imageIndex": 0,
         "recommendedSection": "section name where this image works best",
-        "placementReason": "why this image enhances this specific section",
-        "altTextSuggestion": "SEO-optimized alt text",
-        "captionSuggestion": "engaging caption that ties to content"
+        "placementReason": "why this image enhances authority and geographic relevance",
+        "altTextSuggestion": "SEO-optimized alt text with EEAT and geographic keywords",
+        "captionSuggestion": "engaging caption with credibility and location relevance"
       }
     ],
-    "visualNarrativeFlow": "how images collectively support the content's story arc"
+    "visualNarrativeFlow": "how images collectively support authority building and geographic context",
+    "credibilityEnhancement": "how images support EEAT demonstration"
   }` : ""}
 }`;
 };
@@ -588,6 +910,9 @@ Return ONLY a well-structured JSON object with this exact format:
  * Focuses on authenticity, practical value, and genuine expertise demonstration
  */
 const buildGPTPrompt = (outline: any, data: any): string => {
+  const languageInstruction = data.lang === 'fr'
+    ? "IMPORTANT: Toutes les instructions et le contenu doivent être rédigés en français."
+    : "IMPORTANT: All instructions and content must be written in English.";
   const toneInstructions = getToneInstructions(data.contentTone);
   
   // Structure-specific writing guidance
@@ -659,12 +984,13 @@ const buildGPTPrompt = (outline: any, data: any): string => {
     }
   };
 
-  return `You are an exceptionally skilled ${data.industry} content writer and ${data.audience} specialist with a gift for creating deeply human, emotionally resonant content that feels like it was written by someone who truly understands both the subject matter and the reader's world.
+  return `${languageInstruction}\n\n` +
+    `You are an exceptionally skilled ${data.industry} content writer and ${data.audience} specialist with 15+ years of proven experience, industry recognition, and deep geographic market understanding. You create deeply human, emotionally resonant content that demonstrates authentic expertise and builds unshakeable trust with readers worldwide.
 
 ${toneInstructions}
 
-WRITING MISSION:
-Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that follows the ${data.structureFormat} structure format. Ensure ${data.audience} will find it genuinely valuable, relatable, and engaging.
+🏆 **ENHANCED EEAT + GEO WRITING MISSION:**
+Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that follows the ${data.structureFormat} structure format while demonstrating world-class expertise, establishing unquestionable authority, and building deep trust with geographic market awareness.
 
 ${getStructureWritingGuidance(data.structureFormat)}
 
@@ -679,134 +1005,202 @@ ${data.writingPersonality ? `• Writing Personality: ${data.writingPersonality}
 ${data.readingLevel ? `• Target Reading Level: ${data.readingLevel} for clarity and accessibility` : ""}
 • Word Target: ${data.wordCount} words
 • Keywords to weave naturally: ${data.keywords.join(", ")}
-${data.includeStats ? "• MUST include relevant statistics with sources" : ""}
-${data.includeReferences ? "• MUST include 3-7 reputable external sources with clickable links" : ""}
+${data.includeStats ? "• MUST include relevant statistics with sources and geographic breakdowns" : ""}
+${data.includeReferences ? "• MUST include 5-10 reputable external sources with clickable links and geographic diversity" : ""}
 ${data.mediaUrls.length > 0 ? `• Media Integration: ${data.mediaUrls.length} visual elements provided
 • Placement Strategy: Follow ${data.mediaPlacementStrategy} placement recommendations from outline
-• Alt Text Requirements: Generate SEO-friendly alt text for each image
-• Visual Storytelling: Use images to enhance narrative flow and break up text` : ""}
+• Alt Text Requirements: Generate SEO-friendly alt text for each image with geographic relevance
+• Visual Storytelling: Use images to enhance narrative flow and build authority` : ""}
 
-CRITICAL WRITING GUIDELINES:
+🚀 **CRITICAL EEAT + GEO WRITING GUIDELINES:**
 
-🎯 **HUMAN-FIRST APPROACH:**
-- Write as if you're having a conversation with a smart friend in ${data.industry}
-- Include personal observations, relatable scenarios, and "you've been there" moments
-- Use contractions, occasional informal language, and natural speech patterns
-- Reference common experiences that ${data.audience} faces daily
-- Inject personality, opinions, and authentic voice throughout
-${data.writingPersonality ? `- Inject the personality of a ${data.writingPersonality} expert into the writing style` : ""}
+🎯 **HUMAN-FIRST + AUTHORITY APPROACH:**
+- Write as if you're the leading expert in ${data.industry} sharing insights with a colleague
+- Include personal observations backed by years of experience and measurable results
+- Use contractions and natural speech patterns while maintaining authoritative credibility
+- Reference common experiences that ${data.audience} faces in different geographic markets
+- Inject personality, expert opinions, and authentic voice with credibility signals
+${data.writingPersonality ? `- Inject the personality of a ${data.writingPersonality} expert with proven industry track record` : ""}
 
-📖 **STORYTELLING INTEGRATION:**
-- Start sections with micro-stories, scenarios, or "picture this" moments
-- Use real-world examples that ${data.audience} can immediately relate to
-- Include failure stories, lessons learned, and honest admissions
-- Reference industry trends, challenges, and opportunities naturally
+📖 **STORYTELLING + EXPERIENCE INTEGRATION:**
+- Start sections with real case studies from your extensive client portfolio
+- Use specific examples from different geographic markets and cultural contexts
+- Include both success stories and failure analyses with measurable outcomes
+- Reference industry trends with data from multiple regions and markets
+- Include client testimonials and third-party validation where appropriate
 
-🧠 **EXPERTISE DEMONSTRATION (E-A-T):**
-- Showcase deep understanding of ${data.industry} through specific details
-- Reference industry tools, terminology, and insider knowledge naturally
-- Include forward-thinking insights and trend predictions
-- Demonstrate experience through specific examples and case references
+🧠 **ENHANCED EXPERTISE DEMONSTRATION (EEAT):**
 
-💝 **EMOTIONAL CONNECTION:**
-- Acknowledge the frustrations ${data.audience} feels
-- Celebrate their successes and validate their challenges  
-- Use empathetic language that shows you "get it"
-- Include moments of inspiration, hope, and encouragement
-- End sections with emotional resonance, not just information
+📊 **EXPERIENCE (E) - Proven Track Record:**
+- Reference specific years of experience: "In my 15 years of ${data.industry} consulting..."
+- Include quantifiable results: "Having helped over 500 ${data.audience} achieve..."
+- Mention specific client success stories with measurable outcomes
+- Reference personal observations from working with ${data.audience}
+- Include lessons learned from both successes and failures
 
-⚡ **PRACTICAL VALUE:**
-- Every major point should include actionable advice
-- Provide specific steps, frameworks, or tools they can use immediately
-- Include "pro tips," "insider secrets," or "game-changing insights"
-- Give concrete examples with measurable outcomes
+🎓 **EXPERTISE (E) - Deep Subject Knowledge:**
+- Demonstrate mastery through advanced technical concepts
+- Reference specific methodologies, frameworks, and proprietary approaches
+- Use precise industry terminology with clear explanations for accessibility
+- Include cutting-edge insights and future trend predictions
+- Reference collaboration with other industry leaders and experts
 
-🔍 **SEO INTEGRATION (Natural):**
-- Weave keywords organically into compelling sentences
-- Use variations and related terms naturally throughout
-- Include keyword variations and semantically related terms to improve topic authority and SEO
+🏛️ **AUTHORITATIVENESS (A) - Industry Recognition:**
+- Reference speaking engagements at major industry conferences
+- Mention published research, whitepapers, or thought leadership articles
+- Include media appearances, interviews, or industry recognition
+- Reference professional certifications and ongoing education
+- Mention partnerships with recognized industry organizations
+
+🔒 **TRUSTWORTHINESS (T) - Credibility Building:**
+- Include transparent methodology explanations and process details
+- Reference ethical guidelines and professional standards adherence
+- Provide disclaimers and limitations where appropriate
+- Include contact information and credential verification options
+- Reference compliance with industry regulations and best practices
+
+🌍 **GEO OPTIMIZATION - Geographic Intelligence:**
+- Include location-specific insights relevant to ${data.audience}'s markets
+- Reference regional industry differences and market conditions
+- Mention local regulations, compliance requirements, and business practices
+- Include cultural considerations for international ${data.audience}
+- Reference regional competitors, market leaders, and success stories
+- Include geographic-specific statistics and market data
+- Mention time zone considerations and global business practices
+- Reference currency, economic factors, and regional pricing variations
+
+💝 **EMOTIONAL CONNECTION + TRUST BUILDING:**
+- Acknowledge specific frustrations ${data.audience} faces in different markets
+- Celebrate successes while providing credible backing and validation
+- Use empathetic language that demonstrates deep understanding and experience
+- Include moments of inspiration backed by real success stories
+- End sections with emotional resonance supported by credible evidence
+
+⚡ **PRACTICAL VALUE + EXPERT BACKING:**
+- Every major point includes actionable advice backed by proven results
+- Provide specific frameworks developed through years of client work
+- Include "insider insights" that only experienced practitioners would know
+- Give concrete examples with measurable outcomes from real implementations
+- Reference specific tools and methodologies with usage statistics
+
+🔍 **ENHANCED SEO INTEGRATION (EEAT + GEO):**
+- Weave keywords organically with authority modifiers ("expert," "proven," "certified")
+- Include geographic keyword variations naturally ("${data.industry} in [location]")
+- Use semantic variations that demonstrate subject matter expertise
+- Create scannable content with compelling, authoritative subheadings
+- Include questions that match search intent with expert-level answers
+- Integrate location-based search terms and "near me" optimization opportunities
 - Create scannable content with compelling subheadings
 - Include questions that match search intent
 
-${data.includeReferences ? `📚 **REFERENCES & CREDIBILITY:**
-- Include 3-7 reputable external sources in clickable markdown or HTML format throughout the content
-- Prioritize .gov, .edu, and industry authorities (e.g., Harvard.edu, WHO.int, Forbes.com)
+${data.includeReferences ? `📚 **ENHANCED REFERENCES & CREDIBILITY (EEAT + GEO):**
+- Include 5-10 reputable external sources in clickable markdown or HTML format throughout the content
+- PRIORITY SOURCE HIERARCHY for maximum authority:
+  1. Government sources (.gov) with geographic relevance
+  2. Academic institutions (.edu) and peer-reviewed research
+  3. Established industry authorities (Fortune 500, market leaders)
+  4. Geographic-specific sources (local government, regional organizations)
+  5. International standards organizations (ISO, WHO, etc.)
 - Integrate source links naturally within the content flow, not just as citations
-- Add a "References" section at the end with all sources used
+- Add a comprehensive "References" section at the end with all sources used
+- Include source credibility indicators: "According to [Harvard Business School study]..."
 - Use authoritative sources that enhance credibility and support key claims
-- Format links appropriately for ${data.outputFormat} output format` : ""}
+- Format links appropriately for ${data.outputFormat} output format
+- Include publication dates and author credentials where available
+- Reference both global authorities and location-specific sources
+- Balance international research with regional market data` : ""}
 
-${data.mediaUrls.length > 0 ? `🖼️ **ENHANCED MEDIA INTEGRATION:**
-- Follow the mediaStrategy from the outline for optimal image placement
-- CRITICAL: Use the exact image placeholder format: ![Alt Text](image-${data.mediaUrls.map((_: any, i: number) => i + 1).join('|image-')})
-- Available images: ${data.mediaUrls.length} uploaded media files
+${data.mediaUrls.length > 0 ? `🖼️ **ENHANCED MEDIA INTEGRATION (AUTHORITY + GEO):**
+- CRITICAL: You MUST include the provided images in your content using the exact URLs below
+- Available images: ${data.mediaUrls.length} uploaded media files with URLs:
+${data.mediaUrls.map((url: string, i: number) => `  Image ${i + 1}: ${url}`).join('\n')}
 ${data.mediaCaptions.length > 0 ? `- Image captions provided: ${data.mediaCaptions.map((caption: string, i: number) => `Image ${i + 1}: "${caption}"`).join(', ')}` : ''}
 ${data.mediaAnalysis.length > 0 ? `- AI Analysis available: ${data.mediaAnalysis.map((analysis: string, i: number) => `Image ${i + 1}: "${analysis}"`).join(', ')}` : ''}
-- Place images strategically throughout content to break up text and enhance storytelling
-- Use SEO-optimized alt text for each image (descriptive and keyword-rich)
-- Include engaging captions that tie images directly to surrounding content
-- Reference images naturally in the text flow (e.g., "As shown in the image above..." or "The visual below illustrates...")
-- Ensure images support key points and provide visual breaks every 300-500 words
+- MANDATORY: Include at least one image reference per major section with authority context
+- REQUIRED: Start with a header image using the first URL provided
+- REQUIRED: Place images strategically throughout the content to support key points
+- Format: ![Expert analysis of [topic] implementation](${data.mediaUrls[0]}), ![Regional market data visualization](${data.mediaUrls[1]}), etc.
+- Caption format: *Expert insight: [Caption explaining relevance with credibility indicators]*
+- Use SEO-optimized alt text with EEAT keywords and geographic modifiers
+- Include engaging captions that build authority and reference specific locations/markets
+- Reference images naturally in the text flow with expert commentary
+- Ensure images support key points and provide visual credibility every 300-500 words
 - For ${data.mediaPlacementStrategy} placement: ${
-  data.mediaPlacementStrategy === 'auto' ? 'Let AI determine optimal placement for maximum engagement and content flow' :
-  data.mediaPlacementStrategy === 'manual' ? 'Follow exact placement specifications from media analysis and user preferences' :
-  'Use semantic analysis to place images where they best support content meaning and context'
+  data.mediaPlacementStrategy === 'auto' ? 'Let AI determine optimal placement for maximum engagement, authority, and geographic relevance' :
+  data.mediaPlacementStrategy === 'manual' ? 'Follow exact placement specifications from media analysis with authority and location considerations' :
+  'Use semantic analysis to place images where they best support expertise demonstration and geographic context'
 }
-- MANDATORY: Include at least one image reference per major section if images are available
-- Format: ![Descriptive alt text about the image content](image-1), ![Alt text for second image](image-2), etc.
-- Caption format: Place caption text immediately after image in italics: *Caption explaining relevance*` : ""}
+- CRITICAL: You MUST use the actual URLs provided above, NOT placeholder references
+- CRITICAL: Include a header image at the beginning of your content using the first URL` : ""}
 
-${data.outputFormat === "html" ? `📘 **STRUCTURED DATA (Schema.org):**
-- Add JSON-LD for BlogPosting schema at the beginning of the HTML content
-- Include proper schema markup with author, datePublished, headline, description
-- Use schema.org/BlogPosting structure for better SEO and rich snippets
-- Include wordCount, keywords, and industry-relevant organization data` : ""}
+${data.outputFormat === "html" ? `📘 **ENHANCED STRUCTURED DATA (Schema.org + EEAT + GEO):**
+- Add comprehensive JSON-LD for BlogPosting schema at the beginning of the HTML content
+- Include proper schema markup with expert author credentials and geographic publisher information
+- Use schema.org/BlogPosting structure with EEAT enhancements for rich snippets
+- Include author qualifications, experience years, and professional credentials
+- Add geographic service areas and location relevance
+- Include organization schema with industry authority indicators
+- Reference professional memberships and certifications in author schema
+- Add expertise topics and subject matter authority markers
+- Include publication history and thought leadership indicators` : ""}
 
-${data.outputFormat === "html" && data.structuredData ? `🔗 **BLOG SCHEMA MARKUP:**
-- Include a valid JSON-LD schema block for type "BlogPosting" using schema.org structure
+${data.outputFormat === "html" && data.structuredData ? `🔗 **COMPREHENSIVE BLOG SCHEMA MARKUP (EEAT + GEO):**
+- Include a detailed JSON-LD schema block for type "BlogPosting" using schema.org structure
 - Add structured data in a <script type="application/ld+json"> block at the beginning
-- Use the content's title as headline, meta description, and proper author information
-- Include datePublished, wordCount, keywords, and publisher details` : ""}
+- Use the content's title as headline with authority modifiers
+- Include comprehensive author schema with credentials and geographic expertise
+- Add publisher information with industry authority and location data
+- Include expertise indicators, experience duration, and professional qualifications
+- Reference geographic service areas and market expertise
+- Add industry certifications and professional memberships` : ""}
 
-FORMATTING REQUIREMENTS:
-- Use markdown formatting for structure
-- Create compelling, specific subheadings (not generic ones)
-- Include bullet points and numbered lists for scanability
-- Bold key concepts and important takeaways
-- Use short paragraphs (2-4 sentences max) for readability
-${data.tocRequired ? "- Begin the content with a clean, clickable Table of Contents" : ""}
-${data.summaryRequired ? "- End with a TL;DR section summarizing the 3-5 key takeaways" : ""}
+🏆 **ENHANCED FORMATTING REQUIREMENTS (AUTHORITY + ACCESSIBILITY):**
+- Use markdown formatting with professional structure and credibility indicators
+- Create compelling, specific subheadings with authority signals ("Expert Guide to...", "Proven Strategies for...")
+- Include bullet points and numbered lists for scanability with credibility markers
+- Bold key concepts, expert insights, and important takeaways with authority backing
+- Use short paragraphs (2-4 sentences max) for readability with expert commentary
+- Include expert quotes and industry insights with proper attribution
+- Add professional callout boxes for key insights and expert tips
+${data.tocRequired ? "- Begin the content with a clean, clickable Table of Contents with authority structure" : ""}
+${data.summaryRequired ? "- End with an expert TL;DR section summarizing the 3-5 key takeaways with credibility backing" : ""}
 
-${data.ctaType !== "none" ? `CTA INTEGRATION: Conclude with a natural, ${data.ctaType}-focused call-to-action that feels helpful, not salesy.` : "CONCLUSION: End with inspiring final thoughts that leave readers feeling empowered and informed."}
+${data.ctaType !== "none" ? `🎯 **EXPERT CTA INTEGRATION:** Conclude with a natural, ${data.ctaType}-focused call-to-action that demonstrates expertise and builds trust, feeling helpful rather than salesy.` : "🎯 **EXPERT CONCLUSION:** End with inspiring final thoughts backed by experience that leave readers feeling empowered, informed, and trusting your expertise."}
 
-${data.enableMetadataBlock ? `🔍 **METADATA BLOCK:**
-After the main content, include a JSON metadata block with:
-- metaTitle: SEO-optimized title (50-60 chars)
-- metaDescription: compelling meta description (150-160 chars)
+${data.enableMetadataBlock ? `🔍 **ENHANCED METADATA BLOCK (EEAT + GEO):**
+After the main content, include a comprehensive JSON metadata block with:
+- metaTitle: SEO-optimized title with authority signals (50-60 chars)
+- metaDescription: compelling meta description with expertise indicators (150-160 chars)
 - estimatedReadingTime: reading time in minutes
 - primaryEmotion: main emotion the content evokes
 - readingLevel: assessed reading level (e.g., "B2-C1", "High School", "College")
+- authorityLevel: expertise level demonstrated (beginner/intermediate/expert/authority)
+- geographicScope: geographic markets addressed (local/regional/national/global)
+- expertiseTopics: array of subject matter areas covered
+- credibilityFactors: array of trust and authority signals included
+- industryRelevance: specific industry applications and use cases
 - primaryKeyword: main target keyword
 - topics: array of 3-5 main topics/themes covered` : ""}
 
-${data.outputFormat === "html" ? `FORMAT: Return content in clean HTML format with proper heading tags and structure. START with JSON-LD schema markup in a <script type="application/ld+json"> tag containing BlogPosting schema with:
+${data.outputFormat === "html" ? `🎯 **ENHANCED HTML FORMAT:** Return content in clean HTML format with proper heading tags and authority structure. START with comprehensive JSON-LD schema markup in a <script type="application/ld+json"> tag containing enhanced BlogPosting schema with:
 - @context: "https://schema.org"
 - @type: "BlogPosting"
 - headline: "${data.topic}"
-- description: meta description from outline
+- description: meta description from outline with authority signals
 - datePublished: current date
 - wordCount: estimated word count
 - keywords: ${data.keywords.join(", ")}
-- author: { @type: "Person", name: "Expert ${data.industry} Writer" }
-- publisher: { @type: "Organization", name: "EngagePerfect" }
-Then follow with the actual HTML content.` : "FORMAT: Return content in clean Markdown format."}
+- author: { @type: "Person", name: "Expert ${data.industry} Writer", jobTitle: "Senior ${data.industry} Consultant", expertise: ["${data.keywords.join('", "')}"] }
+- publisher: { @type: "Organization", name: "EngagePerfect", expertise: "${data.industry}" }
+- about: { @type: "Thing", name: "${data.topic}", description: "Expert analysis and insights" }
+Then follow with the actual HTML content with proper authority indicators.` : "🎯 **ENHANCED MARKDOWN FORMAT:** Return content in clean Markdown format with authority structure and credibility indicators."}
 
-${data.includeReferences ? `📋 **SOURCES SECTION:**
-Add a section titled "Sources" at the end of the content that includes a bullet list of all external links used throughout the article. Format as clickable links in either Markdown format [Link Text](URL) or clean HTML format <a href="URL">Link Text</a> depending on the output format. Include brief descriptions of what each source provides.` : ""}
+${data.includeReferences ? `📋 **ENHANCED SOURCES SECTION:**
+Add a comprehensive section titled "Expert References & Sources" at the end of the content that includes a categorized list of all external links used throughout the article. Format as clickable links in either Markdown format [Authoritative Source Title](URL) or clean HTML format <a href="URL">Source Title</a> depending on the output format. Include brief descriptions emphasizing source credibility and geographic relevance.` : ""}
 
-Remember: This content should feel like it was written by a human expert who genuinely cares about helping ${data.audience} succeed in ${data.industry}. Every sentence should either inform, inspire, or provide practical value. Avoid AI-sounding phrases, generic advice, and robotic language patterns.
+🏆 **FINAL AUTHORITY REMINDER:** This content should feel like it was written by a recognized industry expert with 15+ years of experience who genuinely cares about helping ${data.audience} succeed in ${data.industry}. Every sentence should either demonstrate expertise, build trust, or provide practical value backed by experience. Avoid AI-sounding phrases, generic advice, and robotic language patterns. Include geographic awareness and market-specific insights throughout.
 
-Write the complete ${data.wordCount}-word ${data.contentType} now:`;
+Write the complete ${data.wordCount}-word expert-level ${data.contentType} now:`;
 };
 
 const getToneInstructions = (tone: string): string => {
@@ -1425,12 +1819,18 @@ export const generateLongformContent = onCall({
   cors: [
     "localhost:5173",
     "localhost:5174",
+    "localhost:8080",
     /engperfecthlc\.web\.app$/,
     /engperfecthlc\.firebaseapp\.com$/,
-    /engageperfect\.com$/
+    /engageperfect\.com$/,
+    /www\.engageperfect\.com$/,
+    /preview--.*\.lovable\.app$/,
+    /.*\.lovable\.app$/,
+    /.*\.lovableproject\.com$/,
+    ...(process.env.NODE_ENV !== 'production' ? ["*"] : [])
   ],
   maxInstances: config.maxInstances,
-  timeoutSeconds: 540, // Increased to 9 minutes for complex generation
+  timeoutSeconds: 300, // 5 minutes - optimized for typical generation time
   memory: config.memory,
   minInstances: isProduction ? 1 : 0,
   region: "us-central1"
@@ -1452,6 +1852,9 @@ export const generateLongformContent = onCall({
     // Step 2: Input validation
     validateInputs(data);
     
+    // Accept lang from data, default to 'en'
+    const lang = typeof data.lang === 'string' ? data.lang : 'en';
+    
     // Step 3: Initialize AI services
     const { genAI, openai } = initializeAIServices();
     
@@ -1459,7 +1862,7 @@ export const generateLongformContent = onCall({
     const usageCheck = await checkUsageLimits(uid);
     if (!usageCheck.hasUsage) {
       return usageCheck;
-    }    // Step 5: Extract and structure inputs with media validation
+    }    // Step 5: Extract and structure inputs with media validation and geographic optimization
     const promptData = {
       topic: data.topic,
       audience: data.audience,
@@ -1483,7 +1886,14 @@ export const generateLongformContent = onCall({
       mediaAnalysis: data.mediaAnalysis || [], // AI-analyzed descriptions of uploaded images
       mediaPlacementStrategy: data.mediaPlacementStrategy || "auto", // auto, manual, or semantic
       structureNotes: data.structureNotes || "",
-      outputFormat: data.outputFormat || "markdown"
+      outputFormat: data.outputFormat || "markdown",
+      // Enhanced GEO optimization parameters
+      targetLocation: data.targetLocation || "", // e.g., "United States", "California", "San Francisco"
+      geographicScope: data.geographicScope || "global", // local, regional, national, global
+      marketFocus: data.marketFocus || [], // array of specific markets/regions to focus on
+      localSeoKeywords: data.localSeoKeywords || [], // location-based keyword variations
+      culturalContext: data.culturalContext || "", // cultural considerations for the target market
+      lang,
     };
 
     // Step 5.1: Validate and process media URLs
@@ -1501,87 +1911,168 @@ export const generateLongformContent = onCall({
     // Step 6: Generate outline with Gemini
     console.log("[LongForm] Stage 1: Generating outline...");
     const outlineStartTime = Date.now();
-    const outline = await generateOutline(genAI, promptData);
-    const outlineTime = Date.now() - outlineStartTime;
-    console.log(`[LongForm] Outline generated in ${outlineTime}ms`);
     
-    // Step 7: Generate content with GPT
-    console.log("[LongForm] Stage 2: Generating content...");
-    const contentStartTime = Date.now();
-    const generatedContent = await generateContent(openai, outline, promptData);
-    const contentTime = Date.now() - contentStartTime;
-    console.log(`[LongForm] Content generated in ${contentTime}ms`);
-    
-    // Step 8: Create content record
-    contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
-      const contentData = {
-      id: contentId,
-      uid: uid,
-      moduleType: "longform",
-      inputs: promptData,
-      outline: outline,
-      content: generatedContent,      metadata: {
-        actualWordCount: generatedContent.split(/\s+/).filter(word => word.length > 0).length, // More accurate word count
-        estimatedReadingTime: Math.ceil(generatedContent.split(/\s+/).filter(word => word.length > 0).length / 200),
-        generatedAt: FieldValue.serverTimestamp(),        generationTime: Date.now() - startTime,
-        outlineGenerationTime: outlineTime,
-        contentGenerationTime: contentTime,
-        version: "2.2.0", // Updated version with enhanced prompts
-        // New enhanced metadata fields
-        readingLevel: promptData.readingLevel || "General",
-        hasReferences: promptData.includeReferences || false,
-        contentPersonality: promptData.writingPersonality || "Professional",
-        contentEmotion: outline.meta?.primaryEmotion || "Informative",
-        topics: outline.meta?.topics || promptData.keywords?.slice(0, 5) || [promptData.topic],
-        metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
-        metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
-        contentQuality: {
-          hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
-          hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
-          seoOptimized: !!outline.seoStrategy?.primaryKeyword,
-          structureComplexity: outline.sections?.length || 0
-        }
-      },
-      status: "completed"
-    };
-    
-    // Step 9: Store content and update usage in transaction
-    await db.runTransaction(async (transaction) => {
-      const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
-      const userRef = db.collection("users").doc(uid);
+    try {
+      const outline = await generateOutline(genAI, promptData, uid);
+      const outlineTime = Date.now() - outlineStartTime;
+      console.log(`[LongForm] Outline generated in ${outlineTime}ms`);
       
-      // Store content
-      transaction.set(contentRef, contentData);      // Update usage based on plan type - Blog generation costs 4 requests
-      if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
-        transaction.update(userRef, {
-          flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
-        });
-      } else {
-        transaction.update(userRef, {
-          requests_used: FieldValue.increment(BLOG_REQUEST_COST)
-        });
+      // Step 7: Generate content with GPT
+      console.log("[LongForm] Stage 2: Generating content...");
+      const contentStartTime = Date.now();
+      const generatedContent = await generateContent(openai, outline, promptData);
+      const contentTime = Date.now() - contentStartTime;
+      console.log(`[LongForm] Content generated in ${contentTime}ms`);
+      
+      // Step 8: Create content record
+      contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
+      const contentData = {
+        id: contentId,
+        uid: uid,
+        moduleType: "longform",
+        inputs: promptData,
+        outline: outline,
+        content: generatedContent,
+        metadata: {
+          actualWordCount: generatedContent.split(/\s+/).filter(word => word.length > 0).length, // More accurate word count
+          estimatedReadingTime: Math.ceil(generatedContent.split(/\s+/).filter(word => word.length > 0).length / 200),
+          generatedAt: FieldValue.serverTimestamp(),
+          generationTime: Date.now() - startTime,
+          outlineGenerationTime: outlineTime,
+          contentGenerationTime: contentTime,
+          version: "2.2.0", // Updated version with enhanced prompts
+          // New enhanced metadata fields
+          readingLevel: promptData.readingLevel || "General",
+          hasReferences: promptData.includeReferences || false,
+          contentPersonality: promptData.writingPersonality || "Professional",
+          contentEmotion: outline.meta?.primaryEmotion || "Informative",
+          topics: outline.meta?.topics || promptData.keywords?.slice(0, 5) || [promptData.topic],
+          metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
+          metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
+          contentQuality: {
+            hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
+            hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
+            seoOptimized: !!outline.seoStrategy?.primaryKeyword,
+            structureComplexity: outline.sections?.length || 0
+          },
+          lang,
+        },
+        status: "completed"
+      };
+      
+      // Step 9: Store content and update usage in transaction
+      await db.runTransaction(async (transaction) => {
+        const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
+        const userRef = db.collection("users").doc(uid);
+        
+        // Store content
+        transaction.set(contentRef, contentData);
+        
+        // Update usage based on plan type - Blog generation costs 4 requests
+        if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
+          transaction.update(userRef, {
+            flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
+          });
+        } else {
+          transaction.update(userRef, {
+            requests_used: FieldValue.increment(BLOG_REQUEST_COST)
+          });
+        }
+      });
+      
+      // Step 10: Calculate remaining requests - Blog generation costs 4 requests
+      const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
+      
+      console.log(`[LongForm] Content generation completed in ${Date.now() - startTime}ms`);
+      
+      // Step 11: Return success response
+      return {
+        success: true,
+        contentId: contentId,
+        content: generatedContent,
+        outline: outline,
+        metadata: contentData.metadata,
+        requestsRemaining: remainingRequests,
+        message: "Long-form content generated successfully!"
+      };
+      
+    } catch (outlineError) {
+      // Handle outline generation errors with enhanced error recovery
+      console.error("[LongForm] Outline generation error:", outlineError);
+      
+      if (outlineError instanceof ContentGenerationException) {
+        // Return user-friendly error response
+        return {
+          success: false,
+          error: outlineError.code,
+          userMessage: outlineError.userMessage,
+          retryAfter: outlineError.retryAfter,
+          message: outlineError.userMessage?.description || "Une erreur s'est produite lors de la génération"
+        };
       }
-    });    // Step 10: Calculate remaining requests - Blog generation costs 4 requests
-    const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
-    
-    console.log(`[LongForm] Content generation completed in ${Date.now() - startTime}ms`);
-    
-    // Step 11: Return success response
-    return {
-      success: true,
-      contentId: contentId,
-      content: generatedContent,
-      outline: outline,
-      metadata: contentData.metadata,
-      requestsRemaining: remainingRequests,
-      message: "Long-form content generated successfully!"
-    };
-    
+      
+      // For other errors, try to provide fallback content
+      console.log("[LongForm] Attempting fallback content generation...");
+      const fallbackOutline = createFallbackOutline(promptData);
+      const fallbackContent = await generateContent(openai, fallbackOutline, promptData);
+      
+      // Store fallback content
+      contentId = db.collection("users").doc(uid).collection("longform-content").doc().id;
+      const fallbackData = {
+        id: contentId,
+        uid: uid,
+        moduleType: "longform",
+        inputs: promptData,
+        outline: fallbackOutline,
+        content: fallbackContent,
+        metadata: {
+          actualWordCount: fallbackContent.split(/\s+/).filter(word => word.length > 0).length,
+          estimatedReadingTime: Math.ceil(fallbackContent.split(/\s+/).filter(word => word.length > 0).length / 200),
+          generatedAt: FieldValue.serverTimestamp(),
+          generationTime: Date.now() - startTime,
+          version: "2.2.0",
+          fallback: true,
+          originalError: outlineError instanceof Error ? outlineError.message : String(outlineError),
+          lang,
+        },
+        status: "completed"
+      };
+      
+      await db.runTransaction(async (transaction) => {
+        const contentRef = db.collection("users").doc(uid).collection("longform-content").doc(contentId!);
+        const userRef = db.collection("users").doc(uid);
+        
+        transaction.set(contentRef, fallbackData);
+        
+        if (usageCheck.planType === "flexy" && usageCheck.userData?.flexy_requests && usageCheck.userData.flexy_requests > 0) {
+          transaction.update(userRef, {
+            flexy_requests: FieldValue.increment(-BLOG_REQUEST_COST)
+          });
+        } else {
+          transaction.update(userRef, {
+            requests_used: FieldValue.increment(BLOG_REQUEST_COST)
+          });
+        }
+      });
+      
+      const remainingRequests = Math.max(0, usageCheck.requestsRemaining - BLOG_REQUEST_COST);
+      
+      return {
+        success: true,
+        contentId: contentId,
+        content: fallbackContent,
+        outline: fallbackOutline,
+        metadata: fallbackData.metadata,
+        requestsRemaining: remainingRequests,
+        message: "Contenu généré avec le modèle de secours en raison d'une erreur technique.",
+        fallback: true
+      };
+    }
   } catch (error) {
     console.error("[LongForm] Function error:", error);
     
     // Enhanced error logging
-    if (contentId && request.auth?.uid) {
+    if (contentId && request.auth && request.auth.uid) {
       try {
         await db.collection("users").doc(request.auth.uid).collection("longform-content").doc(contentId).set({
           status: "failed",

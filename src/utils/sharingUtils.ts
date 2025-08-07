@@ -38,11 +38,11 @@ export const createCaptionedVideo = async (
       } else {
         // Try to get text overlay data from the mediaFile property if it exists
         // This happens when text overlays are added in the previous step
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property
         const mediaFileData = videoElement.mediaFile?.textOverlayData;
         if (mediaFileData) {
           console.log('Found text overlay data in mediaFile property:', mediaFileData);
-          // @ts-ignore - adding property to videoElement
+          // @ts-expect-error - adding property to videoElement
           videoElement.textOverlayData = mediaFileData;
         }
       }
@@ -102,7 +102,7 @@ export const createCaptionedVideo = async (
         let combinedStream: MediaStream;
 
         try {
-          const videoStream = (originalVideo as any).captureStream();
+          const videoStream = (originalVideo as HTMLVideoElement & { captureStream(): MediaStream }).captureStream();
           const audioTracks = videoStream.getAudioTracks();
 
           if (audioTracks.length > 0) {
@@ -732,7 +732,7 @@ export const sharePreview = async (
                     (clonedContent as HTMLElement).style.width = '100%';
                     (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
                     (clonedContent as HTMLElement).style.margin = '0 auto';
-                    (clonedContent as HTMLElement).style.padding = '20px';
+                    (clonedContent as HTMLElement).style.padding = '1px';
                     (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
                     (clonedContent as HTMLElement).style.display = 'flex';
                     (clonedContent as HTMLElement).style.flexDirection = 'column';
@@ -757,7 +757,7 @@ export const sharePreview = async (
                       (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
                       (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
                       (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
-                      (captionContainer as HTMLElement).style.padding = '20px';
+                      (captionContainer as HTMLElement).style.padding = '1px';
                       (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
                       (captionContainer as HTMLElement).style.borderRadius = '8px';
                       (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
@@ -805,7 +805,7 @@ export const sharePreview = async (
                 (clonedContent as HTMLElement).style.width = '100%';
                 (clonedContent as HTMLElement).style.maxWidth = '600px';
                 (clonedContent as HTMLElement).style.margin = '0 auto';
-                (clonedContent as HTMLElement).style.padding = '20px';
+                (clonedContent as HTMLElement).style.padding = '1px';
                 (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
                 (clonedContent as HTMLElement).style.display = 'flex';
                 (clonedContent as HTMLElement).style.flexDirection = 'column';
@@ -825,7 +825,7 @@ export const sharePreview = async (
                   (captionContainer as HTMLElement).style.width = '100%';
                   (captionContainer as HTMLElement).style.maxWidth = '600px';
                   (captionContainer as HTMLElement).style.margin = '0 auto';
-                  (captionContainer as HTMLElement).style.padding = '20px';
+                  (captionContainer as HTMLElement).style.padding = '1px';
                   (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
                   (captionContainer as HTMLElement).style.borderRadius = '8px';
                   (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
@@ -925,7 +925,7 @@ export const sharePreview = async (
           }
         };
         if (userEvent) {
-          let sharePromise: Promise<any>;
+          let sharePromise: Promise<void>;
           try {
             if (mediaFile && navigator.canShare && navigator.canShare({ files: [mediaFile] })) {
               sharePromise = navigator.share({
@@ -1090,7 +1090,7 @@ export const downloadPreview = async (
               (clonedContent as HTMLElement).style.width = '100%';
               (clonedContent as HTMLElement).style.maxWidth = '600px'; // Keep a reasonable max width for the overall block
               (clonedContent as HTMLElement).style.margin = '0 auto';
-              (clonedContent as HTMLElement).style.padding = '20px';
+              (clonedContent as HTMLElement).style.padding = '1px';
               (clonedContent as HTMLElement).style.backgroundColor = '#1e1e1e';
               (clonedContent as HTMLElement).style.display = 'flex';
               (clonedContent as HTMLElement).style.flexDirection = 'column';
@@ -1115,7 +1115,7 @@ export const downloadPreview = async (
                 (captionContainer as HTMLElement).style.width = '100%'; // Take full width up to max-width
                 (captionContainer as HTMLElement).style.maxWidth = '600px'; // Match the max width of the overall block/media
                 (captionContainer as HTMLElement).style.margin = '0 auto'; // Center the caption container
-                (captionContainer as HTMLElement).style.padding = '20px';
+                (captionContainer as HTMLElement).style.padding = '1px';
                 (captionContainer as HTMLElement).style.backgroundColor = '#2a2a2a';
                 (captionContainer as HTMLElement).style.borderRadius = '8px';
                 (captionContainer as HTMLElement).style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)';
@@ -1231,6 +1231,13 @@ export const downloadPreview = async (
     success: boolean = true
    ): void => {
     try {
+      // Import analytics function dynamically to avoid circular dependencies
+      import('@/utils/analytics').then(({ trackContentShare }) => {
+        trackContentShare(platform, mediaType, success);
+      }).catch((error) => {
+        console.error('Error loading analytics:', error);
+      });
+      
       // Log the share event
       console.log(`Content shared to ${platform}: ${mediaType} (${success ? 'success' : 'failed'})`);
       

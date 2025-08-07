@@ -32,15 +32,17 @@ const CaptionPreview = forwardRef<HTMLDivElement, CaptionPreviewProps>(({
                     crossOrigin="anonymous"
                     style={{ objectFit: 'contain' }}
                   />
-                </div>                {captionOverlayMode === 'overlay' && caption && (                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-4 backdrop-blur-sm">
-                    <p className="text-white text-xl font-bold mb-2">{stripMarkdownFormatting(caption.title)}</p>
-                    <p className="text-white text-base mb-2">{stripMarkdownFormatting(caption.caption)}</p>
+                </div>                {captionOverlayMode === 'overlay' && caption && (                  <div className="absolute bottom-0 left-0 right-0 p-5 pt-12 backdrop-blur-[2px]" style={{ 
+                    background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.0) 100%)'
+                  }}>
+                    <p className="text-white text-xl font-bold mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.title)}</p>
+                    <p className="text-white text-base mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.caption)}</p>
                     {caption.cta && (
-                      <p className="text-gray-200 text-sm italic mb-2">{stripMarkdownFormatting(caption.cta)}</p>
+                      <p className="text-gray-200 text-sm italic mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.cta)}</p>
                     )}
                     <div className="flex flex-wrap gap-1 mt-1">
                       {caption.hashtags.map((hashtag, idx) => (
-                        <span key={idx} className="text-blue-300 dark:text-blue-400 text-sm font-medium">
+                        <span key={idx} className="text-blue-300 dark:text-blue-400 text-sm font-medium drop-shadow-md">
                           #{stripMarkdownFormatting(hashtag)}
                         </span>
                       ))}
@@ -57,7 +59,9 @@ const CaptionPreview = forwardRef<HTMLDivElement, CaptionPreviewProps>(({
                   preload="auto"
                 />{/* For videos, always show modern caption overlay with left-aligned text */}
                 {caption && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-5 pt-12 backdrop-blur-[2px]">
+                  <div className="absolute bottom-0 left-0 right-0 p-5 pt-12 backdrop-blur-[2px]" style={{ 
+                    background: 'linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.6) 30%, transparent 100%)'
+                  }}>
                     <p className="text-white text-xl font-bold mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.title)}</p>
                     <p className="text-white text-base mb-2 drop-shadow-md">{stripMarkdownFormatting(caption.caption)}</p>
                     {caption.cta && (

@@ -12,10 +12,11 @@ import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
 import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngine';
 import { useAutoSave, getDraftInfo } from '@/hooks/useAutoSave';
 import { useToast } from '@/hooks/use-toast';
+import { WizardFormData } from '@/types/components';
 import { useTranslation } from 'react-i18next';
 
 // Helper function to get industry options with translations
-const getIndustryOptions = (t: any) => [
+const getIndustryOptions = (t: (key: string) => string) => [
   { 
     value: 'Marketing', 
     label: t('step1.industries.marketing'),
@@ -85,8 +86,8 @@ const getIndustryOptions = (t: any) => [
 ];
 
 interface Step1Props {
-  formData: any;
-  updateFormData: (key: string, value: any) => void;
+  formData: WizardFormData & { customIndustry?: string };
+  updateFormData: (key: string, value: string | number | string[]) => void;
 }
 
 const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
@@ -268,7 +269,7 @@ const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">{t('step1.topic.title')}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.topic.subtitle', { fallback: 'Define your content focus' })}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.topic.subtitle')}</p>
                   </div>
                 </div>
                 <Tooltip>
@@ -357,7 +358,7 @@ const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">{t('step1.audience.title')}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.audience.subtitle', { fallback: 'Define your target audience' })}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('step1.audience.subtitle')}</p>
                   </div>
                 </div>
                 <Tooltip>
@@ -400,14 +401,12 @@ const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
                         <Building2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                       </div>
                       <Label htmlFor="customIndustry" className="text-blue-800 dark:text-blue-200 font-medium text-sm">
-                        {t('step1.audience.customIndustryLabel', { fallback: 'Specify your industry' })}
+                        {t('step1.audience.customIndustryLabel')}
                       </Label>
                     </div>
                     <Input
                       id="customIndustry"
-                      placeholder={t('step1.audience.customIndustryPlaceholder', { 
-                        fallback: 'e.g., Renewable Energy, Pet Care, Gaming...' 
-                      })}
+                      placeholder={t('step1.audience.customIndustryPlaceholder')}
                       value={customIndustry}
                       onChange={(e) => setCustomIndustry(e.target.value)}
                       className="transition-all duration-200 border-2 border-blue-200 focus:border-blue-400 bg-white dark:bg-blue-950/50"
@@ -416,9 +415,7 @@ const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
                       <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
                         <Lightbulb className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <span>
-                          {t('step1.audience.customIndustryHint', { 
-                            fallback: 'Be specific to get better topic suggestions tailored to your industry' 
-                          })}
+                          {t('step1.audience.customIndustryHint')}
                         </span>
                       </p>
                     </div>
@@ -532,7 +529,7 @@ const Step1WhatWho: React.FC<Step1Props> = ({ formData, updateFormData }) => {
                 className="flex items-center space-x-2 hover:bg-gray-100"
               >
                 <Save className="h-4 w-4" />
-                <span>{t('wizard.navigation.saveNow', { fallback: 'Save Now' })}</span>
+                <span>{t('wizard.navigation.saveNow')}</span>
               </Button>
             </div>
           </div>

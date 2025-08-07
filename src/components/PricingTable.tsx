@@ -77,11 +77,12 @@ const PricingTable: React.FC = () => {
       const priceId = 'price_1RTGhNGCd9fidigraVTwiPFB'; // Updated Basic Monthly price ID
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(`Error subscribing to ${plan} plan:`, error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Error",
-        description: `Failed to process subscription: ${error.message}`,
+        description: `Failed to process subscription: ${errorMessage}`,
         variant: "destructive",
       });
     }
@@ -100,11 +101,12 @@ const PricingTable: React.FC = () => {
       const priceId = 'price_1RTHNhGCd9fidigrric9VnxJ'; // Updated Flex price ID
       const url = await createFlexCheckout(currentUser.uid, priceId, 1);
       window.location.assign(url);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error purchasing Flex pack:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       toast({
         title: "Error",
-        description: `Failed to process purchase: ${error.message}`,
+        description: `Failed to process purchase: ${errorMessage}`,
         variant: "destructive",
       });
     }

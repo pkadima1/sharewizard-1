@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { GeneratedCaption, CaptionResponse, generateCaptions } from '@/services/openaiService';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from "sonner";
 
 interface UseCaptionGenerationProps {
@@ -29,6 +30,7 @@ export const useCaptionGeneration = ({
   const [requestsRemaining, setRequestsRemaining] = useState<number | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const { checkRequestAvailability } = useAuth();
+  const { currentLanguage } = useLanguage();
 
   // Maximum number of automatic retries
   const MAX_RETRIES = 3;
@@ -75,7 +77,8 @@ export const useCaptionGeneration = ({
             selectedTone,
             selectedNiche,
             selectedGoal,
-            postIdea
+            postIdea,
+            currentLanguage
           );
           
           if (!captionResponse) {
@@ -139,7 +142,8 @@ export const useCaptionGeneration = ({
     selectedGoal, 
     postIdea, 
     setIsGenerating, 
-    checkRequestAvailability
+    checkRequestAvailability,
+    currentLanguage
   ]);
 
   useEffect(() => {

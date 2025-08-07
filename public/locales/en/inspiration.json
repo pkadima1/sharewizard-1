@@ -1,0 +1,116 @@
+{
+  "googleTrends": {
+    "title": "Google Trends",
+    "description": "Explore trending topics and search patterns",
+    "loading": {
+      "script": "Loading Google Trends...",
+      "widget": "Rendering trends widget..."
+    },
+    "errors": {
+      "scriptLoadFailed": "Failed to load Google Trends script",
+      "widgetInitFailed": "Failed to initialize Google Trends widget",
+      "widgetRenderFailed": "Failed to render Google Trends widget"
+    }
+  },
+  "topicEngine": {
+    "title": "Topic Suggestion Engine",
+    "description": "Get AI-powered topic suggestions for your content",
+    "templates": {
+      "howTo": {
+        "description": "Step-by-step guides and tutorials"
+      },
+      "ultimateGuide": {
+        "description": "Comprehensive resources and complete guides"
+      },
+      "waysTo": {
+        "description": "Multiple approaches and strategies"
+      },
+      "bestPractices": {
+        "description": "Proven methods and industry standards"
+      },
+      "caseStudy": {
+        "description": "Real-world examples and success stories"
+      },
+      "trending": {
+        "description": "Current trends and emerging topics"
+      },
+      "comparison": {
+        "description": "Comparative analysis and alternatives"
+      }
+    },
+    "messages": {
+      "suggestionsGenerated": "Generated {{count}} topic suggestions",
+      "generationFailed": "Failed to generate topic suggestions",
+      "topicSelected": "Selected topic: {{topic}}",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites",
+      "copiedToClipboard": "Topic copied to clipboard",
+      "copyFailed": "Failed to copy topic"
+    },
+    "buttons": {
+      "newTopics": "New Topics",
+      "refresh": "Refresh",
+      "generating": "Generating...",
+      "select": "Select",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "newTopicsTooltip": "Generate completely new topics"
+    },
+    "metrics": {
+      "match": "match",
+      "views": "views"
+    },
+    "competition": {
+      "label": "competition",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "favorites": {
+      "title": "Favorites ({{count}})",
+      "clearAll": "Clear all"
+    },
+    "noSuggestions": {
+      "tryRefresh": "No suggestions found. Try refreshing or adjusting your criteria.",
+      "selectContext": "Select industry, audience, or enter keywords to get topic suggestions."
+    },
+    "loading": {
+      "title": "Generating Topic Suggestions",
+      "description": "Analyzing your context and creating personalized recommendations..."
+    },
+    "disclaimer": "AI-powered suggestions. Always verify and adapt topics to your specific needs.",
+    "reasons": {
+      "transformativeImpact": "Highlights {{topic}}'s transformative impact",
+      "comprehensiveResource": "Comprehensive resource for your audience",
+      "currentYearStrategy": "Current year strategy with actionable roadmap",
+      "skillFocused": "Focuses on essential {{topic}} skills",
+      "problemFocused": "Addresses common pain points and solutions",
+      "forwardLooking": "Forward-looking analysis with future predictions",
+      "financialPerspective": "Financial perspective on {{topic}} in {{industry}}",
+      "caseStudies": "Real case studies from {{industry}} leaders",
+      "leadershipInsights": "Leadership insights from industry experts",
+      "regulatoryPerspective": "Regulatory and compliance considerations",
+      "businessValue": "Business value and ROI analysis",
+      "audienceSpecific": "Tailored specifically for {{audience}}",
+      "trendCapitalizes": "Capitalizes on current {{topic}} trends",
+      "highQuality": "High-quality, evergreen content"
+    },
+    "fallbacks": {
+      "industries": "your industry",
+      "professionals": "professionals",
+      "anyIndustry": "any industry",
+      "professional": "professional",
+      "companies": "companies",
+      "experts": "experts",
+      "yourField": "your field",
+      "industryTrends": "industry trends",
+      "industry": "industry",
+      "anyField": "any field",
+      "theirIndustry": "their industry"
+    },
+    "debug": {
+      "topicSelected": "Topic selected:",
+      "errorGenerating": "Error generating topic suggestions:"
+    }
+  }
+} 

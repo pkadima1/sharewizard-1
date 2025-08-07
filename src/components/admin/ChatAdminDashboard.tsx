@@ -301,7 +301,7 @@ const ChatAdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'conversations' | 'analytics')}
                 className={`flex items-center space-x-2 pb-3 px-1 border-b-2 transition-colors ${
                   activeTab === tab.id
                     ? 'border-primary text-primary'
@@ -330,7 +330,7 @@ const ChatAdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => {
 
           <select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
+            onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'resolved' | 'pending')}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary dark:bg-gray-700 dark:text-white"
           >
             <option value="all">All Status</option>
@@ -341,7 +341,7 @@ const ChatAdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => {
 
           <select
             value={dateRange}
-            onChange={(e) => setDateRange(e.target.value as any)}
+            onChange={(e) => setDateRange(e.target.value as 'today' | 'week' | 'month')}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary dark:bg-gray-700 dark:text-white"
           >
             <option value="today">Today</option>

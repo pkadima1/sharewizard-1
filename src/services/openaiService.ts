@@ -23,6 +23,7 @@ const generateCaptionsFunction = httpsCallable<
     goal: string;
     postIdea?: string;
     requestId?: string;
+    lang?: string;
   }, 
   CaptionResponse
 >(functions, 'generateCaptionsV3');
@@ -36,7 +37,8 @@ export const generateCaptions = async (
   tone: string,
   niche: string,
   goal: string,
-  postIdea?: string
+  postIdea?: string,
+  lang?: string
 ): Promise<CaptionResponse> => {
   try {
     // Generate a unique request ID
@@ -49,7 +51,8 @@ export const generateCaptions = async (
       niche,
       goal,
       postIdea,
-      requestId
+      requestId,
+      lang
     });
     
     // Make sure we have valid data

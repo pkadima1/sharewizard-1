@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Type } from 'lucide-react';
 import { useCaptionGeneration } from '@/hooks/useCaptionGeneration';
 import useMediaType from '@/hooks/useMediaType';
 import CaptionsList from './captions/CaptionsList';
@@ -11,8 +10,6 @@ import CaptionPreview from './captions/CaptionPreview';
 import ErrorDisplay from './captions/ErrorDisplay';
 import GenerationLoading from './captions/GenerationLoading';
 import EmptyState from './captions/EmptyState';
-import { TextOverlayEditor } from './TextOverlayEditor';
-import { DraggableTextOverlay } from './DraggableTextOverlay';
 
 interface GeneratedCaptionsProps {
   selectedMedia: File | null;
@@ -47,17 +44,6 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
   
-  // Custom text overlay state
-  const [showCustomTextEditor, setShowCustomTextEditor] = useState(false);
-  const [customTextOverlay, setCustomTextOverlay] = useState({
-    text: '',
-    position: { x: 50, y: 50 },
-    color: '#ffffff',
-    size: 24,
-    rotation: 0
-  });
-  const [showCaptionWithCustomText, setShowCaptionWithCustomText] = useState(true);
-  
   const previewRef = useRef<HTMLDivElement>(null);
   const mediaContainerRef = useRef<HTMLDivElement>(null);
   
@@ -84,35 +70,6 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
   const handleRegenerateClick = () => {
     setCaptions([]);
     setIsGenerating(true);
-  };
-
-  // Custom text overlay handlers
-  const handleCustomTextChange = (text: string) => {
-    setCustomTextOverlay(prev => ({ ...prev, text }));
-  };
-
-  const handleCustomTextColorChange = (color: string) => {
-    setCustomTextOverlay(prev => ({ ...prev, color }));
-  };
-
-  const handleCustomTextSizeChange = (size: number) => {
-    setCustomTextOverlay(prev => ({ ...prev, size }));
-  };
-
-  const handleCustomTextRotationChange = (rotation: number) => {
-    setCustomTextOverlay(prev => ({ ...prev, rotation }));
-  };
-
-  const handleCustomTextPositionChange = (position: { x: number; y: number }) => {
-    setCustomTextOverlay(prev => ({ ...prev, position }));
-  };
-
-  const handleAddCustomText = () => {
-    setShowCustomTextEditor(true);
-  };
-
-  const handleCloseCustomTextEditor = () => {
-    setShowCustomTextEditor(false);
   };
 
   // Handle error state
@@ -166,25 +123,11 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
             selectedCaption={selectedCaption}
             setSelectedCaption={setSelectedCaption}
           />
-          
-          {/* Custom Text Button - Fixed to work with both media and text-only modes */}
-          {(selectedMedia || isTextOnly) && (
-            <div className="mt-4">
-              <Button
-                onClick={handleAddCustomText}
-                variant="outline"
-                className="w-full flex items-center justify-center gap-2 py-3"
-              >
-                <Type className="h-4 w-4" />
-                Ajouter du Texte Personnalisé
-              </Button>
-            </div>
-          )}
         </div>
         
         <div className="lg:w-3/5">
           <div className="sticky top-6 space-y-4">
-            {/* Preview section with custom text overlay */}
+            {/* Preview section */}
             {captions.length > 0 && selectedCaption >= 0 && (
               <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-3">
@@ -195,23 +138,10 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
                     ref={previewRef}
                     selectedMedia={selectedMedia}
                     previewUrl={previewUrl}
-                    caption={showCaptionWithCustomText ? captions[selectedCaption] : null}
+                    caption={captions[selectedCaption]}
                     captionOverlayMode={captionOverlayMode}
                     mediaType={mediaType}
                   />
-                  
-                  {/* Custom text overlay - Fixed to work with text-only mode */}
-                  {customTextOverlay.text && (
-                    <DraggableTextOverlay
-                      text={customTextOverlay.text}
-                      position={customTextOverlay.position}
-                      color={customTextOverlay.color}
-                      size={customTextOverlay.size}
-                      rotation={customTextOverlay.rotation}
-                      onPositionChange={handleCustomTextPositionChange}
-                      containerRef={mediaContainerRef}
-                    />
-                  )}
                 </div>
               </div>
             )}
@@ -225,55 +155,8 @@ const GeneratedCaptions: React.FC<GeneratedCaptionsProps> = ({
               isTextOnly={isTextOnly}
               captionOverlayMode={captionOverlayMode}
               onCaptionOverlayModeChange={onCaptionOverlayModeChange}
-              onShareClick={() => {
-                if (previewRef.current) {
-                  setIsSharing(true);
-                } else {
-                  console.error("Preview ref is null");
-                }
-              }}
-              onDownloadClick={() => {
-                if (previewRef.current) {
-                  setIsDownloading(true);
-                } else {
-                  console.error("Preview ref is null");
-                }
-              }}
-              isSharing={isSharing}
-              isDownloading={isDownloading}
               mediaType={mediaType}
             />
-
-            {/* Custom Text Editor - Fixed to work with text-only mode */}
-            {showCustomTextEditor && (
-              <div className="bg-gray-50 dark:bg-gray-800/90 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                <TextOverlayEditor
-                  onTextChange={handleCustomTextChange}
-                  onColorChange={handleCustomTextColorChange}
-                  onSizeChange={handleCustomTextSizeChange}
-                  onRotationChange={handleCustomTextRotationChange}
-                  onClose={handleCloseCustomTextEditor}
-                  initialText={customTextOverlay.text}
-                  initialColor={customTextOverlay.color}
-                  initialSize={customTextOverlay.size}
-                  initialRotation={customTextOverlay.rotation}
-                />
-                
-                {/* Caption visibility toggle when custom text is active */}
-                {customTextOverlay.text && !isTextOnly && (
-                  <div className="mt-4 flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-md border border-gray-200 dark:border-gray-700">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Afficher la légende générée avec le texte personnalisé
-                    </span>
-                    <Switch
-                      checked={showCaptionWithCustomText}
-                      onCheckedChange={setShowCaptionWithCustomText}
-                      className="data-[state=checked]:bg-primary"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
             
             <CaptionSharingActions
               previewRef={previewRef}

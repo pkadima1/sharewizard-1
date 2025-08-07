@@ -2,7 +2,25 @@
 rules_version = '2';
 
 service cloud.firestore {
-  match /databases/{database}/documents {
+  match /dat    // =    // =============================
+    // 📝 BLOG CONTENT ACCESS
+    // =============================
+    
+    // Special read access for afribudget@gmail.com's longform content for blog display
+    // This rule allows ANYONE (including unauthenticated users) to read this user's completed content
+    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
+      // Allow public read access to completed longform content for blog display
+      // No authentication required - completely public for SEO and accessibility
+      allow read: if true;
+    }===================
+    // 📝 BLOG CONTENT ACCESS
+    // =============================
+    
+    // Special read access for afribudget@gmail.com's longform content for blog display
+    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
+      // Allow public read access to completed longform content for blog display
+      allow read: if true; // Allow anyone to read this specific user's completed content
+    }atabase}/documents {
 
     // =============================
     // 🔒 HELPER FUNCTIONS
@@ -64,7 +82,17 @@ service cloud.firestore {
     }
 
     // =============================
-    // 🔐 CUSTOMER DATA SECURITY
+    // � BLOG CONTENT ACCESS
+    // =============================
+    
+    // Special read access for afribudget@gmail.com's longform content for blog display
+    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
+      // Allow public read access to completed longform content for blog display
+      allow read: if resource.data.status == "completed";
+    }
+
+    // =============================
+    // �🔐 CUSTOMER DATA SECURITY
     // =============================
 
     // Allow each user to read ONLY their own customer-related data
@@ -88,6 +116,28 @@ service cloud.firestore {
     // Allow system functions to manage subscription data
     match /subscriptions/{customerId} {
       allow read, write: if request.auth.uid == customerId;
+    }
+
+    // =============================
+    // 📧 NEWSLETTER SUBSCRIPTIONS
+    // =============================
+
+    // Allow anyone to subscribe to newsletter (unauthenticated writes allowed)
+    match /blogSubs/{docId} {
+      allow create: if true; // Allow anyone to create newsletter subscriptions
+      allow read: if false; // Don't allow reading (privacy)
+      allow update, delete: if false; // Don't allow updates or deletes
+    }
+
+    // =============================
+    // 📝 CONTACT FORM SUBMISSIONS
+    // =============================
+
+    // Allow anyone to submit contact forms (unauthenticated writes allowed)
+    match /EngPcontactForm/{docId} {
+      allow create: if true; // Allow anyone to create contact form submissions
+      allow read: if false; // Don't allow reading (privacy)
+      allow update, delete: if false; // Don't allow updates or deletes
     }
 
     // =============================

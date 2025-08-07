@@ -1,61 +1,113 @@
 /**
- * Translation utility for content structure components
- * Basic implementation that can be extended with react-i18next or similar
+ * useTranslation Hook
+ * Provides stable translation function references to fix React hooks dependency issues
  */
 
-import enTranslations from '../locales/en.json';
+import { useCallback } from 'react';
+import { useTranslation as useI18nTranslation } from 'react-i18next';
 
-type TranslationPath = string;
-
-// Basic translation function - can be replaced with i18n library
+/**
+ * Provides a stable translation function that doesn't change on every render
+ * This helps fix React hooks dependency warnings when using translation functions
+ */
 export const useTranslation = () => {
-  const t = (path: TranslationPath, defaultValue?: string): string => {
-    const keys = path.split('.');
-    let value: any = enTranslations;
-    
-    for (const key of keys) {
-      value = value?.[key];
-      if (value === undefined) {
-        return defaultValue || path;
-      }
-    }
-    
-    return typeof value === 'string' ? value : defaultValue || path;
+  const { t, i18n } = useI18nTranslation();
+  
+  const stableT = useCallback((key: string, params?: Record<string, unknown>) => {
+    return t(key, params);
+  }, [t]);
+  
+  const stableTWithNamespace = useCallback((namespace: string, key: string, params?: Record<string, unknown>) => {
+    return t(key, { ns: namespace, ...params });
+  }, [t]);
+  
+  const changeLanguage = useCallback((language: string) => {
+    return i18n.changeLanguage(language);
+  }, [i18n]);
+  
+  const getCurrentLanguage = useCallback(() => {
+    return i18n.language;
+  }, [i18n]);
+  
+  const isLanguageLoaded = useCallback((language: string) => {
+    return i18n.hasResourceBundle(language, 'translation');
+  }, [i18n]);
+  
+  return {
+    t: stableT,
+    tWithNamespace: stableTWithNamespace,
+    changeLanguage,
+    getCurrentLanguage,
+    isLanguageLoaded,
+    i18n,
+    ready: i18n.isInitialized,
+    language: i18n.language,
+    languages: i18n.languages,
   };
-
-  return { t };
 };
 
-// Content structure translation keys
-export const CONTENT_STRUCTURE_KEYS = {
-  HOW_TO_STEPS: 'contentStructures.howToSteps',
-  FAQ_QA: 'contentStructures.faqQa',
-  COMPARISON_VS: 'contentStructures.comparisonVs',
-  REVIEW_ANALYSIS: 'contentStructures.reviewAnalysis',
-  CASE_STUDY_DETAILED: 'contentStructures.caseStudyDetailed',
-} as const;
+/**
+ * Hook for translation with specific namespace
+ * Useful when working with specific translation namespaces
+ */
+export const useTranslationWithNamespace = (namespace: string) => {
+  const { t } = useI18nTranslation(namespace);
+  
+  const stableT = useCallback((key: string, params?: Record<string, unknown>) => {
+    return t(key, params);
+  }, [t]);
+  
+  return {
+    t: stableT,
+    namespace,
+  };
+};
 
-// Reading level translation keys
-export const READING_LEVEL_KEYS = {
-  BEGINNER: 'readingLevels.beginner',
-  INTERMEDIATE: 'readingLevels.intermediate',
-  ADVANCED: 'readingLevels.advanced',
-} as const;
+/**
+ * Hook for translation with fallback
+ * Provides fallback text when translation is not available
+ */
+export const useTranslationWithFallback = () => {
+  const { t } = useI18nTranslation();
+  
+  const stableT = useCallback((key: string, fallback: string, params?: Record<string, unknown>) => {
+    const translation = t(key, params);
+    return translation === key ? fallback : translation;
+  }, [t]);
+  
+  return {
+    t: stableT,
+  };
+};
 
-// Format option translation keys
-export const FORMAT_OPTION_KEYS = {
-  MARKDOWN: 'formatOptions.markdown',
-  HTML: 'formatOptions.html',
-  GDOCS: 'formatOptions.gdocs',
-} as const;
+/**
+ * Hook for plural translation
+ * Handles plural forms automatically
+ */
+export const usePluralTranslation = () => {
+  const { t } = useI18nTranslation();
+  
+  const stableT = useCallback((key: string, count: number, params?: Record<string, unknown>) => {
+    return t(key, { count, ...params });
+  }, [t]);
+  
+  return {
+    t: stableT,
+  };
+};
 
-// Content generation translation keys
-export const CONTENT_GENERATION_KEYS = {
-  PLAGIARISM_CHECK: 'contentGeneration.plagiarismCheck',
-  PLAGIARISM_CHECK_DESC: 'contentGeneration.plagiarismCheckDescription',
-  INCLUDE_IMAGES: 'contentGeneration.includeImages',
-  INCLUDE_IMAGES_DESC: 'contentGeneration.includeImagesDescription',
-  ESTIMATED_TIME: 'contentGeneration.estimatedTime',
-  BASED_ON_COMPLEXITY: 'contentGeneration.basedOnComplexity',
-  GENERATION_FEATURES: 'contentGeneration.generationFeatures',
-} as const;
+/**
+ * Hook for interpolation translation
+ * Handles complex interpolation patterns
+ */
+export const useInterpolationTranslation = () => {
+  const { t } = useI18nTranslation();
+  
+  const stableT = useCallback((key: string, interpolation: Record<string, unknown>) => {
+    return t(key, { interpolation });
+  }, [t]);
+  
+  return {
+    t: stableT,
+  };
+};

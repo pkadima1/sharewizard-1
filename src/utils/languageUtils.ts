@@ -17,21 +17,108 @@ export const detectAndSetLanguage = () => {
     return;
   }
   
-  // Check localStorage first
-  const savedLanguage = localStorage.getItem('i18nextLng');
+  // Let i18n handle language detection automatically
+  // It will check localStorage first, then fall back to browser language
+  const currentLang = i18n.language;
+  const supportedLang = supportedLanguages.find(lang => lang.code === currentLang);
   
-  if (savedLanguage) {
-    // If language is already saved, use it
-    return i18n.changeLanguage(savedLanguage);
+  // If current language is not supported, fall back to English
+  if (!supportedLang) {
+    return i18n.changeLanguage('en');
   }
   
-  // Otherwise detect from browser
-  const browserLang = navigator.language.split('-')[0];
-  const supportedLang = supportedLanguages.find(lang => lang.code === browserLang);
+  // Language is already set correctly
+  return Promise.resolve(currentLang);
+};
+
+/**
+ * Force reset language to English and clear any stored preferences
+ * Useful for users who are stuck with the wrong language
+ */
+export const forceResetToEnglish = () => {
+  // Clear localStorage
+  localStorage.removeItem('i18nextLng');
   
-  // If browser language is supported, use it. Otherwise fall back to default (en)
-  const langToUse = supportedLang ? browserLang : 'en';
-  return i18n.changeLanguage(langToUse);
+  // Force change to English
+  return i18n.changeLanguage('en');
+};
+
+/**
+ * Debug utility to diagnose language detection issues
+ */
+export const debugLanguageDetection = () => {
+  const browserLang = navigator.language;
+  const storedLang = localStorage.getItem('i18nextLng');
+  const currentLang = i18n.language;
+  
+  console.log('Language Debug Info:', {
+    browserLanguage: browserLang,
+    storedLanguage: storedLang,
+    currentLanguage: currentLang,
+    supportedLanguages: supportedLanguages.map(l => l.code),
+    isCurrentLangSupported: supportedLanguages.some(l => l.code === currentLang)
+  });
+  
+  return {
+    browserLanguage: browserLang,
+    storedLanguage: storedLang,
+    currentLanguage: currentLang,
+    isCurrentLangSupported: supportedLanguages.some(l => l.code === currentLang)
+  };
+};
+
+/**
+ * Test specific translation keys that were causing issues
+ */
+export const testTranslationKeys = () => {
+  const currentLang = i18n.language;
+  const testKeys = [
+    'cta.options.subscribe',
+    'cta.options.bookCall', 
+    'cta.options.download',
+    'cta.options.visitWebsite',
+    'cta.options.none'
+  ];
+  
+  console.log(`Testing translation keys for language: ${currentLang}`);
+  
+  testKeys.forEach(key => {
+    const translation = i18n.t(key, { ns: 'longform' });
+    console.log(`${key}: ${translation}`);
+  });
+  
+  return testKeys.map(key => ({
+    key,
+    translation: i18n.t(key, { ns: 'longform' }),
+    exists: i18n.exists(key, { ns: 'longform' })
+  }));
+};
+
+/**
+ * Test if translation files are accessible at the correct URLs
+ */
+export const testTranslationFileAccess = async () => {
+  const languages = ['en', 'fr'];
+  const namespaces = ['common', 'longform'];
+  
+  console.log('Testing translation file accessibility...');
+  
+  for (const lang of languages) {
+    for (const ns of namespaces) {
+      const url = `/locales/${lang}/${ns}.json`;
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`✅ ${url} - Loaded successfully (${Object.keys(data).length} keys)`);
+        } else {
+          console.error(`❌ ${url} - HTTP ${response.status}: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error(`❌ ${url} - Network error:`, error);
+      }
+    }
+  }
 };
 
 /**

@@ -117,7 +117,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({
     };
 
     return toneExamples[contentTone] || toneExamples.professional;
-  }, [contentTone, keywords, industry, audience]);
+  }, [contentTone, keywords, industry, audience, topic]);
 
   // Get section icon
   const getSectionIcon = (type: string) => {

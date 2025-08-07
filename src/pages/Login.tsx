@@ -7,8 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
+import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
+import { trackLogin, trackButtonClick, trackError } from '@/utils/analytics';
 
 const Login: React.FC = () => {
+  // Analytics: Track page view automatically
+  usePageAnalytics('Login - EngagePerfect');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +59,9 @@ const Login: React.FC = () => {
     try {
       await login(email, password);
       
+      // Analytics: Track successful email login
+      trackLogin('email');
+      
       // If remember me is checked, store auth state
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true');
@@ -67,6 +75,9 @@ const Login: React.FC = () => {
       });
       navigate('/caption-generator');
     } catch (error: any) {
+      // Analytics: Track login error
+      trackError('login_failed', error.message, 'login_page');
+      
       let errorMessage = t('login.failedSignIn');
       let shouldRedirectToSignup = false;
       

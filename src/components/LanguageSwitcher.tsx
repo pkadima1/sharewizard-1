@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { GlobeIcon } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { GlobeIcon, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { getLanguageFlag } from '@/utils/languageUtils';
+import { getLanguageFlag, forceResetToEnglish } from '@/utils/languageUtils';
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -12,6 +12,13 @@ export default function LanguageSwitcher() {
   // Function to handle language change
   const handleLanguageChange = (languageCode: string) => {
     changeLanguage(languageCode);
+  };
+
+  // Function to force reset to English
+  const handleForceResetToEnglish = () => {
+    forceResetToEnglish();
+    // Also update the URL to reflect English
+    changeLanguage('en');
   };
 
   // Get the current language object
@@ -51,6 +58,14 @@ export default function LanguageSwitcher() {
             <span>{language.name}</span>
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleForceResetToEnglish}
+          className="flex items-center gap-3 text-orange-600 dark:text-orange-400"
+        >
+          <RefreshCw className="h-4 w-4" />
+          <span>Reset to English</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
