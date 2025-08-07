@@ -215,10 +215,16 @@
       "ukOffice": "Bureau UK",
       "euOffice": "Bureau EU",
       "phone": "Téléphone & WhatsApp",
+      "phoneTelegram": "Téléphone & Telegram",
       "whatsapp": {
         "title": "Support Rapide via WhatsApp",
         "description": "Obtenez une aide instantanée avec notre équipe de support WhatsApp",
         "button": "Démarrer le Chat WhatsApp"
+      },
+      "telegram": {
+        "title": "Support Rapide via Telegram",
+        "description": "Obtenez une aide instantanée avec notre équipe de support Telegram",
+        "button": "Démarrer le Chat Telegram"
       }
     },
     "hours": {

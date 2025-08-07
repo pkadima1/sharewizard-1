@@ -216,10 +216,16 @@
       "ukOffice": "UK Office",
       "euOffice": "EU Office",
       "phone": "Phone & WhatsApp",
+      "phoneTelegram": "Phone & Telegram",
       "whatsapp": {
         "title": "Quick Support via WhatsApp",
         "description": "Get instant help with our WhatsApp support team",
         "button": "Start WhatsApp Chat"
+      },
+      "telegram": {
+        "title": "Quick Support via Telegram",
+        "description": "Get instant help with our Telegram support team",
+        "button": "Start Telegram Chat"
       }
     },
     "hours": {
