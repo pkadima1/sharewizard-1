@@ -134,7 +134,7 @@ export const getContentPreview = (content: string, maxLength: number = 200): str
  * Format content specifically for preview mode (smaller spacing, truncation)
  */
 export const formatBlogContentPreview = (content: string, maxLength?: number): string => {
-  let formattedContent = formatBlogContent(content, { preview: true });
+  const formattedContent = formatBlogContent(content, { preview: true });
   
   if (maxLength) {
     // For previews, we might want to truncate the HTML content too

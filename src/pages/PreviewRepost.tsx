@@ -22,7 +22,6 @@ const PreviewRepost = () => {
   const { caption: initialCaption, gen, mediaFile } = location.state || {};
   
   const [currentCaption, setCurrentCaption] = useState(initialCaption);
-
   const { currentUser } = useAuth();
 
   // Initialize showCaptionOverlay to true if mediaFile is an image or video
@@ -36,6 +35,12 @@ const PreviewRepost = () => {
   const [textSize, setTextSize] = useState(36);
   const [textRotation, setTextRotation] = useState(0);
   const [showTextOverlayEditor, setShowTextOverlayEditor] = useState(false);
+
+  // Move all refs and state to top level
+  const previewRef = useRef<HTMLDivElement>(null);
+  const mediaContainerRef = useRef<HTMLDivElement>(null);
+  const [processedVideoFile, setProcessedVideoFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);
     // Extract text overlay data from file if it exists
   useEffect(() => {
     if (mediaFile) {
@@ -77,6 +82,79 @@ const PreviewRepost = () => {
       }
     }
   }, [mediaFile]);
+
+  // Auto-process video with caption when video is added or caption changes
+  useEffect(() => {
+    if (mediaFile && mediaFile.type.startsWith('video')) {
+      setProcessing(true);
+      setProcessedVideoFile(null);
+      setTimeout(async () => {
+        const video = document.querySelector('#preview-video');
+        if (video) {
+          try {
+            // Add text overlay data to the video element
+            if (customTextOverlay) {
+              // Add text overlay data to the video element for processing
+              (video as any).textOverlayData = {
+                text: customTextOverlay,
+                position: textPosition,
+                color: textColor,
+                size: textSize,
+                rotation: textRotation
+              };
+              
+              // Also add the original mediaFile as a reference to enable fallback retrieval
+              (video as any).mediaFile = mediaFile;
+              
+              
+              // Set data attribute as an additional backup for text overlay data
+              try {
+                const textOverlayJson = JSON.stringify({
+                  text: customTextOverlay,
+                  position: textPosition,
+                  color: textColor,
+                  size: textSize,
+                  rotation: textRotation
+                });
+                (video as HTMLVideoElement).setAttribute('data-text-overlay', textOverlayJson);
+              } catch (e) {
+                console.warn('Failed to set data-text-overlay attribute:', e);
+              }
+            }
+            
+            const captionedBlob = await createCaptionedVideo(video as HTMLVideoElement, currentCaption, 'modern');
+            const file = new File([captionedBlob], `video-${Date.now()}.mp4`, { type: 'video/mp4' });
+            
+            // Store text overlay data in the processed file as well
+            if (customTextOverlay) {
+              (file as any).textOverlayData = {
+                text: customTextOverlay,
+                position: textPosition,
+                color: textColor,
+                size: textSize,
+                rotation: textRotation
+              };
+              
+              // Store processed file in mediaFileCache for better retrieval
+              if (typeof window !== 'undefined' && window.mediaFileCache) {
+                const blobUrl = URL.createObjectURL(file);
+                (window.mediaFileCache as any)[blobUrl] = file;
+              }
+            }
+            
+            setProcessedVideoFile(file);
+          } catch (err) {
+            console.error('Failed to process video:', err);
+            toast.error('Failed to process video with caption.');
+          } finally {
+            setProcessing(false);
+          }
+        } else {
+          setProcessing(false);
+        }
+      }, 100);
+    }
+  }, [mediaFile, customTextOverlay, textPosition, textColor, textSize, textRotation, currentCaption]);
 
   // Improved validation with better error messages
   if (!currentCaption || !gen) {
@@ -243,83 +321,6 @@ const PreviewRepost = () => {
       img.src = URL.createObjectURL(mediaFile);
     });
   };
-
-  const previewRef = useRef<HTMLDivElement>(null);
-  const mediaContainerRef = useRef<HTMLDivElement>(null);
-
-  const [processedVideoFile, setProcessedVideoFile] = useState<File | null>(null);
-  const [processing, setProcessing] = useState(false);  // Auto-process video with caption when video is added or caption changes
-  useEffect(() => {
-    if (mediaFile && mediaFile.type.startsWith('video')) {
-      setProcessing(true);
-      setProcessedVideoFile(null);
-      setTimeout(async () => {
-        const video = document.querySelector('#preview-video');
-        if (video) {
-          try {
-            // Add text overlay data to the video element
-            if (customTextOverlay) {
-              // Add text overlay data to the video element for processing
-              (video as any).textOverlayData = {
-                text: customTextOverlay,
-                position: textPosition,
-                color: textColor,
-                size: textSize,
-                rotation: textRotation
-              };
-              
-              // Also add the original mediaFile as a reference to enable fallback retrieval
-              (video as any).mediaFile = mediaFile;
-              
-              
-              // Set data attribute as an additional backup for text overlay data
-              try {
-                const textOverlayJson = JSON.stringify({
-                  text: customTextOverlay,
-                  position: textPosition,
-                  color: textColor,
-                  size: textSize,
-                  rotation: textRotation
-                });
-                (video as HTMLVideoElement).setAttribute('data-text-overlay', textOverlayJson);
-              } catch (e) {
-                console.warn('Failed to set data-text-overlay attribute:', e);
-              }
-            }
-            
-            const captionedBlob = await createCaptionedVideo(video as HTMLVideoElement, currentCaption, 'modern');
-            const file = new File([captionedBlob], `video-${Date.now()}.mp4`, { type: 'video/mp4' });
-            
-            // Store text overlay data in the processed file as well
-            if (customTextOverlay) {
-              (file as any).textOverlayData = {
-                text: customTextOverlay,
-                position: textPosition,
-                color: textColor,
-                size: textSize,
-                rotation: textRotation
-              };
-              
-              // Store processed file in mediaFileCache for better retrieval
-              if (typeof window !== 'undefined' && window.mediaFileCache) {
-                const blobUrl = URL.createObjectURL(file);
-                (window.mediaFileCache as any)[blobUrl] = file;
-              }
-            }
-            
-            setProcessedVideoFile(file);
-          } catch (err) {
-            console.error('Failed to process video:', err);
-            toast.error('Failed to process video with caption.');
-          } finally {
-            setProcessing(false);
-          }
-        } else {
-          setProcessing(false);
-        }
-      }, 500); // Give time for video to render
-    }
-  }, [mediaFile, currentCaption, customTextOverlay, textPosition, textColor, textSize, textRotation]);
 
   const handleShareOrDownload = async (action: 'share' | 'download', userEvent?: React.MouseEvent) => {
     const targetUserId = currentUser?.uid || gen.userId;
