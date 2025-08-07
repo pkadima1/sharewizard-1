@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, Phone, MapPin, Clock, MessageCircle, Users, Zap } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageCircle, Users, Zap, Send } from 'lucide-react';
 import { createSupportEmail, sendContactEmail } from '@/lib/emailUtils';
 import { toast } from '@/hooks/use-toast';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -257,7 +257,7 @@ Timestamp: ${new Date().toLocaleString()}
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Email */}
-               {/* <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
@@ -266,13 +266,13 @@ Timestamp: ${new Date().toLocaleString()}
                       {t('contact.info.email')}
                     </p>
                     <a 
-                      href="mailto:hello@nodematics.com" 
+                      href="mailto:support@engageperfect.com" 
                       className="text-primary hover:text-primary/80 transition-colors"
                     >
-                      hello@nodematics.com
+                      support@engageperfect.com
                     </a>
                   </div>
-                </div>*/}
+                </div>
 
                 {/* UK Office */}
                 <div className="flex items-start space-x-3">
@@ -284,11 +284,11 @@ Timestamp: ${new Date().toLocaleString()}
                       {t('contact.info.ukOffice')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      2, Main Court Cambrian, Main Court<br />
-                      Liverpool, England, L1K 25A<br />
+                      2, Main Court Brampton,<br />
+                      Cambria, England, CA8 1SA<br />
                     </p>
                     <p className="text-sm text-primary mt-1">
-                      {t('contact.info.phone')}: <a href="tel:+447799936260" className="hover:text-primary/80">+44 7799 936260</a>
+                      {t('contact.info.phone')}: <a href="tel:+44 7767596260" className="hover:text-primary/80">+44 77 6759 6260</a>
                     </p>
                   </div>
                 </div>
@@ -303,12 +303,34 @@ Timestamp: ${new Date().toLocaleString()}
                       {t('contact.info.euOffice')}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Astra 14, 9 North Station Street<br />
-                      Tallinn, Harju County 10312<br />
+                      Auna 4-5 , 9 North Tallinn district<br />
+                      Tallinn, Harju County 10317<br />
                     </p>
                     <p className="text-sm text-primary mt-1">
-                      {t('contact.info.phone')}: <a href="tel:+37253448842" className="hover:text-primary/80">+372 5344 8842</a>
+                      {t('contact.info.phoneTelegram')}: <a href="tel:+372 5354 1829" className="hover:text-primary/80">+372 5354 1829</a>
                     </p>
+                  </div>
+                </div>
+
+                {/* Telegram Support */}
+                <div className="flex items-start space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mt-1">
+                    <Send className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                      📱 {t('contact.info.telegram.title')}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      {t('contact.info.telegram.description')}
+                    </p>
+                    <Button
+                      onClick={() => window.open('https://t.me/+37253541829', '_blank')}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-auto"
+                      size="sm"
+                    >
+                      {t('contact.info.telegram.button')}
+                    </Button>
                   </div>
                 </div>
 
@@ -325,7 +347,7 @@ Timestamp: ${new Date().toLocaleString()}
                       {t('contact.info.whatsapp.description')}
                     </p>
                     <Button
-                      onClick={() => window.open('https://wa.me/447799936260?text=Hi%2C%20I%20need%20help%20with%20EngagePerfect', '_blank')}
+                      onClick={() => window.open('https://wa.me/447767596260?text=Hi%2C%20I%20need%20help%20with%20EngagePerfect', '_blank')}
                       className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 h-auto"
                       size="sm"
                     >
