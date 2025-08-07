@@ -20,6 +20,7 @@ import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import { useLanguage } from "./contexts/LanguageContext";
 import { trackPageView } from "./utils/analytics";
 
@@ -110,6 +111,7 @@ const RouterConfig = () => {
               <Route path="/longform" element={<RootRedirect />} />
               <Route path="/gallery" element={<RootRedirect />} />
               <Route path="/blog" element={<RootRedirect />} />
+              <Route path="/blog/:postId" element={<RootRedirect />} />
               <Route path="/contact" element={<RootRedirect />} />
               <Route path="/admin" element={<RootRedirect />} />
               
@@ -130,8 +132,9 @@ const RouterConfig = () => {
                     <Route path="/preview-repost" element={<PreviewRepost />} />
                     <Route path="/longform" element={<ErrorBoundary><LongFormWizard /></ErrorBoundary>} />
                     <Route path="/gallery" element={<Gallery />} />
-                                  <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
-              <Route path="/contact" element={<Contact />} />
+                    <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
+                    <Route path="/blog/:postId" element={<ErrorBoundary><BlogPost /></ErrorBoundary>} />
+                    <Route path="/contact" element={<Contact />} />
                     
                     {/* Admin routes */}
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />

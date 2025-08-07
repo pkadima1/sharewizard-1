@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 import { 
   FileText, 
   Calendar, 
@@ -25,12 +26,14 @@ import {
   Tag,
   ArrowRight,
   Share2,
-  Loader2
+  Loader2,
+  ExternalLink
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useTranslation } from 'react-i18next';
+import { formatBlogContentPreview, getContentPreview } from '@/utils/contentFormatter';
 import { 
   Dialog,
   DialogContent,
@@ -214,20 +217,6 @@ const Blog: React.FC = () => {
     }
   };
 
-  // Get content preview
-  const getContentPreview = (content: string, maxLength: number = 150) => {
-    const cleanContent = content
-      .replace(/#{1,6}\s/g, '') // Remove markdown headers
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold formatting
-      .replace(/\*(.*?)\*/g, '$1') // Remove italic formatting
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove links, keep text
-      .trim();
-    
-    return cleanContent.length > maxLength 
-      ? cleanContent.substring(0, maxLength) + '...'
-      : cleanContent;
-  };
-
   // Get content type color
   const getContentTypeColor = (type: string) => {
     const colors = {
@@ -244,28 +233,6 @@ const Blog: React.FC = () => {
   const openPreview = (post: BlogPost) => {
     setSelectedPost(post);
     setPreviewOpen(true);
-  };
-
-  // Format content for preview
-  const formatContentForPreview = (content: string) => {
-    return content
-      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">$1</h1>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">$1</h2>')
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-200">$1</h3>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/^\* (.+)$/gm, '<li class="mb-1">$1</li>')
-      .replace(/^- (.+)$/gm, '<li class="mb-1">$1</li>')
-      .replace(/(<li>.*?<\/li>\s*)+/gm, '<ul class="list-disc list-inside mb-4 space-y-1">$&</ul>')
-      .split('\n\n')
-      .map(para => {
-        para = para.trim();
-        if (para && !para.startsWith('<h') && !para.startsWith('<ul') && !para.startsWith('<li')) {
-          return `<p class="mb-4 leading-relaxed text-gray-700 dark:text-gray-300">${para}</p>`;
-        }
-        return para;
-      })
-      .join('\n');
   };
 
   if (loading) {
@@ -421,9 +388,11 @@ const Blog: React.FC = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                        {post.inputs.topic}
-                      </h3>
+                      <Link to={`/blog/${post.id}`}>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary transition-colors hover:text-primary cursor-pointer">
+                          {post.inputs.topic}
+                        </h3>
+                      </Link>
 
                       {/* Content Preview */}
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
@@ -470,22 +439,33 @@ const Blog: React.FC = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-2">
                         <Button
-                          onClick={() => openPreview(post)}
+                          asChild
                           variant="outline"
                           size="sm"
                           className="flex-1 group-hover:border-primary group-hover:text-primary transition-colors"
                         >
-                          <Eye className="h-4 w-4 mr-2" />
-                          {t('blog.article.readArticle')}
+                          <Link to={`/blog/${post.id}`} className="flex items-center justify-center">
+                            <Eye className="h-4 w-4 mr-2" />
+                            {t('blog.article.readArticle')}
+                          </Link>
+                        </Button>
+                        <Button
+                          onClick={() => openPreview(post)}
+                          variant="ghost"
+                          size="sm"
+                          title="Quick preview"
+                        >
+                          <ExternalLink className="h-4 w-4" />
                         </Button>
                         <Button
                           onClick={() => {
+                            const shareUrl = `${window.location.origin}/blog/${post.id}`;
                             navigator.share?.({
                               title: post.inputs.topic,
                               text: getContentPreview(post.content, 100),
-                              url: window.location.href
+                              url: shareUrl
                             }).catch(() => {
-                              navigator.clipboard.writeText(window.location.href);
+                              navigator.clipboard.writeText(shareUrl);
                               toast({
                                 title: "Link Copied",
                                 description: "Article link copied to clipboard",
@@ -546,7 +526,7 @@ const Blog: React.FC = () => {
               <div
                 className="prose prose-sm max-w-none dark:prose-invert"
                 dangerouslySetInnerHTML={{
-                  __html: formatContentForPreview(selectedPost.content)
+                  __html: formatBlogContentPreview(selectedPost.content)
                 }}
               />
             )}

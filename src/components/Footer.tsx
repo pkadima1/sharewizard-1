@@ -132,8 +132,8 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">{t('footer.legal')}</h3>
             <ul className="space-y-3">
-              <li><Link to="/terms" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.terms')}</Link></li>
-              <li><Link to="/privacy" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.privacy')}</Link></li>
+              <li><a href="/terms" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.terms')}</a></li>
+              <li><a href="/privacy" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.privacy')}</a></li>
               {/*<li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Cookie Policy</Link></li>
             <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">GDPR</Link></li>
               */}</ul>

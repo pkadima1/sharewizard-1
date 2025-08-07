@@ -130,8 +130,51 @@ const cleanSchema = (content) => {
  */
 const convertMarkdownToHTML = (content) => {
   return content
-    // Convert markdown headings to HTML
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    // Special handling for #### blocks (4 hashes) - convert to styled blockquotes
+    .replace(/^#### (Fun Fact|Caution|Note|Tip|Warning|Important):\s*(.+)$/gim, (match, type, text) => {
+      const typeColors = {
+        'Fun Fact': 'border-blue-500 bg-blue-50 text-blue-800',
+        'Caution': 'border-yellow-500 bg-yellow-50 text-yellow-800',
+        'Warning': 'border-red-500 bg-red-50 text-red-800',
+        'Note': 'border-gray-500 bg-gray-50 text-gray-800',
+        'Tip': 'border-green-500 bg-green-50 text-green-800',
+        'Important': 'border-purple-500 bg-purple-50 text-purple-800'
+      };
+      const colorClass = typeColors[type] || typeColors['Note'];
+      return `<blockquote class="border-l-4 ${colorClass} p-3 my-4 rounded-r-lg">
+        <div class="flex items-start gap-2">
+          <strong class="font-semibold text-xs uppercase tracking-wide">${type}:</strong>
+          <span class="flex-1 text-sm">${text}</span>
+        </div>
+      </blockquote>`;
+    })
+    
+    // Special handling for ### blocks (3 hashes) - convert to styled blockquotes
+    .replace(/^### (Fun Fact|Caution|Note|Tip|Warning|Important):\s*(.+)$/gim, (match, type, text) => {
+      const typeColors = {
+        'Fun Fact': 'border-blue-500 bg-blue-50 text-blue-800',
+        'Caution': 'border-yellow-500 bg-yellow-50 text-yellow-800',
+        'Warning': 'border-red-500 bg-red-50 text-red-800',
+        'Note': 'border-gray-500 bg-gray-50 text-gray-800',
+        'Tip': 'border-green-500 bg-green-50 text-green-800',
+        'Important': 'border-purple-500 bg-purple-50 text-purple-800'
+      };
+      const colorClass = typeColors[type] || typeColors['Note'];
+      return `<blockquote class="border-l-4 ${colorClass} p-3 my-4 rounded-r-lg">
+        <div class="flex items-start gap-2">
+          <strong class="font-semibold text-xs uppercase tracking-wide">${type}:</strong>
+          <span class="flex-1 text-sm">${text}</span>
+        </div>
+      </blockquote>`;
+    })
+    
+    // Regular #### headings (4 hashes) that don't match the special pattern
+    .replace(/^#### ((?!(?:Fun Fact|Caution|Note|Tip|Warning|Important):).*)$/gim, '<h4>$1</h4>')
+    
+    // Regular ### headings that don't match the special pattern
+    .replace(/^### ((?!(?:Fun Fact|Caution|Note|Tip|Warning|Important):).*)$/gim, '<h3>$1</h3>')
+    
+    // Convert other markdown headings
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
     
@@ -176,7 +219,7 @@ const ensureProperParagraphs = (content) => {
     }
     
     // Handle list items
-    if (line.startsWith('<li>')) {
+    if (line.startsWith('<li>') || line.includes('class="bold-bullet-point"')) {
       if (!inList) {
         inList = true;
       }
@@ -224,6 +267,14 @@ const ensureProperParagraphs = (content) => {
  */
 const wrapListItems = (items) => {
   if (items.length === 0) return '';
+  
+  // Check if any items are bold bullet points
+  const hasBoldBullets = items.some(item => item.includes('class="bold-bullet-point"'));
+  
+  if (hasBoldBullets) {
+    // For bold bullet points, wrap in ul with special styling
+    return `<ul style="list-style-type: disc; margin-left: 20px;">\n${items.join('\n')}\n</ul>`;
+  }
   
   // Check if it should be ordered or unordered list
   // For now, default to unordered lists

@@ -33,7 +33,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { 
   exportToGoogleDocs, 
-  exportToOneDriveWord,
   createGoogleDocsService 
 } from '@/services/googleDocsService';
 import { useAppTranslation } from '@/hooks/useAppTranslation';
@@ -120,7 +119,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300';
  };
 
- const downloadContent = (content: LongformContent, format: 'markdown' | 'html' | 'txt' | 'pdf' | 'gdoc' | 'word') => {
+ const downloadContent = (content: LongformContent, format: 'html' | 'pdf' | 'gdoc') => {
    let fileContent = '';
    let fileName = '';
    let mimeType = '';
@@ -128,11 +127,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    const sanitizedTitle = content.inputs.topic.replace(/[^a-z0-9]/gi, '-').toLowerCase();
 
    switch (format) {
-     case 'markdown':
-       fileContent = content.content;
-       fileName = `${sanitizedTitle}.md`;
-       mimeType = 'text/markdown';
-       break;
      case 'html': {
        // Use enhanced formatter for better HTML output
        const formattedContent = formatBlogContent(content.content, {
@@ -182,16 +176,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        mimeType = 'text/html';
        break;
      }
-     case 'txt':
-       // Strip markdown formatting for plain text
-       fileContent = content.content
-         .replace(/^#+\s*/gm, '')
-         .replace(/\*\*(.*?)\*\*/g, '$1')
-         .replace(/\*(.*?)\*/g, '$1')
-         .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-       fileName = `${sanitizedTitle}.txt`;
-       mimeType = 'text/plain';
-       break;
      case 'pdf':
        // Open professional PDF generator dialog
        setPdfContent(content);
@@ -199,9 +183,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
        return;
      case 'gdoc':
        exportToGoogleDocsNew(content);
-       return;
-     case 'word':
-       exportToOneDriveWordNew(content);
        return;
    }
 
@@ -274,36 +255,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    }
  };
 
- const exportToOneDriveWordNew = async (content: LongformContent) => {
-   try {
-     await exportToOneDriveWord(content);
-
-     toast({
-       title: "📄 Export OneDrive Word Démarré !",
-       description: "Document Word téléchargé et OneDrive ouvert. Suivez les instructions de téléchargement.",
-       action: (
-         <Button 
-           variant="outline" 
-           size="sm" 
-           onClick={() => window.open('https://office.live.com/start/Word.aspx', '_blank')}
-           className="flex items-center gap-1"
-         >
-           <ExternalLink className="h-3 w-3" />
-           Ouvrir OneDrive
-         </Button>
-       ),
-     });
-
-   } catch (error) {
-     console.error('OneDrive Word export error:', error);
-     toast({
-       title: getTranslation('contentManager.errors.exportError', 'Erreur d\'Export'),
-       description: getTranslation('contentManager.errors.wordError', 'Échec de la préparation de l\'export OneDrive Word. Veuillez réessayer.'),
-       variant: "destructive",
-     });
-   }
- };
-
  const copyToClipboard = (content: LongformContent) => {
    // Detect language from content
    const isfrench = content.content.includes('Cependant') ||
@@ -313,32 +264,31 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                     content.inputs.topic.toLowerCase().includes('français');
    const language = isfrench ? 'fr' : 'en';
    
-   // Format content with clean, neutral styling for clipboard
+   // Format content with professional styling - matching HTML download quality
    const cleanContent = formatBlogContent(content.content, {
-     darkMode: false, // Always use light mode for clean copying
-     accentColor: '#000000', // Use black for clean copying
-     mobileFirst: false, // Use standard sizing for documents
+     darkMode: false,
+     accentColor: '#2563eb', // Use blue accent like HTML download
+     mobileFirst: false, // Use desktop formatting for documents
      enhancedReadability: true,
-     titleToRemove: content.inputs.topic
-   }).replace(/color:\s*[^;]+;/g, 'color: #000000;') // Ensure all text is black
-    .replace(/background[^;]*;/g, '') // Remove all backgrounds
-    .replace(/box-shadow[^;]*;/g, ''); // Remove all shadows
+     titleToRemove: content.inputs.topic // Remove duplicate title
+   });
    
-   // Generate complete article with clean, neutral styling
+   // Generate complete article with professional styling matching HTML download
    const metadata = {
      title: content.inputs.topic,
      author: t('contentManager.metadata.aiContentCreator'),
      readingTime: `${content.metadata.estimatedReadingTime} ${t('contentManager.metadata.minRead')}`,
      publishDate: formatDate(content.metadata.generatedAt),
-     tags: content.inputs.keywords?.slice(0, 5) || []
+     tags: content.inputs.keywords?.slice(0, 5) || [],
+     wordCount: content.metadata.actualWordCount
    };
    
-   // Create clean HTML for copying with neutral colors
-   const cleanFormattedContent = generateCleanCopyContent(cleanContent, metadata, language);
+   // Create professional HTML for copying with same quality as download
+   const professionalFormattedContent = generateCleanCopyContent(cleanContent, metadata, language);
 
    // Try to copy as rich HTML first, fallback to plain text
    if (navigator.clipboard && navigator.clipboard.write) {
-     const blob = new Blob([cleanFormattedContent], { type: 'text/html' });
+     const blob = new Blob([professionalFormattedContent], { type: 'text/html' });
      const clipboardItem = new ClipboardItem({
        'text/html': blob,
        'text/plain': new Blob([content.content], { type: 'text/plain' })
@@ -346,8 +296,8 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
      
      navigator.clipboard.write([clipboardItem]).then(() => {
        toast({
-         title: getTranslation('contentManager.copy.success', 'Contenu propre copié !'),
-         description: getTranslation('contentManager.copy.description', 'Contenu formaté propre avec texte noir copié. Parfait pour coller dans n\'importe quel document.'),
+         title: getTranslation('contentManager.copy.success', '✨ Contenu Professionnel Copié !'),
+         description: getTranslation('contentManager.copy.description', 'Format professionnel avec titres colorés et mise en page parfaite. Prêt pour Google Docs, Word, etc.'),
        });
      }).catch(() => {
        // Fallback to plain text
@@ -367,73 +317,101 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
    }
  };
 
- // Clean copy content generator - neutral colors, no backgrounds
+ // Enhanced copy content generator - matches HTML download quality
  const generateCleanCopyContent = (content: string, metadata: Record<string, unknown>, language: string) => {
    // Use translation system instead of manual language detection
    const authorLabel = getTranslation('contentManager.metadata.author', 'Auteur');
    const readingTimeLabel = getTranslation('contentManager.metadata.readingTime', 'Temps de lecture');
    const publishedLabel = getTranslation('contentManager.metadata.published', 'Publié le');
+   const wordsLabel = getTranslation('contentManager.metadata.words', 'mots');
    
    return `
      <div style="
        max-width: 800px;
        margin: 0 auto;
        padding: 20px;
-       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
        background: transparent;
-       color: #000000;
+       color: #333333;
        line-height: 1.6;
      ">
-       <header style="
+       <div style="
          text-align: center;
-         margin-bottom: 30px;
-         padding-bottom: 20px;
-         border-bottom: 1px solid #cccccc;
+         margin-bottom: 3em;
+         padding-bottom: 2em;
+         border-bottom: 2px solid #e5e7eb;
        ">
          <h1 style="
-           font-size: 28px;
+           color: #1e40af;
+           font-size: 1.2em;
            font-weight: bold;
-           color: #000000;
-           margin: 0 0 15px 0;
+           margin: 0 0 0.5em 0;
            line-height: 1.2;
          ">${metadata.title}</h1>
          <div style="
-           color: #666666;
-           font-size: 14px;
+           color: #6b7280;
+           font-size: 0.875em;
            margin-top: 10px;
          ">
-           <span>${authorLabel}: ${metadata.author}</span> • 
-           <span>${readingTimeLabel}: ${metadata.readingTime}</span> • 
-           <span>${publishedLabel}: ${metadata.publishDate}</span>
+           <span>${metadata.readingTime}</span>
          </div>
          ${Array.isArray(metadata.tags) && metadata.tags.length > 0 ? `
            <div style="margin-top: 15px;">
              ${(metadata.tags as string[]).map((tag: string) => `
                <span style="
-                 background: #f0f0f0;
-                 color: #333333;
+                 background: #f3f4f6;
+                 color: #374151;
                  padding: 4px 12px;
-                 border-radius: 15px;
+                 border-radius: 20px;
                  font-size: 12px;
                  margin: 0 4px;
-                 border: 1px solid #cccccc;
+                 border: 1px solid #d1d5db;
                ">#${tag}</span>
              `).join('')}
            </div>
          ` : ''}
-       </header>
+       </div>
        
-       <main style="
+       <div style="
          font-size: 16px;
          line-height: 1.7;
-         color: #000000;
+         color: #333333;
+         text-align: left;
        ">
-         <div style="
-           color: #000000;
-         ">
-           ${content.replace(/color:\s*[^;]+;/g, 'color: #000000;')}
+         ${content
+           .replace(/color:\s*[^;]+;/g, 'color: #333333;')
+           .replace(/background[^;]*;/g, '')
+           .replace(/box-shadow[^;]*;/g, '')
+           .replace(/<h1[^>]*>/g, '<h1 style="color: #2563eb; font-size: 1.4em; margin-top: 2em; margin-bottom: 0.5em; font-weight: bold; line-height: 1.2; text-align: left;">')
+           .replace(/<h2[^>]*>/g, '<h2 style="color: #2563eb; font-size: 1.2em; margin-top: 2em; margin-bottom: 0.5em; font-weight: bold; line-height: 1.2; text-align: left;">')
+           .replace(/<h3[^>]*>/g, '<h3 style="color: #2563eb; font-size: 1.1em; margin-top: 1.8em; margin-bottom: 0.5em; font-weight: bold; line-height: 1.2; text-align: left;">')
+           .replace(/<h4[^>]*>/g, '<h4 style="color: #2563eb; font-size: 1.05em; margin-top: 1.6em; margin-bottom: 0.5em; font-weight: bold; line-height: 1.2; text-align: left;">')
+           .replace(/<p[^>]*>/g, '<p style="margin-bottom: 1.25em; color: #333333; line-height: 1.7; text-align: left;">')
+           .replace(/<ul[^>]*>/g, '<ul style="margin: 1.5em 0; padding-left: 2em; color: #333333; text-align: left;">')
+           .replace(/<ol[^>]*>/g, '<ol style="margin: 1.5em 0; padding-left: 2em; color: #333333; text-align: left;">')
+           .replace(/<li[^>]*>/g, '<li style="margin-bottom: 0.5em; color: #333333; line-height: 1.6; text-align: left;">')
+           .replace(/<blockquote[^>]*>/g, '<blockquote style="border-left: 4px solid #3b82f6; padding-left: 1.5em; margin: 1.5em 0; font-style: italic; color: #4b5563; text-align: left;">')
+           .replace(/<strong[^>]*>/g, '<strong style="font-weight: 600; color: #1f2937;">')
+           .replace(/<em[^>]*>/g, '<em style="font-style: italic; color: #374151;">')
+           .replace(/<a[^>]*>/g, '<a style="color: #2563eb; text-decoration: underline;">')
+         }
+       </div>
+       
+       <div style="
+         margin-top: 3em;
+         padding-top: 2em;
+         border-top: 1px solid #e5e7eb;
+         text-align: center;
+         color: #6b7280;
+         font-size: 0.875em;
+       ">
+         <div style="margin-bottom: 0.5em;">
+           <span>${authorLabel}: ${metadata.author}</span>
          </div>
-       </main>
+         <div>
+           <span>${publishedLabel}: ${metadata.publishDate}</span>
+         </div>
+       </div>
      </div>
    `;
  };
@@ -666,16 +644,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.auto', 'Auto')}
              </Button>
            
-                        <Button
-               variant="outline"
-               size="sm"
-               onClick={() => downloadContent(item, 'word')}
-               className="flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
-             >
-               <FileEdit className="h-4 w-4" />
-               {getTranslation('contentManager.export.word', 'OneDrive Word')}
-             </Button>
-
            {/* Regular Download Options */}
            <DropdownMenu>
              <DropdownMenuTrigger asChild>
@@ -690,17 +658,9 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
-               <DropdownMenuItem onClick={() => downloadContent(item, 'markdown')}>
-                 <Download className="h-4 w-4 mr-2" />
-                 {getTranslation('contentManager.export.markdown', 'Markdown (.md)')}
-               </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'html')}>
                  <Download className="h-4 w-4 mr-2" />
                  {getTranslation('contentManager.export.html', 'HTML (.html)')}
-               </DropdownMenuItem>
-               <DropdownMenuItem onClick={() => downloadContent(item, 'txt')}>
-                 <Download className="h-4 w-4 mr-2" />
-                 {getTranslation('contentManager.export.txt', 'Texte (.txt)')}
                </DropdownMenuItem>
                <DropdownMenuItem onClick={() => downloadContent(item, 'pdf')}>
                  <Download className="h-4 w-4 mr-2" />
@@ -710,10 +670,6 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                                   <DropdownMenuItem onClick={() => downloadContent(item, 'gdoc')}>
                      <Share2 className="h-4 w-4 mr-2" />
                      🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.autoPaste', '(Collage Auto)')}
-                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => downloadContent(item, 'word')}>
-                     <Share2 className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.word', 'OneDrive Word')} {getTranslation('contentManager.export.collaborative', '(Collaboratif)')}
                    </DropdownMenuItem>
              </DropdownMenuContent>
            </DropdownMenu>
@@ -758,22 +714,10 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                      <FileEdit className="h-4 w-4 mr-2" />
                      🤖 {getTranslation('contentManager.export.gdocs', 'Google Docs')} {getTranslation('contentManager.export.autoPaste', '(Collage Auto)')}
                    </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'word')}>
-                     <FileEdit className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.word', 'OneDrive Word')} {getTranslation('contentManager.export.collaborative', '(Collaboratif)')}
-                   </DropdownMenuItem>
                    <DropdownMenuSeparator />
-                   <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'markdown')}>
-                     <Download className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.markdown', 'Markdown (.md)')}
-                   </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'html')}>
                      <Download className="h-4 w-4 mr-2" />
                      {getTranslation('contentManager.export.html', 'HTML (.html)')}
-                   </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'txt')}>
-                     <Download className="h-4 w-4 mr-2" />
-                     {getTranslation('contentManager.export.txt', 'Texte (.txt)')}
                    </DropdownMenuItem>
                    <DropdownMenuItem onClick={() => selectedContent && downloadContent(selectedContent, 'pdf')}>
                      <Download className="h-4 w-4 mr-2" />
@@ -792,7 +736,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
                    📊 {selectedContent.metadata.actualWordCount.toLocaleString()} {getTranslation('contentManager.metadata.words', 'mots')}
                  </Badge>
-                 <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
+                 <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">
                    ⏱️ {selectedContent.metadata.estimatedReadingTime} {getTranslation('contentManager.metadata.minRead', 'min de lecture')}
                  </Badge>
                  <Badge variant="outline" className="px-3 py-1 text-xs font-medium rounded-full border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm">

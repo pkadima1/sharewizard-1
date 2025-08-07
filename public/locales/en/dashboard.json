@@ -29,6 +29,7 @@
     "allPlatforms": "All Platforms",
     "allGoals": "All Goals",
     "newestFirst": "Newest First",
+    "oldestFirst": "Oldest First",
     "longform": "Long-form Content",
     "captions": "Captions",
     "viewAll": "View all {{count}} articles →"
@@ -36,7 +37,41 @@
   "captions": {
     "subtitle": "Manage your AI-generated social media captions",
     "managementComingSoon": "Caption Management Coming Soon",
-    "historyComingSoon": "Caption history and management features will be available here."
+    "historyComingSoon": "Caption history and management features will be available here.",
+    "loading": "Loading your captions...",
+    "error": "Error Loading Captions",
+    "noCaptons": "No Captions Yet",
+    "noCaptionsDesc": "Start creating captions with our AI-powered generator to see them here.",
+    "copy": "Copy First Caption",
+    "copied": "Caption Copied",
+    "copiedDesc": "Caption has been copied to clipboard",
+    "copyError": "Copy Failed",
+    "copyErrorDesc": "Failed to copy caption to clipboard",
+    "download": "Download",
+    "downloaded": "Caption Downloaded",
+    "downloadedDesc": "Caption has been downloaded as a text file",
+    "niche": "Niche",
+    "variations": "variations",
+    "variation": "Variation",
+    "of": "of",
+    "allTones": "All Tones",
+    "noResults": "No captions found",
+    "noResultsDesc": "Try adjusting your filters or create new captions to see them here.",
+    "platforms": {
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    },
+    "tones": {
+      "professional": "Professional",
+      "casual": "Casual",
+      "humorous": "Humorous",
+      "inspirational": "Inspirational",
+      "persuasive": "Persuasive"
+    }
   },
   "actions": {
     "view": "View",

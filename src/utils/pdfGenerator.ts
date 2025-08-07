@@ -84,7 +84,7 @@ export const PDF_TEMPLATES: Record<string, PDFTemplate> = {
     contentOptimization: {
       maxLineLength: 65,
       optimalParagraphWidth: 85,
-      headingBreakStrategy: 'smart',
+      headingBreakStrategy: 'section',
       listIndentation: 20,
       blockquoteStyle: 'highlight'
     },
@@ -164,7 +164,7 @@ export const PDF_TEMPLATES: Record<string, PDFTemplate> = {
     contentOptimization: {
       maxLineLength: 60,
       optimalParagraphWidth: 80,
-      headingBreakStrategy: 'smart',
+      headingBreakStrategy: 'section',
       listIndentation: 18,
       blockquoteStyle: 'highlight'
     },
@@ -196,41 +196,82 @@ export interface PDFGenerationOptions {
 
 // Revolutionary content optimization function
 const optimizeContentStructure = (content: string, template: PDFTemplate): string => {
+  console.log('🔍 Content Optimization - Starting with content length:', content.length);
+  
   let optimizedContent = content;
 
   // 1. Smart heading optimization with IDs for TOC
+  console.log('🔍 Content Optimization - Processing headings for TOC...');
+  
+  // Count headings before processing
+  const headingCountBefore = (content.match(/<h[1-6][^>]*>/gi) || []).length;
+  const markdownHeadingCountBefore = (content.match(/^#{1,6}\s+/gm) || []).length;
+  console.log('🔍 Content Optimization - Headings before processing:', { headingCountBefore, markdownHeadingCountBefore });
+  
+  // Process markdown headings (#### is now handled by blogFormatter.js)
   optimizedContent = optimizedContent.replace(
-    /^(#{1,6})\s+(.+)$|^<h([1-6])[^>]*>(.+?)<\/h[1-6]>/gm,
-    (match, hashes, title, htmlLevel, htmlTitle) => {
-      let level: number;
-      let headingTitle: string;
-      
-      if (hashes) {
-        // Markdown format: # Heading
-        level = hashes.length;
-        headingTitle = title;
-      } else {
-        // HTML format: <h1>Title</h1>
-        level = parseInt(htmlLevel);
-        headingTitle = htmlTitle;
-      }
-      
+    /^(#{1,3}|#{5,6})\s+(.+)$/gm,
+    (match, hashes, title) => {
+      const level = hashes.length;
+      const headingTitle = title.trim();
       const headingClass = `heading-level-${level}`;
       const breakStrategy = template.contentOptimization.headingBreakStrategy;
       const id = headingTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       
       let breakStyle = '';
+      // Only add page breaks for main headings (h1, h2) to prevent awkward breaks
+      // BUT NOT for the first heading to avoid empty first page
       if (breakStrategy === 'page' && level <= 2) {
         breakStyle = 'page-break-before: always;';
       } else if (breakStrategy === 'section' && level <= 3) {
         breakStyle = 'page-break-before: always;';
       } else if (breakStrategy === 'smart' && level === 1) {
-        breakStyle = 'page-break-before: always;';
+        // Don't add page break for first h1 to prevent empty first page
+        breakStyle = '';
       }
       
-      return `<h${level} id="${id}" class="${headingClass}" style="${breakStyle}">${headingTitle}</h${level}>`;
+      const result = `<h${level} id="${id}" class="${headingClass}" style="${breakStyle}">${headingTitle}</h${level}>`;
+      console.log('🔍 Content Optimization - Processed markdown heading:', { level, title: headingTitle, id, result });
+      return result;
     }
   );
+  
+  // Process HTML headings that don't have IDs
+  optimizedContent = optimizedContent.replace(
+    /<h([1-6])([^>]*?)>(.*?)<\/h[1-6]>/gi,
+    (match, level, attributes, title) => {
+      // Skip if heading already has an ID
+      if (attributes.includes('id=')) {
+        console.log('🔍 Content Optimization - Skipping HTML heading with existing ID:', match);
+        return match;
+      }
+      
+      const headingTitle = title.trim();
+      const headingClass = `heading-level-${level}`;
+      const breakStrategy = template.contentOptimization.headingBreakStrategy;
+      const id = headingTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      
+      let breakStyle = '';
+      // Only add page breaks for main headings (h1, h2) to prevent awkward breaks
+      // BUT NOT for the first heading to avoid empty first page
+      if (breakStrategy === 'page' && level <= 2) {
+        breakStyle = 'page-break-before: always;';
+      } else if (breakStrategy === 'section' && level <= 3) {
+        breakStyle = 'page-break-before: always;';
+      } else if (breakStrategy === 'smart' && level === 1) {
+        // Don't add page break for first h1 to prevent empty first page
+        breakStyle = '';
+      }
+      
+      const result = `<h${level}${attributes} id="${id}" class="${headingClass}" style="${breakStyle}">${headingTitle}</h${level}>`;
+      console.log('🔍 Content Optimization - Processed HTML heading:', { level, title: headingTitle, id, result });
+      return result;
+    }
+  );
+  
+  // Count headings after processing
+  const headingCountAfter = (optimizedContent.match(/<h[1-6][^>]*>/gi) || []).length;
+  console.log('🔍 Content Optimization - Headings after processing:', { headingCountAfter });
 
   // 2. Enhanced paragraph optimization
   optimizedContent = optimizedContent.replace(
@@ -280,36 +321,46 @@ const optimizeContentStructure = (content: string, template: PDFTemplate): strin
 
 // Revolutionary table of contents generator
 const generateTableOfContents = (content: string, template: PDFTemplate): string => {
+  console.log('🔍 TOC Generation - Starting with content length:', content.length);
+  console.log('🔍 TOC Generation - First 500 chars of content:', content.substring(0, 500));
+  
   const headings: Array<{ level: number; title: string; id: string }> = [];
   
-  // Extract headings from content - handle both markdown and HTML
-  const headingRegex = /^(#{1,6})\s+(.+)$|^<h([1-6])[^>]*id="([^"]+)"[^>]*>(.+?)<\/h[1-6]>|^<h([1-6])[^>]*>(.+?)<\/h[1-6]>/gm;
-  let match;
+  // Enhanced regex to catch all possible heading formats
+  // Pattern 1: Markdown headings (# ## ### ##### ######) - excluding #### which are now bullet points
+  const markdownHeadingRegex = /^(#{1,3}|#{5,6})\s+(.+)$/gm;
+  let markdownMatch;
+  while ((markdownMatch = markdownHeadingRegex.exec(content)) !== null) {
+    const level = markdownMatch[1].length;
+    const title = markdownMatch[2].trim();
+    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    console.log('🔍 TOC Generation - Found markdown heading:', { level, title, id });
+    headings.push({ level, title, id });
+  }
   
-  while ((match = headingRegex.exec(content)) !== null) {
-    let level: number;
-    let title: string;
-    let id: string;
+  // Pattern 2: HTML headings with IDs (<h1 id="heading-id">Title</h1>)
+  const htmlHeadingWithIdRegex = /<h([1-6])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h[1-6]>/gi;
+  let htmlWithIdMatch;
+  while ((htmlWithIdMatch = htmlHeadingWithIdRegex.exec(content)) !== null) {
+    const level = parseInt(htmlWithIdMatch[1]);
+    const id = htmlWithIdMatch[2];
+    const title = htmlWithIdMatch[3].trim();
+    console.log('🔍 TOC Generation - Found HTML heading with ID:', { level, title, id });
+    headings.push({ level, title, id });
+  }
+  
+  // Pattern 3: HTML headings without IDs (<h1>Title</h1>)
+  const htmlHeadingRegex = /<h([1-6])[^>]*>(.*?)<\/h[1-6]>/gi;
+  let htmlMatch;
+  while ((htmlMatch = htmlHeadingRegex.exec(content)) !== null) {
+    // Skip if this heading already has an ID (was caught by previous regex)
+    const fullMatch = htmlMatch[0];
+    if (fullMatch.includes('id="')) continue;
     
-    if (match[1]) {
-      // Markdown format: # Heading
-      level = match[1].length;
-      title = match[2].trim();
-      id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    } else if (match[3] && match[4]) {
-      // HTML format with ID: <h1 id="heading-id">Title</h1>
-      level = parseInt(match[3]);
-      title = match[5].trim();
-      id = match[4];
-    } else if (match[6]) {
-      // HTML format without ID: <h1>Title</h1>
-      level = parseInt(match[6]);
-      title = match[7].trim();
-      id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    } else {
-      continue; // Skip if no match
-    }
-    
+    const level = parseInt(htmlMatch[1]);
+    const title = htmlMatch[2].trim();
+    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    console.log('🔍 TOC Generation - Found HTML heading without ID:', { level, title, id });
     headings.push({ level, title, id });
   }
   
@@ -318,9 +369,32 @@ const generateTableOfContents = (content: string, template: PDFTemplate): string
     console.log('🔍 TOC Generation - Found headings:', headings.map(h => `${h.level}: ${h.title} (${h.id})`));
   } else {
     console.warn('⚠️ TOC Generation - No headings found in content');
+    console.log('🔍 TOC Generation - Content sample for debugging:');
+    console.log(content.substring(0, 1000));
+    
+    // Try alternative regex patterns for debugging
+    console.log('🔍 TOC Generation - Trying alternative patterns...');
+    
+    // Pattern 1: Simple HTML headings
+    const simpleHeadingRegex = /<h([1-6])[^>]*>(.*?)<\/h[1-6]>/gi;
+    const simpleMatches = content.match(simpleHeadingRegex);
+    console.log('🔍 TOC Generation - Simple HTML headings found:', simpleMatches);
+    
+    // Pattern 2: Markdown headings
+    const markdownHeadingRegex = /^(#{1,6})\s+(.+)$/gm;
+    const markdownMatches = content.match(markdownHeadingRegex);
+    console.log('🔍 TOC Generation - Markdown headings found:', markdownMatches);
+    
+    // Pattern 3: Any heading-like content
+    const anyHeadingRegex = /(?:^|\n)(?:#{1,6}\s+|<h[1-6][^>]*>)(.*?)(?:\n|<\/h[1-6]>)/gi;
+    const anyMatches = content.match(anyHeadingRegex);
+    console.log('🔍 TOC Generation - Any heading-like content found:', anyMatches);
   }
   
-  if (headings.length === 0) return '';
+  if (headings.length === 0) {
+    console.log('🔍 TOC Generation - Returning empty TOC due to no headings found');
+    return '';
+  }
   
   // Generate TOC HTML
   let tocHTML = `
@@ -357,6 +431,7 @@ const generateTableOfContents = (content: string, template: PDFTemplate): string
       console.warn(`⚠️ TOC Warning: Heading ID "${heading.id}" not found in content for "${heading.title}"`);
     }
     
+    // Use PDF bookmarks instead of HTML anchor links for proper internal navigation
     tocHTML += `
       <li style="
         margin: 2pt 0;
@@ -364,13 +439,24 @@ const generateTableOfContents = (content: string, template: PDFTemplate): string
         font-size: ${fontSize}pt;
         line-height: 1.4;
       ">
-        <a href="#${heading.id}" style="
+        <div style="
           color: ${template.colors.accent};
           text-decoration: none;
           display: flex;
           justify-content: space-between;
           align-items: center;
-        ">
+          cursor: pointer;
+          padding: 2pt 4pt;
+          border-radius: 2pt;
+          transition: background-color 0.2s;
+        "
+        data-pdf-bookmark="${heading.id}"
+        data-pdf-title="${heading.title}"
+        class="pdf-bookmark-link"
+        onmouseover="this.style.backgroundColor='${template.colors.accent}10'"
+        onmouseout="this.style.backgroundColor='transparent'"
+        title="Click to navigate to ${heading.title}"
+        >
           <span style="
             color: ${template.colors.text};
             font-weight: ${heading.level <= 2 ? 'bold' : 'normal'};
@@ -379,7 +465,7 @@ const generateTableOfContents = (content: string, template: PDFTemplate): string
             color: ${template.colors.secondary};
             font-size: ${fontSize - 1}pt;
           ">${index + 1}</span>
-        </a>
+        </div>
       </li>
     `;
   });
@@ -389,6 +475,7 @@ const generateTableOfContents = (content: string, template: PDFTemplate): string
     </div>
   `;
   
+  console.log('🔍 TOC Generation - Generated TOC HTML length:', tocHTML.length);
   return tocHTML;
 };
 
@@ -468,13 +555,22 @@ export const generateProfessionalPDF = async (
     titleToRemove: content.inputs.topic
   });
 
+  console.log('🔍 PDF Generation - Original content length:', content.content.length);
+  console.log('🔍 PDF Generation - Original content sample:', content.content.substring(0, 500));
+  console.log('🔍 PDF Generation - Formatted content length:', formattedContent.length);
+  console.log('🔍 PDF Generation - Formatted content sample:', formattedContent.substring(0, 500));
+
   // Apply revolutionary optimizations
   if (contentFlowOptimization) {
+    console.log('🔍 PDF Generation - Applying content flow optimization...');
     formattedContent = optimizeContentStructure(formattedContent, selectedTemplate);
+    console.log('🔍 PDF Generation - After content flow optimization:', formattedContent.length);
   }
   
   if (optimizedTypography) {
+    console.log('🔍 PDF Generation - Applying optimized typography...');
     formattedContent = enhanceTypography(formattedContent, selectedTemplate);
+    console.log('🔍 PDF Generation - After typography optimization:', formattedContent.length);
   }
 
   // Generate revolutionary PDF HTML with perfect structure
@@ -504,8 +600,35 @@ export const generateProfessionalPDF = async (
     formattedContent // Pass processed content for TOC generation instead of original
   );
 
-  // Generate PDF with revolutionary settings
-  await generateRevolutionaryPDFFromHTML(pdfHTML, title, selectedTemplate);
+  // Generate PDF bookmarks for navigation
+  const bookmarks = generatePDFBookmarks(formattedContent);
+
+  // Generate PDF with revolutionary settings and bookmarks
+  await generateRevolutionaryPDFFromHTML(pdfHTML, title, selectedTemplate, bookmarks);
+};
+
+// Generate PDF bookmarks from content
+const generatePDFBookmarks = (content: string): Array<{ title: string; level: number; id: string }> => {
+  const bookmarks: Array<{ title: string; level: number; id: string }> = [];
+  
+  // Extract headings for bookmarks
+  const headingRegex = /<h([1-6])[^>]*id="([^"]+)"[^>]*>(.*?)<\/h[1-6]>/gi;
+  let match;
+  
+  while ((match = headingRegex.exec(content)) !== null) {
+    const level = parseInt(match[1]);
+    const id = match[2];
+    const title = match[3].trim();
+    
+    bookmarks.push({
+      title,
+      level,
+      id
+    });
+  }
+  
+  console.log('📚 Generated PDF bookmarks:', bookmarks.length);
+  return bookmarks;
 };
 
 const createRevolutionaryPDFHTML = (
@@ -549,6 +672,92 @@ const createRevolutionaryPDFHTML = (
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${metadata.title}</title>
+  <script>
+    // PDF Bookmark Navigation System
+    let pdfBookmarks = [];
+    
+    // Initialize PDF bookmarks from headings
+    function initializePDFBookmarks() {
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      pdfBookmarks = [];
+      
+      headings.forEach((heading, index) => {
+        if (heading.id) {
+          pdfBookmarks.push({
+            title: heading.textContent.trim(),
+            level: parseInt(heading.tagName.charAt(1)),
+            id: heading.id,
+            element: heading
+          });
+        }
+      });
+      
+      console.log('📚 PDF Bookmarks initialized:', pdfBookmarks.length);
+    }
+    
+    // Navigate to PDF bookmark
+    function navigateToBookmark(bookmarkId) {
+      const bookmark = pdfBookmarks.find(b => b.id === bookmarkId);
+      if (bookmark && bookmark.element) {
+        // Scroll to the element
+        bookmark.element.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+        
+        // Add visual feedback
+        bookmark.element.style.backgroundColor = '#f0f8ff';
+        bookmark.element.style.border = '2px solid #3182ce';
+        bookmark.element.style.borderRadius = '4px';
+        bookmark.element.style.padding = '4px';
+        
+        // Remove visual feedback after 3 seconds
+        setTimeout(() => {
+          bookmark.element.style.backgroundColor = '';
+          bookmark.element.style.border = '';
+          bookmark.element.style.borderRadius = '';
+          bookmark.element.style.padding = '';
+        }, 3000);
+        
+        console.log('✅ Navigated to bookmark:', bookmarkId);
+      } else {
+        console.warn('⚠️ Bookmark not found:', bookmarkId);
+      }
+    }
+    
+    // Add click handlers to PDF bookmark links
+    function setupPDFBookmarkLinks() {
+      const bookmarkLinks = document.querySelectorAll('.pdf-bookmark-link');
+      bookmarkLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const bookmarkId = link.getAttribute('data-pdf-bookmark');
+          if (bookmarkId) {
+            navigateToBookmark(bookmarkId);
+          }
+        });
+      });
+      
+      console.log('🔗 PDF Bookmark links setup complete');
+    }
+    
+    // Initialize when document is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      initializePDFBookmarks();
+      setupPDFBookmarkLinks();
+    });
+    
+    // Also initialize immediately if document is already loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        initializePDFBookmarks();
+        setupPDFBookmarkLinks();
+      });
+    } else {
+      initializePDFBookmarks();
+      setupPDFBookmarkLinks();
+    }
+  </script>
   <style>
     /* Optimized PDF Typography System */
     @page {
@@ -654,10 +863,14 @@ const createRevolutionaryPDFHTML = (
     
     h1 {
       font-size: ${template.typography.h1Size}pt;
-      ${smartPageBreaks ? 'page-break-before: always;' : ''}
       text-align: center;
       border-bottom: 1pt solid ${template.colors.secondary};
-      padding-bottom: 4pt;
+      padding-bottom: 8pt;
+    }
+    
+    /* Prevent first h1 from forcing page break */
+    h1:first-of-type {
+      page-break-before: auto !important;
     }
     
     h2 {
@@ -671,7 +884,7 @@ const createRevolutionaryPDFHTML = (
       font-size: ${template.typography.h3Size}pt;
       color: ${template.colors.secondary};
       border-bottom: 1pt solid ${template.colors.secondary};
-      padding-bottom: 2pt;
+      padding-bottom: 20pt;
     }
     
     h4 {
@@ -714,6 +927,22 @@ const createRevolutionaryPDFHTML = (
       margin-bottom: 2pt;
       line-height: ${template.lineHeight};
       page-break-inside: avoid;
+    }
+    
+    /* Bold Bullet Point Styling */
+    .bold-bullet-point {
+      margin-bottom: 4pt;
+      font-weight: bold;
+      color: ${template.colors.primary};
+      list-style-type: disc;
+      margin-left: 12pt;
+      page-break-inside: avoid;
+      line-height: ${template.lineHeight};
+    }
+    
+    .bold-bullet-point strong {
+      font-weight: bold;
+      color: ${template.colors.primary};
     }
     
     li {
@@ -812,9 +1041,14 @@ const createRevolutionaryPDFHTML = (
       h1, h2, h3, h4, h5, h6 {
         page-break-after: avoid;
         page-break-inside: avoid;
+        page-break-before: auto;
       }
       
       p, ul, ol, .key-point-highlight, .emphasized-text, table, .metadata-section {
+        page-break-inside: avoid;
+      }
+      
+      .bold-bullet-point {
         page-break-inside: avoid;
       }
       
@@ -824,6 +1058,18 @@ const createRevolutionaryPDFHTML = (
       
       .section-break {
         page-break-before: always;
+      }
+      
+      /* Prevent orphaned headings */
+      h1, h2, h3, h4, h5, h6 {
+        orphans: 3;
+        widows: 3;
+      }
+      
+      /* Ensure content doesn't break awkwardly */
+      .document-content {
+        orphans: 3;
+        widows: 3;
       }
     }
     
@@ -868,6 +1114,35 @@ const createRevolutionaryPDFHTML = (
     /* Ensure TOC links work in PDF */
     .table-of-contents a[href^="#"] {
       color: ${template.colors.accent};
+    }
+    
+    /* PDF Bookmark Link Styling */
+    .pdf-bookmark-link {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    
+    .pdf-bookmark-link:hover {
+      background-color: ${template.colors.accent}10 !important;
+    }
+    
+    .pdf-bookmark-link:active {
+      background-color: ${template.colors.accent}20 !important;
+    }
+    
+    /* Ensure headings are clickable in PDF */
+    h1, h2, h3, h4, h5, h6 {
+      cursor: pointer;
+    }
+    
+    h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+      background-color: ${template.colors.accent}05;
+      border-radius: 2pt;
+      padding: 2pt;
+      margin: -2pt;
     }
   </style>
 </head>
@@ -933,7 +1208,7 @@ const createRevolutionaryPDFHTML = (
 </html>`;
 };
 
-const generateRevolutionaryPDFFromHTML = async (html: string, title: string, template: PDFTemplate): Promise<void> => {
+const generateRevolutionaryPDFFromHTML = async (html: string, title: string, template: PDFTemplate, bookmarks: Array<{ title: string; level: number; id: string }>): Promise<void> => {
   const element = document.createElement('div');
   element.innerHTML = html;
 
@@ -969,13 +1244,20 @@ const generateRevolutionaryPDFFromHTML = async (html: string, title: string, tem
       before: '.page-break',
       after: '.section-break',
       avoid: [
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+        'h2', 'h3', 'h4', 'h5', 'h6', 
         'ul', 'ol', 'blockquote', 'table', 
         '.metadata-section', '.optimized-paragraph',
         '.enhanced-code-block', '.blockquote',
-        '.table-of-contents' // Prevent TOC from breaking
+        '.table-of-contents', '.bold-bullet-point' // Prevent TOC and bold bullets from breaking
       ]
-    }
+    },
+    // Enhanced options for PDF bookmarks
+    enableLinks: true,
+    preserveAspectRatio: true,
+    removeScripts: false, // Keep our navigation scripts
+    removeInlineStyles: false, // Keep our styling
+    // Add PDF bookmarks for navigation
+    bookmarks: bookmarks
   };
 
   try {
@@ -1039,4 +1321,35 @@ export const getTemplateKeyFromDisplayName = (displayName: string): string => {
     'Creative Modern': 'creative'
   };
   return templateMap[displayName] || 'business';
+}; 
+
+// Test function to verify TOC generation
+export const testTOCGeneration = () => {
+  const testContent = `
+# Main Title
+This is the main content.
+
+## First Section
+Some content here.
+
+### Subsection 1
+More content.
+
+### Subsection 2
+Even more content.
+
+## Second Section
+Another section.
+
+<h1>HTML Title</h1>
+<p>Some HTML content.</p>
+
+<h2 id="existing-id">Existing ID Section</h2>
+<p>Content with existing ID.</p>
+  `;
+  
+  const template = PDF_TEMPLATES.business;
+  const toc = generateTableOfContents(testContent, template);
+  console.log('🧪 TOC Test Result:', toc);
+  return toc;
 }; 
