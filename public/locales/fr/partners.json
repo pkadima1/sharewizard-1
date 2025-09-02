@@ -81,7 +81,6 @@
     "noCustomersYet": "Aucun client parrainé pour le moment",
     "customersWillAppear": "Les clients parrainés apparaîtront ici une fois qu'ils s'inscriront avec vos codes",
     "showingFirst": "Affichage des {{count}} premiers sur {{total}}",
-    "earnings": "Gains",
     "customers": "Clients",
     "month": "Mois : {{month}}"
   },
@@ -509,7 +508,115 @@
         "marketingPreferences": "Préférences Marketing",
         "emailMarketing": "Recevoir les mises à jour marketing par email",
         "smsMarketing": "Recevoir les mises à jour marketing par SMS",
-        "partnerNewsletter": "S'abonner à la newsletter partenaire"
+        "partnerNewsletter": "S'abonner à la newsletter partenaire",
+        
+        "enhanced": {
+          "title": "Candidature Partenaire",
+          "subtitle": "Parlez-nous de vous et de vos compétences",
+          "basicInfo": "Informations de Base",
+          "skillsExperience": "Vos Compétences et Expérience",
+          "availability": "Votre Disponibilité",
+          
+          "fullName": "Nom Complet",
+          "fullNamePlaceholder": "Votre nom complet",
+          "phone": "Téléphone/WhatsApp",
+          "phonePlaceholder": "+33 6 12 34 56 78",
+          "industry": "Votre Secteur/Niche",
+          "industryPlaceholder": "Sélectionnez votre secteur",
+          
+          "contentSkills": "Quels services de contenu pouvez-vous fournir ?",
+          "contentSkillsHelp": "Sélectionnez tout ce qui s'applique - les services DFY principaux sont mis en évidence",
+          "socialMedia": "Publications Réseaux Sociaux",
+          "blogWriting": "Rédaction Blog/Articles",
+          "graphicDesign": "Design Graphique",
+          "videoEditing": "Montage Vidéo/Reels",
+          "communityMgmt": "Gestion de Communauté",
+          "justLearning": "En Apprentissage",
+          "dfyCore": "Service DFY Principal",
+          
+          "languages": "Langues dans Lesquelles Vous Écrivez",
+          "addLanguage": "+ Ajouter une Langue",
+          "selectLanguage": "Sélectionner une Langue",
+          "languageLevel": "Niveau",
+          "native": "Natif",
+          "fluent": "Courant",
+          "conversational": "Conversationnel",
+          "languageOptions": {
+            "english": "Anglais",
+            "french": "Français", 
+            "spanish": "Espagnol",
+            "german": "Allemand",
+            "portuguese": "Portugais",
+            "italian": "Italien",
+            "other": "Autre"
+          },
+          
+          "experienceLevel": "Votre Niveau d'Expérience",
+          "beginner": "Débutant",
+          "beginnerDesc": "0-1 ans",
+          "intermediate": "Intermédiaire",
+          "intermediateDesc": "1-3 ans",
+          "advanced": "Avancé",
+          "advancedDesc": "3+ ans",
+          
+          "expectedClients": "Combien de clients pouvez-vous gérer de manière réaliste ?",
+          "oneClient": "1 client",
+          "clients": "clients",
+          "twentyClients": "20+ clients",
+          "capacityLow": "Parfait pour commencer ! Nous fournirons un support supplémentaire.",
+          "capacityMedium": "Grande capacité ! Vous aurez un bon potentiel de revenus.",
+          "capacityHigh": "Excellent ! Vous êtes prêt pour un partenariat à haut volume.",
+          
+          "availabilityField": "Quand êtes-vous généralement disponible pour de brefs appels hebdomadaires ?",
+          "availabilityPlaceholder": "Choisissez votre heure préférée",
+          
+          "portfolioSamples": "Portfolio ou échantillons de travail (optionnel)",
+          "portfolioPlaceholder": "https://votre-portfolio.com ou nom Instagram",
+          
+          "submitting": "Soumission en cours...",
+          "submitApplication": "Soumettre la candidature",
+          "back": "Retour",
+          "clientsSliderStart": "1 client",
+          "clientsSliderEnd": "20+ clients",
+          "clientsFeedback": {
+            "low": "Parfait pour commencer ! Nous fournirons un support supplémentaire.",
+            "medium": "Grande capacité ! Vous aurez un bon potentiel de revenus.",
+            "high": "Excellent ! Vous êtes prêt pour un partenariat à haut volume."
+          },
+          
+          "availabilityTime": "Quand êtes-vous généralement disponible pour de brefs contrôles hebdomadaires ?",
+          "weekdayMorning": "Matins en Semaine (9h-12h)",
+          "weekdayAfternoon": "Après-midis en Semaine (13h-17h)",
+          "weekdayEvening": "Soirées en Semaine (18h-21h)",
+          "weekendMorning": "Matins de Week-end",
+          "weekendAfternoon": "Après-midis de Week-end",
+          "flexible": "Flexible - n'importe quand",
+          
+          "portfolio": "Portfolio ou Échantillons de Travail (Optionnel)",
+          "portfolioHelp": "Partagez des exemples de votre travail de contenu - site web, Instagram, échantillons d'écriture, etc.",
+          
+          "commissionStructure": "Votre Structure de Commission",
+          "commissionTier": {
+            "basic": "Partenaire de Base",
+            "standard": "Partenaire Standard",
+            "certified": "Partenaire Certifié"
+          },
+          "leadSources": {
+            "yourLeads": "Vos Prospects",
+            "yourLeadsDesc": "Vous trouvez le client → Vous servez → Vous gagnez 70%",
+            "ourLeads": "Nos Prospects",
+            "ourLeadsDesc": "Nous trouvons le client → Vous servez → Commission partagée",
+            "notEligible": "Non Éligible",
+            "notEligibleTooltip": "L'éligibilité à notre pipeline de prospects est basée sur votre niveau d'expérience, vos compétences et votre portfolio. Complétez plus de champs ou améliorez votre expertise pour vous qualifier."
+          },
+          "dfyRequirements": "Exigences du Service DFY :",
+          "requirements": {
+            "weeklyCall": "Appel de suivi client hebdomadaire de 10 min",
+            "dailyCaptions": "3 légendes de réseaux sociaux quotidiennes",
+            "blogPosts": "Article de blog tous les deux jours",
+            "satisfaction": "Maintenir une satisfaction client de 4,3/5+"
+          }
+        }
       },
       
       "success": {
@@ -554,7 +661,12 @@
     "invalidCode": "Format de code partenaire invalide",
     "codeExists": "Le code partenaire existe déjà",
     "minCommission": "Le taux de commission doit être d'au moins 10%",
-    "maxCommission": "Le taux de commission ne peut pas dépasser 90%"
+    "maxCommission": "Le taux de commission ne peut pas dépasser 90%",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "selectSkills": "Veuillez sélectionner au moins une compétence",
+    "selectIndustry": "Veuillez sélectionner votre secteur",
+    "selectExperience": "Veuillez sélectionner votre niveau d'expérience",
+    "selectAvailability": "Veuillez sélectionner votre disponibilité"
   },
   
   "invoices": {
@@ -564,6 +676,19 @@
       "cancelled": "Annulée"
     },
     "invoiceId": "ID de Facture"
+  },
+  
+  "industries": {
+    "coaching": "Coaching d'Entreprise",
+    "fitness": "Fitness et Santé", 
+    "ecommerce": "E-commerce",
+    "tech": "Technologie",
+    "realestate": "Immobilier",
+    "finance": "Finance",
+    "beauty": "Beauté et Style de Vie",
+    "food": "Alimentation et Hôtellerie",
+    "education": "Éducation",
+    "other": "Autre"
   },
   
   "customers": {
