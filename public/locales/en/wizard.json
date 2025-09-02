@@ -1,0 +1,69 @@
+{
+  "title": "Long-Form Content Wizard",
+  "progress": {
+    "title": "Content Wizard Progress",
+    "step": "Step {{current}} of {{total}}",
+    "complete": "{{percent}}% Complete",
+    "remaining": "{{time}} min remaining",
+    "completed": "{{completed}} of {{total}} steps completed",
+    "current": "Current: {{name}}",
+    "optional": "(Optional)"
+  },
+  "steps": {
+    "whatWho": {
+      "name": "What & Who",
+      "description": "Define your topic and target audience"
+    },
+    "mediaVisuals": {
+      "name": "Media & Visuals",
+      "description": "Upload and manage your visual content"
+    },
+    "seoKeywords": {
+      "name": "SEO & Keywords",
+      "description": "Optimize with smart keyword suggestions"
+    },
+    "structureTone": {
+      "name": "Structure & Tone",
+      "description": "Create your content blueprint"
+    },
+    "generationSettings": {
+      "name": "Generation Settings",
+      "description": "Configure length, format, and CTA"
+    },
+    "reviewGenerate": {
+      "name": "Review & Generate",
+      "description": "Final preview and content generation"
+    }
+  },
+  "navigation": {
+    "previous": "Previous",
+    "next": "Next",
+    "skip": "Skip Step",
+    "generate": "Generate Content",
+    "saveNow": "Save Now",
+    "shortcuts": "Shortcuts"
+  },
+  "draft": {
+    "available": "Draft Available",
+    "restore": "Restore draft",
+    "saved": "Draft saved",
+    "saving": "Saving...",
+    "savedAt": "Saved at {{time}}",
+    "autoSave": "Auto-save enabled"
+  },
+  "errors": {
+    "validation": "Please fix errors before continuing",
+    "generation": "Error generating content",
+    "save": "Error saving",
+    "load": "Error loading",
+    "network": "Network error"
+  },
+  "keyboard": {
+    "title": "Keyboard Shortcuts",
+    "next": "Next (→)",
+    "previous": "Previous (←)",
+    "save": "Save (Ctrl+S)",
+    "generate": "Generate (Ctrl+G)",
+    "close": "Close (Esc)"
+  }
+}

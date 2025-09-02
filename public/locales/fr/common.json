@@ -3,6 +3,7 @@
     "home": "Accueil",
     "dashboard": "Tableau de bord",
     "pricing": "Tarifs",
+    "becomePartner": "Devenir Partenaire",
     "login": "Connexion",
     "signup": "S'inscrire",
     "caption_generator": "Générateur de Légendes",
@@ -14,7 +15,10 @@
     "adminDashboard": "Tableau de bord Admin",
     "logOut": "Se déconnecter",
     "features": "Fonctionnalités",
-    "blog": "Blog"
+    "blog": "Blog",
+    "partner": {
+      "dashboard": "Dashboard Partenaire"
+    }
   },
   "wizard": {
     "step1": "Télécharger un Média",
@@ -137,6 +141,9 @@
     "newsletter": "Abonnez-vous à notre newsletter",
     "newsletterDesc": "Recevez les dernières nouvelles et mises à jour",
     "emailPlaceholder": "Votre email",
+    "newsletterError": "Veuillez saisir une adresse email valide.",
+    "newsletterSuccess": "Vous avez été abonné avec succès à notre newsletter.",
+    "newsletterFailure": "Échec de l'abonnement à la newsletter. Veuillez réessayer.",
     "allRights": "Tous droits réservés."
   },
   "support": {

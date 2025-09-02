@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home, Search, User, Settings, Menu } from 'lucide-react';
+import { Home, Search, User, Settings, Menu, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const MobileFooterNav: React.FC = () => {
@@ -16,6 +16,11 @@ const MobileFooterNav: React.FC = () => {
         <Link to="/caption-generator" className="flex flex-col items-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
           <Search size={20} />
           <span className="text-xs mt-1">{t('wizard.generateShort')}</span>
+        </Link>
+        
+        <Link to="/partner-registration" className="flex flex-col items-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
+          <Users size={20} />
+          <span className="text-xs mt-1">{t('nav.becomePartner')}</span>
         </Link>
         
         {/*<Link to="/dashboard" className="flex flex-col items-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
