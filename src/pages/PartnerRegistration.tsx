@@ -240,13 +240,14 @@ const PartnerRegistration: React.FC = () => {
         if (value.trim().length < 2) return t('validation.minLength', { min: 2 });
         if (value.trim().length > 50) return t('validation.maxLength', { max: 50 });
         break;
-      case 'phone':
+      case 'phone': {
         if (!value || !value.trim()) return t('validation.required');
         // Basic phone validation - allow international formats
-        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-        const cleanPhone = value.replace(/[\s\-\(\)]/g, '');
+        const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
+        const cleanPhone = value.replace(/[\s\-()]/g, '');
         if (!phoneRegex.test(cleanPhone)) return t('validation.invalidPhone');
         break;
+      }
       case 'industry':
         if (!value || !value.trim()) return t('validation.selectIndustry');
         break;

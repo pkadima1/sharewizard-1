@@ -47,17 +47,23 @@ export const functions = getFunctions(app, 'us-central1');
 // Connect to emulators if in development mode
 if (useEmulators) {
   try {
-    // Only connect to Functions emulator for local development
+    // Connect to all emulators for consistent local development
     connectFunctionsEmulator(functions, "127.0.0.1", 5001);
     console.log("✅ Connected to Functions emulator on 127.0.0.1:5001");
     
-    // Use production Auth and Firestore for real user data
-    console.log("🌐 Using production Auth and Firestore with real user data");
+    // Connect to Firestore emulator to see the same data as functions
+    connectFirestoreEmulator(db, "127.0.0.1", 8082);
+    console.log("✅ Connected to Firestore emulator on 127.0.0.1:8082");
     
-    // Uncomment these lines if you want to use emulated services instead:
-    // connectFirestoreEmulator(db, "127.0.0.1", 8081);
+    // Only connect to Auth emulator if you have auth emulator running
+    // For now, use production auth with emulator firestore
+    // Uncomment this when you want full emulator setup:
     // connectAuthEmulator(auth, "http://127.0.0.1:9099");
-    // connectStorageEmulator(storage, "127.0.0.1", 9199);
+    // console.log("✅ Connected to Auth emulator on 127.0.0.1:9099");
+    
+    // Connect to Storage emulator
+    connectStorageEmulator(storage, "127.0.0.1", 9199);
+    console.log("✅ Connected to Storage emulator on 127.0.0.1:9199");
   } catch (e) {
     console.error("❌ Failed to connect to emulators:", e);
   }

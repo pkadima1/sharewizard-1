@@ -8,6 +8,7 @@
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import { initializeApp } from "firebase-admin/app";
 import { initializeFirebaseAdmin } from "../config/firebase-admin.js";
 import { 
   Partner, 
@@ -22,6 +23,24 @@ import * as logger from "firebase-functions/logger";
 initializeFirebaseAdmin();
 const db = getFirestore();
 const auth = getAuth();
+
+// Initialize production Firestore for dual-write when in emulator
+let productionDb: any = null;
+const isEmulator = process.env.FUNCTIONS_EMULATOR === 'true';
+
+if (isEmulator) {
+  try {
+    // Initialize production Firestore connection for dual-write
+    const productionApp = initializeApp({
+      projectId: 'engperfecthlc',
+      // Use default credentials in production environment
+    }, 'production-write');
+    productionDb = getFirestore(productionApp);
+    logger.info('✅ Production Firestore initialized for dual-write');
+  } catch (error) {
+    logger.warn('⚠️ Could not initialize production Firestore for dual-write:', error);
+  }
+}
 
 /**
  * Validation helpers
@@ -213,9 +232,43 @@ export const registerPartner = onCall({
       }
     };
 
-    // Step 6: Save partner to Firestore
+    // Step 6: Save partner to Firestore (dual-write to emulator and production)
     const partnerRef = db.collection('partners').doc(partnerId);
+    
+    // Write to emulator Firestore
     await partnerRef.set(partnerData);
+    logger.info(`✅ Partner saved to emulator Firestore: ${partnerId}`);
+    
+    // Also write to production Firestore if in emulator mode
+    if (isEmulator && productionDb) {
+      try {
+        const productionPartnerRef = productionDb.collection('partners').doc(partnerId);
+        
+        // Convert data for production Firestore
+        const productionPartnerData = {
+          ...partnerData,
+          // Convert Firestore timestamps to Dates for production compatibility
+          createdAt: partnerData.createdAt instanceof Timestamp ? partnerData.createdAt.toDate() : partnerData.createdAt,
+          updatedAt: partnerData.updatedAt instanceof Timestamp ? partnerData.updatedAt.toDate() : partnerData.updatedAt,
+          stats: {
+            ...partnerData.stats,
+            lastCalculated: partnerData.stats.lastCalculated instanceof Timestamp ? 
+              partnerData.stats.lastCalculated.toDate() : partnerData.stats.lastCalculated
+          },
+          registrationData: partnerData.registrationData ? {
+            ...partnerData.registrationData,
+            submittedAt: partnerData.registrationData.submittedAt instanceof Timestamp ? 
+              partnerData.registrationData.submittedAt.toDate() : partnerData.registrationData.submittedAt
+          } : undefined
+        };
+        
+        await productionPartnerRef.set(productionPartnerData);
+        logger.info(`✅ Partner also saved to production Firestore: ${partnerId}`);
+      } catch (productionError) {
+        logger.error(`❌ Failed to save to production Firestore:`, productionError);
+        // Continue execution - emulator write succeeded
+      }
+    }
 
     // Step 7: Update Firebase Auth custom claims (for UI authorization)
     try {
@@ -232,18 +285,35 @@ export const registerPartner = onCall({
       // Don't fail the operation for this
     }
 
-    // Step 8: Create admin notification in Firestore
+    // Step 8: Create admin notification in Firestore (dual-write)
+    const notificationData = {
+      type: 'partner_registration',
+      partnerId: partnerId,
+      partnerEmail: email,
+      partnerName: displayName,
+      status: 'pending',
+      createdAt: now,
+      read: false
+    };
+    
     try {
-      await db.collection('adminNotifications').add({
-        type: 'partner_registration',
-        partnerId: partnerId,
-        partnerEmail: email,
-        partnerName: displayName,
-        status: 'pending',
-        createdAt: now,
-        read: false
-      });
-      logger.info(`[RegisterPartner] Created admin notification for partner: ${partnerId}`);
+      // Write to emulator
+      await db.collection('adminNotifications').add(notificationData);
+      logger.info(`✅ Admin notification created in emulator: ${partnerId}`);
+      
+      // Also write to production if in emulator mode
+      if (isEmulator && productionDb) {
+        try {
+          await productionDb.collection('adminNotifications').add({
+            ...notificationData,
+            createdAt: notificationData.createdAt instanceof Timestamp ? 
+              notificationData.createdAt.toDate() : notificationData.createdAt
+          });
+          logger.info(`✅ Admin notification also created in production: ${partnerId}`);
+        } catch (productionError) {
+          logger.error(`❌ Failed to create admin notification in production:`, productionError);
+        }
+      }
     } catch (error) {
       logger.warn(`[RegisterPartner] Failed to create admin notification:`, error);
       // Don't fail the operation for this

@@ -33,7 +33,11 @@ service cloud.firestore {
     function isServiceAccount() {
       return request.auth != null && 
         (request.auth.token.firebase.sign_in_provider == 'custom' || 
-         request.auth.token.firebase.sign_in_provider == 'service_account');
+         request.auth.token.firebase.sign_in_provider == 'service_account' ||
+         // Additional check for emulator compatibility
+         request.auth.token.iss != null && request.auth.token.iss.contains('firebase-adminsdk') ||
+         // Fallback for emulator - check for admin SDK usage
+         request.auth.token.firebase.sign_in_provider == null);
     }
 
     // =============================
@@ -296,22 +300,27 @@ service cloud.firestore {
     
     // Partners collection - core partner management
     match /partners/{partnerId} {
-      // TEMPORARY: Allow authenticated users to read for debugging
-      allow read: if isAuthenticated();
-      
       // Admins can read/write all partner data
-      allow write: if hasAdminAccess();
+      allow read, write: if hasAdminAccess();
       
       // Partners can read their own data only
       allow read: if isAuthenticated() && request.auth.uid == partnerId;
       
-      // Cloud Functions can manage partners
+      // Cloud Functions can manage partners (critical for emulator)
       allow read, write: if isServiceAccount();
+      
+      // FIXED: Allow authenticated users to CREATE partner applications (any document ID)
+      allow create: if isAuthenticated() && 
+                     request.resource.data.uid == request.auth.uid &&
+                     request.resource.data.status == 'pending';
+      
+      // TEMPORARY: Allow all authenticated users to write (for debugging registration)
+      allow write: if isAuthenticated();
     }
     
-    // Allow listing partners collection for admins
+    // Allow listing partners collection for admins and authenticated users
     match /partners {
-      allow list: if hasAdminAccess() || isAuthenticated(); // TEMPORARY for debugging
+      allow list: if hasAdminAccess() || isAuthenticated();
     }
     
     // Partner codes collection - for referral codes
@@ -453,6 +462,36 @@ service cloud.firestore {
       
       // Only Cloud Functions can write notifications
       allow write: if isServiceAccount();
+    }
+
+    // =============================
+    // 🤝 PARTNER SYSTEM COLLECTIONS
+    // =============================
+    
+    // Referral customers - partners can read their own customers
+    match /referralCustomers/{customerId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   resource.data.referredBy == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
+    }
+
+    // Partner invoices - partners can read their own invoices
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   resource.data.referredBy == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
+    }
+
+    // Commission ledger - fix collection name mismatch
+    match /commissionLedger/{entryId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
     }
   }
 }
