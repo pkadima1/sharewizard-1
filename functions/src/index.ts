@@ -20,10 +20,6 @@ export { syncSubscriptionToUserProfile } from "./syncSubscription.js";
 // Export longform content generation function
 export { generateLongformContent } from "./services/longformContent.js";
 
-// Export test functions (for debugging - remove in production)
-// export { testGeminiOnly } from "./services/testGemini.js";
-// export { testLongformNoAuth } from "./services/testLongformNoAuth.js";
-
 // Export support chat function
 export { supportChat } from './supportChat.js';
 
@@ -36,6 +32,31 @@ export { exportChatData } from './adminChatFunctions.js';
 // Export contact form functions
 export { processContactForm } from './contactForm.js';
 export { getContactFormAnalytics } from './contactForm.js';
+
+// Export partner system functions
+export { createPartner } from './partners/createPartner.js';
+export { createPartnerCode } from './partners/createPartnerCode.js';
+export { registerPartner } from './partners/registerPartner.js';
+export { checkUserByEmail } from './partners/checkUserByEmail.js';
+export { approvePartner } from './partners/approvePartner.js';
+export { rejectPartner } from './partners/rejectPartner.js';
+
+// Export partner notification functions
+export { notifyPartnerApproved } from './partners/notifications.js';
+export { notifyPartnerRejected } from './partners/notifications.js';
+
+// Export Stripe webhook functions
+export { handleStripeWebhook } from './webhooks/stripeWebhook.js';
+export { getReferralsByCustomer } from './webhooks/stripeWebhook.js';
+export { getReferralsByPartner } from './webhooks/stripeWebhook.js';
+
+// Export checkout session creation function
+export { createCheckoutSession } from './createCheckoutSession.js';
+
+// Export payout system functions
+export { monthlyCommissionReport } from './payouts/monthlyReport.js';
+export { generateManualCommissionReport } from './payouts/monthlyReport.js';
+export { getPayoutReport } from './payouts/monthlyReport.js';
 
 // Add any additional function exports below
 

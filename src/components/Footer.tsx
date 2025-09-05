@@ -18,8 +18,8 @@ const Footer: React.FC = () => {
     
     if (!email.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
+        title: t('status.error'),
+        description: t('footer.newsletterError'),
         variant: "destructive"
       });
       return;
@@ -36,16 +36,16 @@ const Footer: React.FC = () => {
       });
 
       toast({
-        title: "Success!",
-        description: "You've been successfully subscribed to our newsletter.",
+        title: t('status.success'),
+        description: t('footer.newsletterSuccess'),
       });
 
       setEmail(''); // Clear the input
     } catch (error) {
       console.error('Newsletter subscription error:', error);
       toast({
-        title: "Error",
-        description: "Failed to subscribe to newsletter. Please try again.",
+        title: t('status.error'),
+        description: t('footer.newsletterFailure'),
         variant: "destructive"
       });
     } finally {
@@ -104,6 +104,7 @@ const Footer: React.FC = () => {
               <li><Link to="/blog-wizard" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog_wizard')}</Link></li>
               <li><Link to="/blog" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog')}</Link></li>
               <li><Link to="/pricing" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.pricing')}</Link></li>
+              <li><Link to="/partner-registration" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.becomePartner')}</Link></li>
              {/*} <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Features</Link></li>
               <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Roadmap</Link></li>
               */} </ul>

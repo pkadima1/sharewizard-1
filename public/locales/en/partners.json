@@ -1,0 +1,651 @@
+{
+  "nav": {
+    "partners": "Partners",
+    "partner": {
+      "dashboard": "Partner Dashboard",
+      "referrals": "My Referrals",
+      "commissions": "My Commissions",
+      "settings": "Partner Settings"
+    }
+  },
+  "status": {
+    "pending": "Pending Approval",
+    "active": "Active",
+    "suspended": "Suspended",
+    "inactive": "Inactive",
+    "terminated": "Terminated"
+  },
+  "commission": {
+    "accrued": "Pending",
+    "reversed": "Reversed",
+    "paid": "Paid",
+    "ledger": {
+      "title": "Commission Ledger",
+      "entry": "Ledger Entry",
+      "accrualReason": "Payment collected",
+      "reversalReason": "Invoice voided",
+      "grossAmount": "Gross Amount",
+      "commissionRate": "Commission Rate",
+      "commissionAmount": "Commission Amount",
+      "periodStart": "Period Start",
+      "periodEnd": "Period End",
+      "invoiceId": "Invoice ID",
+      "subscriptionId": "Subscription ID",
+      "paymentProcessed": "Payment processed successfully",
+      "commissionEarned": "Commission earned from invoice payment",
+      "invoiceVoided": "Commission reversed due to voided invoice",
+      "processingError": "Error processing commission",
+      "noEntriesFound": "No commission ledger entries found"
+    }
+  },
+  "source": {
+    "link": "Referral Link",
+    "manual": "Manual Attribution",
+    "promotion_code": "Promotion Code",
+    "widget": "Embedded Widget"
+  },
+  "dashboard": {
+    "title": "Partner Dashboard",
+    "overview": "Overview",
+    "stats": "Statistics",
+    "earnings": "Earnings",
+    "referrals": "Referrals",
+    "conversions": "Conversions",
+    "conversionRate": "Conversion Rate",
+    "pendingCommission": "Pending Commission",
+    "totalEarned": "Total Earned",
+    "recentActivity": "Recent Activity",
+    "generateLinks": "Generate Referral Links",
+    "viewReports": "View Detailed Reports",
+    "thisMonth": "This Month",
+    "lifetime": "Lifetime",
+    "last30Days": "Last 30 Days",
+    "noActivity": "No recent activity",
+    "welcomeMessage": "Welcome to your Partner Dashboard! Start sharing your referral links to earn commissions.",
+    "getStarted": "Get Started",
+    "commissionRate": "Commission Rate"
+  },
+  "form": {
+    "partnerCode": "Partner Code",
+    "displayName": "Display Name",
+    "companyName": "Company Name",
+    "website": "Website URL",
+    "commissionRate": "Commission Rate",
+    "paymentMethod": "Payment Method",
+    "accountId": "Account ID",
+    "description": "Description",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "generate": "Generate",
+    "apply": "Apply to Become Partner",
+    "partnerCodePlaceholder": "e.g. YOURNAME123",
+    "displayNamePlaceholder": "Your name or business name",
+    "companyNamePlaceholder": "Your company name (optional)",
+    "websitePlaceholder": "https://yourwebsite.com",
+    "accountIdPlaceholder": "email@example.com or account ID",
+    "descriptionPlaceholder": "Describe how you plan to promote EngagePerfect",
+    "emailDetection": {
+      "userFound": "User found! Will create partner account for existing user.",
+      "newUser": "New user will be created with this email.",
+      "autoDetected": "UID automatically detected from the email address.",
+      "overrideCreate": "Override: Create New User",
+      "overrideDescription": "Override the auto-detection and create a new user instead of using the existing one."
+    }
+  },
+  "referral": {
+    "capturedStatus": "Captured",
+    "clearReferral": "Clear Referral",
+    "debugTitle": "🔍 Referral Debug",
+    "noActiveReferral": "No Active Referral",
+    "testInstructions": "Add ?ref=CODE to URL to test referral capture",
+    "welcome": "You're signing up with Partner: {{partnerName}}",
+    "welcomeWithCompany": "You're signing up with {{partnerName}} from {{companyName}}",
+    "captured": "Referral code {{code}} captured successfully!",
+    "invalid": "Invalid referral code: {{code}}",
+    "expired": "Referral code has expired",
+    "inactive": "This referral code is no longer active",
+    "usageLimitReached": "This referral code has reached its usage limit",
+    "partnerInactive": "The partner for this referral code is currently inactive"
+  },
+  "messages": {
+    "applicationSubmitted": "Your partner application has been submitted successfully! We'll review it and get back to you within 1-2 business days.",
+    "codeGenerated": "Partner code generated successfully!",
+    "settingsUpdated": "Partner settings updated successfully!",
+    "payoutRequested": "Payout request submitted successfully!",
+    "invalidCode": "Invalid partner code format. Use 3-20 uppercase letters and numbers only.",
+    "codeExists": "This partner code is already taken. Please choose a different one.",
+    "error": "An error occurred. Please try again.",
+    "success": "Operation completed successfully!",
+    "linkCopied": "Referral link copied to clipboard!",
+    "minPayoutAmount": "Minimum payout amount is $50.00",
+    "insufficientBalance": "Insufficient commission balance for payout"
+  },
+  "actions": {
+    "apply": "Apply Now",
+    "generateCode": "Generate New Code",
+    "copyLink": "Copy Link",
+    "requestPayout": "Request Payout",
+    "viewDetails": "View Details",
+    "editProfile": "Edit Profile",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "refresh": "Refresh",
+    "download": "Download Report",
+    "viewAll": "View All"
+  },
+  "application": {
+    "title": "Become a Partner",
+    "subtitle": "Join our affiliate program and earn commissions by referring customers to EngagePerfect.",
+    "benefits": {
+      "title": "Partner Benefits",
+      "commission": "Earn up to 60% commission on every sale",
+      "support": "Dedicated partner support",
+      "materials": "Free marketing materials and resources",
+      "tracking": "Advanced tracking and analytics",
+      "payments": "Monthly automatic payments"
+    },
+    "requirements": {
+      "title": "Requirements",
+      "audience": "Have an engaged audience interested in content creation",
+      "platform": "Active presence on social media, blog, or website",
+      "quality": "Commitment to promoting our service authentically",
+      "compliance": "Agree to our partner terms and conditions"
+    },
+    "steps": {
+      "title": "How It Works",
+      "apply": "Submit your application",
+      "review": "We review your application (1-2 days)",
+      "approved": "Get approved and receive your unique referral code",
+      "promote": "Start promoting and earn commissions"
+    }
+  },
+  "referrals": {
+    "title": "My Referrals",
+    "subtitle": "Track all your referrals and their conversion status",
+    "columns": {
+      "date": "Date",
+      "code": "Code Used",
+      "status": "Status",
+      "customer": "Customer",
+      "plan": "Plan",
+      "commission": "Commission",
+      "source": "Source"
+    },
+    "status": {
+      "pending": "Pending",
+      "converted": "Converted",
+      "subscribed": "Subscribed"
+    },
+    "empty": "No referrals yet. Start sharing your referral links to see them here!",
+    "filters": {
+      "all": "All Referrals",
+      "converted": "Converted Only",
+      "pending": "Pending Only",
+      "dateRange": "Date Range"
+    }
+  },
+  "commissions": {
+    "title": "My Commissions",
+    "subtitle": "Track your earnings and payout history",
+    "columns": {
+      "date": "Date",
+      "referral": "Referral",
+      "amount": "Amount",
+      "rate": "Rate",
+      "status": "Status",
+      "period": "Billing Period"
+    },
+    "summary": {
+      "totalEarned": "Total Earned",
+      "pendingAmount": "Pending",
+      "paidAmount": "Paid Out",
+      "nextPayout": "Next Payout"
+    },
+    "payout": {
+      "title": "Request Payout",
+      "minimumAmount": "Minimum payout amount: $50.00",
+      "currentBalance": "Current balance:",
+      "requestAmount": "Request amount:",
+      "paymentMethod": "Payment method:",
+      "processing": "Payouts are processed monthly on the 15th"
+    },
+    "empty": "No commissions yet. Start referring customers to earn your first commission!"
+  },
+  "links": {
+    "title": "Referral Links",
+    "subtitle": "Generate and manage your referral links",
+    "generator": {
+      "title": "Link Generator",
+      "selectPage": "Select destination page:",
+      "pages": {
+        "home": "Home Page",
+        "pricing": "Pricing Page",
+        "signup": "Sign Up Page",
+        "dashboard": "Dashboard"
+      },
+      "utmParams": "UTM Parameters (optional):",
+      "utmSource": "UTM Source",
+      "utmMedium": "UTM Medium",
+      "utmCampaign": "UTM Campaign"
+    },
+    "popular": {
+      "title": "Popular Links",
+      "pricing": "Pricing Page - Most conversions",
+      "home": "Home Page - General audience",
+      "signup": "Sign Up - Direct conversion"
+    },
+    "analytics": {
+      "title": "Link Performance",
+      "clicks": "Clicks",
+      "conversions": "Conversions",
+      "rate": "Conversion Rate"
+    }
+  },
+  "settings": {
+    "title": "Partner Settings",
+    "subtitle": "Manage your partner profile and preferences",
+    "profile": {
+      "title": "Profile Information",
+      "displayName": "Display Name",
+      "companyName": "Company Name",
+      "website": "Website",
+      "partnerCode": "Partner Code"
+    },
+    "payment": {
+      "title": "Payment Information",
+      "method": "Payment Method",
+      "methods": {
+        "paypal": "PayPal",
+        "bank_transfer": "Bank Transfer",
+        "stripe_express": "Stripe Express"
+      },
+      "accountId": "Account ID/Email",
+      "verified": "Verified",
+      "notVerified": "Not Verified",
+      "verify": "Verify Payment Details"
+    },
+    "marketing": {
+      "title": "Marketing Preferences",
+      "language": "Preferred Language",
+      "updates": "Receive Performance Updates",
+      "newsletter": "Partner Newsletter"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "deactivate": "Deactivate Partner Account",
+      "deactivateDesc": "Temporarily disable your partner account. You can reactivate it later.",
+      "terminate": "Terminate Partnership",
+      "terminateDesc": "Permanently end your partnership. This action cannot be undone."
+    }
+  },
+  "admin": {
+    "title": "Partner Management",
+    "totalPartners": "partners",
+    "loading": "Loading partners...",
+    "noPartners": "No partners yet",
+    "noPartnersDesc": "Get started by creating your first partner account.",
+    "noResults": "No partners found",
+    "noResultsDesc": "Try adjusting your search or filter criteria.",
+    
+    "columns": {
+      "name": "Name",
+      "email": "Email", 
+      "status": "Status",
+      "commission": "Commission Rate",
+      "referrals": "Referrals",
+      "earned": "Total Earned",
+      "joined": "Joined",
+      "actions": "Actions",
+      "company": "Company"
+    },
+
+    "partners": {
+      "title": "All Partners",
+      "description": "Manage partner accounts, commission rates, and referral codes."
+    },
+
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "suspended": "Suspended", 
+      "inactive": "Inactive",
+      "terminated": "Terminated"
+    },
+
+    "search": {
+      "placeholder": "Search partners by name, email, or company...",
+      "results": "Showing {{count}} results"
+    },
+
+    "filters": {
+      "allStatus": "All Status"
+    },
+
+    "actions": {
+      "title": "Actions",
+      "create": "Create",
+      "createPartner": "Create Partner",
+      "createFirst": "Create First Partner",
+      "editRate": "Edit Commission Rate",
+      "generateCode": "Generate Code",
+      "copyLink": "Copy Link",
+      "viewDetails": "View Details",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete Partner",
+      "cancel": "Cancel",
+      "close": "Close",
+      "refresh": "Refresh",
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "generating": "Generating...",
+      "updateRate": "Update Rate",
+      "copied": "Copied!",
+      "copiedDesc": "Link has been copied to clipboard."
+    },
+
+    "forms": {
+      "default": "default",
+      "createPartner": {
+        "title": "Create New Partner",
+        "subtitle": "Create a partner account for an existing Firebase Auth user.",
+        "uid": "Firebase Auth UID",
+        "uidPlaceholder": "Enter the Firebase Auth UID",
+        "uidHelp": "The user must already be registered in Firebase Auth.",
+        "email": "Email Address",
+        "emailPlaceholder": "partner@company.com",
+        "displayName": "Display Name",
+        "displayNamePlaceholder": "John Doe or Company Name",
+        "companyName": "Company Name",
+        "companyNamePlaceholder": "Acme Corp (optional)",
+        "website": "Website",
+        "websitePlaceholder": "https://example.com (optional)",
+        "commissionRate": "Commission Rate",
+        "notes": "Description",
+        "notesPlaceholder": "Internal notes about this partner..."
+      },
+      "editPartner": {
+        "title": "Edit Partner Commission",
+        "description": "Update the commission rate for {{name}}.",
+        "commissionRate": "Commission Rate",
+        "commissionHelp": "This will apply to all future referrals and commissions."
+      },
+      "generateCode": {
+        "title": "Generate Partner Code",
+        "subtitle": "Create a new referral code for {{name}}.",
+        "desiredCode": "Desired Code",
+        "desiredCodePlaceholder": "PARTNER123",
+        "codeHelp": "3-20 alphanumeric characters. Leave blank for auto-generation.",
+        "codeFormat": "Only uppercase letters and numbers allowed.",
+        "notes": "Description",
+        "notesPlaceholder": "Q4 2025 Campaign",
+        "maxUses": "Maximum Uses",
+        "unlimited": "Unlimited",
+        "expiresAt": "Expiry Date",
+        "customRate": "Custom Commission Rate",
+        "useDefault": "Use Partner Default"
+      }
+    },
+
+    "details": {
+      "title": "Partner Details",
+      "subtitle": "Complete information for {{name}}.",
+      "information": "Partner Information",
+      "statistics": "Performance Statistics",
+      "codes": "Referral Codes",
+      "website": "Website",
+      "conversions": "Conversions",
+      "paid": "Paid Out",
+      "noCodes": "No referral codes generated yet.",
+      "noDescription": "No description provided",
+      "uses": "Uses",
+      "expires": "Expires"
+    },
+
+    "messages": {
+      "partnerCreated": "Partner Created",
+      "partnerCreatedDesc": "Partner account for {{name}} has been created successfully.",
+      "partnerUpdated": "Partner Updated", 
+      "partnerUpdatedDesc": "Commission rate for {{name}} has been updated.",
+      "partnerDeleted": "Partner Deleted",
+      "partnerDeletedDesc": "Partner account for {{name}} has been deleted successfully.",
+      "confirmDelete": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "codeGenerated": "Code Generated",
+      "codeGeneratedDesc": "Referral code {{code}} has been generated successfully.",
+      "statusUpdated": "Status Updated",
+      "statusUpdatedDesc": "{{name}} is now {{status}}."
+    },
+
+    "errors": {
+      "fetchFailed": "Failed to Load Data",
+      "fetchFailedDesc": "Could not load partners and codes. Please try again.",
+      "createFailed": "Failed to Create Partner",
+      "createFailedDesc": "Could not create partner account. Check the details and try again.",
+      "updateFailed": "Failed to Update Partner",
+      "updateFailedDesc": "Could not update partner information. Please try again.",
+      "deleteFailed": "Failed to Delete Partner",
+      "deleteFailedDesc": "Could not delete partner account. Please try again.",
+      "codeFailed": "Failed to Generate Code",
+      "codeFailedDesc": "Could not generate referral code. Please try again.",
+      "statusFailed": "Failed to Update Status",
+      "statusFailedDesc": "Could not update partner status. Please try again.",
+      "copyFailed": "Copy Failed",
+      "copyFailedDesc": "Could not copy to clipboard. Please copy manually."
+    },
+  
+    "registration": {
+      "pageTitle": "Become a Partner",
+      "pageDescription": "Join our partner program and start earning commissions",
+      "title": "Partner Registration",
+      "subtitle": "Join our partner program and start earning commissions for every customer you refer",
+      "start": "Start Registration",
+      "back": "Back",
+      "submitting": "Submitting...",
+      "submit": "Submit Registration",
+      
+      "benefits": {
+        "title": "Partner Benefits",
+        "commission": "Earn up to 70% commission on every sale",
+        "tracking": "Real-time tracking and analytics",
+        "support": "Dedicated partner support"
+      },
+      
+      "process": {
+        "title": "Registration Process",
+        "description": "Your application will be reviewed by our team. We'll notify you within 24-48 hours."
+      },
+      
+      "form": {
+        "title": "Partner Information",
+        "subtitle": "Tell us about yourself and your business",
+        "userInfo": "Your Account Information",
+        "email": "Email",
+        "displayName": "Display Name",
+        "displayNamePlaceholder": "Enter your name or business name",
+        "companyName": "Company Name",
+        "companyNamePlaceholder": "Enter your company name (optional)",
+        "website": "Website",
+        "websitePlaceholder": "https://yourwebsite.com",
+        "commissionRate": "Preferred Commission Rate",
+        "default": "Default",
+        "commissionHelp": "Choose your preferred commission rate. Higher rates may require approval.",
+        "description": "About Your Business",
+        "descriptionPlaceholder": "Tell us about your business and how you plan to promote our services",
+        "descriptionHelp": "This helps us understand your business and provide better support.",
+        "marketingPreferences": "Marketing Preferences",
+        "emailMarketing": "Receive email marketing updates",
+        "smsMarketing": "Receive SMS marketing updates",
+        "partnerNewsletter": "Subscribe to partner newsletter",
+        
+        "enhanced": {
+          "title": "Partner Application",
+          "subtitle": "Tell us about yourself and your skills",
+          "basicInfo": "Basic Information",
+          "skillsExperience": "Your Skills & Experience",
+          "availability": "Your Availability",
+          
+          "fullName": "Full Name",
+          "fullNamePlaceholder": "Your full name",
+          "phone": "Phone/WhatsApp",
+          "phonePlaceholder": "+1 (555) 123-4567",
+          "industry": "Your Industry/Niche",
+          "industryPlaceholder": "Select your industry",
+          
+          "contentSkills": "What content services can you provide?",
+          "contentSkillsHelp": "Select all that apply - DFY core services are highlighted",
+          "socialMedia": "Social Media Posts",
+          "blogWriting": "Blog/Article Writing", 
+          "graphicDesign": "Graphic Design",
+          "videoEditing": "Video/Reels Editing",
+          "communityMgmt": "Community Management",
+          "justLearning": "Just Learning",
+          "dfyCore": "DFY Core Service",
+          
+          "languages": "Languages You Write In",
+          "addLanguage": "+ Add Language",
+          "selectLanguage": "Select Language",
+          "languageLevel": "Level",
+          "native": "Native",
+          "fluent": "Fluent",
+          "conversational": "Conversational",
+          "languageOptions": {
+            "english": "English",
+            "french": "French", 
+            "spanish": "Spanish",
+            "german": "German",
+            "portuguese": "Portuguese",
+            "italian": "Italian",
+            "other": "Other"
+          },
+          
+          "experienceLevel": "Your Experience Level",
+          "beginner": "Beginner",
+          "beginnerDesc": "0-1 years",
+          "intermediate": "Intermediate", 
+          "intermediateDesc": "1-3 years",
+          "advanced": "Advanced",
+          "advancedDesc": "3+ years",
+          
+          "expectedClients": "How many clients can you realistically handle?",
+          "oneClient": "1 client",
+          "clients": "clients", 
+          "twentyClients": "20+ clients",
+          "capacityLow": "Perfect for getting started! We'll provide extra support.",
+          "capacityMedium": "Great capacity! You'll have good income potential.", 
+          "capacityHigh": "Excellent! You're ready for high-volume partnership.",
+          
+          "availabilityField": "When are you typically available for brief weekly check-ins?",
+          "availabilityPlaceholder": "Choose your preferred time",
+          
+          "portfolioSamples": "Portfolio or Work Samples (Optional)",
+          "portfolioPlaceholder": "https://yourportfolio.com or Instagram handle",
+          
+          "submitting": "Submitting...",
+          "submitApplication": "Submit Application",
+          "back": "Back",
+          "clientsSliderStart": "1 client",
+          "clientsSliderEnd": "20+ clients",
+          "clientsFeedback": {
+            "low": "Perfect for getting started! We'll provide extra support.",
+            "medium": "Great capacity! You'll have good income potential.",
+            "high": "Excellent! You're ready for high-volume partnership."
+          },
+          
+          "availabilityTime": "When are you typically available for brief weekly check-ins?",
+          "weekdayMorning": "Weekday Mornings (9-12 PM)",
+          "weekdayAfternoon": "Weekday Afternoons (1-5 PM)",
+          "weekdayEvening": "Weekday Evenings (6-9 PM)",
+          "weekendMorning": "Weekend Mornings",
+          "weekendAfternoon": "Weekend Afternoons",
+          "flexible": "Flexible - any time",
+          
+          "portfolio": "Portfolio or Work Samples (Optional)",
+          "portfolioHelp": "Share any examples of your content work - website, Instagram, writing samples, etc.",
+          
+          "commissionStructure": "Your Commission Structure",
+          "commissionTier": {
+            "basic": "Basic Partner",
+            "standard": "Standard Partner", 
+            "certified": "Certified Partner"
+          },
+          "leadSources": {
+            "yourLeads": "Your Leads",
+            "yourLeadsDesc": "You find client → You serve → You earn 70%",
+            "ourLeads": "Our Leads",
+            "ourLeadsDesc": "We find client → You serve → Shared commission",
+            "notEligible": "Not Eligible",
+            "notEligibleTooltip": "Eligibility for our lead pipeline is based on your experience level, skills, and portfolio. Complete more fields or upgrade your expertise to qualify."
+          },
+          "dfyRequirements": "DFY Service Requirements:",
+          "requirements": {
+            "weeklyCall": "Weekly 10-min client check-in call",
+            "dailyCaptions": "Daily 3 social media captions", 
+            "blogPosts": "Blog post every other day",
+            "satisfaction": "Maintain 4.3/5+ client satisfaction"
+          }
+        }
+      },
+      
+      "success": {
+        "title": "Registration Submitted!",
+        "subtitle": "Thank you for applying to become a partner",
+        "nextSteps": "What happens next?",
+        "review": "We'll review your application",
+        "approval": "You'll receive approval within 24-48 hours",
+        "notification": "We'll notify you via email",
+        "whileWaiting": "While you wait",
+        "whileWaitingDesc": "Explore our services and start planning your marketing strategy.",
+        "goToDashboard": "Go to Dashboard",
+        "viewPricing": "View Pricing"
+      },
+      
+      "errors": {
+        "title": "Registration Failed",
+        "general": "An error occurred while submitting your registration. Please try again.",
+        "alreadyExists": "You already have a partner account or this email is already registered.",
+        "invalidData": "Please check your information and try again."
+      }
+    },
+
+    "applications": {
+      "title": "Pending Applications",
+      "review": "Review Application",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "commissions": {
+      "title": "Commission Ledger",
+      "payout": "Process Payout",
+      "reverse": "Reverse Commission"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be no more than {max} characters",
+    "invalidEmail": "Invalid email address",
+    "invalidUrl": "Invalid URL format",
+    "invalidCode": "Invalid partner code format",
+    "codeExists": "Partner code already exists",
+    "minCommission": "Commission rate must be at least 10%",
+    "maxCommission": "Commission rate cannot exceed 90%",
+    "invalidPhone": "Please enter a valid phone number",
+    "selectSkills": "Please select at least one skill",
+    "selectIndustry": "Please select your industry",
+    "selectExperience": "Please select your experience level",
+    "selectAvailability": "Please select your availability"
+  },
+  
+  "industries": {
+    "coaching": "Business Coaching",
+    "fitness": "Fitness & Health", 
+    "ecommerce": "E-commerce",
+    "tech": "Technology",
+    "realestate": "Real Estate",
+    "finance": "Finance",
+    "beauty": "Beauty & Lifestyle",
+    "food": "Food & Hospitality",
+    "education": "Education",
+    "other": "Other"
+  }
+}

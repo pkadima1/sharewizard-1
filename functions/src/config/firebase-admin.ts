@@ -22,14 +22,12 @@ export function initializeFirebaseAdmin() {
                       process.env.NODE_ENV === 'development';
 
     if (isEmulator) {
-      // In emulator mode, explicitly connect to production Firestore
-      console.log('🔧 Initializing Firebase Admin for emulator with production services');
+      // In emulator mode, but connect to PRODUCTION Firestore for real data
+      console.log('🔧 Initializing Firebase Admin for emulator with PRODUCTION services');
       
-      // Remove any emulator environment variables that might interfere
-      delete process.env.FIRESTORE_EMULATOR_HOST;
-      
+      // Use production credentials even in emulator
       app = initializeApp({
-        projectId: 'engperfecthlc',
+        projectId: 'engperfecthlc', // Use production project ID
       });
       
     } else {

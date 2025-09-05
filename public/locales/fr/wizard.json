@@ -1,0 +1,69 @@
+{
+  "title": "Assistant de Contenu Long-format",
+  "progress": {
+    "title": "Progression de l'Assistant de Contenu",
+    "step": "Étape {{current}} sur {{total}}",
+    "complete": "{{percent}}% Terminé",
+    "remaining": "{{time}} min restantes",
+    "completed": "{{completed}} sur {{total}} étapes terminées",
+    "current": "Actuel : {{name}}",
+    "optional": "(Optionnel)"
+  },
+  "steps": {
+    "whatWho": {
+      "name": "Quoi & Qui",
+      "description": "Définir votre sujet et votre public cible"
+    },
+    "mediaVisuals": {
+      "name": "Médias & Visuels",
+      "description": "Télécharger et gérer votre contenu visuel"
+    },
+    "seoKeywords": {
+      "name": "SEO & Mots-clés",
+      "description": "Optimiser avec des suggestions de mots-clés intelligentes"
+    },
+    "structureTone": {
+      "name": "Structure & Ton",
+      "description": "Créer votre plan de contenu"
+    },
+    "generationSettings": {
+      "name": "Paramètres de Génération",
+      "description": "Configurer la longueur, le format et l'appel à l'action"
+    },
+    "reviewGenerate": {
+      "name": "Réviser & Générer",
+      "description": "Aperçu final et génération de contenu"
+    }
+  },
+  "navigation": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "skip": "Passer l'étape",
+    "generate": "Générer le Contenu",
+    "saveNow": "Enregistrer Maintenant",
+    "shortcuts": "Raccourcis"
+  },
+  "draft": {
+    "available": "Brouillon Disponible",
+    "restore": "Restaurer le brouillon",
+    "saved": "Brouillon enregistré",
+    "saving": "Enregistrement...",
+    "savedAt": "Enregistré à {{time}}",
+    "autoSave": "Sauvegarde automatique activée"
+  },
+  "errors": {
+    "validation": "Veuillez corriger les erreurs avant de continuer",
+    "generation": "Erreur lors de la génération du contenu",
+    "save": "Erreur lors de l'enregistrement",
+    "load": "Erreur lors du chargement",
+    "network": "Erreur de connexion"
+  },
+  "keyboard": {
+    "title": "Raccourcis Clavier",
+    "next": "Suivant (→)",
+    "previous": "Précédent (←)",
+    "save": "Enregistrer (Ctrl+S)",
+    "generate": "Générer (Ctrl+G)",
+    "close": "Fermer (Échap)"
+  }
+}

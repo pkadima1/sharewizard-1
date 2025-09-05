@@ -18,7 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 const Navbar: React.FC = () => {
-  const { currentUser, userProfile, logout } = useAuth();
+  const { currentUser, userProfile, isPartner, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,16 +164,26 @@ const Navbar: React.FC = () => {
             >
           {/*  Features*/}
             </Link>
-            <Link 
-              to={getLocalizedPath('blog')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/blog') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-             {/* Blog*/}
-            </Link>
+                         <Link 
+               to={getLocalizedPath('blog')} 
+               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                 isActive('/blog') 
+                   ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+               }`}
+             >
+              {/* Blog*/}
+             </Link>
+             <Link 
+               to={getLocalizedPath('partner-registration')} 
+               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                 isActive('/partner-registration') 
+                   ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                   : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+               }`}
+             >
+               {t('nav.becomePartner')}
+             </Link>
           </nav>
             <div className="flex items-center space-x-4">
             
@@ -184,17 +194,30 @@ const Navbar: React.FC = () => {
                 <div className="hidden md:flex items-center">
                   <LanguageSwitcher />
                 </div>
-                {/* Dashboard link hidden for now */}
-                 <Link 
-                  to="/dashboard" 
-                  className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                    isActive('/dashboard') 
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {t('nav.dashboard')}
-                </Link> 
+                            {/* Dashboard link for regular users */}
+             <Link 
+              to="/dashboard" 
+              className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                isActive('/dashboard') 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              {t('nav.dashboard')}
+            </Link>
+            {/* Partner Dashboard link - only visible to partners */}
+            {isPartner && (
+              <Link 
+                to="/partner/dashboard" 
+                className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                  isActive('/partner/dashboard') 
+                    ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                    : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+                }`}
+              >
+                {t('nav.partner.dashboard')}
+              </Link>
+            )} 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="group relative flex items-center">
@@ -227,13 +250,22 @@ const Navbar: React.FC = () => {
                         <span>{t('nav.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
-                    {/* Dashboard menu item hidden for now */}
+                    {/* Dashboard menu item */}
                   <DropdownMenuItem asChild>
                       <Link to={getLocalizedPath('dashboard')} className="cursor-pointer flex items-center">
                         <Bell className="mr-2 h-4 w-4" />
                         <span>{t('nav.dashboard')}</span>
                       </Link>
-                    </DropdownMenuItem> 
+                    </DropdownMenuItem>
+                    {/* Partner Dashboard menu item - only visible to partners */}
+                    {isPartner && (
+                      <DropdownMenuItem asChild>
+                        <Link to={getLocalizedPath('partner/dashboard')} className="cursor-pointer flex items-center">
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>{t('nav.partner.dashboard')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )} 
                     {/* Admin Dashboard link - only visible to admins */}
                     {isAdmin && (
                       <DropdownMenuItem asChild>
@@ -302,6 +334,17 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('nav.pricing')}
+              </Link>
+              <Link 
+                to={getLocalizedPath('partner-registration')} 
+                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                  isActive('/partner-registration') 
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('nav.becomePartner')}
               </Link>              <Link 
                 to={getLocalizedPath('caption-generator')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -370,7 +413,7 @@ const Navbar: React.FC = () => {
               </Link>
               {currentUser && (
                 <>
-                  {/* Dashboard mobile link hidden for now */}
+                  {/* Dashboard mobile link */}
                   <Link 
                     to={getLocalizedPath('dashboard')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -381,7 +424,21 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('nav.dashboard')}
-                  </Link> 
+                  </Link>
+                  {/* Partner Dashboard mobile link - only visible to partners */}
+                  {isPartner && (
+                    <Link 
+                      to={getLocalizedPath('partner/dashboard')} 
+                      className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                        isActive('/partner/dashboard') 
+                          ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                          : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('nav.partner.dashboard')}
+                    </Link>
+                  )} 
                   <Link 
                     to={getLocalizedPath('profile')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
