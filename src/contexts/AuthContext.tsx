@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const partnerQuery = query(
         collection(db, 'partners'),
         where('uid', '==', uid),
-        where('status', '==', 'active')
+        where('status', '==', 'approved')
       );
       
       const partnerSnapshot = await getDocs(partnerQuery);

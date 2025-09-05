@@ -128,7 +128,7 @@ export const rejectPartner = onCall({
     }
 
     // Check if already approved
-    if (partnerData.status === 'active') {
+    if (partnerData.status === 'approved') {
       throw new HttpsError(
         "failed-precondition",
         "Cannot reject an approved partner application."
