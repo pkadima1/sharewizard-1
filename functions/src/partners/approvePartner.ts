@@ -171,7 +171,7 @@ export const approvePartner = onCall({
     const partnerData = partnerDoc.data() as Partner;
     
     // Check if already approved
-    if (partnerData.status === 'active') {
+    if (partnerData.status === 'approved') {
       throw new HttpsError(
         "already-exists",
         "Partner application has already been approved."
@@ -188,12 +188,14 @@ export const approvePartner = onCall({
 
     const now = Timestamp.now();
 
-    // Step 5: Update partner status to active
+    // Step 5: Update partner status to approved
     await partnerRef.update({
-      status: 'active' as PartnerStatus,
+      status: 'approved' as PartnerStatus,
       commissionRate: finalCommissionRate,
       updatedAt: now,
-      approvedAt: now
+      approvedAt: now,
+      approvedByUid: callerUid,
+      approvedByEmail: callerEmail
     });
 
     // Step 6: Update Firebase Auth custom claims
@@ -203,7 +205,7 @@ export const approvePartner = onCall({
         ...authUser.customClaims,
         partner: true,
         partnerId: applicationId,
-        partnerStatus: 'active'
+        partnerStatus: 'approved'
       });
       logger.info(`[ApprovePartner] Updated custom claims for user: ${partnerData.uid}`);
     } catch (error) {

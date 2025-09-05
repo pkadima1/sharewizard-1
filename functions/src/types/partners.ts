@@ -9,7 +9,7 @@ import { Timestamp } from "firebase-admin/firestore";
 /**
  * Partner status options
  */
-export type PartnerStatus = 'pending' | 'active' | 'inactive' | 'suspended' | 'rejected' | 'terminated';
+export type PartnerStatus = 'pending' | 'approved' | 'inactive' | 'suspended' | 'rejected' | 'terminated';
 
 /**
  * Commission rate options (as decimals)

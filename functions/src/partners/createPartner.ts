@@ -253,7 +253,7 @@ export const createPartner = onCall({
       email: email.toLowerCase(),
       displayName: displayName.trim(),
       commissionRate: finalCommissionRate,
-      status: 'active' as PartnerStatus, // New partners are immediately active (admin created)
+      status: 'approved' as PartnerStatus, // New partners are immediately approved (admin created)
       createdAt: isUpdate ? (existingPartnerQuery.docs[0].data().createdAt || now) : now,
       updatedAt: now,
       ...(companyName && { companyName: companyName.trim() }),
@@ -279,7 +279,7 @@ export const createPartner = onCall({
         ...authUser.customClaims,
         partner: true,
         partnerId: partnerId,
-        partnerStatus: 'active'
+        partnerStatus: 'approved'
       });
       logger.info(`[CreatePartner] Updated custom claims for user: ${finalUid}`);
     } catch (error) {

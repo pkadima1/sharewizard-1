@@ -3,7 +3,7 @@ export interface Partner {
   uid: string;
   displayName: string;
   email: string;
-  status: 'active' | 'pending' | 'inactive';
+  status: 'approved' | 'pending' | 'inactive';
   commissionRate: number;
   createdAt: Date;
   updatedAt: Date;

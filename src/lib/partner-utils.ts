@@ -12,9 +12,9 @@ export const COMMISSION_RATE_OPTIONS = [0.4, 0.5, 0.6, 0.7] as const;
 /**
  * Partner Status Types for Frontend
  */
-export type PartnerStatus = 
+export type PartnerStatus =
   | 'pending'     // Awaiting approval
-  | 'active'      // Active and can earn commissions
+  | 'approved'    // Approved and can earn commissions
   | 'suspended'   // Temporarily disabled
   | 'inactive'    // Voluntarily paused by partner
   | 'terminated'; // Permanently disabled
@@ -176,7 +176,7 @@ class PartnerStatusHelper {
    */
   static getStatusColor(status: PartnerStatus): string {
     switch (status) {
-      case 'active':
+      case 'approved':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
@@ -195,14 +195,14 @@ class PartnerStatusHelper {
    * Check if partner can earn commissions
    */
   static canEarnCommissions(status: PartnerStatus): boolean {
-    return status === 'active';
+    return status === 'approved';
   }
 
   /**
    * Check if partner can access dashboard
    */
   static canAccessDashboard(status: PartnerStatus): boolean {
-    return ['active', 'inactive'].includes(status);
+    return ['approved', 'inactive'].includes(status);
   }
 }
 

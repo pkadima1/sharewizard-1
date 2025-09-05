@@ -441,9 +441,9 @@ export const approvePartnerRegistration = async (partnerId: string): Promise<boo
     
     const partnerData = partnerDoc.data() as Partner;
     
-    // Update partner status to active
+    // Update partner status to approved
     await partnerRef.update({
-      status: 'active',
+      status: 'approved',
       updatedAt: Timestamp.now(),
       approvedAt: Timestamp.now()
     });
@@ -453,7 +453,7 @@ export const approvePartnerRegistration = async (partnerId: string): Promise<boo
       await auth.setCustomUserClaims(partnerData.uid, {
         partner: true,
         partnerId: partnerId,
-        partnerStatus: 'active'
+        partnerStatus: 'approved'
       });
       logger.info(`[ApprovePartnerRegistration] Updated custom claims for user: ${partnerData.uid}`);
     } catch (error) {

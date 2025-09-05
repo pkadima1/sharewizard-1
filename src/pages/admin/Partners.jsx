@@ -110,7 +110,7 @@ const DEFAULT_COMMISSION_RATE = 0.6;
  */
 const getStatusColor = (status) => {
   switch (status) {
-    case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+    case 'approved': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
     case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
     case 'suspended': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
     case 'inactive': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
@@ -121,7 +121,7 @@ const getStatusColor = (status) => {
 
 const getStatusIcon = (status) => {
   switch (status) {
-    case 'active': return <CheckCircle className="h-4 w-4" />;
+    case 'approved': return <CheckCircle className="h-4 w-4" />;
     case 'pending': return <Clock className="h-4 w-4" />;
     case 'suspended': return <XCircle className="h-4 w-4" />;
     case 'inactive': return <AlertCircle className="h-4 w-4" />;
@@ -1190,7 +1190,7 @@ const Partners = () => {
   // Toggle partner status
   const togglePartnerStatus = async (partner) => {
     try {
-      const newStatus = partner.status === 'active' ? 'inactive' : 'active';
+      const newStatus = partner.status === 'approved' ? 'inactive' : 'approved';
       const partnerRef = doc(db, 'partners', partner.id);
       await updateDoc(partnerRef, {
         status: newStatus,
@@ -1310,7 +1310,7 @@ const Partners = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t('admin.filters.allStatus')}</SelectItem>
-                  <SelectItem value="active">{t('admin.status.active')}</SelectItem>
+                  <SelectItem value="approved">{t('admin.status.approved')}</SelectItem>
                   <SelectItem value="pending">{t('admin.status.pending')}</SelectItem>
                   <SelectItem value="suspended">{t('admin.status.suspended')}</SelectItem>
                   <SelectItem value="inactive">{t('admin.status.inactive')}</SelectItem>
@@ -1506,7 +1506,7 @@ const Partners = () => {
                               <DropdownMenuItem 
                                 onClick={() => togglePartnerStatus(partner)}
                               >
-                                {partner.status === 'active' ? (
+                                {partner.status === 'approved' ? (
                                   <>
                                     <XCircle className="mr-2 h-4 w-4" />
                                     {t('admin.actions.deactivate')}

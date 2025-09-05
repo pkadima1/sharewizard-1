@@ -418,9 +418,10 @@ const PendingPartners = () => {
       }
     } catch (error: any) {
       console.error('Error approving application:', error);
+      const errorMessage = error?.message?.split(': ')[1] || error?.message || t('errors.approvalFailedDesc');
       toast({
         title: t('errors.approvalFailed'),
-        description: error.message || t('errors.approvalFailedDesc'),
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -452,9 +453,10 @@ const PendingPartners = () => {
       }
     } catch (error: any) {
       console.error('Error rejecting application:', error);
+      const errorMessage = error?.message?.split(': ')[1] || error?.message || t('errors.rejectionFailedDesc');
       toast({
         title: t('errors.rejectionFailed'),
-        description: error.message || t('errors.rejectionFailedDesc'),
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
