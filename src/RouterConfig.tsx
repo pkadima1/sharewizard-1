@@ -3,6 +3,8 @@ import { Routes, Route, useParams, useNavigate, useLocation } from 'react-router
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ReferralCapture from "./components/ReferralCapture";
+import ReferralStatusDisplay from "./components/ReferralStatusDisplay";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
@@ -18,6 +20,11 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Partners from "./pages/admin/Partners";
+import PendingPartners from "./pages/admin/PendingPartners";
+import PartnerPayouts from "./pages/admin/PartnerPayouts";
+import PartnerRegistration from "./pages/PartnerRegistration";
+import PartnerDashboard from "./pages/partner/Dashboard";
 import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -89,6 +96,7 @@ const RouterConfig = () => {
   return (
     <ErrorBoundary>
       <GlobalPageTracker />
+      <ReferralCapture />
       <div className="flex flex-col min-h-screen">
         <ErrorBoundary>
           <Navbar />
@@ -114,6 +122,11 @@ const RouterConfig = () => {
               <Route path="/blog/:postId" element={<RootRedirect />} />
               <Route path="/contact" element={<RootRedirect />} />
               <Route path="/admin" element={<RootRedirect />} />
+              <Route path="/admin/partners" element={<RootRedirect />} />
+              <Route path="/admin/pending-partners" element={<RootRedirect />} />
+              <Route path="/admin/partner-payouts" element={<RootRedirect />} />
+              <Route path="/partner-registration" element={<RootRedirect />} />
+              <Route path="/partner/dashboard" element={<RootRedirect />} />
               
               {/* Language-prefixed routes */}
               <Route path="/:lang/*" element={
@@ -138,8 +151,13 @@ const RouterConfig = () => {
                     
                     {/* Admin routes */}
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+                    <Route path="/admin/partners" element={<ErrorBoundary><Partners /></ErrorBoundary>} />
+                    <Route path="/admin/pending-partners" element={<ErrorBoundary><PendingPartners /></ErrorBoundary>} />
+                    <Route path="/admin/partner-payouts" element={<ErrorBoundary><PartnerPayouts /></ErrorBoundary>} />
                     
-
+                    {/* Partner routes */}
+                    <Route path="/partner-registration" element={<ErrorBoundary><PartnerRegistration /></ErrorBoundary>} />
+                    <Route path="/partner/dashboard" element={<ErrorBoundary><PartnerDashboard /></ErrorBoundary>} />
                     
                     {/* Nested route catch-all for unknown pages */}
                     <Route path="*" element={<NotFound />} />
@@ -155,6 +173,7 @@ const RouterConfig = () => {
         <ErrorBoundary>
           <Footer />
         </ErrorBoundary>
+        <ReferralStatusDisplay />
       </div>
     </ErrorBoundary>
   );

@@ -1,0 +1,78 @@
+/**
+ * PartnerRegistration.tsx - Enhanced Public Partner Registration Page
+ * 
+ * Purpose: Allow users to register themselves as partners with perfect UX
+ * Features: Self-registration form, validation, approval workflow, enhanced UI
+ */
+
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { Navigate } from 'react-router-dom';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/lib/firebase';
+import { usePartnerTranslation } from '@/hooks/use-partner-translation';
+
+// Icons
+import { 
+  Users, 
+  UserPlus, 
+  Mail, 
+  Building, 
+  Globe, 
+  FileText, 
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
+  Shield,
+  Star,
+  TrendingUp,
+  Headphones,
+  Gift,
+  Clock,
+  Check,
+  X,
+  Info
+} from 'lucide-react';
+
+// UI Components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+// Constants
+const COMMISSION_RATE_OPTIONS = [0.4, 0.5, 0.6, 0.7];
+const DEFAULT_COMMISSION_RATE = 0.6;
+
+interface FormErrors {
+  displayName?: string;
+  website?: string;
+  description?: string;
+}
+
+const PartnerRegistration: React.FC = () => {
+  const { currentUser } = useAuth();
+  const { toast } = useToast();
+  // Use the fixed translation hook instead of regular useTranslation
+  const { t } = usePartnerTranslation();
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    displayName: '',
+    companyName: '',
+    website: '',
+    commissionRate: DEFAULT_COMMISSION_RATE,
+    description: '',
+    marketingPreferences: {
+      emailMarketing: true,
+      smsMarketing: false,
+      partnerNewsletter: true
+    }
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});

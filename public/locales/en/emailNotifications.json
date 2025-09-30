@@ -1,0 +1,60 @@
+{
+  "partnerApproved": {
+    "subject": "✅ You're approved — EngagePerfect Partner",
+    "html": {
+      "title": "🎉 Welcome to EngagePerfect!",
+      "greeting": "Hi",
+      "approvalMessage": "Great news! Your Partner account has been <strong>approved</strong> and you're now ready to start earning commissions.",
+      "partnerDetails": "Your Partner Details:",
+      "referralCode": "Referral Code:",
+      "referralLink": "Referral Link:",
+      "startSharing": "Start sharing your referral link and earn commissions for every new customer you bring to EngagePerfect!",
+      "questions": "If you have any questions, feel free to reach out to our support team.",
+      "welcome": "Welcome aboard! 🚀",
+      "footer": "This email was sent from EngagePerfect Partner Program. If you have any questions, please contact support."
+    },
+    "text": {
+      "greeting": "Hi",
+      "approvalMessage": "Great news! Your Partner account has been approved and you're now ready to start earning commissions.",
+      "partnerDetails": "Your Partner Details:",
+      "referralCode": "Referral Code:",
+      "referralLink": "Referral Link:",
+      "startSharing": "Start sharing your referral link and earn commissions for every new customer you bring to EngagePerfect!",
+      "questions": "If you have any questions, feel free to reach out to our support team.",
+      "welcome": "Welcome aboard!",
+      "footer": "This email was sent from EngagePerfect Partner Program. If you have any questions, please contact support."
+    }
+  },
+  "partnerRejected": {
+    "subject": "Your EngagePerfect Partner application",
+    "html": {
+      "title": "Application Update",
+      "greeting": "Hi",
+      "thankYou": "Thank you for your interest in becoming an EngagePerfect Partner and for taking the time to apply.",
+      "regretMessage": "After careful review of your application, we regret to inform you that we are unable to approve your partner application at this time.",
+      "reviewFeedback": "Review Feedback:",
+      "whatsNext": "What's next?",
+      "reapply": "You may re-apply in 60 days from the date of this email",
+      "considerFeedback": "Consider addressing the feedback provided above",
+      "contact": "Feel free to reach out if you have any questions",
+      "appreciation": "We appreciate your interest in EngagePerfect and wish you the best of luck in your future endeavors.",
+      "regards": "Best regards,",
+      "team": "The EngagePerfect Team",
+      "footer": "This email was sent from EngagePerfect Partner Program. If you have any questions, please contact support."
+    },
+    "text": {
+      "greeting": "Hi",
+      "thankYou": "Thank you for your interest in becoming an EngagePerfect Partner and for taking the time to apply.",
+      "regretMessage": "After careful review of your application, we regret to inform you that we are unable to approve your partner application at this time.",
+      "reviewFeedback": "Review Feedback:",
+      "whatsNext": "What's next?",
+      "reapply": "You may re-apply in 60 days from the date of this email",
+      "considerFeedback": "Consider addressing the feedback provided above",
+      "contact": "Feel free to reach out if you have any questions",
+      "appreciation": "We appreciate your interest in EngagePerfect and wish you the best of luck in your future endeavors.",
+      "regards": "Best regards,",
+      "team": "The EngagePerfect Team",
+      "footer": "This email was sent from EngagePerfect Partner Program. If you have any questions, please contact support."
+    }
+  }
+}

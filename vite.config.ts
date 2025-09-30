@@ -8,7 +8,10 @@ import path from "path";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 8082,
+    hmr: {
+      overlay: false
+    }
   },
  plugins: [
     react(),
@@ -24,7 +27,7 @@ export default defineConfig(({ mode }) => ({
   base: "/",
   // Add SPA fallback
   preview: {
-    port: 8080,
+    port: 8082,
     host: true,
     strictPort: true,
   },

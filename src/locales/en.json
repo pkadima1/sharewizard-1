@@ -102,5 +102,72 @@
     "disabled": "disabled",
     "active": "active",
     "basic": "basic"
+  },
+  "referrals": {
+    "processing": "Processing referral information...",
+    "validating": "Validating referral code...",
+    "validated": "Referral code validated successfully",
+    "invalid": "Invalid referral code - proceeding without referral attribution",
+    "error": "Error processing referral code - continuing checkout",
+    "applied": "Referral bonus applied to your account",
+    "commission": {
+      "calculating": "Calculating partner commission...",
+      "processed": "Commission processed successfully",
+      "failed": "Failed to process commission"
+    },
+    "checkout": {
+      "withReferral": "Checkout with referral tracking enabled",
+      "metadataAttached": "Referral metadata attached for webhook processing",
+      "customerCreated": "Customer profile created for future referral tracking",
+      "sessionCreated": "Checkout session created with referral attribution"
+    },
+    "partner": {
+      "notFound": "Partner not found for referral code",
+      "inactive": "Partner account is inactive",
+      "validated": "Partner account validated successfully"
+    },
+    "webhooks": {
+      "processing": "Processing webhook event with referral data",
+      "correlating": "Correlating customer with referral code",
+      "tracking": "Updating referral tracking records",
+      "commission": "Processing referral commission",
+      "invoicePaid": {
+        "processing": "Processing invoice payment for commission accrual",
+        "calculating": "Calculating commission on invoice payment",
+        "accrued": "Commission accrued from invoice payment",
+        "noReferral": "No referral found for invoice - skipping commission",
+        "zeroAmount": "Invoice amount is zero - skipping commission",
+        "partnerNotFound": "Partner not found for commission accrual",
+        "ledgerCreated": "Commission ledger entry created successfully"
+      },
+      "invoiceVoided": {
+        "processing": "Processing invoice void for commission reversal",
+        "reversing": "Reversing commission due to voided invoice",
+        "reversed": "Commission successfully reversed",
+        "noEntries": "No commission entries found for voided invoice",
+        "alreadyReversed": "Commission already reversed"
+      },
+      "invoicePaymentAction": {
+        "processing": "Processing invoice payment action required",
+        "tracked": "Invoice payment action tracked for analytics"
+      }
+    }
+  },
+  "auth": {
+    "referralAttribution": {
+      "success": {
+        "title": "Referral Applied!",
+        "description": "You've been attributed to partner {{partnerName}}"
+      },
+      "error": {
+        "title": "Attribution Error",
+        "description": "Unable to apply referral code"
+      },
+      "info": {
+        "noReferral": "No referral code found",
+        "invalidCode": "Invalid or expired referral code",
+        "attributionFailed": "Failed to process referral attribution"
+      }
+    }
   }
 }

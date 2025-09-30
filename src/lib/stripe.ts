@@ -3,12 +3,50 @@ import { doc, collection, addDoc, onSnapshot } from 'firebase/firestore';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db, auth } from './firebase';
 import { STRIPE_CUSTOMER_PORTAL_URL } from './subscriptionUtils';
+import { getReferralCode, validateReferralCode } from './referrals';
 
 /**
- * Creates a checkout session for a subscription
+ * Creates a checkout session for a subscription with referral tracking
  */
 export const createSubscriptionCheckout = async (userId: string, priceId: string) => {
   try {
+    // ========================================
+    // REFERRAL CAPTURE & VALIDATION
+    // ========================================
+    
+    // Get current referral code from storage (URL params, cookies, or localStorage)
+    const currentUrl = new URL(window.location.href);
+    const urlParams = new URLSearchParams(currentUrl.search);
+    const referralCode = getReferralCode(urlParams);
+    
+    let referralMetadata: Record<string, string> = {};
+    
+    if (referralCode) {
+      console.log('🎯 Processing subscription checkout with referral code:', referralCode);
+      
+      try {
+        // Validate referral code against Firebase/mock data
+        const partnerData = await validateReferralCode(referralCode);
+        
+        if (partnerData) {
+          console.log('✅ Valid referral code found for partner:', partnerData.displayName);
+          
+          // Set referral metadata for Stripe
+          referralMetadata = {
+            referralCode,
+            partnerId: partnerData.partnerId,
+            partnerName: partnerData.displayName,
+            partnerEmail: partnerData.email,
+            source: 'referral_link'
+          };
+        } else {
+          console.log('⚠️ Invalid referral code, proceeding without referral attribution');
+        }
+      } catch (error) {
+        console.error('❌ Error validating referral code during subscription checkout:', error);
+      }
+    }
+    
     const docRef = await addDoc(
       collection(db, "customers", userId, "checkout_sessions"), 
       {
@@ -20,9 +58,29 @@ export const createSubscriptionCheckout = async (userId: string, priceId: string
         },
         allow_promotion_codes: true, // Enable promo code field
         billing_address_collection: 'auto', // Collect billing address
-        client_reference_id: userId, // For tracking purposes
         payment_method_types: ['card'], // Payment method types
         mode: 'subscription', // Subscription mode
+        
+        // ========================================
+        // REFERRAL METADATA ATTACHMENT
+        // ========================================
+        // 
+        // Why we attach this metadata:
+        // 1. client_reference_id: Used for tracking and linking back to our referral system
+        // 2. metadata: Passed through to Stripe webhooks for commission processing
+        // 3. customer_creation: Ensures we always have a Stripe customer for future referrals
+        //
+        client_reference_id: referralCode || userId, // Use referral code as primary reference
+        customer_creation: 'always', // Always create customer for referral tracking
+        
+        // Base metadata + referral metadata
+        metadata: {
+          user_id: userId,
+          source: referralMetadata.source || 'EngagePerfect AI Web App',
+          created_at: new Date().toISOString(),
+          checkout_type: 'subscription',
+          ...referralMetadata // Spread referral metadata (empty object if no referral)
+        }
       }
     );
 
@@ -51,10 +109,47 @@ export const createSubscriptionCheckout = async (userId: string, priceId: string
 };
 
 /**
- * Creates a checkout session for a one-time Flex purchase
+ * Creates a checkout session for a one-time Flex purchase with referral tracking
  */
 export const createFlexCheckout = async (userId: string, priceId: string, quantity: number = 1) => {
   try {
+    // ========================================
+    // REFERRAL CAPTURE & VALIDATION
+    // ========================================
+    
+    // Get current referral code from storage (URL params, cookies, or localStorage)
+    const currentUrl = new URL(window.location.href);
+    const urlParams = new URLSearchParams(currentUrl.search);
+    const referralCode = getReferralCode(urlParams);
+    
+    let referralMetadata: Record<string, string> = {};
+    
+    if (referralCode) {
+      console.log('🎯 Processing flex checkout with referral code:', referralCode);
+      
+      try {
+        // Validate referral code against Firebase/mock data
+        const partnerData = await validateReferralCode(referralCode);
+        
+        if (partnerData) {
+          console.log('✅ Valid referral code found for partner:', partnerData.displayName);
+          
+          // Set referral metadata for Stripe
+          referralMetadata = {
+            referralCode,
+            partnerId: partnerData.partnerId,
+            partnerName: partnerData.displayName,
+            partnerEmail: partnerData.email,
+            source: 'referral_link'
+          };
+        } else {
+          console.log('⚠️ Invalid referral code, proceeding without referral attribution');
+        }
+      } catch (error) {
+        console.error('❌ Error validating referral code during flex checkout:', error);
+      }
+    }
+    
     const docRef = await addDoc(
       collection(db, "customers", userId, "checkout_sessions"),
       {
@@ -65,8 +160,30 @@ export const createFlexCheckout = async (userId: string, priceId: string, quanti
         cancel_url: window.location.origin,
         allow_promotion_codes: true, // Enable promo code field
         billing_address_collection: 'auto', // Collect billing address
-        client_reference_id: userId, // For tracking purposes
         payment_method_types: ['card'], // Payment method types
+        
+        // ========================================
+        // REFERRAL METADATA ATTACHMENT
+        // ========================================
+        // 
+        // Why we attach this metadata:
+        // 1. client_reference_id: Used for tracking and linking back to our referral system
+        // 2. metadata: Passed through to Stripe webhooks for commission processing
+        // 3. customer_creation: Ensures we always have a Stripe customer for future referrals
+        //
+        client_reference_id: referralCode || userId, // Use referral code as primary reference
+        customer_creation: 'always', // Always create customer for referral tracking
+        
+        // Base metadata + referral metadata
+        metadata: {
+          user_id: userId,
+          source: referralMetadata.source || 'EngagePerfect AI Web App',
+          created_at: new Date().toISOString(),
+          checkout_type: 'payment',
+          product_type: 'flex_pack',
+          quantity: quantity.toString(),
+          ...referralMetadata // Spread referral metadata (empty object if no referral)
+        }
       }
     );
 

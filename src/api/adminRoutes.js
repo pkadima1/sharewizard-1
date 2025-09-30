@@ -22,7 +22,7 @@ const isAdmin = async (req, res, next) => {
     }
     
     const token = await user.getIdToken();
-    const email = user.email;    if (email?.toLowerCase() === 'engageperfect@gmail.com' || user.uid === 'admin-uid-here') {
+    const email = user.email;    if (email?.toLowerCase() === 'engageperfect@gmail.com') {
       req.user = user;
       req.token = token;
       next();

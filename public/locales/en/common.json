@@ -3,6 +3,7 @@
     "home": "Home",
     "dashboard": "Dashboard", 
     "pricing": "Pricing",
+    "becomePartner": "Become Partner",
     "login": "Login",
     "signup": "Sign Up",
     "caption_generator": "Caption Generator",
@@ -138,6 +139,9 @@
     "newsletter": "Subscribe to our newsletter",
     "newsletterDesc": "Get the latest news and updates",
     "emailPlaceholder": "Your email",
+    "newsletterError": "Please enter a valid email address.",
+    "newsletterSuccess": "You've been successfully subscribed to our newsletter.",
+    "newsletterFailure": "Failed to subscribe to newsletter. Please try again.",
     "allRights": "All rights reserved."
   },
   "support": {

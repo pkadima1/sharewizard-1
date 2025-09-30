@@ -15,6 +15,7 @@ import {
   doc, 
   setDoc, 
   getDoc, 
+  getDocs,
   serverTimestamp, 
   collection, 
   query, 
@@ -30,6 +31,7 @@ import { useToast } from '@/hooks/use-toast';
 const isUsingEmulators = process.env.NODE_ENV === 'development' && 
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 import { DEFAULT_REQUEST_LIMIT } from '@/lib/constants';
+import { processSignupReferralAttribution } from '@/services/referralService';
 import { 
   checkUserPlan, 
   markUserForTrial, 
@@ -43,6 +45,7 @@ interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
+  isPartner: boolean;
   signUp: (email: string, password: string, username: string) => Promise<UserCredential>;
   login: (email: string, password: string) => Promise<UserCredential>;
   loginWithGoogle: () => Promise<UserCredential>;
@@ -78,8 +81,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [isPartner, setIsPartner] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  // Check if user is a partner
+  const checkPartnerRole = useCallback(async (uid: string): Promise<boolean> => {
+    try {
+      console.log('🔍 checkPartnerRole: Checking partner status for user:', uid);
+      const partnerQuery = query(
+        collection(db, 'partners'),
+        where('uid', '==', uid),
+        where('status', '==', 'active')
+      );
+      
+      const partnerSnapshot = await getDocs(partnerQuery);
+      const isPartnerUser = !partnerSnapshot.empty;
+      
+      console.log('🔍 checkPartnerRole: Partner status:', isPartnerUser);
+      return isPartnerUser;
+    } catch (error) {
+      console.error('🔍 checkPartnerRole: Error checking partner role:', error);
+      return false;
+    }
+  }, []);
 
   const createUserProfile = useCallback(async (user: User, additionalData: AdditionalUserData = {}) => {
     if (!user) return;
@@ -104,6 +129,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             requests_limit: DEFAULT_REQUEST_LIMIT.free,
             ...additionalData,
           });
+          
+          // Process referral attribution for new users
+          try {
+            const attributionResult = await processSignupReferralAttribution(
+              user.uid,
+              {
+                source: 'signup',
+                landingPage: window.location.href,
+                userAgent: navigator.userAgent,
+                referrerUrl: document.referrer
+              }
+            );
+            
+            if (attributionResult.success) {
+              console.log('✅ User successfully attributed to partner:', {
+                userId: user.uid,
+                partnerId: attributionResult.partnerId,
+                partnerName: attributionResult.partnerName,
+                referralId: attributionResult.referralId
+              });
+              
+              // Show success toast with partner information
+              toast({
+                title: "🎉 " + (window.i18next?.t?.('auth.referralAttribution.success.title') || "Referral Applied!"),
+                description: (window.i18next?.t?.('auth.referralAttribution.success.description', { 
+                  partnerName: attributionResult.partnerName 
+                }) || `You've been attributed to ${attributionResult.partnerName}`),
+                duration: 6000,
+              });
+            } else {
+              console.log('ℹ️ No referral attribution for new user:', attributionResult.message);
+            }
+          } catch (attributionError) {
+            console.error('⚠️ Referral attribution failed during signup:', attributionError);
+            // Don't fail the signup process if attribution fails
+          }
           
           toast({
             title: "Profile created",
@@ -505,6 +566,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               console.warn("User exists in Firebase Auth but has no profile in Firestore");
             }
           }
+          
+          // Check partner role
+          const partnerStatus = await checkPartnerRole(user.uid);
+          setIsPartner(partnerStatus);
         } catch (error: unknown) {
           console.error("Error fetching user profile:", error);
           const errorMessage = error instanceof Error ? error.message : 'Check your connection';
@@ -514,17 +579,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             variant: "destructive",
           });
         }
+      } else {
+        setIsPartner(false);
       }
       
       setLoading(false);
     });
 
     return unsubscribe;
-  }, []);
+  }, [checkPartnerRole]);
   const value = {
     currentUser,
     userProfile,
     loading,
+    isPartner,
     signUp,
     login,
     loginWithGoogle,
