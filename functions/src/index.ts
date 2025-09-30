@@ -7,6 +7,9 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
+// Load environment variables early to ensure availability across all modules
+import 'dotenv/config';
+
 /**
  * ShareWizard Firebase Functions
  * 
@@ -49,6 +52,20 @@ export { notifyPartnerRejected } from './partners/notifications.js';
 export { handleStripeWebhook } from './webhooks/stripeWebhook.js';
 export { getReferralsByCustomer } from './webhooks/stripeWebhook.js';
 export { getReferralsByPartner } from './webhooks/stripeWebhook.js';
+
+// Export new commission tracking functions
+export { processCommission } from './partners/commissionTracking.js';
+export { getPartnerCommissionSummary } from './partners/commissionTracking.js';
+
+// Export referral attribution functions
+export { processReferralAttributionCallable as processReferralAttribution } from './partners/processReferralAttribution.js';
+export { generateReferralLink } from './partners/referralAttribution.js';
+export { getPartnerReferralStats } from './partners/referralAttribution.js';
+
+// Export conversion tracking functions
+export { getPartnerConversionAnalytics } from './partners/conversionAnalytics.js';
+export { getPartnerConversionSummaryCallable as getPartnerConversionSummary } from './partners/conversionAnalytics.js';
+export { getPartnerConversionFunnel } from './partners/conversionAnalytics.js';
 
 // Export checkout session creation function
 export { createCheckoutSession } from './createCheckoutSession.js';

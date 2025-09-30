@@ -101,6 +101,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ApprovalModal from '@/components/admin/ApprovalModal';
 import RejectionModal from '@/components/admin/RejectionModal';
 import ApplicationDetailsModal from '@/components/admin/ApplicationDetailsModal';
+import PartnerApplicationDiagnostic from '@/components/admin/PartnerApplicationDiagnostic';
 
 // Types
 interface PartnerApplication {
@@ -123,7 +124,7 @@ interface PartnerApplication {
   };
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'active' | 'rejected';
   approvedByUid?: string;
   approvedByEmail?: string;
   approvedAt?: Timestamp;
@@ -524,6 +525,11 @@ const PendingPartners = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Diagnostic Component - Temporary */}
+        <div className="mb-6">
+          <PartnerApplicationDiagnostic />
+        </div>
+
         {/* Search and Filters */}
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
@@ -547,8 +553,8 @@ const PendingPartners = () => {
             <TabsTrigger value="pending">
               {t('tabs.pending')} ({applications.filter(a => a.status === 'pending').length})
             </TabsTrigger>
-            <TabsTrigger value="approved">
-              {t('tabs.approved')} ({applications.filter(a => a.status === 'approved').length})
+            <TabsTrigger value="active">
+              {t('tabs.approved')} ({applications.filter(a => a.status === 'active').length})
             </TabsTrigger>
             <TabsTrigger value="rejected">
               {t('tabs.rejected')} ({applications.filter(a => a.status === 'rejected').length})
@@ -556,7 +562,7 @@ const PendingPartners = () => {
           </TabsList>
 
           {/* Tab Content */}
-          {['pending', 'approved', 'rejected'].map((tab) => (
+          {['pending', 'active', 'rejected'].map((tab) => (
             <TabsContent key={tab} value={tab} className="mt-6">
               {filteredApplications.length === 0 ? (
                 <div className="text-center py-12">
@@ -627,7 +633,7 @@ const PendingPartners = () => {
                                   {t('status.pending')}
                                 </Badge>
                               )}
-                              {application.status === 'approved' && (
+                              {application.status === 'active' && (
                                 <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                   <CheckCircle className="h-3 w-3 mr-1" />
                                   {t('status.approved')}

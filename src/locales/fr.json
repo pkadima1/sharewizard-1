@@ -143,5 +143,64 @@
         "cancelled": "Abonnement annulé"
       }
     }
+  },
+  "auth": {
+    "referralAttribution": {
+      "success": {
+        "title": "Parrainage Appliqué !",
+        "description": "Vous avez été attribué au partenaire {{partnerName}}"
+      },
+      "error": {
+        "title": "Erreur d'Attribution",
+        "description": "Impossible d'appliquer le code de parrainage"
+      },
+      "info": {
+        "noReferral": "Aucun code de parrainage trouvé",
+        "invalidCode": "Code de parrainage invalide ou expiré",
+        "attributionFailed": "Échec de l'attribution du parrainage"
+      }
+    }
+  },
+  "partners": {
+    "dashboard": {
+      "title": "Tableau de Bord Partenaire",
+      "subtitle": "Bienvenue, {{name}}",
+      "noData": "Aucune donnée disponible pour le moment",
+      "overview": {
+        "title": "Vue d'ensemble",
+        "recentPerformance": "Performance Récente",
+        "revenue": "Revenus",
+        "quickActions": "Actions Rapides",
+        "notifications": "Notifications"
+      },
+      "referrals": {
+        "title": "Parrainages",
+        "manageCodes": "Gérer les Codes",
+        "createCode": "Créer un Code",
+        "activeCodes": "Codes Actifs"
+      },
+      "analytics": {
+        "title": "Analyses",
+        "performance": "Performance",
+        "conversions": "Conversions",
+        "revenue": "Revenus"
+      },
+      "financial": {
+        "title": "Financier",
+        "commissions": "Commissions",
+        "payments": "Paiements",
+        "invoices": "Factures"
+      },
+      "conversions": {
+        "title": "Conversions",
+        "tracking": "Suivi des Conversions",
+        "funnel": "Entonnoir de Conversion"
+      },
+      "reports": {
+        "title": "Rapports",
+        "generate": "Générer un Rapport",
+        "export": "Exporter"
+      }
+    }
   }
 }

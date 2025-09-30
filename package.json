@@ -60,7 +60,7 @@
     "dotenv": "^16.5.0",
     "embla-carousel-react": "^8.3.0",
     "firebase": "^10.2.0",
-    "firebase-admin": "^13.4.0",
+    "firebase-admin": "^13.5.0",
     "framer-motion": "^12.12.1",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",

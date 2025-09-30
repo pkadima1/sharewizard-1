@@ -11,7 +11,7 @@ export interface Partner {
 
 export interface PartnerCode {
   id: string;
-  partnerUid: string;
+  partnerId: string;
   code: string;
   isActive: boolean;
   usageCount: number;
@@ -21,19 +21,19 @@ export interface PartnerCode {
 
 export interface CommissionLedgerEntry {
   id: string;
-  partnerUid: string;
+  partnerId: string;
   customerEmail: string;
   invoiceId: string;
   amount: number;
   commission: number;
   status: 'pending' | 'paid' | 'cancelled';
-  creditedAt: Date;
+  createdAt: Date;
   paidAt?: Date;
 }
 
 export interface ReferralCustomer {
   id: string;
-  partnerUid: string;
+  partnerId: string;
   customerUid: string;
   displayName: string;
   email: string;
@@ -49,8 +49,8 @@ export interface InvoiceEntry {
   customerEmail: string;
   amount: number;
   commission: number;
-  creditedPartnerUid: string;
-  creditedAt: Date;
+  partnerId: string;
+  createdAt: Date;
   status: 'pending' | 'paid' | 'cancelled';
 }
 

@@ -17,6 +17,11 @@ import * as admin from "firebase-admin";
 import Stripe from "stripe";
 import { handleSubscriptionCheckoutCompleted } from "../stripeHelpers.js";
 import { processReferralCommission } from "../referralCommissions.js";
+import { processCommission } from "../partners/commissionTracking.js";
+import { 
+  createConversionTracking, 
+  markConversion
+} from "../partners/conversionTracking.js";
 import { config } from "../config/secrets.js";
 import { initializeFirebaseAdmin, getFirestore } from "../config/firebase-admin.js";
 import { DEFAULT_COMMISSION_RATE } from "../types/partners.js";
@@ -240,6 +245,42 @@ async function handleCheckoutSessionCompleted(
     } catch (commissionError) {
       console.error("❌ Error processing referral commission (continuing with tracking):", commissionError);
       // Don't throw - referral tracking should succeed even if commission processing fails
+    }
+    
+    // Create conversion tracking entry for new signup
+    try {
+      const conversionId = await createConversionTracking(
+        partnerId,
+        referralCode,
+        session.customer as string,
+        {
+          ipAddress: session.customer_details?.address?.country || undefined,
+          userAgent: session.metadata?.userAgent,
+          utmParams: {
+            source: session.metadata?.utm_source,
+            medium: session.metadata?.utm_medium,
+            campaign: session.metadata?.utm_campaign,
+            term: session.metadata?.utm_term,
+            content: session.metadata?.utm_content
+          },
+          referrerUrl: session.metadata?.referrerUrl,
+          landingPage: session.metadata?.landingPage,
+          country: session.customer_details?.address?.country || undefined,
+          deviceType: session.metadata?.deviceType
+        }
+      );
+      
+      if (conversionId) {
+        console.log("✅ Conversion tracking created:", {
+          conversionId,
+          partnerId,
+          referralCode,
+          customerId: session.customer
+        });
+      }
+    } catch (conversionError) {
+      console.error("❌ Error creating conversion tracking (continuing with processing):", conversionError);
+      // Don't throw - conversion tracking is supplementary
     }
     
   } catch (error) {
@@ -471,57 +512,54 @@ async function handleInvoicePaid(
       currency
     });
 
-    // Create unique commission ledger entry ID
-    const ledgerEntryId = `${invoice.id}_${partnerId}`;
-    const ledgerRef = db.collection('commission_ledger').doc(ledgerEntryId);
+    // Use the new commission tracking system
+    const ledgerEntryId = await processCommission(
+      partnerId,
+      referralDoc.id, // This is the referral document ID
+      amountPaid,
+      currency,
+      invoice.id || '', // Ensure string type
+      subscriptionId || '',
+      new Date(periodStart * 1000),
+      new Date(periodEnd * 1000)
+    );
 
-    // Check for existing entry (idempotency)
-    const existingEntry = await ledgerRef.get();
-    if (existingEntry.exists) {
-      const existingData = existingEntry.data() as any;
-      if (existingData.eventIds && existingData.eventIds.includes(eventId)) {
-        console.log("✅ Commission ledger entry already processed (idempotency guard):", eventId);
-        return;
-      }
+    if (ledgerEntryId) {
+      console.log("✅ Commission processed successfully using new tracking system:", {
+        ledgerEntryId,
+        partnerId,
+        commissionAmount,
+        currency
+      });
+    } else {
+      console.warn("⚠️ Failed to process commission using new tracking system:", {
+        partnerId,
+        referralId: referralDoc.id,
+        amountPaid
+      });
     }
-
-    // Write ledger entry to commission_ledger
-    const ledgerEntry = {
-      partnerId,
-      referralId: referralDoc.id,
-      stripeInvoiceId: invoice.id,
-      stripeSubscriptionId: subscriptionId || '',
-      amountGross: amountPaid,
-      commissionRate,
-      commissionAmount,
-      currency,
-      periodStart: admin.firestore.Timestamp.fromDate(new Date(periodStart * 1000)),
-      periodEnd: admin.firestore.Timestamp.fromDate(new Date(periodEnd * 1000)),
-      status: 'accrued' as 'accrued' | 'paid' | 'reversed' | 'pending',
-      createdAt: admin.firestore.Timestamp.now(),
-      eventIds: existingEntry.exists 
-        ? [...(existingEntry.data()!.eventIds || []), eventId]
-        : [eventId],
+    
+    // Mark conversion in conversion tracking
+    try {
+      const conversionMarked = await markConversion(
+        referralData.customerUid,
+        customerId,
+        amountPaid,
+        currency
+      );
       
-      // Additional Stripe metadata for reference
-      stripeMetadata: {
-        invoiceStatus: invoice.status,
-        subscriptionStatus: subscriptionId ? 'active' : 'none',
-        customerId: customerId,
-        priceId: (invoice.lines?.data?.[0] as any)?.price?.id || ''
+      if (conversionMarked) {
+        console.log("✅ Conversion marked in tracking system:", {
+          customerUid: referralData.customerUid,
+          stripeCustomerId: customerId,
+          amountPaid,
+          currency
+        });
       }
-    };
-
-    // Save commission ledger entry
-    await ledgerRef.set(ledgerEntry, { merge: true });
-
-    console.log("✅ Commission ledger entry created successfully:", {
-      ledgerEntryId,
-      partnerId,
-      commissionAmount,
-      currency,
-      status: 'accrued'
-    });
+    } catch (conversionError) {
+      console.error("❌ Error marking conversion (continuing with processing):", conversionError);
+      // Don't throw - conversion tracking is supplementary
+    }
 
   } catch (error) {
     console.error("❌ Error handling invoice.paid:", error);

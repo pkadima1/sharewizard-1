@@ -27,7 +27,15 @@ const auth = getAuth();
  * Validation functions
  */
 const validateCommissionRate = (rate: number): boolean => {
-  return rate >= 0.1 && rate <= 0.9 && rate % 0.05 === 0;
+  // Check range
+  if (rate < 0.1 || rate > 0.9) {
+    return false;
+  }
+  
+  // Handle floating-point precision issues
+  // Convert to percentage and check if it's a multiple of 5
+  const percentage = Math.round(rate * 100);
+  return percentage % 5 === 0;
 };
 
 const validateCode = (code: string): boolean => {

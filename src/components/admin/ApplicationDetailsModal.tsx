@@ -64,7 +64,7 @@ interface PartnerApplication {
   };
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'active' | 'rejected';
   approvedByUid?: string;
   approvedByEmail?: string;
   approvedAt?: Timestamp;
@@ -351,7 +351,7 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
           </Card>
 
           {/* Review Information (if approved/rejected) */}
-          {(application.status === 'approved' || application.status === 'rejected') && (
+          {(application.status === 'active' || application.status === 'rejected') && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -363,27 +363,27 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {application.status === 'approved' ? t('details.reviewedBy') : t('details.reviewedBy')}
+                      {application.status === 'active' ? t('details.reviewedBy') : t('details.reviewedBy')}
                     </Label>
                     <p className="text-gray-900 dark:text-white">
-                      {application.status === 'approved' 
+                      {application.status === 'active' 
                         ? application.approvedByEmail 
                         : application.rejectedByEmail}
                     </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {application.status === 'approved' ? t('details.reviewedAt') : t('details.reviewedAt')}
+                      {application.status === 'active' ? t('details.reviewedAt') : t('details.reviewedAt')}
                     </Label>
                     <p className="text-gray-900 dark:text-white">
-                      {application.status === 'approved' 
+                      {application.status === 'active' 
                         ? (application.approvedAt ? formatDate(application.approvedAt) : t('details.notApplicable'))
                         : (application.rejectedAt ? formatDate(application.rejectedAt) : t('details.notApplicable'))}
                     </p>
                   </div>
                 </div>
 
-                {application.status === 'approved' && application.commissionRate && (
+                {application.status === 'active' && application.commissionRate && (
                   <div>
                     <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {t('details.commissionRate')}

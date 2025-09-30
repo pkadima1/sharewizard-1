@@ -31,6 +31,7 @@ import { useToast } from '@/hooks/use-toast';
 const isUsingEmulators = process.env.NODE_ENV === 'development' && 
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 import { DEFAULT_REQUEST_LIMIT } from '@/lib/constants';
+import { processSignupReferralAttribution } from '@/services/referralService';
 import { 
   checkUserPlan, 
   markUserForTrial, 
@@ -128,6 +129,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             requests_limit: DEFAULT_REQUEST_LIMIT.free,
             ...additionalData,
           });
+          
+          // Process referral attribution for new users
+          try {
+            const attributionResult = await processSignupReferralAttribution(
+              user.uid,
+              {
+                source: 'signup',
+                landingPage: window.location.href,
+                userAgent: navigator.userAgent,
+                referrerUrl: document.referrer
+              }
+            );
+            
+            if (attributionResult.success) {
+              console.log('✅ User successfully attributed to partner:', {
+                userId: user.uid,
+                partnerId: attributionResult.partnerId,
+                partnerName: attributionResult.partnerName,
+                referralId: attributionResult.referralId
+              });
+              
+              // Show success toast with partner information
+              toast({
+                title: "🎉 " + (window.i18next?.t?.('auth.referralAttribution.success.title') || "Referral Applied!"),
+                description: (window.i18next?.t?.('auth.referralAttribution.success.description', { 
+                  partnerName: attributionResult.partnerName 
+                }) || `You've been attributed to ${attributionResult.partnerName}`),
+                duration: 6000,
+              });
+            } else {
+              console.log('ℹ️ No referral attribution for new user:', attributionResult.message);
+            }
+          } catch (attributionError) {
+            console.error('⚠️ Referral attribution failed during signup:', attributionError);
+            // Don't fail the signup process if attribution fails
+          }
           
           toast({
             title: "Profile created",

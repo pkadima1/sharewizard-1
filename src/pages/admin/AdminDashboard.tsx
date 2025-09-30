@@ -16,7 +16,8 @@ import {
   MessageCircle, 
   BarChart3, 
   Settings,
-  Shield 
+  Shield,
+  DollarSign
 } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
@@ -196,6 +197,21 @@ const AdminDashboard: React.FC = () => {
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Review & approve partner applications
+                  </p>
+                </div>
+              </a>
+              
+              <a
+                href={`/${currentLanguage}/admin/partner-payouts`}
+                className="flex items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+              >
+                <DollarSign className="h-8 w-8 text-purple-600 mr-3" />
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-white">
+                    Partner Payouts
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Manage partner earnings & payouts
                   </p>
                 </div>
               </a>

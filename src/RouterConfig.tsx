@@ -22,6 +22,7 @@ import PreviewRepost from "./pages/PreviewRepost";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Partners from "./pages/admin/Partners";
 import PendingPartners from "./pages/admin/PendingPartners";
+import PartnerPayouts from "./pages/admin/PartnerPayouts";
 import PartnerRegistration from "./pages/PartnerRegistration";
 import PartnerDashboard from "./pages/partner/Dashboard";
 import Gallery from "./pages/Gallery";
@@ -123,6 +124,7 @@ const RouterConfig = () => {
               <Route path="/admin" element={<RootRedirect />} />
               <Route path="/admin/partners" element={<RootRedirect />} />
               <Route path="/admin/pending-partners" element={<RootRedirect />} />
+              <Route path="/admin/partner-payouts" element={<RootRedirect />} />
               <Route path="/partner-registration" element={<RootRedirect />} />
               <Route path="/partner/dashboard" element={<RootRedirect />} />
               
@@ -151,6 +153,7 @@ const RouterConfig = () => {
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
                     <Route path="/admin/partners" element={<ErrorBoundary><Partners /></ErrorBoundary>} />
                     <Route path="/admin/pending-partners" element={<ErrorBoundary><PendingPartners /></ErrorBoundary>} />
+                    <Route path="/admin/partner-payouts" element={<ErrorBoundary><PartnerPayouts /></ErrorBoundary>} />
                     
                     {/* Partner routes */}
                     <Route path="/partner-registration" element={<ErrorBoundary><PartnerRegistration /></ErrorBoundary>} />

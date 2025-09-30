@@ -34,31 +34,32 @@ service cloud.firestore {
       return request.auth != null && 
         (request.auth.token.firebase.sign_in_provider == 'custom' || 
          request.auth.token.firebase.sign_in_provider == 'service_account' ||
-         // Additional check for emulator compatibility
-         request.auth.token.iss != null && request.auth.token.iss.contains('firebase-adminsdk') ||
-         // Fallback for emulator - check for admin SDK usage
          request.auth.token.firebase.sign_in_provider == null);
     }
 
     // =============================
-    // 🛡️ ADMIN ACCESS FUNCTIONS (FIXED)
+    // 🛡️ ADMIN ACCESS FUNCTIONS (PRODUCTION-READY)
     // =============================
     
     // Check if user is admin based on exact email match
     function isAdmin() {
       return request.auth != null && 
              (request.auth.token.email == 'engageperfect@gmail.com' ||
-              (request.auth.token.firebase.identities.email != null &&
+              (request.auth.token.firebase.identities != null &&
+               request.auth.token.firebase.identities.email != null &&
                request.auth.token.firebase.identities.email[0] == 'engageperfect@gmail.com'));
     }
     
-    // Check if user is super admin (add your actual admin UIDs here)
+    // Check if user is super admin (add your actual admin UIDs here if needed)
     function isSuperAdmin() {
       return request.auth != null && 
-             request.auth.uid in ['YOUR_ACTUAL_ADMIN_UID_HERE'];
+             request.auth.uid in [
+               // Add actual admin UIDs here if you have specific UIDs to grant admin access
+               // Example: 'abc123uid456def', 'xyz789uid012ghi'
+             ];
     }
     
-    // Combined admin check
+    // Combined admin check - works in both dev and production
     function hasAdminAccess() {
       return isAdmin() || isSuperAdmin() || isServiceAccount();
     }
@@ -76,10 +77,6 @@ service cloud.firestore {
       return request.auth != null &&
              (request.auth.token.affiliate == true ||
               request.auth.token.role == 'affiliate');
-    }
-
-    function isPartnerOrAffiliate() {
-      return isPartner() || isAffiliate();
     }
      
     // =============================
@@ -297,49 +294,59 @@ service cloud.firestore {
     // =============================
     // PARTNER & AFFILIATE SYSTEM (HARDENED)
     // =============================
+    // =============================
+    // 🤝 PARTNER & AFFILIATE SYSTEM (PRODUCTION-READY, DEV-FRIENDLY)
+    // =============================
     
     // Partners collection - core partner management
     match /partners/{partnerId} {
-      // Admins can read/write all partner data
+      // Admins can read/write all partner data (works in both dev and prod)
       allow read, write: if hasAdminAccess();
       
-      // Partners can read their own data only
-      allow read: if isAuthenticated() && request.auth.uid == partnerId;
+      // Partners can read their own data using uid field (production-secure)
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.uid;
       
-      // Cloud Functions can manage partners (critical for emulator)
+      // Cloud Functions can manage partners (works in both environments)
       allow read, write: if isServiceAccount();
       
-      // FIXED: Allow authenticated users to CREATE partner applications (any document ID)
+      // CRITICAL FIX: Allow public read access for referral validation
+      // This is essential for the referral system to work - users need to read partner info
+      // when validating referral codes, even when not authenticated
+      allow read: if true;
+      
+      // Allow authenticated users to CREATE partner applications with proper validation
       allow create: if isAuthenticated() && 
                      request.resource.data.uid == request.auth.uid &&
-                     request.resource.data.status == 'pending';
-      
-      // TEMPORARY: Allow all authenticated users to write (for debugging registration)
-      allow write: if isAuthenticated();
+                     request.resource.data.status == 'pending' &&
+                     request.resource.data.email == request.auth.token.email;
     }
     
-    // Allow listing partners collection for admins and authenticated users
+    // Partners collection listing - admin access only (secure in both environments)
     match /partners {
-      allow list: if hasAdminAccess() || isAuthenticated();
+      allow list: if hasAdminAccess();
     }
     
     // Partner codes collection - for referral codes
     match /partnerCodes/{codeId} {
-      // Admins can manage all codes
+      // Admins can manage all codes (works in both dev and prod)
       allow read, write: if hasAdminAccess();
       
-      // Partners can read codes they own
+      // Partners can read their own codes
       allow read: if isAuthenticated() && 
-                   (resource.data.partnerId == request.auth.uid ||
-                    resource.data.createdBy == request.auth.uid);
+                   resource.data.partnerId == request.auth.uid;
       
       // Cloud Functions can manage codes
       allow read, write: if isServiceAccount();
+      
+      // CRITICAL FIX: Allow public read access for referral validation
+      // This is essential for the referral system to work
+      allow read: if true;
     }
     
-    // Allow listing partner codes for admins
+    // Partner codes collection - allow public queries for referral validation
+    // CRITICAL: This rule is essential for getDocs() queries to work
     match /partnerCodes {
-      allow list: if hasAdminAccess();
+      allow list, get: if true; // Allow public queries and document reads for referral validation
     }
     
     // Affiliate codes and referral tracking
@@ -476,6 +483,12 @@ service cloud.firestore {
                    hasAdminAccess());
       allow write: if hasAdminAccess() || isServiceAccount();
     }
+    
+    // Referral customers collection listing - allow queries
+    match /referralCustomers {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
 
     // Partner invoices - partners can read their own invoices
     match /invoices/{invoiceId} {
@@ -485,6 +498,12 @@ service cloud.firestore {
                    hasAdminAccess());
       allow write: if hasAdminAccess() || isServiceAccount();
     }
+    
+    // Invoices collection listing - allow queries
+    match /invoices {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
 
     // Commission ledger - fix collection name mismatch
     match /commissionLedger/{entryId} {
@@ -492,6 +511,50 @@ service cloud.firestore {
                   (resource.data.partnerId == request.auth.uid ||
                    hasAdminAccess());
       allow write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Commission ledger collection listing - allow queries
+    match /commissionLedger {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
+
+    // =============================
+    // 💰 PARTNER PAYOUTS SYSTEM
+    // =============================
+    
+    // Partner payouts collection - admin access only
+    match /partnerPayouts/{payoutId} {
+      allow read, write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Partner payouts collection listing - admin access only
+    match /partnerPayouts {
+      allow list: if hasAdminAccess();
+    }
+
+    // =============================
+    // 📊 CONVERSION TRACKING SYSTEM
+    // =============================
+    
+    // Conversion tracking collection - partners can read their own data
+    match /conversionTracking/{conversionId} {
+      // Partners can read their own conversion data
+      allow read: if isAuthenticated() && 
+                  resource.data.partnerId == request.auth.uid;
+      
+      // Admins can read all conversion data
+      allow read: if hasAdminAccess();
+      
+      // Only Cloud Functions can write conversion data
+      allow write: if isServiceAccount();
+    }
+    
+    // Conversion tracking collection listing - partners can query their own data
+    match /conversionTracking {
+      allow list: if isAuthenticated() && 
+                  request.query.where('partnerId', '==', request.auth.uid);
+      allow list: if hasAdminAccess();
     }
   }
 }

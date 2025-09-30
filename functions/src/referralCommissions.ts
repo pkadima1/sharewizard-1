@@ -6,6 +6,7 @@
  */
 
 import { getFirestore } from "firebase-admin/firestore";
+import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 import Stripe from "stripe";
 
@@ -14,10 +15,14 @@ const db = getFirestore();
 
 /**
  * Commission rates for different partner tiers (percentage as decimal)
+ * Updated to match the new partner system structure
  */
 const COMMISSION_RATES = {
-  standard: 0.10, // 10% commission
-  premium: 0.15,  // 15% commission
+  basic: 0.70,     // 70% commission for basic partners
+  standard: 0.70,  // 70% commission for standard partners  
+  certified: 0.70, // 70% commission for certified partners
+  // Legacy rates for backward compatibility
+  premium: 0.15,   // 15% commission
   enterprise: 0.20 // 20% commission
 } as const;
 
@@ -83,9 +88,10 @@ export async function calculateCommission(
     
     const partnerData = partnerDoc.data()!;
     
-    // Use custom commission rate if set, otherwise use tier-based rate
-    let commissionRate = partnerData.customCommissionRate;
+    // Use partner's commission rate from the new system
+    let commissionRate = partnerData.commissionRate;
     
+    // Fallback to tier-based rate if commissionRate is not set
     if (!commissionRate) {
       const tier = partnerData.tier || 'standard';
       commissionRate = COMMISSION_RATES[tier as keyof typeof COMMISSION_RATES] || COMMISSION_RATES.standard;
@@ -197,19 +203,19 @@ async function updatePartnerStatistics(
       }
       
       const partnerData = partnerDoc.data()!;
-      const stats = partnerData.statistics || {};
+      const stats = partnerData.stats || {};
       
-      // Update total earnings and referral count
-      const currentEarnings = stats.totalEarnings || 0;
+      // Update total earnings and referral count using the new stats structure
+      const currentEarnings = stats.totalCommissionEarned || 0;
       const currentReferrals = stats.totalReferrals || 0;
-      const currentCommissionsPending = stats.commissionsPending || 0;
+      const currentConversions = stats.totalConversions || 0;
       
       transaction.update(partnerRef, {
-        'statistics.totalEarnings': currentEarnings + commissionAmount,
-        'statistics.totalReferrals': currentReferrals + 1,
-        'statistics.commissionsPending': currentCommissionsPending + commissionAmount,
-        'statistics.lastReferralDate': new Date(),
-        'statistics.currency': currency
+        'stats.totalCommissionEarned': currentEarnings + commissionAmount,
+        'stats.totalReferrals': currentReferrals + 1,
+        'stats.totalConversions': currentConversions + 1, // Increment conversions on commission
+        'stats.lastCalculated': admin.firestore.Timestamp.now(),
+        'updatedAt': admin.firestore.Timestamp.now()
       });
     });
     

@@ -152,5 +152,22 @@
         "tracked": "Invoice payment action tracked for analytics"
       }
     }
+  },
+  "auth": {
+    "referralAttribution": {
+      "success": {
+        "title": "Referral Applied!",
+        "description": "You've been attributed to partner {{partnerName}}"
+      },
+      "error": {
+        "title": "Attribution Error",
+        "description": "Unable to apply referral code"
+      },
+      "info": {
+        "noReferral": "No referral code found",
+        "invalidCode": "Invalid or expired referral code",
+        "attributionFailed": "Failed to process referral attribution"
+      }
+    }
   }
 }

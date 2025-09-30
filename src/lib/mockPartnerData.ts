@@ -1,7 +1,9 @@
 /**
  * Simple Mock Partner Data for Testing
  * 
+ * DISABLED FOR PRODUCTION DEVELOPMENT
  * This provides fallback data when Firestore doesn't have real partner codes
+ * Currently disabled - system uses real Firestore database
  */
 
 export const MOCK_PARTNER_DATA = {
@@ -28,14 +30,25 @@ export const MOCK_PARTNER_DATA = {
     companyName: 'Test Company',
     active: true,
     commissionRate: 0.6
+  },
+  'PATRICK': {
+    partnerId: 'DUAQ3fcgkGgeMzro3MUT',
+    email: 'patrick@example.com',
+    displayName: 'Patrick',
+    companyName: 'Patrick Company',
+    active: true,
+    commissionRate: 0.7
   }
 } as const;
 
 /**
  * Check if we're in development mode with mock data enabled
+ * DISABLED FOR PRODUCTION DEVELOPMENT - Always use real Firestore data
  */
 export function shouldUseMockData(): boolean {
-  return import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_PARTNERS === 'true';
+  // Mock data is disabled for production development
+  // Always use real Firestore database
+  return false;
 }
 
 /**

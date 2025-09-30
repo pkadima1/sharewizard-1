@@ -29,6 +29,7 @@ export interface PartnerInfo {
   companyName?: string;
   website?: string;
   active: boolean;
+  status?: string;
   commissionRate: number;
 }
 
@@ -175,7 +176,8 @@ export async function validateReferralCode(code: string): Promise<PartnerInfo | 
     
     const normalizedCode = code.toUpperCase().trim();
     
-    // In development mode, use mock data for testing
+    // Mock data is disabled for production development
+    // Always use real Firestore database
     if (shouldUseMockData()) {
       const mockData = getMockPartnerData(normalizedCode);
       if (mockData) {
@@ -187,13 +189,24 @@ export async function validateReferralCode(code: string): Promise<PartnerInfo | 
     }
     
     // Check if code exists and is active in Firestore
-    const codeDoc = await getDoc(doc(db, 'partnerCodes', normalizedCode));
+    // Query by the 'code' field instead of document ID
+    console.log('🔍 Querying Firestore for code:', normalizedCode);
+    const { collection, query, where, getDocs } = await import('firebase/firestore');
+    const codesQuery = query(
+      collection(db, 'partnerCodes'),
+      where('code', '==', normalizedCode)
+    );
     
-    if (!codeDoc.exists()) {
+    console.log('🔍 Executing query...');
+    const codeSnapshot = await getDocs(codesQuery);
+    console.log('🔍 Query result:', codeSnapshot.size, 'documents found');
+    
+    if (codeSnapshot.empty) {
       console.log('❌ Referral code not found:', normalizedCode);
       return null;
     }
     
+    const codeDoc = codeSnapshot.docs[0];
     const codeData = codeDoc.data() as PartnerCode;
     
     // Check if code is active
@@ -224,9 +237,12 @@ export async function validateReferralCode(code: string): Promise<PartnerInfo | 
     
     const partnerData = partnerDoc.data() as PartnerInfo;
     
-    // Check if partner is active
-    if (!partnerData.active) {
-      console.log('❌ Partner is inactive:', partnerData.displayName);
+    // Check if partner is active (check both 'active' and 'status' fields)
+    const isPartnerActive = partnerData.active !== false && 
+                           (partnerData.status === 'active' || partnerData.status === undefined || !partnerData.status);
+    
+    if (!isPartnerActive) {
+      console.log('❌ Partner is inactive:', partnerData.displayName, 'Status:', partnerData.status, 'Active:', partnerData.active);
       return null;
     }
     
@@ -235,6 +251,18 @@ export async function validateReferralCode(code: string): Promise<PartnerInfo | 
     
   } catch (error) {
     console.error('❌ Error validating referral code:', error);
+    
+    // Log specific error details for debugging
+    if (error instanceof Error) {
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+    }
+    
+    // Check if it's a permission error
+    if (error && typeof error === 'object' && 'code' in error) {
+      console.error('❌ Error code:', (error as any).code);
+    }
+    
     return null;
   }
 }

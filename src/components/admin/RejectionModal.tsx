@@ -46,7 +46,7 @@ interface PartnerApplication {
   };
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'active' | 'rejected';
   approvedByUid?: string;
   approvedByEmail?: string;
   approvedAt?: Timestamp;

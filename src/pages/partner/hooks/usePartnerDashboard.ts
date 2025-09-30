@@ -27,9 +27,9 @@ const fetchPartnerCodes = async (partnerUid: string): Promise<PartnerCode[]> => 
   try {
     const codesQuery = query(
       collection(db, 'partnerCodes'),
-      where('partnerUid', '==', partnerUid),
-      where('isActive', '==', true),
-      orderBy('createdAt', 'desc')
+      where('partnerId', '==', partnerUid),
+      where('active', '==', true),
+        orderBy('createdAt', 'desc')
     );
     
     const snapshot = await getDocs(codesQuery);
@@ -48,8 +48,8 @@ const fetchPartnerEarnings = async (partnerUid: string): Promise<CommissionLedge
   try {
     const earningsQuery = query(
       collection(db, 'commissionLedger'),
-      where('partnerUid', '==', partnerUid),
-      orderBy('creditedAt', 'desc'),
+      where('partnerId', '==', partnerUid),
+        orderBy('createdAt', 'desc'),
       limit(100)
     );
     
@@ -69,8 +69,8 @@ const fetchPartnerCustomers = async (partnerUid: string): Promise<ReferralCustom
   try {
     const customersQuery = query(
       collection(db, 'referralCustomers'),
-      where('partnerUid', '==', partnerUid),
-      orderBy('joinedAt', 'desc'),
+      where('partnerId', '==', partnerUid),
+        orderBy('createdAt', 'desc'),
       limit(50)
     );
     
@@ -90,8 +90,8 @@ const fetchPartnerInvoices = async (partnerUid: string): Promise<InvoiceEntry[]>
   try {
     const invoicesQuery = query(
       collection(db, 'invoices'),
-      where('creditedPartnerUid', '==', partnerUid),
-      orderBy('creditedAt', 'desc'),
+      where('partnerId', '==', partnerUid),
+        orderBy('createdAt', 'desc'),
       limit(20)
     );
     
@@ -117,18 +117,20 @@ const calculateDashboardStats = (
   
   // Calculate monthly commissions
   const monthlyCommissions = earnings
-    .filter(earning => earning.creditedAt.toDate() >= thisMonth)
-    .reduce((sum, earning) => sum + earning.commission, 0);
+    .filter(earning => {
+      return earning.createdAt >= thisMonth;
+    })
+    .reduce((sum, earning) => sum + earning.amount, 0);
   
   // Calculate total earnings
-  const totalEarnings = earnings.reduce((sum, earning) => sum + earning.commission, 0);
+  const totalEarnings = earnings.reduce((sum, earning) => sum + earning.amount, 0);
   
   // Calculate active customers
   const activeCustomers = customers.filter(customer => customer.status === 'active').length;
   
   // Calculate churn rate (simplified - customers inactive in last 30 days)
   const inactiveIn30Days = customers.filter(customer => 
-    customer.lastActivity.toDate() < thirtyDaysAgo
+    customer.joinedAt < thirtyDaysAgo
   ).length;
   const churnRate = customers.length > 0 ? (inactiveIn30Days / customers.length) * 100 : 0;
   
@@ -140,14 +142,14 @@ const calculateDashboardStats = (
     
     const monthEarnings = earnings
       .filter(earning => {
-        const earningDate = earning.creditedAt.toDate();
+        const earningDate = earning.createdAt;
         return earningDate >= month && earningDate <= monthEnd;
       })
-      .reduce((sum, earning) => sum + earning.commission, 0);
+      .reduce((sum, earning) => sum + earning.amount, 0);
     
     const monthCustomers = customers
       .filter(customer => {
-        const joinedDate = customer.joinedAt.toDate();
+        const joinedDate = customer.joinedAt;
         return joinedDate >= month && joinedDate <= monthEnd;
       }).length;
     
