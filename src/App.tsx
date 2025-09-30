@@ -21,9 +21,6 @@ import {
   initializeMediaFileCache 
 } from './utils/textOverlayHelpers';
 
-// Import referral testing utilities
-import './utils/testReferralAccess';
-
 // Make text overlay utilities globally available for use in other components
 if (typeof window !== 'undefined') {
   // @ts-expect-error - adding to window
