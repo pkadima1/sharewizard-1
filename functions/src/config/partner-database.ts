@@ -189,8 +189,7 @@ match /partners/{partnerId} {
   
   // Admins can read/write all partner data
   allow read, write: if request.auth != null && 
-    (request.auth.token.email == 'engageperfect@gmail.com' || 
-     request.auth.uid == 'admin-uid-here');
+    (request.auth.token.email == 'engageperfect@gmail.com');
      
   // Partners can update specific fields of their own profile
   allow update: if request.auth != null && 
@@ -211,8 +210,7 @@ match /partnerCodes/{codeId} {
     
   // Admins can read/write all codes
   allow read, write: if request.auth != null && 
-    (request.auth.token.email == 'engageperfect@gmail.com' || 
-     request.auth.uid == 'admin-uid-here');
+    (request.auth.token.email == 'engageperfect@gmail.com');
      
   // System can update usage statistics
   allow update: if request.auth != null &&
@@ -229,8 +227,7 @@ match /referrals/{referralId} {
     
   // Admins can read/write all referrals
   allow read, write: if request.auth != null && 
-    (request.auth.token.email == 'engageperfect@gmail.com' || 
-     request.auth.uid == 'admin-uid-here');
+    (request.auth.token.email == 'engageperfect@gmail.com');
      
   // System can create referrals and update conversion data
   allow create, update: if request.auth != null;
@@ -245,8 +242,7 @@ match /commission_ledger/{entryId} {
     
   // Admins can read/write all commission entries
   allow read, write: if request.auth != null && 
-    (request.auth.token.email == 'engageperfect@gmail.com' || 
-     request.auth.uid == 'admin-uid-here');
+    (request.auth.token.email == 'engageperfect@gmail.com');
      
   // System can create and update commission entries
   allow create, update: if request.auth != null;
@@ -265,8 +261,7 @@ match /payout_requests/{payoutId} {
     
   // Admins can read/write all payout requests
   allow read, write: if request.auth != null && 
-    (request.auth.token.email == 'engageperfect@gmail.com' || 
-     request.auth.uid == 'admin-uid-here');
+    (request.auth.token.email == 'engageperfect@gmail.com');
 }
 `;
 

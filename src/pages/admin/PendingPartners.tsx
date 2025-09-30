@@ -300,8 +300,7 @@ const PendingPartners = () => {
   const [rejecting, setRejecting] = useState(false);
 
   // Admin check - exact match with backend logic
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here';
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   // Cloud Functions
   const approvePartner = httpsCallable(functions, 'approvePartner');

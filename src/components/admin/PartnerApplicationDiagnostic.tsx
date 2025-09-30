@@ -23,8 +23,7 @@ const PartnerApplicationDiagnostic: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Admin check
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here';
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   const fetchData = async () => {
     setLoading(true);

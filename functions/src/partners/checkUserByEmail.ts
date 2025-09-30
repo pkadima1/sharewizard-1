@@ -18,7 +18,7 @@ const auth = getAuth();
  * Check if user is admin
  */
 const isAdmin = (uid: string, email?: string): boolean => {
-  return email?.toLowerCase() === 'engageperfect@gmail.com' || uid === 'admin-uid-here';
+  return email?.toLowerCase() === 'engageperfect@gmail.com';
 };
 
 /**

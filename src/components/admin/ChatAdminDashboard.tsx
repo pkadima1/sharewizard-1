@@ -80,8 +80,7 @@ const ChatAdminDashboard: React.FC<AdminDashboardProps> = ({ className }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedConversation, setExpandedConversation] = useState<string | null>(null);
   // Check if user is admin
-  const isAdmin = currentUser?.email === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here'; // Using exact email match for security
+  const isAdmin = currentUser?.email === 'engageperfect@gmail.com';
   // Fetch chat analytics
   const fetchAnalytics = async () => {
     try {

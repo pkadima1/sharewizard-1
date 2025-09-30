@@ -85,10 +85,7 @@ const PartnerPayouts: React.FC = () => {
   const [payoutAmount, setPayoutAmount] = useState('');
   const [payoutNotes, setPayoutNotes] = useState('');
   const [processingPayout, setProcessingPayout] = useState(false);
-
-  // Admin check
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here';
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   // Fetch partner earnings data
   const fetchPartnerEarnings = async () => {

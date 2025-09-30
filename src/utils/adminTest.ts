@@ -19,8 +19,7 @@ export const testAdminAccess = async () => {
   console.log('Is Authenticated:', !!user);
   
   // Test admin check
-  const isAdmin = user?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  user?.uid === 'admin-uid-here';
+  const isAdmin = user?.email?.toLowerCase() === 'engageperfect@gmail.com';
   console.log('Is Admin:', isAdmin);
   
   if (!isAdmin) {

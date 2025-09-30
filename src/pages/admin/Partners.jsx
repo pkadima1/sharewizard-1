@@ -1082,8 +1082,7 @@ const Partners = () => {
   const [selectedPartner, setSelectedPartner] = useState(null);
 
   // Admin check - exact match with backend logic
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here';
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   // Fetch partners and codes
   const fetchData = useCallback(async () => {

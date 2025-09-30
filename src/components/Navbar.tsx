@@ -28,8 +28,7 @@ const Navbar: React.FC = () => {
   const { getLocalizedPath } = useLocalizedPath();
   const navigateLocalized = useLocalizedNavigate();
   // Check if user is admin
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                 currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   useEffect(() => {
     const handleScroll = () => {

@@ -31,8 +31,7 @@ const AdminDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
     // Check if user is admin
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                  currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
   // Fetch dashboard statistics
   useEffect(() => {
     const fetchStats = async () => {
