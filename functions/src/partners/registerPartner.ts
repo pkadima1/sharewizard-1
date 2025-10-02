@@ -113,6 +113,26 @@ export const registerPartner = onCall({
         smsMarketing?: boolean;
         partnerNewsletter?: boolean;
       };
+      
+      // Enhanced partner registration fields
+      fullName?: string;
+      phone?: string;
+      industry?: string;
+      contentSkills?: string[];
+      languages?: Array<{
+        language: string;
+        level: string;
+      }>;
+      experienceLevel?: 'beginner' | 'intermediate' | 'advanced';
+      expectedClients?: number;
+      availability?: string;
+      portfolioSamples?: string;
+      
+      // Commission tier information
+      commissionTier?: 'basic' | 'standard' | 'certified';
+      partnerSourcedRate?: number;
+      epSourcedRate?: number;
+      canReceiveEPLeads?: boolean;
     };
     
     if (!data || typeof data !== 'object') {
@@ -129,7 +149,24 @@ export const registerPartner = onCall({
       website, 
       commissionRate, 
       description, 
-      marketingPreferences 
+      marketingPreferences,
+      
+      // Enhanced fields
+      fullName,
+      phone,
+      industry,
+      contentSkills,
+      languages,
+      experienceLevel,
+      expectedClients,
+      availability,
+      portfolioSamples,
+      
+      // Commission tier fields
+      commissionTier,
+      partnerSourcedRate,
+      epSourcedRate,
+      canReceiveEPLeads
     } = data;
 
     // Validate required fields
@@ -216,6 +253,24 @@ export const registerPartner = onCall({
       ...(website && { website }),
       ...(description && { description: description.trim() }),
       ...(marketingPreferences && { marketingPreferences }),
+      
+      // Enhanced partner data fields
+      ...(fullName && { fullName: fullName.trim() }),
+      ...(phone && { phone: phone.trim() }),
+      ...(industry && { industry: industry.trim() }),
+      ...(contentSkills && { contentSkills }),
+      ...(languages && { languages }),
+      ...(experienceLevel && { experienceLevel }),
+      ...(expectedClients && { expectedClients }),
+      ...(availability && { availability: availability.trim() }),
+      ...(portfolioSamples && { portfolioSamples: portfolioSamples.trim() }),
+      
+      // Commission tier information
+      ...(commissionTier && { commissionTier }),
+      ...(partnerSourcedRate && { partnerSourcedRate }),
+      ...(epSourcedRate && { epSourcedRate }),
+      ...(canReceiveEPLeads !== undefined && { canReceiveEPLeads }),
+      
       stats: {
         totalReferrals: 0,
         totalConversions: 0,
@@ -333,11 +388,20 @@ export const registerPartner = onCall({
             
             <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0; color: #1e293b;">Détails du candidat</h3>
-              <p><strong>Nom:</strong> ${displayName}</p>
+              <p><strong>Nom:</strong> ${fullName || displayName}</p>
               <p><strong>Email:</strong> ${email}</p>
+              ${phone ? `<p><strong>Téléphone:</strong> ${phone}</p>` : ''}
               ${companyName ? `<p><strong>Entreprise:</strong> ${companyName}</p>` : ''}
+              ${industry ? `<p><strong>Industrie:</strong> ${industry}</p>` : ''}
               ${website ? `<p><strong>Site web:</strong> <a href="${website}">${website}</a></p>` : ''}
+              ${portfolioSamples ? `<p><strong>Portfolio:</strong> <a href="${portfolioSamples}">${portfolioSamples}</a></p>` : ''}
               <p><strong>Taux de commission:</strong> ${commissionRatePercent}%</p>
+              ${commissionTier ? `<p><strong>Niveau de partenariat:</strong> ${commissionTier}</p>` : ''}
+              ${experienceLevel ? `<p><strong>Niveau d'expérience:</strong> ${experienceLevel}</p>` : ''}
+              ${expectedClients ? `<p><strong>Clients attendus:</strong> ${expectedClients}</p>` : ''}
+              ${availability ? `<p><strong>Disponibilité:</strong> ${availability}</p>` : ''}
+              ${contentSkills && contentSkills.length > 0 ? `<p><strong>Compétences:</strong> ${contentSkills.join(', ')}</p>` : ''}
+              ${languages && languages.length > 0 ? `<p><strong>Langues:</strong> ${languages.map(l => `${l.language} (${l.level})`).join(', ')}</p>` : ''}
               ${description ? `<p><strong>Description:</strong> ${description}</p>` : ''}
             </div>
             
@@ -359,11 +423,20 @@ export const registerPartner = onCall({
 Nouvelle demande de partenariat
 
 Détails du candidat:
-- Nom: ${displayName}
+- Nom: ${fullName || displayName}
 - Email: ${email}
+${phone ? `- Téléphone: ${phone}` : ''}
 ${companyName ? `- Entreprise: ${companyName}` : ''}
+${industry ? `- Industrie: ${industry}` : ''}
 ${website ? `- Site web: ${website}` : ''}
+${portfolioSamples ? `- Portfolio: ${portfolioSamples}` : ''}
 - Taux de commission: ${commissionRatePercent}%
+${commissionTier ? `- Niveau de partenariat: ${commissionTier}` : ''}
+${experienceLevel ? `- Niveau d'expérience: ${experienceLevel}` : ''}
+${expectedClients ? `- Clients attendus: ${expectedClients}` : ''}
+${availability ? `- Disponibilité: ${availability}` : ''}
+${contentSkills && contentSkills.length > 0 ? `- Compétences: ${contentSkills.join(', ')}` : ''}
+${languages && languages.length > 0 ? `- Langues: ${languages.map(l => `${l.language} (${l.level})`).join(', ')}` : ''}
 ${description ? `- Description: ${description}` : ''}
 
 Action requise: Veuillez examiner cette demande et approuver ou rejeter le candidat partenaire.

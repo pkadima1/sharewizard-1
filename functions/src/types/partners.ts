@@ -52,6 +52,26 @@ export interface Partner {
     userAgent?: string;
     source: 'admin_created' | 'public_registration';
   };
+  
+  // Enhanced partner data fields
+  fullName?: string;
+  phone?: string;
+  industry?: string;
+  contentSkills?: string[];
+  languages?: Array<{
+    language: string;
+    level: string;
+  }>;
+  experienceLevel?: 'beginner' | 'intermediate' | 'advanced';
+  expectedClients?: number;
+  availability?: string;
+  portfolioSamples?: string;
+  
+  // Commission tier information
+  commissionTier?: 'basic' | 'standard' | 'certified';
+  partnerSourcedRate?: number;
+  epSourcedRate?: number;
+  canReceiveEPLeads?: boolean;
 }
 
 /**
@@ -358,6 +378,26 @@ export interface RegisterPartnerRequest {
   commissionRate?: number;
   description?: string;
   marketingPreferences?: Partner['marketingPreferences'];
+  
+  // Enhanced partner registration fields
+  fullName?: string;
+  phone?: string;
+  industry?: string;
+  contentSkills?: string[];
+  languages?: Array<{
+    language: string;
+    level: string;
+  }>;
+  experienceLevel?: 'beginner' | 'intermediate' | 'advanced';
+  expectedClients?: number;
+  availability?: string;
+  portfolioSamples?: string;
+  
+  // Commission tier information
+  commissionTier?: 'basic' | 'standard' | 'certified';
+  partnerSourcedRate?: number;
+  epSourcedRate?: number;
+  canReceiveEPLeads?: boolean;
 }
 
 /**

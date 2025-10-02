@@ -247,7 +247,20 @@ export async function validateReferralCode(code: string): Promise<PartnerInfo | 
     }
     
     console.log('✅ Valid referral code found:', normalizedCode, 'Partner:', partnerData.displayName);
-    return partnerData;
+    
+    // Ensure all required fields are defined before returning
+    const sanitizedPartnerData: PartnerInfo = {
+      partnerId: codeData.partnerId,
+      email: partnerData.email || '',
+      displayName: partnerData.displayName || 'Unknown Partner',
+      companyName: partnerData.companyName || undefined,
+      website: partnerData.website || undefined,
+      active: partnerData.active !== false,
+      status: partnerData.status || 'active',
+      commissionRate: partnerData.commissionRate || 0.1
+    };
+    
+    return sanitizedPartnerData;
     
   } catch (error) {
     console.error('❌ Error validating referral code:', error);

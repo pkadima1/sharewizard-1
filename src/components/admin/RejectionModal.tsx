@@ -25,37 +25,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // Icons
 import { XCircle, AlertTriangle, FileText } from 'lucide-react';
 
-// Types
-interface PartnerApplication {
-  id: string;
-  uid: string;
-  email: string;
-  displayName: string;
-  companyName?: string;
-  website?: string;
-  portfolioUrl?: string;
-  experienceNote?: string;
-  languages?: string[];
-  timezone?: string;
-  expectedClients?: number;
-  description?: string;
-  marketingPreferences?: {
-    emailMarketing?: boolean;
-    smsMarketing?: boolean;
-    partnerNewsletter?: boolean;
-  };
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  status: 'pending' | 'active' | 'rejected';
-  approvedByUid?: string;
-  approvedByEmail?: string;
-  approvedAt?: Timestamp;
-  rejectedByUid?: string;
-  rejectedByEmail?: string;
-  rejectedAt?: Timestamp;
-  rejectionReason?: string;
-  commissionRate?: number;
-}
+// Import shared types
+import { PartnerApplication } from '@/types/partnerApplication';
 
 interface RejectionModalProps {
   isOpen: boolean;

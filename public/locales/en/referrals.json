@@ -22,7 +22,14 @@
     "success": "Referral attribution successful",
     "failed": "Referral attribution failed",
     "processing": "Processing referral attribution...",
-    "error": "Error processing referral attribution"
+    "error": "Error processing referral attribution",
+    "customerRecordCreated": "Customer record created for dashboard tracking",
+    "customerRecordFailed": "Failed to create customer record",
+    "trackingFailed": "Failed to create referral tracking",
+    "processingFailed": "Failed to process referral attribution",
+    "invalidCode": "Invalid or expired referral code",
+    "enhancedSuccess": "Enhanced referral attribution completed successfully",
+    "partnerDashboardUpdated": "Partner dashboard will now reflect this referral"
   },
   "stats": {
     "totalReferrals": "Total Referrals",

@@ -2,6 +2,13 @@
  * Helper functions for handling text overlays on media
  */
 
+// Production logging utility - logs only in development
+const debugLog = (message: string, ...args: any[]) => {
+  if (import.meta.env.DEV) {
+    console.log(message, ...args);
+  }
+};
+
 /**
  * Draws custom text overlay based on stored metadata
  */
@@ -37,7 +44,6 @@ export function drawCustomTextOverlay(
     color = '#ffffff';
     size = 24;
     rotation = 0;
-    console.log('Drawing simple text overlay:', text);
   } else if (typeof textOverlayData === 'object' && textOverlayData !== null) {
     // Get text properties from overlay data
     const overlayData = textOverlayData as TextOverlayData;
@@ -50,15 +56,11 @@ export function drawCustomTextOverlay(
       position = overlayData.position;
     } else {
       position = { x: 50, y: 50 }; // Default center
-      console.log('Using default position for text overlay, invalid position provided:', overlayData.position);
     }
     
     color = overlayData.color || '#ffffff';
     size = overlayData.size || 24;
     rotation = overlayData.rotation || 0;
-    
-    // Log the overlay data for debugging
-    console.log('Drawing text overlay with properties:', { text, position, color, size, rotation });
   } else {
     console.warn('Invalid text overlay data type:', typeof textOverlayData);
     ctx.restore();
@@ -143,7 +145,7 @@ export function getMediaFileFromCache(url: string): File | null {
   try {
     const file = window.mediaFileCache[url];
     if (file) {
-      console.log('Found file in cache for URL:', url);
+      debugLog('Found file in cache for URL:', url);
       return file;
     }
   } catch (error) {
@@ -170,21 +172,21 @@ declare global {
  */
 export function debugMediaFileCache(): void {
   if (typeof window === 'undefined' || !window.mediaFileCache) {
-    console.log('Media file cache is not initialized');
+    debugLog('Media file cache is not initialized');
     return;
   }
   
   const cacheKeys = Object.keys(window.mediaFileCache);
-  console.log(`Media file cache contains ${cacheKeys.length} entries:`);
+  debugLog(`Media file cache contains ${cacheKeys.length} entries:`);
   
   cacheKeys.forEach(key => {
     const file = window.mediaFileCache![key];
     const hasTextOverlay = !!(file && (file as File & { textOverlayData?: unknown }).textOverlayData);
     
-    console.log(`- ${key.substring(0, 30)}... : ${file?.name || 'unnamed'} (${hasTextOverlay ? 'has text overlay' : 'no text overlay'})`);
+    debugLog(`- ${key.substring(0, 30)}... : ${file?.name || 'unnamed'} (${hasTextOverlay ? 'has text overlay' : 'no text overlay'})`);
     
     if (hasTextOverlay) {
-      console.log('  Text overlay data:', (file as File & { textOverlayData?: unknown }).textOverlayData);
+      debugLog('  Text overlay data:', (file as File & { textOverlayData?: unknown }).textOverlayData);
     }
   });
 }
@@ -199,13 +201,13 @@ export function debugMediaFileCache(): void {
 export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLImageElement): unknown {
   if (!element) return null;
   
-  console.log('Searching for text overlay data for element:', element);
+  debugLog('Searching for text overlay data for element:', element);
   
   // Check for direct property first
   const elementWithOverlay = element as (HTMLVideoElement | HTMLImageElement) & { textOverlayData?: unknown };
   let textOverlayData = elementWithOverlay.textOverlayData;
   if (textOverlayData) {
-    console.log('Found text overlay data directly on element:', textOverlayData);
+    debugLog('Found text overlay data directly on element:', textOverlayData);
     return textOverlayData;
   }
   
@@ -215,7 +217,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
     if (textDataAttribute) {
       try {
         const parsedData = JSON.parse(textDataAttribute);
-        console.log('Found text overlay data in data attribute:', parsedData);
+        debugLog('Found text overlay data in data attribute:', parsedData);
         return parsedData;
       } catch (err) {
         console.warn('Failed to parse text overlay data from attribute:', textDataAttribute);
@@ -225,7 +227,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
     // Check for mediaFile property, which might be added by the MediaUploader component
     const videoWithMediaFile = element as HTMLVideoElement & { mediaFile?: File & { textOverlayData?: unknown } };
     if (videoWithMediaFile.mediaFile && videoWithMediaFile.mediaFile.textOverlayData) {
-      console.log('Found text overlay data in mediaFile property:', videoWithMediaFile.mediaFile.textOverlayData);
+      debugLog('Found text overlay data in mediaFile property:', videoWithMediaFile.mediaFile.textOverlayData);
       return videoWithMediaFile.mediaFile.textOverlayData;
     }
   }
@@ -238,7 +240,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
       const fileWithOverlay = cachedFile as File & { textOverlayData?: unknown };
       textOverlayData = fileWithOverlay.textOverlayData;
       if (textOverlayData) {
-        console.log('Found text overlay data in media file cache:', textOverlayData);
+        debugLog('Found text overlay data in media file cache:', textOverlayData);
         return textOverlayData;
       }
     }
@@ -251,7 +253,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
         const fileWithOverlay = exactMatch as File & { textOverlayData?: unknown };
         textOverlayData = fileWithOverlay.textOverlayData;
         if (textOverlayData) {
-          console.log('Found text overlay data with exact URL match:', textOverlayData);
+          debugLog('Found text overlay data with exact URL match:', textOverlayData);
           return textOverlayData;
         }
       }
@@ -263,7 +265,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
           const file = window.mediaFileCache[key];
           const fileWithOverlay = file as File & { textOverlayData?: unknown };
           if (file && fileWithOverlay.textOverlayData) {
-            console.log('Found text overlay data with partial URL match:', fileWithOverlay.textOverlayData);
+            debugLog('Found text overlay data with partial URL match:', fileWithOverlay.textOverlayData);
             return fileWithOverlay.textOverlayData;
           }
         }
@@ -271,7 +273,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
     }
   }
   
-  console.log('No text overlay data found for element:', element);
+  debugLog('No text overlay data found for element:', element);
   return null;
 }
 

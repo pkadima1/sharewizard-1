@@ -7,13 +7,14 @@ const PrivacyPolicy: React.FC = () => {
       <p className="text-sm text-gray-600 mb-6">Last updated: 14 May 2025</p>
       
       <p className="mb-6">
-        This Privacy Policy explains how NodeMatics Ltd ("EngagePerfect", "we", "our") collects, uses, shares and protects your personal data when you visit engageperfect.com, 
+        This Privacy Policy explains how InSighter OÜ, and its affiliate NodeMatics Ltd ("EngagePerfect", "we", "our") collects, uses, shares and protects your personal data when you visit engageperfect.com, 
         use our web or mobile apps, or otherwise interact with our services.
       </p>
       
       <h2 className="text-2xl font-bold mt-8 mb-4">1. Who is the Data Controller?</h2>
       <p className="mb-4">
-        NodeMatics Ltd, registered in England & Wales (company no. 14190750) with its registered office at [address], is the data controller for all personal data processed through EngagePerfect.<br />
+        InSighter OÜ, registered in Estonia (company no. 14180862) with its registered address at Auna tn 4-5, Põhja-Tallinna linnaosa, 10317 Tallinn, Harju maakond, Estonia, is the data controller for users in the EEA.<br />
+        NodeMatics Ltd, registered in England & Wales (company no. 14190750) with its registered office at 2 Main Court, Brampton, CA8 1SA, Cumbria, is the data controller for all personal data processed through EngagePerfect.<br />
         Contact: support@engageperfect.com
       </p>
       
@@ -93,7 +94,7 @@ const PrivacyPolicy: React.FC = () => {
             </tr>
             <tr>
               <td className="border border-gray-300 px-4 py-2">Comply with legal obligations (tax, accounting)</td>
-              <td className="border border-gray-300 px-4 py-2">Legal Obligation (Art. 6 (1)(c))</td>
+              <td className="border border-gray-300 px-4 py-2">Legal Obligation </td>
             </tr>
           </tbody>
         </table>
@@ -134,7 +135,7 @@ const PrivacyPolicy: React.FC = () => {
               <td className="border border-gray-300 px-4 py-2">EU or US; SCCs</td>
             </tr>
             <tr>
-              <td className="border border-gray-300 px-4 py-2">OpenAI, Google Cloud AI</td>
+              <td className="border border-gray-300 px-4 py-2">Google Cloud AI</td>
               <td className="border border-gray-300 px-4 py-2">Caption generation & media analysis</td>
               <td className="border border-gray-300 px-4 py-2">Only prompt text and media; SCCs</td>
             </tr>
@@ -255,12 +256,16 @@ const PrivacyPolicy: React.FC = () => {
       <h2 className="text-2xl font-bold mt-8 mb-4">13. Contact & Complaints</h2>
       <p className="mb-2">
         Questions or concerns?<br />
+        InSighter OÜ / EngagePerfect<br />
+        Email: support@engageperfect.com
+      </p>
+      <p className="mb-2">
         NodeMatics Ltd / EngagePerfect<br />
-        Email: privacy@engageperfect.com
+        Email: support@engageperfect.com
       </p>
       
       <p className="mb-8">
-        If you are in the UK/EU and believe we have not addressed your concern, you have the right to lodge a complaint with your local supervisory authority (in the UK: the ICO).
+        If you are in the UK/EU and believe we have not addressed your concern, you have the right to lodge a complaint with your local supervisory authority (in the UK/Estonia: the Information Commissioner's Office).
       </p>
       
       <p className="mb-8">

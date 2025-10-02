@@ -103,37 +103,9 @@ import RejectionModal from '@/components/admin/RejectionModal';
 import ApplicationDetailsModal from '@/components/admin/ApplicationDetailsModal';
 import PartnerApplicationDiagnostic from '@/components/admin/PartnerApplicationDiagnostic';
 
-// Types
-interface PartnerApplication {
-  id: string;
-  uid: string;
-  email: string;
-  displayName: string;
-  companyName?: string;
-  website?: string;
-  portfolioUrl?: string;
-  experienceNote?: string;
-  languages?: string[];
-  timezone?: string;
-  expectedClients?: number;
-  description?: string;
-  marketingPreferences?: {
-    emailMarketing?: boolean;
-    smsMarketing?: boolean;
-    partnerNewsletter?: boolean;
-  };
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  status: 'pending' | 'active' | 'rejected';
-  approvedByUid?: string;
-  approvedByEmail?: string;
-  approvedAt?: Timestamp;
-  rejectedByUid?: string;
-  rejectedByEmail?: string;
-  rejectedAt?: Timestamp;
-  rejectionReason?: string;
-  commissionRate?: number;
-}
+// Import shared types
+import { PartnerApplication } from '@/types/partnerApplication';
+import { validateLanguageData } from '@/utils/languageUtils';
 
 /**
  * Application Card Component (Mobile)
@@ -223,9 +195,9 @@ const ApplicationCard = ({
             <div>
               <span className="font-medium text-gray-700 dark:text-gray-300">{t('details.languages')}:</span>
               <div className="flex flex-wrap gap-1 mt-1">
-                {application.languages.map((lang, index) => (
+                {validateLanguageData(application.languages).map((lang, index) => (
                   <Badge key={index} variant="outline" className="text-xs">
-                    {lang}
+                    {lang.language} ({lang.level})
                   </Badge>
                 ))}
               </div>
@@ -604,14 +576,14 @@ const PendingPartners = () => {
                             <TableCell>
                               {application.languages && application.languages.length > 0 ? (
                                 <div className="flex flex-wrap gap-1">
-                                  {application.languages.slice(0, 2).map((lang, index) => (
+                                  {validateLanguageData(application.languages).slice(0, 2).map((lang, index) => (
                                     <Badge key={index} variant="outline" className="text-xs">
-                                      {lang}
+                                      {lang.language} ({lang.level})
                                     </Badge>
                                   ))}
-                                  {application.languages.length > 2 && (
+                                  {validateLanguageData(application.languages).length > 2 && (
                                     <Badge variant="outline" className="text-xs">
-                                      +{application.languages.length - 2}
+                                      +{validateLanguageData(application.languages).length - 2}
                                     </Badge>
                                   )}
                                 </div>

@@ -43,37 +43,9 @@ import {
   Hash
 } from 'lucide-react';
 
-// Types
-interface PartnerApplication {
-  id: string;
-  uid: string;
-  email: string;
-  displayName: string;
-  companyName?: string;
-  website?: string;
-  portfolioUrl?: string;
-  experienceNote?: string;
-  languages?: string[];
-  timezone?: string;
-  expectedClients?: number;
-  description?: string;
-  marketingPreferences?: {
-    emailMarketing?: boolean;
-    smsMarketing?: boolean;
-    partnerNewsletter?: boolean;
-  };
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
-  status: 'pending' | 'active' | 'rejected';
-  approvedByUid?: string;
-  approvedByEmail?: string;
-  approvedAt?: Timestamp;
-  rejectedByUid?: string;
-  rejectedByEmail?: string;
-  rejectedAt?: Timestamp;
-  rejectionReason?: string;
-  commissionRate?: number;
-}
+// Import shared types
+import { PartnerApplication } from '@/types/partnerApplication';
+import { validateLanguageData } from '@/utils/languageUtils';
 
 interface ApplicationDetailsModalProps {
   isOpen: boolean;
@@ -161,7 +133,7 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('details.displayName')}
                   </Label>
-                  <p className="text-gray-900 dark:text-white">{application.displayName}</p>
+                  <p className="text-gray-900 dark:text-white">{application.fullName || application.displayName}</p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -169,6 +141,14 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                   </Label>
                   <p className="text-gray-900 dark:text-white">{application.email}</p>
                 </div>
+                {application.phone && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Téléphone
+                    </Label>
+                    <p className="text-gray-900 dark:text-white">{application.phone}</p>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('details.company')}
@@ -177,6 +157,14 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                     {application.companyName || t('details.notProvided')}
                   </p>
                 </div>
+                {application.industry && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Industrie
+                    </Label>
+                    <p className="text-gray-900 dark:text-white">{application.industry}</p>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('details.website')}
@@ -196,6 +184,23 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                     <p className="text-gray-500 dark:text-gray-400">{t('details.notProvided')}</p>
                   )}
                 </div>
+                {application.portfolioSamples && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Portfolio/Échantillons
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <p className="text-gray-900 dark:text-white">{application.portfolioSamples}</p>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => openUrl(application.portfolioSamples!)}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -218,6 +223,24 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                     {application.expectedClients || t('details.notProvided')}
                   </p>
                 </div>
+                {application.experienceLevel && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Niveau d'expérience
+                    </Label>
+                    <p className="text-gray-900 dark:text-white">
+                      {application.experienceLevel.charAt(0).toUpperCase() + application.experienceLevel.slice(1)}
+                    </p>
+                  </div>
+                )}
+                {application.availability && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Disponibilité
+                    </Label>
+                    <p className="text-gray-900 dark:text-white">{application.availability}</p>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('details.timezone')}
@@ -228,16 +251,31 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                 </div>
               </div>
               
+              {application.contentSkills && application.contentSkills.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Compétences en contenu
+                  </Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {application.contentSkills.map((skill, index) => (
+                      <Badge key={index} variant="outline">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               {application.languages && application.languages.length > 0 && (
                 <div>
                   <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t('details.languages')}
                   </Label>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {application.languages.map((lang, index) => (
+                    {validateLanguageData(application.languages).map((lang, index) => (
                       <Badge key={index} variant="outline">
                         <Languages className="h-3 w-3 mr-1" />
-                        {lang}
+                        {lang.language} ({lang.level})
                       </Badge>
                     ))}
                   </div>
@@ -286,6 +324,62 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
             </CardContent>
           </Card>
 
+          {/* Commission Tier Information */}
+          {(application.commissionTier || application.partnerSourcedRate || application.epSourcedRate !== undefined) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Percent className="h-5 w-5" />
+                  Informations de Commission
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {application.commissionTier && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Niveau de partenariat
+                      </Label>
+                      <Badge variant="outline" className="mt-1">
+                        {application.commissionTier.charAt(0).toUpperCase() + application.commissionTier.slice(1)}
+                      </Badge>
+                    </div>
+                  )}
+                  {application.partnerSourcedRate && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Taux vos leads
+                      </Label>
+                      <p className="text-gray-900 dark:text-white">
+                        {(application.partnerSourcedRate * 100).toFixed(0)}%
+                      </p>
+                    </div>
+                  )}
+                  {application.epSourcedRate !== undefined && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Taux nos leads
+                      </Label>
+                      <p className="text-gray-900 dark:text-white">
+                        {application.epSourcedRate > 0 ? `${(application.epSourcedRate * 100).toFixed(0)}%` : 'Non éligible'}
+                      </p>
+                    </div>
+                  )}
+                  {application.canReceiveEPLeads !== undefined && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Peut recevoir nos leads
+                      </Label>
+                      <Badge variant={application.canReceiveEPLeads ? "default" : "secondary"}>
+                        {application.canReceiveEPLeads ? "Oui" : "Non"}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Marketing Preferences */}
           {application.marketingPreferences && (
             <Card>
@@ -296,24 +390,60 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Badge variant={application.marketingPreferences.emailMarketing ? "default" : "secondary"}>
-                      {application.marketingPreferences.emailMarketing ? "✓" : "✗"}
-                    </Badge>
-                    <span className="text-sm">{t('details.emailMarketing')}</span>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    {t('details.marketingDesc')}
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Mail className="h-5 w-5 text-blue-600" />
+                        <div>
+                          <span className="font-medium text-gray-900 dark:text-white">{t('details.emailMarketing')}</span>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{t('details.emailMarketingDesc')}</p>
+                        </div>
+                      </div>
+                      <Badge variant={application.marketingPreferences.emailMarketing ? "default" : "secondary"}>
+                        {application.marketingPreferences.emailMarketing ? "✓ Activé" : "✗ Désactivé"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="h-5 w-5 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">SMS</span>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-900 dark:text-white">{t('details.smsMarketing')}</span>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{t('details.smsMarketingDesc')}</p>
+                        </div>
+                      </div>
+                      <Badge variant={application.marketingPreferences.smsMarketing ? "default" : "secondary"}>
+                        {application.marketingPreferences.smsMarketing ? "✓ Activé" : "✗ Désactivé"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="h-5 w-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">📧</span>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-900 dark:text-white">{t('details.partnerNewsletter')}</span>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{t('details.partnerNewsletterDesc')}</p>
+                        </div>
+                      </div>
+                      <Badge variant={application.marketingPreferences.partnerNewsletter ? "default" : "secondary"}>
+                        {application.marketingPreferences.partnerNewsletter ? "✓ Activé" : "✗ Désactivé"}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={application.marketingPreferences.smsMarketing ? "default" : "secondary"}>
-                      {application.marketingPreferences.smsMarketing ? "✓" : "✗"}
-                    </Badge>
-                    <span className="text-sm">{t('details.smsMarketing')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={application.marketingPreferences.partnerNewsletter ? "default" : "secondary"}>
-                      {application.marketingPreferences.partnerNewsletter ? "✓" : "✗"}
-                    </Badge>
-                    <span className="text-sm">{t('details.partnerNewsletter')}</span>
+                  
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>Note :</strong> Ces préférences ont été définies par le candidat lors de l'inscription et peuvent être modifiées dans leurs paramètres de compte.
+                    </p>
                   </div>
                 </div>
               </CardContent>

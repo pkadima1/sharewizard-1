@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   User, 
   createUserWithEmailAndPassword, 
@@ -84,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isPartner, setIsPartner] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { t } = useTranslation(['auth', 'referrals']);
 
   // Check if user is a partner
   const checkPartnerRole = useCallback(async (uid: string): Promise<boolean> => {
@@ -130,36 +132,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ...additionalData,
           });
           
-          // Process referral attribution for new users
+          // Process enhanced referral attribution for new users
           try {
             const attributionResult = await processSignupReferralAttribution(
               user.uid,
               {
+                email: user.email || '',
+                displayName: user.displayName || additionalData.displayName || '',
+                photoURL: user.photoURL || ''
+              },
+              {
                 source: 'signup',
                 landingPage: window.location.href,
                 userAgent: navigator.userAgent,
-                referrerUrl: document.referrer
+                referrerUrl: document.referrer,
+                locale: {
+                  language: navigator.language || 'en',
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                }
               }
             );
             
             if (attributionResult.success) {
               console.log('✅ User successfully attributed to partner:', {
                 userId: user.uid,
+                userEmail: user.email,
                 partnerId: attributionResult.partnerId,
                 partnerName: attributionResult.partnerName,
-                referralId: attributionResult.referralId
+                referralId: attributionResult.referralId,
+                customerRecordCreated: attributionResult.metadata?.customerRecordCreated
               });
               
-              // Show success toast with partner information
+              // Show enhanced success toast with partner information
+              const successTitle = t('referrals:attribution.enhancedSuccess') || "Referral Applied!";
+              const successMessage = t('referrals:attribution.partnerDashboardUpdated') || "Partner dashboard will now reflect this referral";
+              
               toast({
-                title: "🎉 " + (window.i18next?.t?.('auth.referralAttribution.success.title') || "Referral Applied!"),
-                description: (window.i18next?.t?.('auth.referralAttribution.success.description', { 
-                  partnerName: attributionResult.partnerName 
-                }) || `You've been attributed to ${attributionResult.partnerName}`),
-                duration: 6000,
+                title: "🎉 " + successTitle,
+                description: successMessage + (attributionResult.metadata?.customerRecordCreated 
+                  ? " " + t('referrals:attribution.customerRecordCreated') 
+                  : ""),
+                duration: 8000,
               });
             } else {
-              console.log('ℹ️ No referral attribution for new user:', attributionResult.message);
+              console.log('ℹ️ No referral attribution for new user:', {
+                message: attributionResult.message,
+                messageKey: attributionResult.messageKey
+              });
             }
           } catch (attributionError) {
             console.error('⚠️ Referral attribution failed during signup:', attributionError);

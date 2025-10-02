@@ -1,5 +1,11 @@
 /**
- * Process Referral Attribution - Firebase Callable Function
+ * Process Referral Attribution - Firebase Cexport const processReferralAttributionCallable = onCall({
+  cors: true,
+  region: "us-central1",
+  timeoutSeconds: 30,
+  memory: "256MiB",
+  maxInstances: 10
+}, async (request) => { Function
  * 
  * Handles referral attribution during user signup and checkout.
  * Integrates with the partner system to track referrals and prepare for commission processing.
@@ -52,9 +58,15 @@ export const processReferralAttributionCallable = onCall({
 
     const callerUid = request.auth.uid;
     
-    // Step 2: Validate request data
+    // Step 2: Validate and extract request data
     const data = request.data as {
       referralCode: string;
+      customerUid?: string; // Optional: if different from caller UID
+      customerData?: {
+        email?: string;
+        displayName?: string;
+        photoURL?: string;
+      };
       metadata?: {
         ipAddress?: string;
         userAgent?: string;
@@ -63,6 +75,11 @@ export const processReferralAttributionCallable = onCall({
         landingPage?: string;
         country?: string;
         deviceType?: string;
+        locale?: {
+          language?: string;
+          country?: string;
+          timezone?: string;
+        };
       };
     };
     
@@ -73,7 +90,7 @@ export const processReferralAttributionCallable = onCall({
       );
     }
 
-    const { referralCode, metadata } = data;
+    const { referralCode, customerUid, customerData, metadata } = data;
 
     if (!referralCode || typeof referralCode !== 'string') {
       throw new HttpsError(
@@ -82,50 +99,65 @@ export const processReferralAttributionCallable = onCall({
       );
     }
 
-    logger.info(`[ProcessReferralAttribution] Processing referral attribution:`, {
+    // Use provided customerUid or fall back to caller UID
+    const targetCustomerUid = customerUid || callerUid;
+
+    logger.info(`[ProcessReferralAttribution] Processing enhanced referral attribution:`, {
       callerUid,
+      targetCustomerUid,
       referralCode,
-      hasMetadata: !!metadata
+      hasCustomerData: !!customerData,
+      customerEmail: customerData?.email,
+      hasMetadata: !!metadata,
+      locale: metadata?.locale
     });
 
-    // Step 3: Process referral attribution
+    // Step 3: Process enhanced referral attribution
     const result = await processReferralAttribution(
       referralCode,
-      callerUid,
+      targetCustomerUid,
+      customerData,
       metadata
     );
 
     const processingTime = Date.now() - startTime;
     
     if (result.success) {
-      logger.info(`[ProcessReferralAttribution] Referral attribution processed successfully in ${processingTime}ms:`, {
+      logger.info(`[ProcessReferralAttribution] Enhanced referral attribution processed successfully in ${processingTime}ms:`, {
         callerUid,
-        partnerId: result.partnerId,
+        targetCustomerUid,
+        referralId: result.referralId,
         partnerCode: result.partnerCode,
-        referralId: result.referralId
+        customerId: result.customerId,
+        commission: result.commission,
+        customerRecordCreated: result.customerRecordCreated,
+        messageKey: result.messageKey
       });
       
       return {
         success: true,
-        partnerId: result.partnerId,
-        partnerCode: result.partnerCode,
-        partnerName: result.partnerName,
-        commissionRate: result.commissionRate,
         referralId: result.referralId,
-        message: result.message,
-        messageKey: 'referral.attribution.success'
-      };
+        partnerCode: result.partnerCode,
+        customerId: result.customerId,
+        commission: result.commission,
+        metadata: result.metadata,
+        customerRecordCreated: result.customerRecordCreated || false,
+        messageKey: result.messageKey || "referral.attribution.success",
+        message: result.message || "Referral attribution processed successfully"
+      } as any;
     } else {
-      logger.warn(`[ProcessReferralAttribution] Referral attribution failed in ${processingTime}ms:`, {
+      logger.warn(`[ProcessReferralAttribution] Enhanced referral attribution failed in ${processingTime}ms:`, {
         callerUid,
+        targetCustomerUid,
         referralCode,
-        message: result.message
+        message: result.message,
+        messageKey: result.messageKey
       });
       
       return {
         success: false,
-        message: result.message,
-        messageKey: 'referral.attribution.failed'
+        message: result.message || "Referral attribution failed",
+        messageKey: result.messageKey || "referral.attribution.failed"
       };
     }
 
