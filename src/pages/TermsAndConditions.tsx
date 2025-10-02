@@ -14,7 +14,7 @@ const TermsAndConditions: React.FC = () => {
       
       <h2 className="text-2xl font-bold mt-8 mb-4">1. About Us</h2>
       <p className="mb-4">
-        EngagePerfect is operated by NODEMATICS LTD, a company registered in England & Wales (company no. 14190750) with its registered office at [address]. 
+        EngagePerfect is operated by InSighter OÜ, (company no. 14180862) registered in Estonia at Auna tn 4-5, Põhja-Tallinna linnaosa, 10317 Tallinn, Harju maakond and NODEMATICS LTD, a company registered in England & Wales (company no. 14190750) with its registered office at 2 Main Court, brampton-CA8 1SA: cumbria.
         References to "we," "our," or "us" mean NodeMatics Ltd.
       </p>
       
@@ -31,30 +31,41 @@ const TermsAndConditions: React.FC = () => {
       
       <h2 className="text-2xl font-bold mt-8 mb-4">3. Subscriptions, Billing & Refunds</h2>
       <p className="mb-2">
-        <strong>Plans.</strong> We offer Free, Monthly, Yearly, and Flex Add-On plans. Plan benefits (e.g., request allowances) are described on our pricing page.
+        <strong>Plans.</strong> <br />
+        We offer Free, Monthly, Yearly, and Done-For-You (DFY) subscription plans. Each plan’s benefits, features, and current prices are displayed on our official <a href="/pricing">Pricing Page</a>. You may switch or cancel plans at any time from your account dashboard.
+
+      </p>
+      <p className="mb-2"><br />
+        <strong>Introductory Pricing.</strong> <br />
+        Certain plans may include introductory offers or trial discounts for the first billing period. After the introductory period, the subscription renews automatically at the standard rate shown on the Pricing Page unless cancelled beforehand.
+      </p>
+       <p className="mb-2"><br />
+        <strong>DFY (Done-For-You) Plans.</strong><br /> 
+        DFY plans provide a managed content service where EngagePerfect’s team creates, reviews, and optimizes content (e.g. captions, blog posts, reels) on your behalf. These plans include human quality review and follow the same billing, renewal, and cancellation policies as DIY subscriptions. Details and inclusions are outlined on the Pricing Page.
+      </p>
+      <p className="mb-2"><br />
+        <strong>Automatic Renewal.</strong><br />
+        All paid subscriptions, including DFY, renew automatically at the end of each billing cycle unless cancelled via your account dashboard before renewal.
       </p>
       <p className="mb-2">
-        <strong>Introductory Pricing.</strong> The Basic Monthly plan is £2.99 for the first month, then renews at £5.99/month unless cancelled.
+        <strong>Payments.</strong> <br />
+        Billing is handled by Stripe. By subscribing, you authorise Stripe to charge the applicable fees (plus VAT where required) to your chosen payment method.
       </p>
       <p className="mb-2">
-        <strong>Automatic Renewal.</strong> Paid plans renew automatically at the end of each billing cycle unless you cancel via your dashboard.
-      </p>
-      <p className="mb-2">
-        <strong>Payments.</strong> Billing is handled by Stripe. By subscribing, you authorise Stripe to charge the applicable fees (plus VAT where required) to your chosen payment method.
-      </p>
-      <p className="mb-2">
-        <strong>Refunds.</strong> Except where required by law, payments are non-refundable. You may cancel at any time, and access will continue until the end of the paid period.
+        <strong>Refunds.</strong> <br />
+        Except where required by law, payments are non-refundable. You may cancel at any time, and access will continue until the end of the paid period.
       </p>
       <p className="mb-4">
-        <strong>Failed Payments.</strong> If a payment fails, we may suspend or terminate your access until the outstanding balance is settled.
+        <strong>Failed Payments.</strong> <br />
+        If a payment fails, we may suspend or terminate your access until the outstanding balance is settled.
       </p>
       
       <h2 className="text-2xl font-bold mt-8 mb-4">4. Use of the Service</h2>
       <p className="mb-2">
-        <strong>Permitted Use.</strong> EngagePerfect is provided solely to generate and manage social-media content for yourself or your organisation.
+        <strong>Permitted Use.</strong> <br />EngagePerfect is provided solely to generate and manage social-media content for yourself or your organisation.
       </p>
       <p className="mb-2">
-        <strong>Prohibited Conduct.</strong> You agree not to:
+        <strong>Prohibited Conduct. </strong> <br />You agree not to:
       </p>
       <ul className="list-disc pl-8 mb-4">
         <li>Reverse-engineer, scrape, or attempt to extract source code or underlying models.</li>
@@ -154,7 +165,10 @@ const TermsAndConditions: React.FC = () => {
       
       <h2 className="text-2xl font-bold mt-8 mb-4">16. Contact</h2>
       <p className="mb-4">
-        NodeMatics Ltd / EngagePerfect<br />
+        InSighter OÜ – Company No. 14180862 | VAT: EE102020564<br />
+        Registered Address: Auna tn 4-5, Põhja-Tallinna linnaosa, 10317 Tallinn, Harju maakond, Estonia<br />
+        <br />NodeMatics Ltd – Company No. 14190750 | Registered in England & Wales<br />
+        Registered Office: 2 Main Court, Brampton, CA8 1SA, Cumbria<br /><br />
         Email: support@engageperfect.com<br />
         Website: https://engageperfect.com
       </p>

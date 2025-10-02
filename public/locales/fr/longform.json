@@ -9,125 +9,125 @@
     "structureFormat": "Structure Format"
   },
   "wizard": {
-    "title": "Long-Form Content Wizard",
+    "title": "Assistant de Contenu Long-format",
     "progress": {
-      "title": "Content Wizard Progress",
-      "step": "Step {{current}} of {{total}}",
-      "complete": "{{percent}}% Complete",
-      "remaining": "{{time}} min remaining",
-      "completed": "{{completed}} of {{total}} steps completed",
-      "current": "Current: {{name}}",
-      "optional": "(Optional)"
+      "title": "Progrès de l'Assistant de Contenu",
+      "step": "Étape {{current}} sur {{total}}",
+      "complete": "{{percent}}% Terminé",
+      "remaining": "{{time}} min restantes",
+      "completed": "{{completed}} sur {{total}} étapes terminées",
+      "current": "Actuel : {{name}}",
+      "optional": "(Optionnel)"
     },
     "steps": {
       "whatWho": {
-        "name": "What & Who",
-        "description": "Define your topic and target audience"
+        "name": "Quoi & Qui",
+        "description": "Définir votre sujet et votre public cible"
       },
       "mediaVisuals": {
-        "name": "Media & Visuals",
-        "description": "Upload and manage your visual content"
+        "name": "Médias & Visuels",
+        "description": "Télécharger et gérer votre contenu visuel"
       },
       "seoKeywords": {
-        "name": "SEO & Keywords",
-        "description": "Optimize with smart keyword suggestions"
+        "name": "SEO & Mots-clés",
+        "description": "Optimiser avec des suggestions de mots-clés intelligentes"
       },
       "structureTone": {
-        "name": "Structure & Tone",
-        "description": "Create your content blueprint"
+        "name": "Structure & Ton",
+        "description": "Créer votre plan de contenu"
       },
       "generationSettings": {
-        "name": "Generation Settings",
-        "description": "Configure length, format, and CTA"
+        "name": "Paramètres de Génération",
+        "description": "Configurer la longueur, le format et l'appel à l'action"
       },
       "reviewGenerate": {
-        "name": "Review & Generate",
-        "description": "Final preview and content generation"
+        "name": "Révision & Génération",
+        "description": "Aperçu final et génération de contenu"
       }
     },
     "navigation": {
-      "previous": "Previous",
-      "next": "Next",
-      "skip": "Skip Step",
-      "generate": "Generate Content",
-      "saveNow": "Save Now",
-      "shortcuts": "Shortcuts"
+      "previous": "Précédent",
+      "next": "Suivant",
+      "skip": "Ignorer l'Étape",
+      "generate": "Générer le Contenu",
+      "saveNow": "Sauvegarder Maintenant",
+      "shortcuts": "Raccourcis"
     },
     "draft": {
-      "available": "Draft Available",
-      "foundSaved": "You have a saved draft from {{time}}. Would you like to restore it?",
-      "restore": "Restore Draft",
-      "dismiss": "Dismiss",
-      "restored": "Draft Restored",
-      "restoredDesc": "Your saved progress has been restored.",
-      "saved": "Progress Saved",
-      "savedDesc": "Your current progress has been saved.",
-      "notSaved": "Not saved",
-      "savedTime": "Saved {{time}}"
+      "available": "Brouillon Disponible",
+      "foundSaved": "Vous avez un brouillon sauvegardé du {{time}}. Souhaitez-vous le restaurer ?",
+      "restore": "Restaurer le Brouillon",
+      "dismiss": "Ignorer",
+      "restored": "Brouillon Restauré",
+      "restoredDesc": "Votre progression sauvegardée a été restaurée.",
+      "saved": "Progression Sauvegardée",
+      "savedDesc": "Votre progression actuelle a été sauvegardée.",
+      "notSaved": "Non sauvegardé",
+      "savedTime": "Sauvegardé {{time}}"
     },
     "status": {
-      "completed": "Completed",
-      "skipped": "Skipped",
-      "needsAttention": "Needs attention"
+      "completed": "Terminé",
+      "skipped": "Ignoré",
+      "needsAttention": "Nécessite une attention"
     },
     "validation": {
-      "pleaseComplete": "Please complete the following:"
+      "pleaseComplete": "Veuillez compléter les éléments suivants :"
     },
     "errors": {
-      "fixFollowing": "Please fix the following issues:",
-      "completeRequired": "Please complete the following:",
-      "beforeProceed": "Please fix the following errors before proceeding:",
-      "allRequired": "Please complete all required fields before generating content.",
-      "unknownStep": "Unknown step"
+      "fixFollowing": "Veuillez corriger les problèmes suivants :",
+      "completeRequired": "Veuillez compléter les éléments suivants :",
+      "beforeProceed": "Veuillez corriger les erreurs suivantes avant de continuer :",
+      "allRequired": "Veuillez compléter tous les champs requis avant de générer le contenu.",
+      "unknownStep": "Étape inconnue"
     },
     "keyboard": {
-      "title": "Keyboard Shortcuts",
-      "nextStep": "Proceed to next step",
-      "prevStep": "Go back to previous step",
-      "manualSave": "Manual save draft",
-      "navigate": "Navigate through form",
-      "showHelp": "Show/hide this help",
-      "tip": "Tip: Use keyboard shortcuts to navigate quickly through the wizard"
+      "title": "Raccourcis Clavier",
+      "nextStep": "Passer à l'étape suivante",
+      "prevStep": "Revenir à l'étape précédente",
+      "manualSave": "Sauvegarde manuelle du brouillon",
+      "navigate": "Naviguer dans le formulaire",
+      "showHelp": "Afficher/masquer cette aide",
+      "tip": "Astuce : Utilisez les raccourcis clavier pour naviguer rapidement dans l'assistant"
     }
   },
   "step1": {
-    "title": "What & Who",
-    "subtitle": "Define your topic and target audience to create focused, engaging content",
+    "title": "Quoi & Qui",
+    "subtitle": "Définissez votre sujet et votre public cible pour créer un contenu ciblé et engageant",
     "topic": {
-      "title": "What will you write about?",
-      "subtitle": "Define your content focus",
-      "tooltip": "Be specific about your main topic. This helps generate more targeted content.",
-      "label": "Content Topic *",
-      "placeholder": "e.g., 'How to improve email marketing open rates for small businesses' or 'The best productivity tools for remote teams'",
-      "characters": "{{count}} characters",
-      "getIdeas": "Get Ideas"
+      "title": "De quoi allez-vous écrire ?",
+      "subtitle": "Définissez le focus de votre contenu",
+      "tooltip": "Soyez spécifique sur votre sujet principal. Cela aide à générer un contenu plus ciblé.",
+      "label": "Sujet du Contenu *",
+      "placeholder": "ex. 'Comment améliorer les taux d'ouverture d'email marketing pour les petites entreprises' ou 'Les meilleurs outils de productivité pour les équipes distantes'",
+      "characters": "{{count}} caractères",
+      "getIdeas": "Obtenir des Idées"
     },
     "audience": {
-      "title": "Who are you writing for?",
-      "subtitle": "Define your target audience",
-      "tooltip": "Understanding your audience helps tailor the content tone and complexity.",
-      "industryLabel": "Industry (optional)",
-      "industryPlaceholder": "Select your industry for better suggestions",
-      "customIndustryLabel": "Specify your industry",
-      "customIndustryPlaceholder": "e.g., Renewable Energy, Pet Care, Gaming, Crypto, SaaS...",
-      "customIndustryHint": "Be specific to get better topic suggestions tailored to your industry",
-      "audienceLabel": "Target Audience *",
-      "audiencePlaceholder": "e.g., 'Small business owners looking to improve their marketing' or 'Remote workers seeking productivity tips'",
-      "suggestedAudiences": "Suggested Audiences for {{industry}}:",
-      "selectAudience": "Select"
+      "title": "Pour qui écrivez-vous ?",
+      "subtitle": "Définissez votre public cible",
+      "tooltip": "Comprendre votre audience aide à adapter le ton et la complexité du contenu.",
+      "industryLabel": "Secteur (optionnel)",
+      "industryPlaceholder": "Sélectionnez votre secteur pour de meilleures suggestions",
+      "customIndustryLabel": "Spécifiez votre secteur",
+      "customIndustryPlaceholder": "ex. Énergie Renouvelable, Soins aux Animaux, Jeux, Crypto, SaaS...",
+      "customIndustryHint": "Soyez spécifique pour obtenir de meilleures suggestions de sujets adaptées à votre secteur",
+      "audienceLabel": "Public Cible *",
+      "audiencePlaceholder": "ex. 'Propriétaires de petites entreprises cherchant à améliorer leur marketing' ou 'Travailleurs distants cherchant des conseils de productivité'",
+      "suggestedAudiences": "Audiences Suggérées pour {{industry}} :",
+      "selectAudience": "Sélectionner"
     },
     "industries": {
-      "marketing": "Marketing & Advertising",
-      "health": "Health & Wellness",
-      "technology": "Technology & Software",
-      "finance": "Finance & Investment",
-      "education": "Education & Learning",
-      "coaching": "Life & Business Coaching",
-      "ecommerce": "E-commerce & Retail",
-      "food": "Food & Beverage",
-      "realEstate": "Real Estate",
-      "travel": "Travel & Tourism",
-      "other": "Other Industry"
+      "marketing": "Marketing & Publicité",
+      "health": "Santé & Bien-être",
+      "technology": "Technologie & Logiciels",
+      "finance": "Finance & Investissement",
+      "education": "Éducation & Apprentissage",
+      "coaching": "Coaching Personnel & Business",
+      "ecommerce": "E-commerce & Vente au Détail",
+      "food": "Alimentation & Boissons",
+      "realEstate": "Immobilier",
+      "travel": "Voyage & Tourisme",
+      "other": "Autre Secteur"
     },
     "audienceTypes": {
       "smallBusiness": "Small Business Owners",
@@ -225,6 +225,9 @@
       "uploading": "Uploading files...",
       "selectFiles": "Select Files"
     },
+    "placeholders": {
+      "industry": "Sélectionnez votre secteur ou niche"
+    },
     "files": {
       "title": "Uploaded Files",
       "count": "{{current}} / {{max}} files",
@@ -304,137 +307,141 @@
     }
   },
   "step3": {
-    "title": "SEO Keywords & Optimized Title",
-    "subtitle": "Select keywords and get AI-suggested titles optimized for search engines with real-time SEO analysis.",
+    "title": "Mots-clés SEO & Titre Optimisé",
+    "subtitle": "Sélectionnez des mots-clés et obtenez des titres suggérés par l'IA optimisés pour les moteurs de recherche avec une analyse SEO en temps réel.",
     "seoScore": {
-      "title": "Real-time SEO Score",
+      "title": "Score SEO en Temps Réel",
       "scoreLabel": "{{score}}/100",
       "factors": {
-        "keywordCount": "Keyword Count",
-        "titleOptimization": "Title Optimization",
-        "keywordDiversity": "Keyword Diversity",
-        "contentRelevance": "Content Relevance"
+        "keywordCount": "Nombre de Mots-clés",
+        "titleOptimization": "Optimisation du Titre",
+        "keywordDiversity": "Diversité des Mots-clés",
+        "contentRelevance": "Pertinence du Contenu"
       },
       "points": "{{score}}pts"
     },
+    "placeholders": {
+      "contentType": "Sélectionnez le type de contenu",
+      "contentTone": "Sélectionnez le ton du contenu"
+    },
     "seoImpact": {
-      "title": "SEO Impact Preview",
+      "title": "Aperçu de l'Impact SEO",
       "metrics": {
-        "searchVisibility": "Search Visibility",
-        "clickThroughRate": "Click-Through Rate",
-        "longTailTraffic": "Long-tail Traffic"
+        "searchVisibility": "Visibilité de Recherche",
+        "clickThroughRate": "Taux de Clic",
+        "longTailTraffic": "Trafic Long-tail"
       },
       "descriptions": {
-        "searchVisibility": "Increased chance of appearing in search results",
-        "clickThroughRate": "More compelling titles attract more clicks",
-        "longTailTraffic": "Long-tail keywords capture specific search intent"
+        "searchVisibility": "Augmentation des chances d'apparaître dans les résultats de recherche",
+        "clickThroughRate": "Des titres plus attrayants attirent plus de clics",
+        "longTailTraffic": "Les mots-clés long-tail capturent l'intention de recherche spécifique"
       }
     },
     "titleSuggestions": {
-      "title": "SEO-Optimized Title Suggestions",
-      "regenerate": "Regenerate",
-      "noKeywords": "Select at least one keyword to generate title suggestions.",
-      "loading": "Crafting SEO-optimized titles...",
-      "customize": "Customize selected title",
-      "placeholder": "Edit your selected title...",
+      "title": "Suggestions de Titres Optimisés SEO",
+      "regenerate": "Régénérer",
+      "noKeywords": "Sélectionnez au moins un mot-clé pour générer des suggestions de titres.",
+      "loading": "Création de titres optimisés SEO...",
+      "customize": "Personnaliser le titre sélectionné",
+      "placeholder": "Modifiez votre titre sélectionné...",
       "recommendation": "💡 {{recommendation}}",
-      "chars": "{{length}} chars",
-      "optimalChars": "{{length}}/60 chars"
+      "chars": "{{length}} caractères",
+      "optimalChars": "{{length}}/60 caractères"
     },
     "titleAnalysis": {
       "recommendations": {
-        "perfectLength": "Perfect length for SEO!",
-        "addWords": "Consider adding more descriptive words",
-        "shortenTitle": "Consider shortening for better SEO"
+        "perfectLength": "Longueur parfaite pour le SEO !",
+        "addWords": "Considérez ajouter plus de mots descriptifs",
+        "shortenTitle": "Considérez raccourcir pour un meilleur SEO"
       }
     },
     "titleImprovement": {
-      "title": "Title Improvement Suggestions",
-      "useThis": "Use This",
+      "title": "Suggestions d'Amélioration du Titre",
+      "useThis": "Utiliser Ceci",
       "suggestions": {
-        "length": "Complete {{keyword}} Guide",
-        "lengthReason": "Increase title length for better SEO (currently too short)",
-        "shortenReason": "Shorten title for better search display (currently too long)",
-        "keywordReason": "Place primary keyword at the beginning for better SEO",
-        "powerWordReason": "Add power words to increase click-through rates"
+        "length": "Guide Complet {{keyword}}",
+        "lengthReason": "Augmentez la longueur du titre pour un meilleur SEO (actuellement trop court)",
+        "shortenReason": "Raccourcissez le titre pour un meilleur affichage de recherche (actuellement trop long)",
+        "keywordReason": "Placez le mot-clé principal au début pour un meilleur SEO",
+        "powerWordReason": "Ajoutez des mots puissants pour augmenter les taux de clic"
       },
       "powerWords": [
-        "Ultimate",
-        "Complete",
-        "Essential",
-        "Proven",
+        "Ultime",
+        "Complet",
+        "Essentiel",
+        "Prouvé",
         "Expert"
       ]
     },
     "keywordDensity": {
-      "title": "Keyword Density Analysis",
+      "title": "Analyse de la Densité des Mots-clés",
       "occurrences": "{{count}} occurrence",
       "occurrences_plural": "{{count}} occurrences",
-      "missing": "Consider including in title",
-      "good": "Good keyword placement",
-      "recommendation": "Recommendation: Include 1-2 primary keywords in your title for optimal SEO impact."
+      "missing": "Considérez inclure dans le titre",
+      "good": "Bon placement de mot-clé",
+      "recommendation": "Recommandation : Incluez 1-2 mots-clés principaux dans votre titre pour un impact SEO optimal."
     },
     "titleTemplates": {
-      "ultimate": "The Ultimate Guide to {{keyword}} for {{audience}}",
-      "boost": "How to Boost Your {{industry}} Results with {{keywords}}",
-      "secret": "{{keyword}}: The Secret Ingredient for {{industry}} Success",
-      "strategies": "{{number}} {{keyword}} Strategies That Transform Your {{industry}} Approach",
-      "essential": "Why {{keyword}} is Essential for {{audience}} in {{year}}",
-      "leveraging": "{{topic}}: Leveraging the Power of {{keyword}}"
+      "ultimate": "Le Guide Ultime de {{keyword}} pour {{audience}}",
+      "boost": "Comment Booster Vos Résultats {{industry}} avec {{keywords}}",
+      "secret": "{{keyword}} : L'Ingrédient Secret pour le Succès {{industry}}",
+      "strategies": "{{number}} Stratégies {{keyword}} qui Transforment Votre Approche {{industry}}",
+      "essential": "Pourquoi {{keyword}} est Essentiel pour {{audience}} en {{year}}",
+      "leveraging": "{{topic}} : Exploiter le Pouvoir de {{keyword}}"
     },
     "defaults": {
-      "content": "Content",
+      "content": "Contenu",
       "business": "Business",
-      "professionals": "Professionals"
+      "professionals": "Professionnels"
     },
     "keywords": {
-      "title": "Target Keywords",
-      "tooltip": "Keywords help your content rank better in search results and reach the right audience.",
-      "label": "Keywords (comma-separated)",
-      "placeholder": "e.g., email marketing, small business, open rates, marketing automation",
-      "suggestions": "Suggested Keywords:",
-      "add": "Add"
+      "title": "Mots-clés Cibles",
+      "tooltip": "Les mots-clés aident votre contenu à mieux se classer dans les résultats de recherche et à atteindre la bonne audience.",
+      "label": "Mots-clés (séparés par des virgules)",
+      "placeholder": "ex. marketing email, petite entreprise, taux d'ouverture, automatisation marketing",
+      "suggestions": "Mots-clés Suggérés :",
+      "add": "Ajouter"
     },
     "optimizedTitle": {
-      "title": "Optimized Title",
-      "tooltip": "A well-crafted title improves click-through rates and SEO performance.",
-      "label": "SEO-Optimized Title",
-      "placeholder": "e.g., '7 Proven Strategies to Double Your Email Open Rates in 2024'",
-      "generateButton": "Generate Title Ideas",
-      "suggestions": "Title Suggestions:"
+      "title": "Titre Optimisé",
+      "tooltip": "Un titre bien conçu améliore les taux de clic et les performances SEO.",
+      "label": "Titre Optimisé SEO",
+      "placeholder": "ex. '7 Stratégies Prouvées pour Doubler Vos Taux d'Ouverture Email en 2024'",
+      "generateButton": "Générer des Idées de Titres",
+      "suggestions": "Suggestions de Titres :"
     },
     "quality": {
-      "excellent": "Excellent SEO optimization",
-      "good": "Good keyword targeting",
+      "excellent": "Optimisation SEO excellente",
+      "good": "Bon ciblage de mots-clés",
       "suggestions": {
-        "addKeywords": "Add 3-5 relevant keywords for better SEO",
-        "optimizeTitle": "Create an engaging, keyword-rich title",
-        "useNumbers": "Consider using numbers in your title for better engagement"
+        "addKeywords": "Ajoutez 3-5 mots-clés pertinents pour un meilleur SEO",
+        "optimizeTitle": "Créez un titre engageant et riche en mots-clés",
+        "useNumbers": "Considérez utiliser des chiffres dans votre titre pour un meilleur engagement"
       }
     }
   },
   "smartKeywordGenerator": {
-    "title": "Smart Keyword Generator",
+    "title": "Générateur de Mots-clés Intelligent",
     "version": "v2.0",
-    "subtitle": "AI-powered keyword intelligence with clustering, intent analysis & gap detection",
+    "subtitle": "Intelligence de mots-clés alimentée par l'IA avec clustering, analyse d'intention et détection de lacunes",
     "aiDisclaimer": {
-      "title": "AI-Estimated Data:",
-      "text": "All keyword metrics (search volume, difficulty, CPC) are AI-generated estimates. Future versions will integrate real data from Google Keyword Planner and other APIs."
+      "title": "Données Estimées par l'IA :",
+      "text": "Toutes les métriques de mots-clés (volume de recherche, difficulté, CPC) sont des estimations générées par l'IA. Les versions futures intégreront des données réelles de Google Keyword Planner et d'autres API."
     },
     "indicators": {
-      "enhancedAi": "Enhanced AI",
+      "enhancedAi": "IA Améliorée",
       "clusters": "Clusters",
-      "intentAnalysis": "Intent Analysis"
+      "intentAnalysis": "Analyse d'Intention"
     },
     "buttons": {
-      "regenerate": "Regenerate",
-      "analyzing": "Analyzing...",
-      "addKeyword": "Add Keyword",
-      "selectAll": "Select All",
-      "deselectAll": "Deselect All",
-      "exportKeywords": "Export Keywords",
-      "importKeywords": "Import Keywords",
-      "analyzeGaps": "Analyze Gaps"
+      "regenerate": "Régénérer",
+      "analyzing": "Analyse en cours...",
+      "addKeyword": "Ajouter un Mot-clé",
+      "selectAll": "Tout Sélectionner",
+      "deselectAll": "Tout Désélectionner",
+      "exportKeywords": "Exporter les Mots-clés",
+      "importKeywords": "Importer les Mots-clés",
+      "analyzeGaps": "Analyser les Lacunes"
     },
     "filters": {
       "keywordType": "Keyword Type",
@@ -1405,29 +1412,6 @@
       "title": "Topic Suggestions",
       "description": "AI-generated topic ideas based on your content focus",
       "disclaimer": "These are AI-generated suggestions and metrics for demonstration purposes.",
-      "templates": {
-        "howTo": {
-          "description": "Step-by-step guides"
-        },
-        "ultimateGuide": {
-          "description": "Comprehensive guides"
-        },
-        "waysTo": {
-          "description": "List-based content"
-        },
-        "bestPractices": {
-          "description": "Industry standards"
-        },
-        "caseStudy": {
-          "description": "Real-world examples"
-        },
-        "trending": {
-          "description": "Current hot topics"
-        },
-        "comparison": {
-          "description": "Product/service comparisons"
-        }
-      },
       "buttons": {
         "newTopics": "New Topics",
         "newTopicsTooltip": "Clear history and generate fresh suggestions",
@@ -1497,6 +1481,39 @@
         "audienceSpecific": "Specifically designed for {{audience}} with {{topic}} focus",
         "trendCapitalizes": "Capitalizes on trending aspects of {{topic}}",
         "highQuality": "High-quality content suggestion based on available context"
+      },
+      "templates": {
+        "transformativeImpact": "Comment {{topic}} révolutionne {{industry}}",
+        "comprehensiveResource": "Le guide complet de {{topic}} pour {{audience}} dans {{industry}}",
+        "currentYearStrategy": "Stratégie {{topic}} : Feuille de route d'implémentation {{year}}",
+        "skillFocused": "10 compétences essentielles en {{topic}} que chaque {{audience}} doit maîtriser",
+        "problemFocused": "Les erreurs {{topic}} qui coûtent des millions aux {{industry}}",
+        "forwardLooking": "L'avenir de {{topic}} : Ce que prédisent les {{audience}} pour {{year}}",
+        "financialPerspective": "Perspective financière sur {{topic}} dans {{industry}}",
+        "caseStudies": "Études de cas et méthodes éprouvées dans {{industry}}",
+        "leadershipInsights": "Insights de leadership sur {{topic}} dans {{industry}}",
+        "regulatoryPerspective": "Perspective réglementaire sur {{topic}} pour {{industry}}",
+        "businessValue": "Analyse de la valeur commerciale de {{topic}} dans {{industry}}",
+        "audienceSpecific": "Spécialement conçu pour {{audience}} avec un focus sur {{topic}}",
+        "trendCapitalizes": "Capitalise sur les aspects tendance de {{topic}}",
+        "highQuality": "Suggestion de contenu de haute qualité basée sur le contexte disponible",
+        "industryFusion": "{{topic}} et conformité réglementaire dans {{industry}}",
+        "audienceBeginners": "{{topic}} 101 : Bases essentielles pour les débutants",
+        "audienceBeginners2": "Commencer avec {{topic}} : Un parcours pour débutants",
+        "audienceBeginners3": "{{topic}} expliqué simplement : Aucune connaissance préalable requise",
+        "audienceProfessionals": "Stratégies avancées {{topic}} pour les professionnels de l'industrie",
+        "audienceProfessionals2": "Leadership {{topic}} : Guide de prise de décision exécutive",
+        "audienceProfessionals3": "Implémentation {{topic}} : Meilleures pratiques professionnelles",
+        "audienceEntrepreneurs": "Opportunités d'affaires {{topic}} pour les entrepreneurs",
+        "audienceEntrepreneurs2": "Construire une startup axée sur {{topic}} en {{year}}",
+        "audienceStudents": "{{topic}} pour les étudiants : Guide d'apprentissage complet",
+        "audienceStudents2": "Projets {{topic}} pour étudiants : Applications pratiques",
+        "audienceStudents3": "{{topic}} dans l'éducation : Préparer la prochaine génération",
+        "industryInvestment": "Opportunités d'investissement {{topic}} dans {{industry}}",
+        "industryBestPractices": "Meilleures pratiques {{topic}} des entreprises leaders {{industry}}",
+        "industryLeadership": "Comment les leaders {{industry}} utilisent {{topic}} pour stimuler la croissance",
+        "industryCompliance": "Conformité et réglementation {{topic}} dans {{industry}}",
+        "industryROI": "ROI de l'implémentation {{topic}} dans {{industry}}"
       },
       "debug": {
         "topicSelected": "Topic selected:",
@@ -1587,6 +1604,16 @@
     "showMore": "Show {{count}} more tips",
     "stillStuck": "Still stuck?",
     "contactSupport": "Contact Support",
+    "support": {
+      "success": {
+        "title": "Demande de Support Envoyée",
+        "description": "Votre demande de support a été envoyée à notre équipe. Nous vous répondrons bientôt !"
+      },
+      "error": {
+        "title": "Erreur",
+        "description": "Échec de l'envoi de la demande de support. Veuillez nous écrire directement à engageperfect@gmail.com"
+      }
+    },
     "supportAlert": "Support feature would open here. For now, please email support@example.com",
     "goodExamples": "Good Examples",
     "avoidThese": "Avoid These",
@@ -1966,70 +1993,70 @@
   },
   "contentManager": {
     "actions": {
-      "preview": "Aperçu",
-      "copy": "Copier",
-      "copyClean": "Copier Propre",
-      "copyFormatted": "Copier Formaté",
-      "download": "Télécharger",
-      "export": "Exporter"
+      "preview": "Preview",
+      "copy": "Copy",
+      "copyClean": "Copy Clean",
+      "copyFormatted": "Copy Formatted",
+      "download": "Download",
+      "export": "Export"
     },
     "export": {
       "markdown": "Markdown (.md)",
       "html": "HTML (.html)",
-      "txt": "Texte (.txt)",
+      "txt": "Text (.txt)",
       "pdf": "PDF (.pdf)",
       "gdocs": "Google Docs",
       "word": "OneDrive Word",
       "auto": "Auto",
-      "autoPaste": "(Collage Auto)",
-      "collaborative": "(Collaboratif)",
-      "enhanced": "(Amélioré)",
-      "pageSafe": "(Sécurisé)"
+      "autoPaste": "(Auto-Paste)",
+      "collaborative": "(Collaborative)",
+      "enhanced": "(Enhanced)",
+      "pageSafe": "(Page-Safe)"
     },
     "errors": {
-      "exportError": "Erreur d'Export",
-      "gdocsError": "Échec de la préparation de l'export Google Docs. Veuillez réessayer.",
-      "wordError": "Échec de la préparation de l'export OneDrive Word. Veuillez réessayer.",
-      "automationFailed": "L'automatisation a échoué. Retour à l'option de téléchargement manuel."
+      "exportError": "Export Error",
+      "gdocsError": "Failed to prepare Google Docs export. Please try again.",
+      "wordError": "Failed to prepare OneDrive Word export. Please try again.",
+      "automationFailed": "Automation failed. Falling back to manual download option."
     },
     "gdocs": {
-      "autoOpening": "🤖 Ouverture Auto de Google Docs...",
-      "preparing": "Préparation de votre contenu avec tentatives de collage automatisé",
-      "magicProgress": "🚀 Magie en Cours !",
-      "opened": "Google Docs ouvert avec automatisation intelligente. Le contenu devrait se coller automatiquement ou appuyez simplement sur Ctrl+V !",
-      "openNow": "Ouvrir Maintenant",
-      "focusGdocs": "Focuser Google Docs",
-      "downloadHtml": "Télécharger HTML"
+      "autoOpening": "🤖 Auto-Opening Google Docs...",
+      "preparing": "Preparing your content with automated paste attempts",
+      "magicProgress": "🚀 Magic in Progress!",
+      "opened": "Google Docs opened with smart automation. Content should auto-paste or just press Ctrl+V!",
+      "openNow": "Open Now",
+      "focusGdocs": "Focus Google Docs",
+      "downloadHtml": "Download HTML"
     },
     "status": {
-      "empty": "Aucun Contenu Généré Encore",
-      "createFirst": "Créez votre premier contenu long pour le voir ici.",
-      "startCreating": "Commencer à Créer du Contenu",
-      "errorLoading": "Erreur de Chargement du Contenu"
+      "empty": "No Content Generated Yet",
+      "createFirst": "Create your first long-form content to see it here.",
+      "startCreating": "Start Creating Content",
+      "errorLoading": "Error Loading Content"
     },
     "metadata": {
-      "words": "mots",
-      "minRead": "min de lecture",
-      "author": "Auteur",
-      "readingTime": "Temps de lecture",
-      "published": "Publié le",
-      "aiContentCreator": "Créateur de Contenu IA",
-      "tone": "Ton",
+      "words": "words",
+      "minRead": "min read",
+      "author": "Author",
+      "readingTime": "Reading Time",
+      "published": "Published",
+      "aiContentCreator": "AI Content Creator",
+      "tone": "Tone",
       "version": "Version"
     },
     "copy": {
-      "success": "Contenu propre copié !",
-      "description": "Contenu formaté propre avec texte noir copié. Parfait pour coller dans n'importe quel document.",
-      "fallback": "Contenu copié dans le presse-papiers (texte brut de secours).",
-      "error": "Contenu copié dans le presse-papiers."
+      "success": "Clean content copied!",
+      "description": "Clean, formatted content with black text copied. Perfect for pasting into any document.",
+      "fallback": "Content copied to clipboard (plain text fallback).",
+      "error": "Content copied to clipboard."
     },
     "download": {
-      "started": "Téléchargement commencé",
-      "success": "{{fileName}} a été téléchargé avec succès.",
-      "pdfSuccess": "{{fileName}}.pdf a été téléchargé avec succès.",
-      "pdfTitle": "PDF propre téléchargé",
-      "pdfError": "Échec de la génération PDF",
-      "pdfErrorDesc": "Il y a eu une erreur lors de la génération du PDF. Veuillez réessayer."
+      "started": "Download started",
+      "success": "{{fileName}} has been downloaded successfully.",
+      "pdfSuccess": "{{fileName}}.pdf has been downloaded successfully.",
+      "pdfTitle": "Clean PDF downloaded",
+      "pdfError": "PDF generation failed",
+      "pdfErrorDesc": "There was an error generating the PDF. Please try again."
     }
   },
   "aiIdeasGenerator": {
@@ -2192,60 +2219,54 @@
     }
   },
   "pdf": {
-    "title": "Générateur PDF Professionnel",
-    "description": "Choisissez un template et personnalisez votre PDF pour un résultat de qualité publication.",
-    "contentInfo": "Contenu Sélectionné:",
-    "generating": "🎨 Génération PDF Professionnel...",
-    "preparing": "Création d'un document de qualité publication avec le template sélectionné.",
-    "success": "✅ PDF Professionnel Créé !",
-    "downloaded": "Document de qualité publication téléchargé avec succès.",
-    "error": "❌ Erreur de Génération PDF",
-    "errorDesc": "Il y a eu une erreur lors de la génération du PDF professionnel. Veuillez réessayer.",
+    "title": "Professional PDF Generator",
+    "description": "Choose a template and customize your PDF for publication-quality results.",
+    "contentInfo": "Selected Content:",
+    "generating": "🎨 Generating Professional PDF...",
+    "preparing": "Creating a publication-quality document with the selected template.",
+    "success": "✅ Professional PDF Created!",
+    "downloaded": "Publication-quality document downloaded successfully.",
+    "error": "❌ PDF Generation Error",
+    "errorDesc": "There was an error generating the professional PDF. Please try again.",
     "templateSelector": {
-      "title": "Choisir un Template PDF",
-      "pdfOptions": "Options PDF",
-      "documentStructure": "Structure du Document",
-      "contentOptions": "Options de Contenu",
-      "revolutionaryEnhancements": "Améliorations Révolutionnaires",
-      "includeHeader": "Inclure l'En-tête du Document",
-      "includeFooter": "Inclure le Pied de Page avec Attribution",
-      "includePageNumbers": "Inclure les Numéros de Page",
-      "includeMetadata": "Inclure la Section Métadonnées",
-      "includeTableOfContents": "Inclure la Table des Matières",
-      "enhancedReadability": "Lisibilité Améliorée",
-      "smartPageBreaks": "Sauts de Page Intelligents",
-      "optimizedTypography": "Typographie Optimisée",
-      "contentFlowOptimization": "Optimisation du Flux de Contenu",
-      "generateButton": "Générer PDF Professionnel",
-      "previewButton": "Aperçu du Template",
-      "selectedTemplate": "Template Sélectionné :",
+      "title": "Choose PDF Template",
+      "pdfOptions": "PDF Options",
+      "documentStructure": "Document Structure",
+      "contentOptions": "Content Options",
+      "revolutionaryEnhancements": "Revolutionary Enhancements",
+      "includeHeader": "Include Document Header",
+      "includeFooter": "Include Footer with Attribution",
+      "includePageNumbers": "Include Page Numbers",
+      "includeMetadata": "Include Metadata Section",
+      "includeTableOfContents": "Include Table of Contents",
+      "enhancedReadability": "Enhanced Readability",
+      "smartPageBreaks": "Smart Page Breaks",
+      "optimizedTypography": "Optimized Typography",
+      "contentFlowOptimization": "Content Flow Optimization",
+      "generateButton": "Generate Professional PDF",
+      "previewButton": "Preview Template",
+      "selectedTemplate": "Selected Template:",
       "templateFeatures": {
-        "revolutionaryTypography": "• Typographie révolutionnaire avec la police {{font}}",
-        "perfectContentFlow": "• Flux de contenu parfait avec espacement et sauts de page optimisés",
-        "enhancedReadability": "• Lisibilité améliorée avec des ratios de contraste professionnels",
-        "productionReady": "• Mise en forme prête pour la production avec une sortie de qualité ultra-élevée",
-        "smartOptimization": "• Optimisation intelligente du contenu pour une structure impeccable"
+        "revolutionaryTypography": "• Revolutionary typography with {{font}} font",
+        "perfectContentFlow": "• Perfect content flow with optimized spacing and page breaks",
+        "enhancedReadability": "• Enhanced readability with professional contrast ratios",
+        "productionReady": "• Production-ready formatting with ultra-high quality output",
+        "smartOptimization": "• Smart content optimization for flawless structure"
       }
     },
     "templates": {
       "business": {
-        "name": "Professionnel Business",
-        "description": "Document de style corporate propre, parfait pour les rapports d'entreprise et les livres blancs"
+        "name": "Business Professional",
+        "description": "Clean, corporate-style document perfect for business reports and whitepapers"
       },
       "academic": {
-        "name": "Recherche Académique",
-        "description": "Style académique formel avec citations appropriées et formatage de recherche"
+        "name": "Academic Research", 
+        "description": "Formal academic style with proper citations and research formatting"
       },
       "creative": {
-        "name": "Moderne Créatif",
-        "description": "Design contemporain avec typographie moderne et hiérarchie visuelle"
+        "name": "Creative Modern",
+        "description": "Contemporary design with modern typography and visual hierarchy"
       }
-    },
-    "technicalSpecs": {
-      "font": "Police",
-      "size": "Taille",
-      "lineHeight": "Hauteur de ligne",
-      "points": "pt"
     }
   }
 }

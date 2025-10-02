@@ -30,7 +30,7 @@ i18n
       lookupLocalStorage: 'i18nextLng',
     },
     // Namespace configuration
-    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform'],
+    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform', 'partners'],
     defaultNS: 'common',
     // Backend configuration for loading translations
     backend: {

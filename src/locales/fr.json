@@ -1,0 +1,206 @@
+{
+  "contentStructures": {
+    "howToSteps": {
+      "label": "Comment Faire / Étape par Étape",
+      "description": "Les guides étape par étape nécessitent des instructions claires et réalisables",
+      "sections": {
+        "introduction": "Aperçu et ce que les lecteurs vont apprendre",
+        "prerequisites": "Ce dont vous avez besoin avant de commencer",
+        "step": "Étape d'action",
+        "conclusion": "Résumé et meilleures pratiques"
+      }
+    },
+    "faqQa": {
+      "label": "FAQ / Q&R",
+      "description": "Les FAQ doivent fournir des réponses concises et utiles",
+      "sections": {
+        "introduction": "Aperçu du sujet et portée",
+        "question": "Question",
+        "answer": "Réponse détaillée avec exemples",
+        "conclusion": "Informations de contact ou prochaines étapes"
+      }
+    },
+    "comparisonVs": {
+      "label": "Comparaison / vs.",
+      "description": "Les comparaisons nécessitent une analyse approfondie des options",
+      "sections": {
+        "introduction": "Contexte et ce qui est comparé",
+        "optionOverview": "Détails de l'option",
+        "comparison": "Comparaison directe des fonctionnalités",
+        "prosAndCons": "Avantages et inconvénients",
+        "recommendation": "Quelle option choisir et quand"
+      }
+    },
+    "reviewAnalysis": {
+      "label": "Critique / Analyse",
+      "description": "Les critiques nécessitent une évaluation équilibrée et une analyse détaillée",
+      "sections": {
+        "introduction": "Ce qui est examiné",
+        "keyFeatures": "Principales fonctionnalités et capacités",
+        "pros": "Ce qui fonctionne bien",
+        "cons": "Limitations et inconvénients",
+        "performance": "Comment cela fonctionne en pratique",
+        "verdict": "Recommandation globale"
+      }
+    },
+    "caseStudyDetailed": {
+      "label": "Étude de Cas",
+      "description": "Les études de cas détaillées nécessitent une narration complète",
+      "sections": {
+        "introduction": "Aperçu de l'étude de cas",
+        "challenge": "Le défi ou problème",
+        "solution": "Approche de la solution",
+        "implementation": "Processus de mise en œuvre",
+        "results": "Résultats et métriques",
+        "lessons": "Leçons apprises",
+        "conclusion": "Résumé et recommandations"
+      }
+    },
+    "listRoundup": {
+      "label": "Liste / Compilation",
+      "description": "Les listes et compilations nécessitent une organisation claire",
+      "sections": {
+        "introduction": "Introduction au sujet et critères",
+        "methodology": "Comment les éléments ont été sélectionnés",
+        "listItem": "Élément de la liste avec détails",
+        "summary": "Résumé des points clés",
+        "conclusion": "Réflexions finales et recommandations"
+      }
+    },
+    "newsUpdate": {
+      "label": "Actualités / Mise à jour",
+      "description": "Les articles d'actualités nécessitent des informations factuelles et opportunes",
+      "sections": {
+        "introduction": "Titre et informations contextuelles",
+        "keyPoints": "Points principaux de l'actualité",
+        "background": "Contexte et historique",
+        "implications": "Ce que cela signifie",
+        "conclusion": "Perspectives futures"
+      }
+    },
+    "opinionEditorial": {
+      "label": "Opinion / Éditorial",
+      "description": "Les pièces d'opinion nécessitent des arguments clairs et des preuves",
+      "sections": {
+        "introduction": "Position et contexte",
+        "argument": "Point d'argumentation avec preuves",
+        "counterargument": "Reconnaissance des points de vue opposés",
+        "evidence": "Preuves à l'appui",
+        "conclusion": "Réaffirmation de la position et appel à l'action"
+      }
+    },
+    "resourceGuide": {
+      "label": "Guide de Ressources",
+      "description": "Les guides de ressources nécessitent une organisation complète",
+      "sections": {
+        "introduction": "Vue d'ensemble et comment utiliser le guide",
+        "category": "Catégorie de ressources",
+        "resource": "Ressource individuelle avec description",
+        "tips": "Conseils d'utilisation",
+        "conclusion": "Résumé et ressources supplémentaires"
+      }
+    },
+    "industryTrends": {
+      "label": "Tendances de l'Industrie",
+      "description": "L'analyse des tendances nécessite une recherche approfondie et des données",
+      "sections": {
+        "introduction": "État actuel de l'industrie",
+        "trend": "Tendance émergente",
+        "analysis": "Analyse approfondie",
+        "implications": "Impact sur l'industrie",
+        "predictions": "Prédictions futures",
+        "conclusion": "Conseils stratégiques"
+      }
+    }
+  },
+  "webhook": {
+    "processing": {
+      "start": "Traitement du webhook en cours...",
+      "validating": "Validation de la signature du webhook...",
+      "processing": "Traitement de l'événement...",
+      "complete": "Webhook traité avec succès",
+      "error": "Erreur lors du traitement du webhook"
+    },
+    "commission": {
+      "calculating": "Calcul de la commission...",
+      "accrued": "Commission accumulée avec succès",
+      "reversed": "Commission inversée",
+      "error": "Erreur lors du traitement de la commission"
+    },
+    "events": {
+      "invoice": {
+        "paid": "Facture payée - traitement de la commission",
+        "voided": "Facture annulée - inversion de la commission",
+        "paymentActionRequired": "Action de paiement requise pour la facture"
+      },
+      "checkout": {
+        "completed": "Paiement de commande terminé",
+        "processing": "Traitement de la commande de paiement"
+      },
+      "subscription": {
+        "created": "Abonnement créé",
+        "updated": "Abonnement mis à jour",
+        "cancelled": "Abonnement annulé"
+      }
+    }
+  },
+  "auth": {
+    "referralAttribution": {
+      "success": {
+        "title": "Parrainage Appliqué !",
+        "description": "Vous avez été attribué au partenaire {{partnerName}}"
+      },
+      "error": {
+        "title": "Erreur d'Attribution",
+        "description": "Impossible d'appliquer le code de parrainage"
+      },
+      "info": {
+        "noReferral": "Aucun code de parrainage trouvé",
+        "invalidCode": "Code de parrainage invalide ou expiré",
+        "attributionFailed": "Échec de l'attribution du parrainage"
+      }
+    }
+  },
+  "partners": {
+    "dashboard": {
+      "title": "Tableau de Bord Partenaire",
+      "subtitle": "Bienvenue, {{name}}",
+      "noData": "Aucune donnée disponible pour le moment",
+      "overview": {
+        "title": "Vue d'ensemble",
+        "recentPerformance": "Performance Récente",
+        "revenue": "Revenus",
+        "quickActions": "Actions Rapides",
+        "notifications": "Notifications"
+      },
+      "referrals": {
+        "title": "Parrainages",
+        "manageCodes": "Gérer les Codes",
+        "createCode": "Créer un Code",
+        "activeCodes": "Codes Actifs"
+      },
+      "analytics": {
+        "title": "Analyses",
+        "performance": "Performance",
+        "conversions": "Conversions",
+        "revenue": "Revenus"
+      },
+      "financial": {
+        "title": "Financier",
+        "commissions": "Commissions",
+        "payments": "Paiements",
+        "invoices": "Factures"
+      },
+      "conversions": {
+        "title": "Conversions",
+        "tracking": "Suivi des Conversions",
+        "funnel": "Entonnoir de Conversion"
+      },
+      "reports": {
+        "title": "Rapports",
+        "generate": "Générer un Rapport",
+        "export": "Exporter"
+      }
+    }
+  }
+}
