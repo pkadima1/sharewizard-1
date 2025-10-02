@@ -22,7 +22,14 @@
     "success": "Attribution de référence réussie",
     "failed": "Échec de l'attribution de référence",
     "processing": "Traitement de l'attribution de référence...",
-    "error": "Erreur lors de l'attribution de référence"
+    "error": "Erreur lors de l'attribution de référence",
+    "customerRecordCreated": "Enregistrement client créé pour le suivi du tableau de bord",
+    "customerRecordFailed": "Échec de la création de l'enregistrement client",
+    "trackingFailed": "Échec de la création du suivi de référence",
+    "processingFailed": "Échec du traitement de l'attribution de référence",
+    "invalidCode": "Code de référence invalide ou expiré",
+    "enhancedSuccess": "Attribution de référence améliorée terminée avec succès",
+    "partnerDashboardUpdated": "Le tableau de bord du partenaire reflétera maintenant cette référence"
   },
   "stats": {
     "totalReferrals": "Total des Références",

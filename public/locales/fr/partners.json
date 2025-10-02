@@ -1,4 +1,14 @@
 {
+  "admin": {
+    "errors": {
+      "userNotFound": "L'utilisateur Firebase Auth avec cet UID n'existe pas. Veuillez d'abord créer l'utilisateur ou utiliser l'option \"Créer un nouvel utilisateur\"."
+    },
+    "forms": {
+      "createPartner": {
+        "passwordPlaceholder": "Entrez le mot de passe pour le nouvel utilisateur"
+      }
+    }
+  },
   "nav": {
     "partners": "Partenaires",
     "partner": {
@@ -505,10 +515,17 @@
         "description": "À Propos de Votre Entreprise",
         "descriptionPlaceholder": "Parlez-nous de votre entreprise et de la façon dont vous prévoyez de promouvoir nos services",
         "descriptionHelp": "Cela nous aide à comprendre votre entreprise et à fournir un meilleur support.",
-        "marketingPreferences": "Préférences Marketing",
-        "emailMarketing": "Recevoir les mises à jour marketing par email",
-        "smsMarketing": "Recevoir les mises à jour marketing par SMS",
-        "partnerNewsletter": "S'abonner à la newsletter partenaire",
+          "marketingPreferences": "Préférences Marketing",
+          "communicationPreferences": "Préférences de Communication",
+          "communicationPreferencesDesc": "Choisissez comment vous souhaitez recevoir nos communications et mises à jour",
+          "emailMarketing": "Marketing par Email",
+          "emailMarketingDesc": "Recevoir des conseils marketing, des mises à jour de performance et des opportunités spéciales",
+          "smsMarketing": "Marketing par SMS",
+          "smsMarketingDesc": "Recevoir des alertes importantes et des notifications urgentes par SMS",
+          "partnerNewsletter": "Newsletter Partenaire",
+          "partnerNewsletterDesc": "Recevoir notre newsletter mensuelle avec des conseils, des stratégies et des nouvelles du programme",
+          "privacyNote": "Note de Confidentialité",
+          "privacyNoteDesc": "Vos préférences peuvent être modifiées à tout moment dans vos paramètres. Nous respectons votre vie privée et ne partagerons jamais vos informations.",
         
         "enhanced": {
           "title": "Candidature Partenaire",

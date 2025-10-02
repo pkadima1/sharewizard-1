@@ -34,11 +34,16 @@ export const createSubscriptionCheckout = async (userId: string, priceId: string
           // Set referral metadata for Stripe
           referralMetadata = {
             referralCode,
-            partnerId: partnerData.partnerId,
-            partnerName: partnerData.displayName,
-            partnerEmail: partnerData.email,
+            partnerId: partnerData.partnerId || '',
+            partnerName: partnerData.displayName || 'Unknown Partner',
+            partnerEmail: partnerData.email || '',
             source: 'referral_link'
           };
+          
+          // Remove any undefined or empty values
+          referralMetadata = Object.fromEntries(
+            Object.entries(referralMetadata).filter(([_, value]) => value && value !== '' && value !== undefined)
+          );
         } else {
           console.log('⚠️ Invalid referral code, proceeding without referral attribution');
         }
@@ -79,7 +84,10 @@ export const createSubscriptionCheckout = async (userId: string, priceId: string
           source: referralMetadata.source || 'EngagePerfect AI Web App',
           created_at: new Date().toISOString(),
           checkout_type: 'subscription',
-          ...referralMetadata // Spread referral metadata (empty object if no referral)
+          // Only spread defined referral metadata fields
+          ...(Object.keys(referralMetadata).length > 0 ? Object.fromEntries(
+            Object.entries(referralMetadata).filter(([_, value]) => value !== undefined && value !== null && value !== '')
+          ) : {})
         }
       }
     );
@@ -137,11 +145,16 @@ export const createFlexCheckout = async (userId: string, priceId: string, quanti
           // Set referral metadata for Stripe
           referralMetadata = {
             referralCode,
-            partnerId: partnerData.partnerId,
-            partnerName: partnerData.displayName,
-            partnerEmail: partnerData.email,
+            partnerId: partnerData.partnerId || '',
+            partnerName: partnerData.displayName || 'Unknown Partner',
+            partnerEmail: partnerData.email || '',
             source: 'referral_link'
           };
+          
+          // Remove any undefined or empty values
+          referralMetadata = Object.fromEntries(
+            Object.entries(referralMetadata).filter(([_, value]) => value && value !== '' && value !== undefined)
+          );
         } else {
           console.log('⚠️ Invalid referral code, proceeding without referral attribution');
         }
@@ -182,7 +195,10 @@ export const createFlexCheckout = async (userId: string, priceId: string, quanti
           checkout_type: 'payment',
           product_type: 'flex_pack',
           quantity: quantity.toString(),
-          ...referralMetadata // Spread referral metadata (empty object if no referral)
+          // Only spread defined referral metadata fields
+          ...(Object.keys(referralMetadata).length > 0 ? Object.fromEntries(
+            Object.entries(referralMetadata).filter(([_, value]) => value !== undefined && value !== null && value !== '')
+          ) : {})
         }
       }
     );

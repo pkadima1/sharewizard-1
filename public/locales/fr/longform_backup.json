@@ -1,0 +1,1953 @@
+﻿{
+  "fields": {
+    "topic": "Sujet",
+    "audience": "Public Cible",
+    "keywords": "Mots-clÃ©s",
+    "contentType": "Type de Contenu",
+    "contentTone": "Ton du Contenu",
+    "industry": "Secteur",
+    "structureFormat": "Format de Structure"
+  },
+  "wizard": {
+    "title": "Assistant de Contenu Long-format",
+    "progress": {
+      "title": "ProgrÃ¨s de l'Assistant de Contenu",
+      "step": "Ã‰tape {{current}} sur {{total}}",
+      "complete": "{{percent}}% TerminÃ©",
+      "remaining": "{{time}} min restantes",
+      "completed": "{{completed}} sur {{total}} Ã©tapes terminÃ©es",
+      "current": "Actuel : {{name}}",
+      "optional": "(Optionnel)"
+    },
+    "steps": {
+      "whatWho": {
+        "name": "Quoi & Qui",
+        "description": "DÃ©finir votre sujet et votre public cible"
+      },
+      "mediaVisuals": {
+        "name": "MÃ©dias & Visuels",
+        "description": "TÃ©lÃ©charger et gÃ©rer votre contenu visuel"
+      },
+      "seoKeywords": {
+        "name": "SEO & Mots-clÃ©s",
+        "description": "Optimiser avec des suggestions de mots-clÃ©s intelligentes"
+      },
+      "structureTone": {
+        "name": "Structure & Ton",
+        "description": "CrÃ©er votre plan de contenu"
+      },
+      "generationSettings": {
+        "name": "ParamÃ¨tres de GÃ©nÃ©ration",
+        "description": "Configurer la longueur, le format et l'appel Ã  l'action"
+      },
+      "reviewGenerate": {
+        "name": "RÃ©vision & GÃ©nÃ©ration",
+        "description": "AperÃ§u final et gÃ©nÃ©ration de contenu"
+      }
+    },
+    "navigation": {
+      "previous": "PrÃ©cÃ©dent",
+      "next": "Suivant",
+      "skip": "Ignorer l'Ã‰tape",
+      "generate": "GÃ©nÃ©rer le Contenu",
+      "saveNow": "Sauvegarder Maintenant",
+      "shortcuts": "Raccourcis"
+    },
+    "draft": {
+      "available": "Brouillon Disponible",
+      "foundSaved": "Vous avez un brouillon sauvegardÃ© du {{time}}. Souhaitez-vous le restaurer ?",
+      "restore": "Restaurer le Brouillon",
+      "dismiss": "Ignorer",
+      "restored": "Brouillon RestaurÃ©",
+      "restoredDesc": "Votre progression sauvegardÃ©e a Ã©tÃ© restaurÃ©e.",
+      "saved": "Progression SauvegardÃ©e",
+      "savedDesc": "Votre progression actuelle a Ã©tÃ© sauvegardÃ©e.",
+      "notSaved": "Non sauvegardÃ©",
+      "savedTime": "SauvegardÃ© {{time}}"
+    },
+    "status": {
+      "completed": "TerminÃ©",
+      "skipped": "IgnorÃ©",
+      "needsAttention": "NÃ©cessite une attention"
+    },
+    "validation": {
+      "pleaseComplete": "Veuillez complÃ©ter les Ã©lÃ©ments suivants :"
+    },
+    "errors": {
+      "fixFollowing": "Veuillez corriger les problÃ¨mes suivants :",
+      "completeRequired": "Veuillez complÃ©ter les Ã©lÃ©ments suivants :",
+      "beforeProceed": "Veuillez corriger les erreurs suivantes avant de continuer :",
+      "allRequired": "Veuillez complÃ©ter tous les champs requis avant de gÃ©nÃ©rer le contenu.",
+      "unknownStep": "Ã‰tape inconnue"
+    },
+    "keyboard": {
+      "title": "Raccourcis Clavier",
+      "nextStep": "Passer Ã  l'Ã©tape suivante",
+      "prevStep": "Revenir Ã  l'Ã©tape prÃ©cÃ©dente",
+      "manualSave": "Sauvegarde manuelle du brouillon",
+      "navigate": "Naviguer dans le formulaire",
+      "showHelp": "Afficher/masquer cette aide",
+      "tip": "Astuce : Utilisez les raccourcis clavier pour naviguer rapidement dans l'assistant"
+    }
+  },
+  "step1": {
+    "title": "Quoi & Qui",
+    "subtitle": "DÃ©finissez votre sujet et votre public cible pour crÃ©er un contenu ciblÃ© et engageant",
+    "topic": {
+      "title": "De quoi allez-vous Ã©crire ?",
+      "subtitle": "DÃ©finissez le focus de votre contenu",
+      "tooltip": "Soyez spÃ©cifique sur votre sujet principal. Cela aide Ã  gÃ©nÃ©rer un contenu plus ciblÃ©.",
+      "label": "Sujet du Contenu *",
+      "placeholder": "ex. 'Comment amÃ©liorer les taux d'ouverture d'email marketing pour les petites entreprises' ou 'Les meilleurs outils de productivitÃ© pour les Ã©quipes distantes'",
+      "characters": "{{count}} caractÃ¨res",
+      "getIdeas": "Obtenir des IdÃ©es"
+    },
+    "audience": {
+      "title": "Pour qui Ã©crivez-vous ?",
+      "subtitle": "DÃ©finissez votre public cible",
+      "tooltip": "Comprendre votre audience aide Ã  adapter le ton et la complexitÃ© du contenu.",
+      "industryLabel": "Secteur (optionnel)",
+      "industryPlaceholder": "SÃ©lectionnez votre secteur pour de meilleures suggestions",
+      "customIndustryLabel": "SpÃ©cifiez votre secteur",
+      "customIndustryPlaceholder": "ex. Ã‰nergie Renouvelable, Soins aux Animaux, Jeux, Crypto, SaaS...",
+      "customIndustryHint": "Soyez spÃ©cifique pour obtenir de meilleures suggestions de sujets adaptÃ©es Ã  votre secteur",
+      "audienceLabel": "Public Cible *",
+      "audiencePlaceholder": "ex. 'PropriÃ©taires de petites entreprises cherchant Ã  amÃ©liorer leur marketing' ou 'Travailleurs distants cherchant des conseils de productivitÃ©'",
+      "suggestedAudiences": "Audiences SuggÃ©rÃ©es pour {{industry}} :",
+      "selectAudience": "SÃ©lectionner"
+    },
+    "industries": {
+      "marketing": "Marketing & PublicitÃ©",
+      "health": "SantÃ© & Bien-Ãªtre",
+      "technology": "Technologie & Logiciels",
+      "finance": "Finance & Investissement",
+      "education": "Ã‰ducation & Apprentissage",
+      "coaching": "Coaching Personnel & Business",
+      "ecommerce": "E-commerce & Vente au DÃ©tail",
+      "food": "Alimentation & Boissons",
+      "realEstate": "Immobilier",
+      "travel": "Voyage & Tourisme",
+      "other": "Autre Secteur"
+    },
+    "audienceTypes": {
+      "smallBusiness": "PropriÃ©taires de Petites Entreprises",
+      "marketingPros": "Professionnels du Marketing",
+      "entrepreneurs": "Entrepreneurs",
+      "students": "Ã‰tudiants",
+      "generalPublic": "Grand Public",
+      "healthcare": "Professionnels de SantÃ©",
+      "patients": "Patients",
+      "fitness": "PassionnÃ©s de Fitness",
+      "techEnthusiasts": "PassionnÃ©s de Technologie",
+      "developers": "DÃ©veloppeurs de Logiciels",
+      "itPros": "Professionnels IT",
+      "businessLeaders": "Dirigeants d'Entreprise",
+      "investors": "Investisseurs",
+      "financialPlanners": "Planificateurs Financiers",
+      "youngPros": "Jeunes Professionnels",
+      "educators": "Ã‰ducateurs",
+      "parents": "Parents",
+      "professionals": "Professionnels",
+      "careerChangers": "Changement de CarriÃ¨re",
+      "personalDev": "DÃ©veloppement Personnel",
+      "onlineSellers": "Vendeurs en Ligne",
+      "retailManagers": "Gestionnaires de Vente au DÃ©tail",
+      "consumers": "Consommateurs",
+      "dropshippers": "Dropshippers",
+      "foodEnthusiasts": "PassionnÃ©s de Cuisine",
+      "restaurantOwners": "PropriÃ©taires de Restaurants",
+      "homeCooks": "Cuisiniers Ã  Domicile",
+      "healthConscious": "Consommateurs Soucieux de SantÃ©",
+      "homeBuyers": "Acheteurs Immobiliers",
+      "realEstateAgents": "Agents Immobiliers",
+      "renters": "Locataires",
+      "travelers": "Voyageurs",
+      "travelAgents": "Agents de Voyage",
+      "localBusinesses": "Entreprises Locales",
+      "adventureSeekers": "Chercheurs d'Aventure",
+      "generalAudience": "Audience GÃ©nÃ©rale",
+      "enthusiasts": "PassionnÃ©s"
+    },
+    "qualityLabels": {
+      "excellent": "Excellente longueur de sujet !",
+      "good": "Bon sujet !",
+      "addMoreDetails": "Ajoutez plus de dÃ©tails",
+      "excellentBadge": "Excellent",
+      "goodBadge": "Bon",
+      "needsWork": "NÃ©cessite du travail",
+      "greatAudience": "Excellente dÃ©finition d'audience !",
+      "goodAudience": "Bonne audience !",
+      "addMoreAudience": "Ajoutez plus de dÃ©tails sur l'audience",
+      "detailed": "DÃ©taillÃ©",
+      "addMore": "Ajouter plus"
+    },
+    "completion": {
+      "stepCompletion": "Ã‰tape 1 ComplÃ©tion : {{score}}%",
+      "readyToProceed": "âœ… PrÃªt Ã  continuer",
+      "almostThere": "âš¡ Presque lÃ  !",
+      "keepFilling": "ðŸ“ Continuez Ã  remplir les dÃ©tails",
+      "customIndustry": "Secteur personnalisÃ© : {{industry}}",
+      "specifyCustom": "Veuillez spÃ©cifier votre secteur personnalisÃ©",
+      "selected": "SÃ©lectionnÃ© : {{industry}}"
+    },
+    "suggestions": {
+      "smartTopicSuggestions": "Suggestions de Sujets Intelligentes"
+    },
+    "validation": {
+      "topicTooShort": "Le sujet doit faire plus de 10 caractÃ¨res",
+      "industryRequired": "Le secteur doit Ãªtre sÃ©lectionnÃ©",
+      "customIndustryRequired": "Le secteur personnalisÃ© doit Ãªtre spÃ©cifiÃ© quand \"Autre\" est sÃ©lectionnÃ©",
+      "audienceRequired": "L'audience cible doit Ãªtre spÃ©cifiÃ©e",
+      "keywordsRequired": "Au moins un mot-clÃ© doit Ãªtre sÃ©lectionnÃ© pour l'optimisation SEO"
+    }
+  },
+  "step2": {
+    "title": "MÃ©dias & Visuels",
+    "subtitle": "TÃ©lÃ©chargez des images et vidÃ©os pour enrichir votre contenu",
+    "settings": {
+      "title": "ParamÃ¨tres de Contenu Visuel",
+      "includeImagesLabel": "Inclure les Suggestions d'Images",
+      "includeImagesDesc": "GÃ©nÃ©rer des suggestions pour des images pertinentes Ã  inclure dans votre contenu",
+      "uploadTitle": "TÃ©lÃ©charger des Fichiers MÃ©dias (Optionnel)",
+      "placementGuideTitle": "Guide de Placement des MÃ©dias",
+      "placementGuide": {
+        "header": "Image principale en haut du contenu",
+        "section": "Visuels de support pour les sections de contenu",
+        "inline": "PlacÃ© dans le flux du texte",
+        "end": "PlacÃ© Ã  la conclusion du contenu"
+      }
+    },
+    "upload": {
+      "title": "TÃ©lÃ©charger des Fichiers MÃ©dias",
+      "dragDrop": "DÃ©posez les fichiers ici ou cliquez pour tÃ©lÃ©charger",
+      "supported": "Supporte les images et vidÃ©os jusqu'Ã  {{size}} chacune",
+      "maxFiles": "Maximum {{count}} fichiers",
+      "uploading": "TÃ©lÃ©chargement des fichiers...",
+      "selectFiles": "SÃ©lectionner les Fichiers"
+    },
+    "files": {
+      "title": "Fichiers TÃ©lÃ©chargÃ©s",
+      "count": "{{current}} / {{max}} fichiers",
+      "noFiles": "Aucun fichier tÃ©lÃ©chargÃ© encore",
+      "noFilesDesc": "TÃ©lÃ©chargez des mÃ©dias pour enrichir votre contenu",
+      "placement": "Placement",
+      "caption": "LÃ©gende",
+      "captionPlaceholder": "Ajouter une lÃ©gende..."
+    },
+    "placements": {
+      "header": "En-tÃªte",
+      "section_1": "Section 1",
+      "section_2": "Section 2",
+      "inline": "En ligne",
+      "end": "Fin",
+      "inlineWithText": "En ligne avec le texte",
+      "headerImage": "Image d'en-tÃªte",
+      "imageGallery": "Galerie d'images",
+      "sidebar": "Barre latÃ©rale"
+    },
+    "errors": {
+      "tooManyFiles": "Trop de fichiers",
+      "maxFilesMsg": "Vous pouvez tÃ©lÃ©charger un maximum de {{count}} fichiers.",
+      "invalidFiles": "Fichiers invalides",
+      "invalidFilesDesc": "Les fichiers suivants ont Ã©tÃ© ignorÃ©s : {{files}}",
+      "fileTooLarge": "trop volumineux",
+      "unsupportedType": "type invalide",
+      "authRequired": "Authentification requise",
+      "authRequiredDesc": "Veuillez vous connecter pour tÃ©lÃ©charger des fichiers.",
+      "uploadFailed": "Ã‰chec du tÃ©lÃ©chargement",
+      "uploadFailedDesc": "Certains fichiers n'ont pas pu Ãªtre tÃ©lÃ©chargÃ©s. Veuillez rÃ©essayer.",
+      "invalidFileType": "Type de fichier invalide",
+      "invalidFileTypeDesc": "Veuillez tÃ©lÃ©charger uniquement des images (PNG, JPG, GIF) ou des vidÃ©os (MP4, MOV).",
+      "fileTooLargeTitle": "Fichier trop volumineux",
+      "fileTooLargeDesc": "Veuillez rÃ©duire la taille du fichier ou choisir un autre fichier. Taille max : {{maxSize}}MB.",
+      "processingError": "Erreur de traitement",
+      "processingErrorDesc": "Une erreur s'est produite lors du traitement de votre fichier. Veuillez rÃ©essayer.",
+      "draftRestored": "Brouillon restaurÃ©"
+    },
+    "success": {
+      "uploadSuccess": "TÃ©lÃ©chargement rÃ©ussi",
+      "uploadSuccessDesc": "{{count}} fichier(s) tÃ©lÃ©chargÃ©(s) avec succÃ¨s.",
+      "draftRestored": "Brouillon RestaurÃ©",
+      "draftRestoredDesc": "Vos paramÃ¨tres de mÃ©dias sauvegardÃ©s ont Ã©tÃ© restaurÃ©s.",
+      "progressSaved": "Progression SauvegardÃ©e",
+      "progressSavedDesc": "Vos paramÃ¨tres de mÃ©dias ont Ã©tÃ© sauvegardÃ©s.",
+      "uploadComplete": "TÃ©lÃ©chargement terminÃ©"
+    },
+    "draft": {
+      "foundSaved": "Brouillon sauvegardÃ© trouvÃ© du {{time}}",
+      "unknownTime": "heure inconnue",
+      "restore": "Restaurer",
+      "dismiss": "Ignorer"
+    },
+    "quality": {
+      "excellent": "Configuration de mÃ©dias excellente",
+      "good": "Bonne collection de mÃ©dias",
+      "suggestions": {
+        "enableImages": "Activez les suggestions d'images pour un contenu amÃ©liorÃ©",
+        "uploadFiles": "TÃ©lÃ©chargez des fichiers mÃ©dias Ã  inclure dans votre contenu",
+        "uploadImages": "TÃ©lÃ©chargez des images pour rendre votre contenu plus engageant",
+        "addCaptions": "Ajoutez des lÃ©gendes Ã  vos images pour une meilleure accessibilitÃ©",
+        "variedPlacements": "Utilisez des placements d'images variÃ©s pour un meilleur flux"
+      },
+      "statusEnabled": "images activÃ©es",
+      "statusDisabled": "images dÃ©sactivÃ©es"
+    },
+    "actions": {
+      "saveProgress": "Sauvegarder la Progression",
+      "autoSaved": "Auto-sauvegardÃ© {{time}}",
+      "draftSavedAuto": "Brouillon SauvegardÃ©",
+      "progressSavedDesc": "Votre progression a Ã©tÃ© automatiquement sauvegardÃ©e.",
+      "saveFailed": "Ã‰chec de la Sauvegarde",
+      "saveFailedDesc": "Impossible de sauvegarder le brouillon. Veuillez vÃ©rifier vos paramÃ¨tres de stockage.",
+      "draftRestored": "Brouillon RestaurÃ©",
+      "draftRestoredDesc": "Le brouillon du {{date}} a Ã©tÃ© restaurÃ©."
+    }
+  },
+  "step3": {
+    "title": "Mots-clÃ©s SEO & Titre OptimisÃ©",
+    "subtitle": "SÃ©lectionnez des mots-clÃ©s et obtenez des titres suggÃ©rÃ©s par l'IA optimisÃ©s pour les moteurs de recherche avec une analyse SEO en temps rÃ©el.",
+    "seoScore": {
+      "title": "Score SEO en Temps RÃ©el",
+      "scoreLabel": "{{score}}/100",
+      "factors": {
+        "keywordCount": "Nombre de Mots-clÃ©s",
+        "titleOptimization": "Optimisation du Titre",
+        "keywordDiversity": "DiversitÃ© des Mots-clÃ©s",
+        "contentRelevance": "Pertinence du Contenu"
+      },
+      "points": "{{score}}pts"
+    },
+    "seoImpact": {
+      "title": "AperÃ§u de l'Impact SEO",
+      "metrics": {
+        "searchVisibility": "VisibilitÃ© de Recherche",
+        "clickThroughRate": "Taux de Clic",
+        "longTailTraffic": "Trafic Long-tail"
+      },
+      "descriptions": {
+        "searchVisibility": "Augmentation des chances d'apparaÃ®tre dans les rÃ©sultats de recherche",
+        "clickThroughRate": "Des titres plus attrayants attirent plus de clics",
+        "longTailTraffic": "Les mots-clÃ©s long-tail capturent l'intention de recherche spÃ©cifique"
+      }
+    },
+    "titleSuggestions": {
+      "title": "Suggestions de Titres OptimisÃ©s SEO",
+      "regenerate": "RÃ©gÃ©nÃ©rer",
+      "noKeywords": "SÃ©lectionnez au moins un mot-clÃ© pour gÃ©nÃ©rer des suggestions de titres.",
+      "loading": "CrÃ©ation de titres optimisÃ©s SEO...",
+      "customize": "Personnaliser le titre sÃ©lectionnÃ©",
+      "placeholder": "Modifiez votre titre sÃ©lectionnÃ©...",
+      "recommendation": "ðŸ’¡ {{recommendation}}",
+      "chars": "{{length}} caractÃ¨res",
+      "optimalChars": "{{length}}/60 caractÃ¨res"
+    },
+    "titleAnalysis": {
+      "recommendations": {
+        "perfectLength": "Longueur parfaite pour le SEO !",
+        "addWords": "ConsidÃ©rez ajouter plus de mots descriptifs",
+        "shortenTitle": "ConsidÃ©rez raccourcir pour un meilleur SEO"
+      }
+    },
+    "titleImprovement": {
+      "title": "Suggestions d'AmÃ©lioration du Titre",
+      "useThis": "Utiliser Ceci",
+      "suggestions": {
+        "length": "Guide Complet {{keyword}}",
+        "lengthReason": "Augmentez la longueur du titre pour un meilleur SEO (actuellement trop court)",
+        "shortenReason": "Raccourcissez le titre pour un meilleur affichage de recherche (actuellement trop long)",
+        "keywordReason": "Placez le mot-clÃ© principal au dÃ©but pour un meilleur SEO",
+        "powerWordReason": "Ajoutez des mots puissants pour augmenter les taux de clic"
+      },
+      "powerWords": [
+        "Ultime",
+        "Complet",
+        "Essentiel",
+        "ProuvÃ©",
+        "Expert"
+      ]
+    },
+    "keywordDensity": {
+      "title": "Analyse de la DensitÃ© des Mots-clÃ©s",
+      "occurrences": "{{count}} occurrence",
+      "occurrences_plural": "{{count}} occurrences",
+      "missing": "ConsidÃ©rez inclure dans le titre",
+      "good": "Bon placement de mot-clÃ©",
+      "recommendation": "Recommandation : Incluez 1-2 mots-clÃ©s principaux dans votre titre pour un impact SEO optimal."
+    },
+    "titleTemplates": {
+      "ultimate": "Le Guide Ultime de {{keyword}} pour {{audience}}",
+      "boost": "Comment Booster Vos RÃ©sultats {{industry}} avec {{keywords}}",
+      "secret": "{{keyword}} : L'IngrÃ©dient Secret pour le SuccÃ¨s {{industry}}",
+      "strategies": "{{number}} StratÃ©gies {{keyword}} qui Transforment Votre Approche {{industry}}",
+      "essential": "Pourquoi {{keyword}} est Essentiel pour {{audience}} en {{year}}",
+      "leveraging": "{{topic}} : Exploiter le Pouvoir de {{keyword}}"
+    },
+    "defaults": {
+      "content": "Contenu",
+      "business": "Business",
+      "professionals": "Professionnels"
+    },
+    "keywords": {
+      "title": "Mots-clÃ©s Cibles",
+      "tooltip": "Les mots-clÃ©s aident votre contenu Ã  mieux se classer dans les rÃ©sultats de recherche et Ã  atteindre la bonne audience.",
+      "label": "Mots-clÃ©s (sÃ©parÃ©s par des virgules)",
+      "placeholder": "ex. marketing email, petite entreprise, taux d'ouverture, automatisation marketing",
+      "suggestions": "Mots-clÃ©s SuggÃ©rÃ©s :",
+      "add": "Ajouter"
+    },
+    "optimizedTitle": {
+      "title": "Titre OptimisÃ©",
+      "tooltip": "Un titre bien conÃ§u amÃ©liore les taux de clic et les performances SEO.",
+      "label": "Titre OptimisÃ© SEO",
+      "placeholder": "ex. '7 StratÃ©gies ProuvÃ©es pour Doubler Vos Taux d'Ouverture Email en 2024'",
+      "generateButton": "GÃ©nÃ©rer des IdÃ©es de Titres",
+      "suggestions": "Suggestions de Titres :"
+    },
+    "quality": {
+      "excellent": "Optimisation SEO excellente",
+      "good": "Bon ciblage de mots-clÃ©s",
+      "suggestions": {
+        "addKeywords": "Ajoutez 3-5 mots-clÃ©s pertinents pour un meilleur SEO",
+        "optimizeTitle": "CrÃ©ez un titre engageant et riche en mots-clÃ©s",
+        "useNumbers": "ConsidÃ©rez utiliser des chiffres dans votre titre pour un meilleur engagement"
+      }
+    }
+  },
+  "smartKeywordGenerator": {
+    "title": "GÃ©nÃ©rateur de Mots-clÃ©s Intelligent",
+    "version": "v2.0",
+    "subtitle": "Intelligence de mots-clÃ©s alimentÃ©e par l'IA avec clustering, analyse d'intention et dÃ©tection de lacunes",
+    "aiDisclaimer": {
+      "title": "DonnÃ©es EstimÃ©es par l'IA :",
+      "text": "Toutes les mÃ©triques de mots-clÃ©s (volume de recherche, difficultÃ©, CPC) sont des estimations gÃ©nÃ©rÃ©es par l'IA. Les versions futures intÃ©greront des donnÃ©es rÃ©elles de Google Keyword Planner et d'autres API."
+    },
+    "indicators": {
+      "enhancedAi": "IA AmÃ©liorÃ©e",
+      "clusters": "Clusters",
+      "intentAnalysis": "Analyse d'Intention"
+    },
+    "buttons": {
+      "regenerate": "RÃ©gÃ©nÃ©rer",
+      "analyzing": "Analyse en cours...",
+      "addKeyword": "Ajouter un Mot-clÃ©",
+      "selectAll": "Tout SÃ©lectionner",
+      "deselectAll": "Tout DÃ©sÃ©lectionner",
+      "exportKeywords": "Exporter les Mots-clÃ©s",
+      "importKeywords": "Importer les Mots-clÃ©s",
+      "analyzeGaps": "Analyser les Lacunes"
+    },
+    "filters": {
+      "keywordType": "Type de Mot-clÃ©",
+      "searchIntent": "Intention de Recherche",
+      "difficulty": "DifficultÃ©",
+      "searchVolume": "Volume de Recherche",
+      "allTypes": "Tous les Types",
+      "primary": "Primaire",
+      "secondary": "Secondaire",
+      "longTail": "Long-tail",
+      "allIntents": "Toutes les Intentions",
+      "informational": "Informationnel",
+      "commercial": "Commercial",
+      "transactional": "Transactionnel",
+      "navigational": "Navigationnel",
+      "allDifficulties": "Toutes les DifficultÃ©s",
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile",
+      "minVolume": "Volume Min",
+      "maxVolume": "Volume Max",
+      "showClusters": "Afficher les Clusters"
+    },
+    "metrics": {
+      "searchVolume": "Volume de Recherche",
+      "difficulty": "DifficultÃ©",
+      "cpc": "CPC",
+      "competition": "Concurrence",
+      "trend": "Tendance",
+      "volume": "Volume",
+      "difficultyLabel": "DifficultÃ©",
+      "priority": "PrioritÃ©",
+      "trafficPotential": "Potentiel de Trafic",
+      "relevance": "Pertinence",
+      "trendingScore": "Score de Tendance"
+    },
+    "difficulty": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile"
+    },
+    "intents": {
+      "informational": "Info",
+      "commercial": "Commercial",
+      "transactional": "Achat",
+      "navigational": "Navigation",
+      "label": "Intention"
+    },
+    "clustering": {
+      "title": "Clusters de Mots-clÃ©s",
+      "cluster": "Cluster {{number}}",
+      "keywords": "{{count}} mots-clÃ©s",
+      "expand": "DÃ©velopper",
+      "collapse": "RÃ©duire"
+    },
+    "contentGaps": {
+      "title": "Analyse des Lacunes de Contenu",
+      "subtitle": "OpportunitÃ©s basÃ©es sur l'analyse des concurrents",
+      "noGaps": "Aucune lacune de contenu significative dÃ©tectÃ©e",
+      "analyzing": "Analyse des lacunes de contenu...",
+      "opportunity": "OpportunitÃ©",
+      "priority": "PrioritÃ©",
+      "high": "Ã‰levÃ©e",
+      "medium": "Moyenne",
+      "low": "Faible",
+      "missingOpportunities": "OpportunitÃ©s ManquÃ©es",
+      "recommendations": "Recommandations"
+    },
+    "search": {
+      "placeholder": "Rechercher des mots-clÃ©s...",
+      "noResults": "Aucun mot-clÃ© ne correspond Ã  votre recherche",
+      "enterTopic": "Entrez un sujet pour voir des suggestions de mots-clÃ©s intelligentes"
+    },
+    "customKeyword": {
+      "placeholder": "Ajouter un mot-clÃ© personnalisÃ© pour analyse...",
+      "add": "Ajouter"
+    },
+    "selection": {
+      "selected": "{{selected}} sur {{max}} mots-clÃ©s sÃ©lectionnÃ©s",
+      "maxReached": "Maximum {{max}} mots-clÃ©s atteint",
+      "selectedKeywords": "Mots-clÃ©s SÃ©lectionnÃ©s",
+      "clearAll": "Tout Effacer",
+      "avgVolume": "Volume Moy."
+    },
+    "messages": {
+      "keywordsGenerated": "{{count}} mots-clÃ©s gÃ©nÃ©rÃ©s",
+      "keywordAdded": "Mot-clÃ© ajoutÃ© avec succÃ¨s",
+      "keywordRemoved": "Mot-clÃ© supprimÃ©",
+      "maxKeywordsReached": "Nombre maximum de mots-clÃ©s atteint",
+      "exportSuccess": "Mots-clÃ©s exportÃ©s avec succÃ¨s",
+      "importSuccess": "Mots-clÃ©s importÃ©s avec succÃ¨s",
+      "analysisComplete": "Analyse des lacunes terminÃ©e",
+      "enhancedKeywordsGenerated": "{{count}} mots-clÃ©s amÃ©liorÃ©s gÃ©nÃ©rÃ©s avec {{clusters}} clusters !",
+      "clusterKeywordsAdded": "Mots-clÃ©s du cluster {{theme}} ajoutÃ©s !",
+      "keywordsExported": "Mots-clÃ©s exportÃ©s au format {{format}} !",
+      "customKeywordAdded": "Mot-clÃ© personnalisÃ© ajoutÃ© avec analyse amÃ©liorÃ©e !",
+      "trendsIntegrated": "DonnÃ©es Google Trends intÃ©grÃ©es ! Mots-clÃ©s classÃ©s par popularitÃ© tendance.",
+      "generationFailed": "Ã‰chec de gÃ©nÃ©ration des mots-clÃ©s. Veuillez rÃ©essayer."
+    },
+    "empty": {
+      "title": "Aucun mot-clÃ© gÃ©nÃ©rÃ© encore",
+      "subtitle": "Entrez un sujet pour voir des suggestions de mots-clÃ©s intelligentes",
+      "cta": "Cliquez sur \"RÃ©gÃ©nÃ©rer\" pour crÃ©er une analyse de mots-clÃ©s amÃ©liorÃ©e"
+    },
+    "analytics": {
+      "title": "Analytiques de SÃ©lection",
+      "keywords": "Mots-clÃ©s",
+      "totalVolume": "Volume Total",
+      "avgCpc": "CPC Moy.",
+      "rankingChance": "Chance de Classement",
+      "trafficPotential": "Potentiel de Trafic",
+      "intentMix": "MÃ©lange d'Intentions",
+      "commercial": "Commercial"
+    },
+    "export": {
+      "title": "Options d'Export",
+      "csv": "CSV",
+      "seo": "SEO"
+    },
+    "seasonality": {
+      "title": "SaisonnalitÃ©",
+      "stable": "Stable",
+      "seasonal": "Saisonnier",
+      "trending": "Tendance"
+    },
+    "units": {
+      "month": "/mois",
+      "percent": "%"
+    },
+    "loadingSteps": {
+      "analyzing": "Analyse des mots-clÃ©s avec l'intelligence IA...",
+      "searchIntent": "Intention de recherche",
+      "competitionAnalysis": "Analyse de la concurrence",
+      "clustering": "Clustering"
+    },
+    "csvHeaders": {
+      "keyword": "Mot-clÃ©",
+      "type": "Type",
+      "difficulty": "DifficultÃ©",
+      "monthlySearches": "Recherches Mensuelles",
+      "competition": "Concurrence",
+      "searchIntent": "Intention de Recherche",
+      "cpc": "CPC",
+      "rankingProbability": "ProbabilitÃ© de Classement"
+    },
+    "keywordCard": {
+      "competition": "Concurrence :",
+      "cpc": "CPC :",
+      "ranking": "Classement :",
+      "seoAnalysis": "Analyse SEO"
+    },
+    "sectionTitles": {
+      "keywordClusters": "Clusters de Mots-clÃ©s",
+      "contentGapAnalysis": "Analyse des Lacunes de Contenu"
+    },
+    "timeframes": {
+      "easy": "1-3 mois",
+      "medium": "3-6 mois",
+      "hard": "6-12 mois"
+    },
+    "userJourney": {
+      "awareness": "Prise de Conscience",
+      "consideration": "ConsidÃ©ration",
+      "decision": "DÃ©cision"
+    },
+    "contentTypes": {
+      "blog": "Blog",
+      "product": "Produit",
+      "guide": "Guide",
+      "comparison": "Comparaison"
+    },
+    "trending": {
+      "hot": "Tendance",
+      "trending": "Tendance",
+      "score": "Score de Tendance"
+    },
+    "trends": {
+      "title": "IntÃ©gration Google Trends",
+      "integration": "DonnÃ©es en Direct",
+      "insights": "Insights de Tendance",
+      "insightsDescription": "Les mots-clÃ©s sont maintenant classÃ©s par popularitÃ© de tendance. Les mots-clÃ©s tendance (ðŸ”¥) indiquent un intÃ©rÃªt actuel Ã©levÃ©.",
+      "error": "DonnÃ©es de tendances indisponibles"
+    }
+  },
+  "step4": {
+    "title": "Structure & Ton",
+    "subtitle": "DÃ©finissez comment votre contenu sera organisÃ© et quel ton il devrait avoir",
+    "tone": {
+      "title": "Ton du Contenu",
+      "tooltip": "Le ton affecte la faÃ§on dont votre message est perÃ§u par votre audience.",
+      "label": "SÃ©lectionner le Ton du Contenu *",
+      "placeholder": "SÃ©lectionner un ton",
+      "example": "Exemple",
+      "writingSample": "Ã‰CHANTILLON D'Ã‰CRITURE",
+      "options": {
+        "friendly": "Amical",
+        "professional": "Professionnel",
+        "thoughtProvoking": "RÃ©flexif",
+        "expert": "Expert",
+        "persuasive": "Persuasif",
+        "informative": "Informatif / Neutre",
+        "casual": "DÃ©contractÃ© / Conversationnel",
+        "authoritative": "Autoritaire / Confiant",
+        "inspirational": "Inspirant / Motivant",
+        "humorous": "Humoristique / Spirituel",
+        "empathetic": "Empathique"
+      }
+    },
+    "structure": {
+      "title": "Format de Structure",
+      "tooltip": "Une structure claire aide les lecteurs Ã  suivre votre contenu et amÃ©liore l'engagement.",
+      "label": "Format de Structure du Contenu *",
+      "placeholder": "SÃ©lectionner le format de structure",
+      "flow": "Flux",
+      "structureBreakdown": "DÃ‰COMPOSITION DE LA STRUCTURE",
+      "breakdown": "DÃ‰COMPOSITION DE LA STRUCTURE",
+      "totalWords": "mots au total",
+      "structureAnalysis": "Analyse de Structure",
+      "analysisTitle": "Analyse de Structure",
+      "sectionsCount": "Sections",
+      "avgPerSection": "Moy. par section",
+      "readingTime": "Temps de lecture",
+      "minutes": "min",
+      "seoPotential": "Potentiel SEO",
+      "structureNotes": "Notes de Structure",
+      "notesPlaceholder": "ex. Inclure une introduction, 3 sections clÃ©s, et une conclusion avec appel Ã  l'action",
+      "addCustomNotes": "Ajouter des Notes de Structure PersonnalisÃ©es",
+      "includeStats": {
+        "label": "Inclure Statistiques & DonnÃ©es",
+        "description": "Ajouter des statistiques et donnÃ©es pertinentes pour soutenir vos points."
+      },
+      "options": {
+        "introPointsCta": {
+          "label": "Intro + 3 Points Principaux + CTA",
+          "useCase": "Articles de blog gÃ©nÃ©raux, leadership d'opinion",
+          "flow": "Accroche â†’ Point 1 â†’ Point 2 â†’ Point 3 â†’ Action"
+        },
+        "problemSolutionCta": {
+          "label": "ProblÃ¨me â†’ Solution â†’ Appel Ã  l'Action",
+          "useCase": "Contenu de vente, explications de services",
+          "flow": "ProblÃ¨me â†’ Impact â†’ Solution â†’ Ã‰tapes â†’ Action"
+        },
+        "howToSteps": {
+          "label": "Comment-Faire / Ã‰tape par Ã‰tape",
+          "useCase": "Tutoriels, guides de processus, articles actionnables",
+          "flow": "Intro â†’ PrÃ©requis â†’ Ã‰tape 1 â†’ Ã‰tape 2 â†’ Ã‰tape 3 â†’ Conseils"
+        },
+        "faqQa": {
+          "label": "FAQ / Format Q&R",
+          "useCase": "Pages SEO, explications de produits, aperÃ§us de services",
+          "flow": "Intro â†’ Q1+R â†’ Q2+R â†’ Q3+R â†’ Plus de Q&R â†’ Conclusion"
+        },
+        "comparisonVs": {
+          "label": "Comparaison / vs.",
+          "useCase": "Comparaisons de produits, alternatives logicielles, contenu de prise de dÃ©cision",
+          "flow": "Intro â†’ Option A â†’ Option B â†’ CÃ´te Ã  CÃ´te â†’ Avantages/InconvÃ©nients â†’ Recommandation"
+        },
+        "reviewAnalysis": {
+          "label": "Avis / Analyse",
+          "useCase": "Avis de produits, Ã©valuations de services",
+          "flow": "Intro â†’ FonctionnalitÃ©s â†’ Avantages â†’ InconvÃ©nients â†’ Performance â†’ Verdict"
+        },
+        "caseStudyDetailed": {
+          "label": "Ã‰tude de Cas",
+          "useCase": "Mise en valeur des histoires de succÃ¨s clients",
+          "flow": "Intro â†’ Contexte â†’ DÃ©fi â†’ Solution â†’ RÃ©sultats â†’ LeÃ§ons"
+        },
+        "storyFactsLessons": {
+          "label": "Histoire + Faits + LeÃ§ons",
+          "useCase": "Storytelling engageant avec support de donnÃ©es",
+          "flow": "Histoire â†’ Faits â†’ Analyse â†’ LeÃ§ons â†’ Application"
+        },
+        "listicle": {
+          "label": "Listicle (ex. 5 faÃ§ons de...)",
+          "useCase": "Ami des rÃ©seaux sociaux, consommation rapide",
+          "flow": "Intro â†’ Point 1 â†’ Point 2 â†’ Point 3 â†’ Point 4 â†’ Point 5"
+        },
+        "custom": {
+          "label": "Plan personnalisÃ©",
+          "useCase": "Structures de contenu uniques",
+          "flow": "DÃ©finissez votre propre flux"
+        }
+      },
+      "categories": {
+        "classic": "Classique",
+        "business": "Business",
+        "tutorial": "Tutoriel",
+        "support": "Support",
+        "analysis": "Analyse",
+        "narrative": "Narratif",
+        "advanced": "AvancÃ©"
+      },
+      "difficulty": {
+        "easy": "Facile",
+        "medium": "Moyen",
+        "hard": "Difficile"
+      },
+      "seoScore": {
+        "veryHigh": "TrÃ¨s Ã‰levÃ©",
+        "high": "Ã‰levÃ©",
+        "medium": "Moyen",
+        "variable": "Variable"
+      },
+      "sections": {
+        "introduction": "Introduction",
+        "introductionDesc": "Accroche et aperÃ§u",
+        "mainPoint1": "Point Principal 1",
+        "mainPoint1Desc": "Premier concept clÃ©",
+        "mainPoint2": "Point Principal 2",
+        "mainPoint2Desc": "DeuxiÃ¨me concept clÃ©",
+        "mainPoint3": "Point Principal 3",
+        "mainPoint3Desc": "TroisiÃ¨me concept clÃ©",
+        "callToAction": "Appel Ã  l'Action",
+        "callToActionDesc": "Prochaine Ã©tape claire",
+        "problemIdentification": "Identification du ProblÃ¨me",
+        "problemIdentificationDesc": "DÃ©finir le dÃ©fi",
+        "impactConsequences": "Impact & ConsÃ©quences",
+        "impactConsequencesDesc": "Pourquoi c'est important",
+        "solutionOverview": "AperÃ§u de la Solution",
+        "solutionOverviewDesc": "Votre approche",
+        "implementationSteps": "Ã‰tapes d'ImplÃ©mentation",
+        "implementationStepsDesc": "Comment appliquer",
+        "howToIntroDesc": "AperÃ§u et ce que les lecteurs apprendront",
+        "prerequisites": "PrÃ©requis",
+        "prerequisitesDesc": "Ce dont vous avez besoin avant de commencer",
+        "step1": "Ã‰tape 1",
+        "step1Desc": "PremiÃ¨re Ã©tape d'action",
+        "step2": "Ã‰tape 2",
+        "step2Desc": "DeuxiÃ¨me Ã©tape d'action",
+        "step3": "Ã‰tape 3",
+        "step3Desc": "TroisiÃ¨me Ã©tape d'action",
+        "additionalSteps": "Ã‰tapes SupplÃ©mentaires",
+        "additionalStepsDesc": "Plus d'Ã©tapes selon les besoins",
+        "conclusionTips": "Conclusion & Conseils",
+        "conclusionTipsDesc": "RÃ©sumÃ© et meilleures pratiques",
+        "topicOverviewDesc": "AperÃ§u du sujet",
+        "question1Answer": "Question 1 + RÃ©ponse",
+        "question1AnswerDesc": "Question la plus courante",
+        "question2Answer": "Question 2 + RÃ©ponse",
+        "question2AnswerDesc": "DeuxiÃ¨me question la plus courante",
+        "question3Answer": "Question 3 + RÃ©ponse",
+        "question3AnswerDesc": "TroisiÃ¨me question la plus courante",
+        "additionalQAs": "Q&R SupplÃ©mentaires",
+        "additionalQAsDesc": "Plus de questions selon les besoins",
+        "conclusion": "Conclusion",
+        "conclusionDesc": "RÃ©sumÃ© et prochaines Ã©tapes",
+        "comparisonIntroDesc": "Contexte et ce qui est comparÃ©",
+        "optionAOverview": "AperÃ§u de l'Option A",
+        "optionAOverviewDesc": "DÃ©tails de la premiÃ¨re option",
+        "optionBOverview": "AperÃ§u de l'Option B",
+        "optionBOverviewDesc": "DÃ©tails de la deuxiÃ¨me option",
+        "sideBySideComparison": "Comparaison CÃ´te Ã  CÃ´te",
+        "sideBySideComparisonDesc": "Comparaison directe des fonctionnalitÃ©s",
+        "prosAndCons": "Avantages et InconvÃ©nients",
+        "prosAndConsDesc": "Avantages et inconvÃ©nients",
+        "recommendation": "Recommandation",
+        "recommendationDesc": "Quelle option choisir quand",
+        "reviewIntroDesc": "Ce qui est Ã©valuÃ©",
+        "keyFeatures": "FonctionnalitÃ©s ClÃ©s",
+        "keyFeaturesDesc": "FonctionnalitÃ©s et capacitÃ©s principales",
+        "pros": "Avantages",
+        "prosDesc": "Ce qui fonctionne bien",
+        "cons": "InconvÃ©nients",
+        "consDesc": "Limitations et inconvÃ©nients",
+        "performanceAnalysis": "Analyse de Performance",
+        "performanceAnalysisDesc": "Comment Ã§a fonctionne en pratique",
+        "finalVerdict": "Verdict Final",
+        "finalVerdictDesc": "Recommandation globale",
+        "caseStudyOverviewDesc": "AperÃ§u de l'Ã©tude de cas",
+        "background": "Contexte",
+        "backgroundDesc": "Contexte et situation",
+        "challenge": "DÃ©fi",
+        "challengeDesc": "Le problÃ¨me qui devait Ãªtre rÃ©solu",
+        "solution": "Solution",
+        "solutionDesc": "Approche et implÃ©mentation",
+        "results": "RÃ©sultats",
+        "resultsDesc": "RÃ©sultats et mÃ©triques",
+        "lessonsLearned": "LeÃ§ons Apprises",
+        "lessonsLearnedDesc": "Points clÃ©s et insights",
+        "openingStory": "Histoire d'Ouverture",
+        "openingStoryDesc": "Narratif engageant",
+        "keyFactsData": "Faits ClÃ©s & DonnÃ©es",
+        "keyFactsDataDesc": "Preuves de soutien",
+        "analysis": "Analyse",
+        "analysisDesc": "Ce que Ã§a signifie",
+        "application": "Application",
+        "applicationDesc": "Comment utiliser",
+        "listOverviewDesc": "AperÃ§u de la liste",
+        "point1": "Point 1",
+        "point1Desc": "Premier Ã©lÃ©ment",
+        "point2": "Point 2",
+        "point2Desc": "DeuxiÃ¨me Ã©lÃ©ment",
+        "point3": "Point 3",
+        "point3Desc": "TroisiÃ¨me Ã©lÃ©ment",
+        "point4": "Point 4",
+        "point4Desc": "QuatriÃ¨me Ã©lÃ©ment",
+        "point5": "Point 5",
+        "point5Desc": "CinquiÃ¨me Ã©lÃ©ment",
+        "customStructure": "Structure PersonnalisÃ©e",
+        "customStructureDesc": "DÃ©finissez vos propres sections",
+        "understandingTopic": "Comprendre {{keywordText}} : Un Guide Complet",
+        "understandingTopicDesc": "Titre principal de l'article",
+        "backgroundOfTopic": "Contexte de {{keywordText}}",
+        "backgroundOfTopicDesc": "Explication dÃ©taillÃ©e du contexte",
+        "keyConceptsOfTopic": "Concepts ClÃ©s de {{keywordText}}",
+        "keyConceptsOfTopicDesc": "Explication dÃ©taillÃ©e des concepts clÃ©s",
+        "implementationOfTopic": "ImplÃ©mentation de {{keywordText}}",
+        "implementationOfTopicDesc": "Explication dÃ©taillÃ©e de l'implÃ©mentation",
+        "bestPracticesOfTopic": "Meilleures Pratiques de {{keywordText}}",
+        "bestPracticesOfTopicDesc": "Explication dÃ©taillÃ©e des meilleures pratiques"
+      }
+    },
+    "customOutline": {
+      "title": "Plan de Contenu PersonnalisÃ©",
+      "label": "Notes de Plan/Structure",
+      "placeholder": "DÃ©crivez votre structure de contenu prÃ©fÃ©rÃ©e, les points principaux Ã  couvrir, ou tout flux spÃ©cifique que vous voulez..."
+    },
+    "contentType": {
+      "title": "Type de Contenu",
+      "tooltip": "Le type de contenu aide Ã  adapter le style d'Ã©criture et la structure.",
+      "label": "Type de Contenu",
+      "placeholder": "SÃ©lectionner le type de contenu",
+      "insights": "Insights",
+      "recommendedTones": "Meilleurs tons",
+      "idealLength": "Longueur idÃ©ale",
+      "anyTone": "N'importe quel ton",
+      "options": {
+        "blogArticle": "Article de Blog",
+        "newsletter": "Newsletter",
+        "caseStudy": "Ã‰tude de Cas",
+        "guide": "Guide",
+        "thoughtPiece": "PiÃ¨ce de RÃ©flexion",
+        "howToSteps": "Comment-Faire / Ã‰tape par Ã‰tape",
+        "faqQa": "FAQ / Q&R",
+        "comparisonVs": "Comparaison / vs.",
+        "reviewAnalysis": "Avis / Analyse",
+        "caseStudyDetailed": "Ã‰tude de Cas (DÃ©taillÃ©e)"
+      },
+      "descriptions": {
+        "blogArticle": "Contenu de blog polyvalent",
+        "newsletter": "Contenu de newsletter email",
+        "caseStudy": "Ã‰tudes de cas business dÃ©taillÃ©es",
+        "guide": "Guides complets comment-faire",
+        "thoughtPiece": "Opinions et perspectives d'industrie",
+        "howToSteps": "Contenu tutoriel et instructif",
+        "faqQa": "Format question et rÃ©ponse",
+        "comparisonVs": "Comparaisons de produits ou services",
+        "reviewAnalysis": "Avis de produits ou services",
+        "caseStudyDetailed": "Analyse d'Ã©tude de cas approfondie"
+      }
+    },
+    "cta": {
+      "title": "Appel Ã  l'Action",
+      "placeholder": "SÃ©lectionner le type de CTA",
+      "ctaPreview": "APERÃ‡U CTA",
+      "options": {
+        "subscribe": "S'abonner",
+        "bookCall": "RÃ©server un Appel",
+        "download": "TÃ©lÃ©charger Gratuitement",
+        "visitWebsite": "Visiter le Site Web",
+        "none": "Aucun"
+      },
+      "previews": {
+        "subscribe": "PrÃªt Ã  obtenir plus d'insights comme celui-ci ? Abonnez-vous Ã  notre newsletter pour des conseils hebdomadaires livrÃ©s directement dans votre boÃ®te de rÃ©ception.",
+        "bookCall": "Vous voulez approfondir ? RÃ©servez une consultation gratuite de 30 minutes pour discuter de vos besoins et objectifs spÃ©cifiques.",
+        "download": "Passez Ã  l'action aujourd'hui ! TÃ©lÃ©chargez notre guide de ressources gratuit avec des modÃ¨les et des listes de contrÃ´le pour commencer.",
+        "visitWebsite": "En savoir plus sur nos solutions et voir comment nous pouvons vous aider Ã  atteindre vos objectifs.",
+        "none": "Le contenu se termine par une conclusion forte sans appel Ã  l'action spÃ©cifique."
+      },
+      "buttons": {
+        "subscribeNow": "S'abonner Maintenant",
+        "scheduleCall": "Programmer un Appel",
+        "downloadGuide": "TÃ©lÃ©charger le Guide Gratuit",
+        "visitWebsite": "Visiter Notre Site Web"
+      }
+    },
+    "wordCount": {
+      "title": "Longueur du Contenu",
+      "label": "Nombre de Mots",
+      "seoRange": "1200-1800 (SEO Optimal)",
+      "seoOptimalRange": "1200-1800 (SEO Optimal)",
+      "impactTitle": "Impact de la Longueur du Contenu",
+      "readingTime": "Temps de lecture estimÃ©",
+      "recommendation": {
+        "prefix": "Pour",
+        "withTone": "contenu avec un",
+        "ideal": " cette longueur est idÃ©ale pour le SEO et l'engagement des lecteurs.",
+        "optimal": " une longueur de {{min}}-{{max}} mots est recommandÃ©e pour des rÃ©sultats optimaux.",
+        "tooShort": " considÃ©rez ajouter plus de contenu. Au moins {{min}} mots est recommandÃ©.",
+        "tooLong": " votre contenu pourrait Ãªtre trop long pour un engagement optimal. ConsidÃ©rez le diviser en plusieurs parties."
+      },
+      "recommendations": {
+        "seoIdeal": " cette longueur est idÃ©ale pour le SEO et l'engagement des lecteurs.",
+        "optimal": " une longueur de {{min}}-{{max}} mots est recommandÃ©e pour des rÃ©sultats optimaux.",
+        "tooShort": " considÃ©rez ajouter plus de contenu. Au moins {{min}} mots est recommandÃ©.",
+        "tooLong": " votre contenu pourrait Ãªtre trop long pour un engagement optimal. ConsidÃ©rez le diviser en plusieurs parties."
+      },
+      "status": {
+        "seoOptimal": "SEO Optimal",
+        "tooShort": "Trop Court",
+        "veryLong": "TrÃ¨s Long",
+        "wordCount": "{{count}} mots"
+      }
+    },
+    "preview": {
+      "title": "AperÃ§u du Contenu",
+      "description": "Voir comment votre contenu apparaÃ®tra et coulera",
+      "live": "AperÃ§u en Direct",
+      "contentOutline": "Plan du Contenu",
+      "images": "Images",
+      "minRead": "min de lecture",
+      "estReadingTime": "Temps de lecture estimÃ©",
+      "sectionContent": {
+        "heading": "Titre principal avec placement de mot-clÃ© primaire",
+        "paragraph": "Accrocher les lecteurs avec une ouverture convaincante",
+        "list": "Explication dÃ©taillÃ©e avec exemples",
+        "image": "ReprÃ©sentation visuelle ou diagramme",
+        "quote": "Citation de soutien ou tÃ©moignage",
+        "cta": "Que faire aprÃ¨s la lecture"
+      },
+      "sectionType": {
+        "heading": "Titre",
+        "paragraph": "Paragraphe",
+        "list": "Liste",
+        "image": "Image",
+        "quote": "Citation",
+        "cta": "Appel Ã  l'Action",
+        "mainTitle": "Titre principal de l'article"
+      },
+      "sampleTitle": "Comprendre {{keywordText}} : Un Guide Complet",
+      "sampleIntro": "Dans le paysage business compÃ©titif d'aujourd'hui, comprendre votre sujet est devenu essentiel pour les professionnels. Cette approche complÃ¨te vous aidera Ã  implÃ©menter des stratÃ©gies efficaces qui gÃ©nÃ¨rent des rÃ©sultats mesurables.",
+      "sampleSectionTitle": "Section ClÃ©",
+      "sampleSectionDesc": "Cette section plongera plus profondÃ©ment dans les aspects spÃ©cifiques de {{keywordText}}, fournissant des insights actionnables et des exemples pratiques que {{audience}} peut implÃ©menter immÃ©diatement dans leur {{industry}}.",
+      "sampleBenefit1": "BÃ©nÃ©fice ou insight clÃ© #1",
+      "sampleBenefit2": "BÃ©nÃ©fice ou insight clÃ© #2",
+      "sampleBenefit3": "BÃ©nÃ©fice ou insight clÃ© #3",
+      "sampleCtaTitle": "Prochaines Ã‰tapes",
+      "sampleCtaDesc": "PrÃªt Ã  implÃ©menter ces stratÃ©gies {{keywordText}} ? Commencez par la premiÃ¨re recommandation et suivez vos progrÃ¨s.",
+      "defaultAudience": "lecteurs",
+      "defaultIndustry": "travail",
+      "tonePreviewTitle": "AperÃ§u du Ton {{contentTone}}",
+      "tonePreviewDesc": "Votre contenu sera Ã©crit dans un ton <strong>{{contentTone}}</strong>, {{toneExplanation}}",
+      "toneExplanation": {
+        "professional": "maintenant un style formel, appropriÃ© au business avec expertise d'industrie.",
+        "casual": "utilisant un langage dÃ©tendu et conversationnel comme parler Ã  un ami autour d'un cafÃ©.",
+        "authoritative": "dÃ©montrant une voix de leadership forte avec confiance et crÃ©dibilitÃ© Ã  travers des dÃ©clarations soutenues par la recherche.",
+        "friendly": "crÃ©ant une atmosphÃ¨re chaleureuse et accueillante qui construit une connexion avec les lecteurs.",
+        "conversational": "engageant les lecteurs comme si vous leur parliez directement dans un dialogue naturel.",
+        "educational": "se concentrant sur des instructions claires et le transfert de connaissances avec des explications systÃ©matiques.",
+        "informative": "fournissant des informations objectives et Ã©quilibrÃ©es dans un style encyclopÃ©dique parfait pour le contenu factuel.",
+        "inspirational": "motivant et Ã©levant les lecteurs avec un langage encourageant idÃ©al pour le contenu de coaching et de bien-Ãªtre.",
+        "humorous": "incorporant de l'esprit lÃ©ger et de l'humour pour rendre le contenu engageant et divertissant.",
+        "empathetic": "utilisant un langage chaleureux et comprÃ©hensif parfait pour des sujets sensibles comme la santÃ© et le bien-Ãªtre mental."
+      }
+    },
+    "guide": {
+      "title": "Guide de SÃ©lection de Structure Intelligente",
+      "seoImpact": "Impact SEO",
+      "seoText": "Les formats Comment-Faire et FAQ se classent gÃ©nÃ©ralement le plus haut dans les rÃ©sultats de recherche. Le contenu tutoriel avec des instructions Ã©tape par Ã©tape reÃ§oit plus d'engagement et de meilleures fonctionnalitÃ©s SERP.",
+      "structureFlow": "Flux de Structure",
+      "structureText": "Chaque format montre son flux de contenu pour une visualisation facile. La note de difficultÃ© vous aide Ã  choisir basÃ© sur votre expÃ©rience d'Ã©criture et vos contraintes de temps.",
+      "bestPractices": "Meilleures Pratiques",
+      "bestPracticesText": "Utilisez des structures de comparaison pour le contenu de prise de dÃ©cision, des Ã©tudes de cas pour mettre en valeur les rÃ©sultats, et des formats FAQ pour rÃ©pondre aux questions communes des utilisateurs."
+    },
+    "recommendation": {
+      "title": "Recommandation pour",
+      "yourContent": "votre contenu",
+      "guide": "La structure Comment-Faire/Ã‰tape par Ã‰tape fonctionne le mieux pour les guides - haute valeur SEO et engagement utilisateur.",
+      "blogArticle": "Intro + 3 Points Principaux ou structures ProblÃ¨meâ†’Solution sont idÃ©ales pour les articles de blog.",
+      "caseStudy": "La structure Ã‰tude de Cas est parfaite - raconte une histoire complÃ¨te du dÃ©fi aux rÃ©sultats.",
+      "newsletter": "Histoire + Faits + LeÃ§ons maintient les lecteurs de newsletter engagÃ©s avec un flux narratif.",
+      "default": "Choisissez basÃ© sur votre objectif : Comment-Faire pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu de prise de dÃ©cision."
+    },
+    "tips": {
+      "title": "Guide de SÃ©lection de Structure Intelligente",
+      "recommendation": "Recommandation pour {{contentType}} :",
+      "yourContent": "votre contenu",
+      "seoImpact": {
+        "title": "Impact SEO",
+        "description": "Les formats Comment-Faire et FAQ se classent gÃ©nÃ©ralement le plus haut dans les rÃ©sultats de recherche. Le contenu tutoriel avec des instructions Ã©tape par Ã©tape reÃ§oit plus d'engagement et de meilleures fonctionnalitÃ©s SERP."
+      },
+      "structureFlow": {
+        "title": "Flux de Structure",
+        "description": "Chaque format montre son flux de contenu pour une visualisation facile. La note de difficultÃ© vous aide Ã  choisir basÃ© sur votre expÃ©rience d'Ã©criture et vos contraintes de temps."
+      },
+      "bestPractices": {
+        "title": "Meilleures Pratiques",
+        "description": "Utilisez des structures de comparaison pour le contenu de prise de dÃ©cision, des Ã©tudes de cas pour mettre en valeur les rÃ©sultats, et des formats FAQ pour rÃ©pondre aux questions communes des utilisateurs."
+      },
+      "recommendations": {
+        "guide": "La structure Comment-Faire/Ã‰tape par Ã‰tape fonctionne le mieux pour les guides - haute valeur SEO et engagement utilisateur.",
+        "blogArticle": "Intro + 3 Points Principaux ou structures ProblÃ¨meâ†’Solution sont idÃ©ales pour les articles de blog.",
+        "caseStudy": "La structure Ã‰tude de Cas est parfaite - raconte une histoire complÃ¨te du dÃ©fi aux rÃ©sultats.",
+        "newsletter": "Histoire + Faits + LeÃ§ons maintient les lecteurs de newsletter engagÃ©s avec un flux narratif.",
+        "default": "Choisissez basÃ© sur votre objectif : Comment-Faire pour les tutoriels, FAQ pour le SEO, Comparaison pour le contenu de prise de dÃ©cision."
+      }
+    },
+    "quality": {
+      "excellent": "Structure de contenu parfaite",
+      "good": "Bonne fondation de structure",
+      "suggestions": {
+        "selectTone": "SÃ©lectionnez un ton qui correspond Ã  votre audience",
+        "chooseStructure": "Choisissez un format de structure pour une meilleure organisation",
+        "addOutline": "Ajoutez des notes de plan personnalisÃ©es pour des conseils plus spÃ©cifiques"
+      }
+    }
+  },
+  "step5": {
+    "title": "ParamÃ¨tres de GÃ©nÃ©ration",
+    "subtitle": "Personnalisez votre gÃ©nÃ©ration de contenu avec des recommandations intelligentes",
+    "contentSummary": {
+      "title": "RÃ©sumÃ© du Contenu",
+      "contentType": "Type de Contenu :",
+      "wordCount": "Nombre de Mots :",
+      "readingLevel": "Niveau de Lecture :",
+      "detailsTitle": "DÃ©tails du Contenu",
+      "details": "Guides et couverture approfondie Ã©tape par Ã©tape"
+    },
+    "outputFormat": {
+      "title": "Format de Sortie",
+      "markdown": {
+        "desc": "Parfait pour les dÃ©veloppeurs et le contenu technique",
+        "cleanFormatting": "Formatage propre",
+        "githubCompatible": "Compatible GitHub",
+        "easyToEdit": "Facile Ã  Ã©diter"
+      },
+      "html": {
+        "desc": "PrÃªt pour la publication web",
+        "webReady": "PrÃªt pour le web",
+        "seoOptimized": "OptimisÃ© SEO",
+        "styledOutput": "Sortie stylÃ©e"
+      },
+      "gdocs": {
+        "desc": "Ã‰dition collaborative et partage",
+        "teamCollab": "Collaboration d'Ã©quipe",
+        "commentSystem": "SystÃ¨me de commentaires",
+        "versionHistory": "Historique des versions"
+      }
+    },
+    "advancedOptions": {
+      "title": "Options AvancÃ©es",
+      "plagiarismCheck": "VÃ©rification de Plagiat",
+      "plagiarismCheckDesc": "VÃ©rifier l'originalitÃ© du contenu et dÃ©tecter les problÃ¨mes potentiels",
+      "includeImages": "Inclure les Suggestions d'Images",
+      "includeImagesDesc": "L'IA suggÃ©rera des images et Ã©lÃ©ments visuels pertinents"
+    },
+    "summary": {
+      "title": "RÃ©sumÃ© des Recommandations Intelligentes",
+      "optimizationStatus": "Statut d'Optimisation",
+      "seoOptimization": "Optimisation SEO :",
+      "contentLength": "Longueur du Contenu :",
+      "readingLevel": "Niveau de Lecture :",
+      "generationSettings": "ParamÃ¨tres de GÃ©nÃ©ration :",
+      "estimatedTime": "Temps EstimÃ© :",
+      "outputFormat": "Format de Sortie :",
+      "qualityChecks": "VÃ©rifications de QualitÃ© :"
+    },
+    "status": {
+      "contentOptimal": "Bonne Longueur pour le Type de Contenu",
+      "tooShort": "Longueur du Contenu : Du cÃ´tÃ© court",
+      "tooLong": "Longueur du Contenu : Du cÃ´tÃ© long",
+      "seoOptimal": "Longueur SEO Optimale",
+      "good": "Bon",
+      "optimal": "Optimal"
+    },
+    "estimatedTime": {
+      "basedOn": "BasÃ© sur la complexitÃ© du contenu, le nombre de mots, et les fonctionnalitÃ©s supplÃ©mentaires"
+    },
+    "generationDetails": {
+      "title": "DÃ©tails de GÃ©nÃ©ration",
+      "readingLevel": "Niveau de Lecture",
+      "estimatedTime": "Temps de GÃ©nÃ©ration EstimÃ©",
+      "featuresTitle": "FonctionnalitÃ©s de GÃ©nÃ©ration",
+      "imageSuggestions": "Suggestions d'images {{status}}",
+      "stats": "Statistiques & donnÃ©es {{status}}",
+      "seoOptimization": "Optimisation SEO {{status}}"
+    }
+  },
+  "step6": {
+    "title": "RÃ©vision & GÃ©nÃ©ration",
+    "subtitle": "RÃ©visez vos paramÃ¨tres de contenu, vÃ©rifiez les scores d'optimisation, et gÃ©nÃ©rez votre contenu",
+    "seoScore": {
+      "title": "Score SEO",
+      "grade": "Note {{grade}}",
+      "points": "{{points}}/100 points sur {{factors}} facteurs"
+    },
+    "completion": {
+      "title": "ComplÃ©tion",
+      "badge": "{{completed}}/{{total}}",
+      "required": "Requis",
+      "requiredItems": "{{completed}}/{{total}} Ã©lÃ©ments requis complÃ©tÃ©s"
+    },
+    "publishReady": {
+      "title": "PrÃªt Ã  Publier",
+      "grade": "{{grade}}",
+      "overall": "PrÃ©paration globale pour la publication"
+    },
+    "completionChecklist": {
+      "title": "Liste de VÃ©rification de ComplÃ©tion du Contenu",
+      "required": "Requis",
+      "edit_button": "Modifier"
+    },
+    "seoScoreBreakdown": {
+      "title": "DÃ©composition du Score SEO",
+      "improve_button": "AmÃ©liorer"
+    },
+    "generationCost": {
+      "basicContent": "GÃ©nÃ©ration de contenu de base",
+      "standardFormatting": "Formatage standard",
+      "enhancedContent": "Contenu amÃ©liorÃ©",
+      "imageSuggestions": "Suggestions d'images",
+      "seoOptimization": "Optimisation SEO",
+      "advancedContent": "Contenu avancÃ©",
+      "researchIntegration": "IntÃ©gration de recherche",
+      "plagiarismCheck": "VÃ©rification de plagiat",
+      "multipleFormats": "Formats multiples"
+    },
+    "exportSettings": {
+      "title": "ParamÃ¨tres d'Export",
+      "selectFormats": "SÃ©lectionner les Formats d'Export :"
+    },
+    "shareDraft": {
+      "title": "Partager le Brouillon",
+      "desc": "Partagez vos paramÃ¨tres de contenu avec les membres de l'Ã©quipe ou collaborateurs avant la gÃ©nÃ©ration.",
+      "generateLink": "GÃ©nÃ©rer le Lien de Partage",
+      "email": "Email",
+      "shareableLink": "Lien Partageable :",
+      "copied": "CopiÃ©",
+      "copy": "Copier",
+      "twitter": "Twitter",
+      "facebook": "Facebook"
+    },
+    "publishReadinessAnalysis": {
+      "title": "Analyse de PrÃ©paration Ã  la Publication"
+    },
+    "checklist": {
+      "topic": "Sujet dÃ©fini",
+      "industryAudience": "Secteur & Audience sÃ©lectionnÃ©s",
+      "keywords": "Mots-clÃ©s ajoutÃ©s",
+      "title": "Titre SEO optimisÃ©",
+      "structure": "Structure de contenu dÃ©finie",
+      "tone": "Ton de contenu sÃ©lectionnÃ©",
+      "wordCount": "Nombre de mots configurÃ©",
+      "format": "Format de sortie sÃ©lectionnÃ©",
+      "media": "PrÃ©fÃ©rences de mÃ©dias dÃ©finies",
+      "qualityChecks": "VÃ©rifications de qualitÃ© activÃ©es"
+    },
+    "seoFactors": {
+      "seoTitle": "Titre OptimisÃ© SEO",
+      "targetKeywords": "Mots-clÃ©s Cibles",
+      "contentLength": "Longueur du Contenu",
+      "structure": "Structure du Contenu",
+      "readability": "LisibilitÃ©",
+      "media": "IntÃ©gration MÃ©dias",
+      "meta": "Optimisation Meta",
+      "status": {
+        "good": "Bon",
+        "needsWork": "NÃ©cessite du travail",
+        "couldImprove": "Pourrait s'amÃ©liorer"
+      },
+      "improve": "AmÃ©liorer",
+      "defined": "Structure dÃ©finie",
+      "noStructure": "Aucune structure sÃ©lectionnÃ©e",
+      "toneSelected": "Ton sÃ©lectionnÃ© pour l'audience cible",
+      "noTone": "Aucun ton spÃ©cifiÃ©",
+      "imagesSuggested": "Des images seront suggÃ©rÃ©es",
+      "noMedia": "Aucune intÃ©gration de mÃ©dias",
+      "metaDefined": "Secteur et audience dÃ©finis",
+      "missingMeta": "Informations meta manquantes",
+      "keywordsSelected": "{{count}} mots-clÃ©s sÃ©lectionnÃ©s",
+      "words": "{{count}} mots (optimal : 1200-1800)",
+      "titleOptimized": "Le titre est correctement optimisÃ©",
+      "titleNeedsOptimization": "Le titre nÃ©cessite une optimisation"
+    },
+    "export": {
+      "markdown": "Markdown (.md)",
+      "markdown.desc": "Parfait pour les dÃ©veloppeurs et le contrÃ´le de version",
+      "html": "HTML (.html)",
+      "html.desc": "PrÃªt pour la publication web",
+      "docx": "Microsoft Word (.docx)",
+      "docx.desc": "Format de document professionnel",
+      "pdf": "PDF (.pdf)",
+      "pdf.desc": "Format de prÃ©sentation professionnel",
+      "gdocs": "Google Docs",
+      "gdocs.desc": "Ã‰dition collaborative et partage",
+      "feature": {
+        "cleanFormatting": "Formatage propre",
+        "platformAgnostic": "IndÃ©pendant de la plateforme",
+        "easyEditing": "Ã‰dition facile",
+        "webReady": "PrÃªt pour le web",
+        "seoMetaTags": "Balises meta SEO",
+        "styledOutput": "Sortie stylÃ©e",
+        "richFormatting": "Formatage riche",
+        "commentsSupport": "Support des commentaires",
+        "trackChanges": "Suivi des modifications",
+        "printReady": "PrÃªt pour l'impression",
+        "universalCompatibility": "CompatibilitÃ© universelle",
+        "fixedLayout": "Mise en page fixe",
+        "realTimeCollab": "Collaboration en temps rÃ©el",
+        "commentSystem": "SystÃ¨me de commentaires",
+        "cloudStorage": "Stockage cloud"
+      }
+    },
+    "publishReadiness": {
+      "contentCompleteness": "ComplÃ©tude du Contenu",
+      "seoOptimization": "Optimisation SEO",
+      "technicalSetup": "Configuration Technique",
+      "qualityAssurance": "Assurance QualitÃ©",
+      "engagementFeatures": "FonctionnalitÃ©s d'Engagement",
+      "requiredItems": "{{completed}}/{{total}} Ã©lÃ©ments requis complÃ©tÃ©s",
+      "seoScore": "Score SEO : {{score}}%",
+      "exportConfigured": "Formats d'export et paramÃ¨tres configurÃ©s",
+      "plagiarismEnabled": "VÃ©rification de plagiat activÃ©e",
+      "basicChecks": "VÃ©rifications de qualitÃ© de base",
+      "images": "Images",
+      "noImages": "Aucune image",
+      "ctaIncluded": "CTA inclus",
+      "noCta": "Aucun CTA"
+    },
+    "button": {
+      "edit": "Modifier",
+      "improve": "AmÃ©liorer"
+    },
+    "seo_score_factor": {
+      "title": "Titre OptimisÃ© SEO",
+      "keywords": "Mots-clÃ©s Cibles",
+      "word_count": "Longueur du Contenu",
+      "structure": "Structure du Contenu",
+      "readability": "LisibilitÃ©",
+      "media_integration": "IntÃ©gration MÃ©dias",
+      "meta_optimization": "Optimisation Meta"
+    },
+    "seo_score_description": {
+      "title_optimized": "Le titre est correctement optimisÃ©",
+      "title_needs_optimization": "Le titre nÃ©cessite une optimisation",
+      "keywords": "{{count}} mots-clÃ©s sÃ©lectionnÃ©s",
+      "word_count": "{{count}} mots (optimal : 1200-1800)",
+      "structure": "{{structure}}",
+      "structure_defined": "Structure dÃ©finie",
+      "structure_no_structure": "Aucune structure sÃ©lectionnÃ©e",
+      "readability": "{{tone}}",
+      "tone_selected": "Ton sÃ©lectionnÃ© pour l'audience cible",
+      "tone_not_specified": "Aucun ton spÃ©cifiÃ©",
+      "media_integration_images_suggested": "Des images seront suggÃ©rÃ©es",
+      "media_integration_no_media": "Aucune intÃ©gration de mÃ©dias",
+      "meta_optimization_industry_audience_defined": "Secteur et audience dÃ©finis",
+      "meta_optimization_missing_meta": "Informations meta manquantes"
+    },
+    "completion_checklist": {
+      "topic": "Sujet dÃ©fini",
+      "industry_audience": "Secteur & Audience sÃ©lectionnÃ©s",
+      "keywords": "Mots-clÃ©s ajoutÃ©s",
+      "title": "Titre SEO optimisÃ©",
+      "structure": "Structure de contenu dÃ©finie",
+      "tone": "Ton de contenu sÃ©lectionnÃ©",
+      "word_count": "Nombre de mots configurÃ©",
+      "format": "Format de sortie sÃ©lectionnÃ©",
+      "media": "PrÃ©fÃ©rences de mÃ©dias dÃ©finies",
+      "quality_checks": "VÃ©rifications de qualitÃ© activÃ©es"
+    },
+    "publish_readiness_factor": {
+      "content_completeness": "ComplÃ©tude du Contenu",
+      "seo_optimization": "Optimisation SEO",
+      "technical_setup": "Configuration Technique",
+      "quality_assurance": "Assurance QualitÃ©",
+      "engagement_features": "FonctionnalitÃ©s d'Engagement"
+    },
+    "publish_readiness_description": {
+      "content_completeness": "{{completed}}/{{total}} Ã©lÃ©ments requis complÃ©tÃ©s",
+      "seo_optimization": "Score SEO : {{score}}%",
+      "technical_setup": "Formats d'export et paramÃ¨tres configurÃ©s",
+      "quality_assurance_plagiarism_enabled": "VÃ©rification de plagiat activÃ©e",
+      "quality_assurance_basic_checks": "VÃ©rifications de qualitÃ© de base",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "Aucune image",
+      "cta_included": "CTA inclus",
+      "no_cta": "Aucun CTA"
+    },
+    "grade": {
+      "A": "Note A",
+      "B": "Note B",
+      "C": "Note C",
+      "D": "Note D",
+      "excellent": "Excellent",
+      "good": "Bon",
+      "fair": "Correct",
+      "needs_work": "NÃ©cessite du Travail"
+    },
+    "review_generate_title": "RÃ©vision & GÃ©nÃ©ration",
+    "review_generate_description": "RÃ©visez vos paramÃ¨tres de contenu, vÃ©rifiez les scores d'optimisation, et gÃ©nÃ©rez votre contenu.",
+    "completion_checklist_title": "Liste de VÃ©rification de ComplÃ©tion du Contenu",
+    "completion_checklist_required": "Requis",
+    "completion_checklist_edit_button": "Modifier",
+    "seo_score_title": "Score SEO",
+    "seo_score_grade": "Note {{grade}}",
+    "seo_score_total_points": "{{total}}/100 points sur {{factors}} facteurs",
+    "completion_title": "ComplÃ©tion",
+    "completion_required_items": "{{completed}}/{{total}} Ã©lÃ©ments requis complÃ©tÃ©s",
+    "publish_readiness_title": "PrÃªt Ã  Publier",
+    "publish_readiness_description_details": {
+      "content_completeness": "{{completed}}/{{total}} required items complete",
+      "seo_optimization": "SEO score: {{score}}%",
+      "technical_setup": "Export formats and settings configured",
+      "quality_assurance_plagiarism_enabled": "Plagiarism checking enabled",
+      "quality_assurance_basic_checks": "Basic quality checks",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "No images",
+      "cta_included": "CTA included",
+      "no_cta": "No CTA"
+    },
+    "seo_score_breakdown_title": "SEO Score Breakdown",
+    "seo_score_breakdown_improve_button": "Improve",
+    "generation_settings_title": "Generation Cost & Settings",
+    "generation_cost_credits": "{{credits}} Credits Required",
+    "generation_estimated_time": "Estimated generation time: {{time}} minutes",
+    "generation_included_features": "Included Features:",
+    "export_settings_title": "Export Settings",
+    "export_formats_label": "Select Export Formats:",
+    "share_draft_title": "Share Draft",
+    "share_draft_description": "Share your content settings with team members or collaborators before generating.",
+    "generate_share_link_button": "Generate Share Link",
+    "email_button": "Email",
+    "shareable_link_label": "Shareable Link:",
+    "copy_link_copied": "Copied",
+    "copy_link_button": "Copy",
+    "twitter_button": "Twitter",
+    "facebook_button": "Facebook",
+    "publish_readiness_analysis_title": "Publish Readiness Analysis",
+    "generating_content_title": "Generating Your Content",
+    "generating_outline_description": "Creating a smart content outline...",
+    "generating_content_description": "Generating human-like content...",
+    "finalizing_content_description": "Finalizing content...",
+    "generating_outline_explanation": "creating a sophisticated content outline with smart structure",
+    "generating_content_explanation": "turning the outline into engaging, audience-optimized content",
+    "finalizing_content_explanation": "Applying final formatting, quality checks, and SEO optimization",
+    "outline_badge": "Outline",
+    "content_badge": "Content",
+    "finalize_badge": "Finalize",
+    "generation_time_explanation": "This process takes about {{time}} minutes. Please do not close this window.",
+    "generation_failed_title": "Generation Failed",
+    "retry_generation_button": "Retry Generation",
+    "ready_to_generate_title": "Ready to Generate Your Content?",
+    "ready_to_generate_description": "Your content will be generated with the current settings. This process will take about {{time}} minutes.",
+    "generate_button_login_text": "Please log in",
+    "generate_button_loading_text": "Loading...",
+    "generate_button_insufficient_credits_text": "Insufficient credits (Need 4)",
+    "generate_button_complete_required_items_text": "Complete required items",
+    "generate_button_generate_text": "Generate Content (4 Credits)",
+    "generate_button_login_prompt": "Please log in to generate content.",
+    "generate_button_insufficient_credits_prompt": "Insufficient credits: You have {{remaining}} credits, but {{credits}} are needed for long-form content.",
+    "generate_button_upgrade_plan_button": "Upgrade Plan",
+    "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
+    "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
+    "generate_button_credits_available": "You have {{credits}} credits available",
+    "publish_readiness_description_text": "Overall readiness for publication",
+    "link_copied_description": "The shareable link has been copied to your clipboard",
+    "copy_failed": "Copy failed",
+    "copy_failed_description": "Unable to copy link to clipboard. Please copy manually.",
+    "generate_link_first": "Please generate a link first",
+    "social_share_text": "Check out this {{topic}} content draft I'm working on with {{app}}!",
+    "email_subject": "Content Draft: {{topic}}",
+    "email_body": "Hi,\n\nI wanted to share a content draft I'm working on about {{topic}}.\n\nYou can view it here: {{url}}\n\nThis was created using {{app}}.\n\nBest regards!"
+  },
+  "smartComponents": {
+    "topicEngine": {
+      "title": "Topic Suggestions",
+      "description": "AI-generated topic ideas based on your content focus",
+      "disclaimer": "These are AI-generated suggestions and metrics for demonstration purposes.",
+      "templates": {
+        "howTo": {
+          "description": "Step-by-step guides"
+        },
+        "ultimateGuide": {
+          "description": "Comprehensive guides"
+        },
+        "waysTo": {
+          "description": "List-based content"
+        },
+        "bestPractices": {
+          "description": "Industry standards"
+        },
+        "caseStudy": {
+          "description": "Real-world examples"
+        },
+        "trending": {
+          "description": "Current hot topics"
+        },
+        "comparison": {
+          "description": "Product/service comparisons"
+        }
+      },
+      "buttons": {
+        "newTopics": "New Topics",
+        "newTopicsTooltip": "Clear history and generate fresh suggestions",
+        "refresh": "Refresh",
+        "generating": "Generating...",
+        "select": "Select",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "remove": "Remove"
+      },
+      "loading": {
+        "title": "Generating topic suggestions...",
+        "description": "Analyzing your content focus to create personalized suggestions"
+      },
+      "competition": {
+        "label": "competition",
+        "low": "low",
+        "medium": "medium",
+        "high": "high"
+      },
+      "metrics": {
+        "views": "views",
+        "match": "match"
+      },
+      "messages": {
+        "suggestionsGenerated": "ðŸŽ¯ Generated {{count}} fresh topic suggestions!",
+        "generationFailed": "Failed to generate topics. Please try again.",
+        "topicSelected": "Selected: {{topic}}...",
+        "addedToFavorites": "Added to favorites",
+        "removedFromFavorites": "Removed from favorites",
+        "copiedToClipboard": "Topic copied to clipboard!",
+        "copyFailed": "Failed to copy topic"
+      },
+      "noSuggestions": {
+        "tryRefresh": "No suggestions available. Try clicking \"Refresh\" to generate more topics.",
+        "selectContext": "Select an industry and audience to see smart topic suggestions."
+      },
+      "favorites": {
+        "title": "Favorited Topics ({{count}})",
+        "clearAll": "Clear All"
+      },
+      "fallbacks": {
+        "industries": "Industries",
+        "professionals": "Professionals",
+        "anyIndustry": "Any Industry",
+        "professional": "Professional",
+        "companies": "Companies",
+        "experts": "Experts",
+        "yourField": "Your Field",
+        "industryTrends": "Industry Trends",
+        "industry": "Industry",
+        "anyField": "Any Field",
+        "theirIndustry": "Their Industry"
+      },
+      "reasons": {
+        "transformativeImpact": "Explores transformative impact of {{topic}}",
+        "comprehensiveResource": "Comprehensive resource combining your topic with target context",
+        "currentYearStrategy": "Current year strategy focused on your topic",
+        "skillFocused": "Skill-focused approach to {{topic}}",
+        "problemFocused": "Problem-focused angle highlighting common pitfalls",
+        "forwardLooking": "Forward-looking perspective on {{topic}}",
+        "financialPerspective": "Financial perspective on {{topic}} within {{industry}}",
+        "caseStudies": "Case studies and proven methods in {{industry}}",
+        "leadershipInsights": "Leadership insights on {{topic}} in {{industry}}",
+        "regulatoryPerspective": "Regulatory perspective on {{topic}} for {{industry}}",
+        "businessValue": "Business value analysis of {{topic}} in {{industry}}",
+        "audienceSpecific": "Specifically designed for {{audience}} with {{topic}} focus",
+        "trendCapitalizes": "Capitalizes on trending aspects of {{topic}}",
+        "highQuality": "High-quality content suggestion based on available context"
+      },
+      "debug": {
+        "topicSelected": "Topic selected:",
+        "errorGenerating": "Error generating topics:",
+        "helpEngagement": "Help engagement:"
+      }
+    },
+    "qualityIndicator": {
+      "title": "Content Quality Score",
+      "description": "Real-time analysis of your content setup",
+      "score": "{{score}}/100",
+      "excellent": "Excellent",
+      "good": "Good",
+      "poor": "Poor",
+      "needsImprovement": "Needs Improvement",
+      "factors": {
+        "topicClarity": "Topic Clarity",
+        "audienceAlignment": "Audience Alignment",
+        "seoOptimization": "SEO Optimization",
+        "contentStructure": "Content Structure"
+      },
+      "tips": {
+        "hasActionWords": "âœ“ Contains engaging action words",
+        "addActionWords": "Consider adding action words like \"How to\", \"Ultimate Guide\", or \"Best Ways\".",
+        "hasNumbers": "âœ“ Includes specific numbers for engagement",
+        "addNumbers": "Consider adding specific numbers (e.g., \"5 Ways\", \"10 Tips\").",
+        "hasPowerWords": "âœ“ Contains engaging power words",
+        "addPowerWords": "Consider adding power words like \"Ultimate\", \"Essential\", or \"Proven\".",
+        "hasSpecificBenefit": "âœ“ Promises clear benefits",
+        "addSpecificBenefit": "Include specific benefits (increase, improve, save, etc.).",
+        "topicTooShort": "Topic is too short. Aim for at least 10 characters.",
+        "topicTooLong": "Topic is too long. Keep it under 120 characters.",
+        "goodTopicLength": "âœ“ Good topic length",
+        "goodSeoLength": "âœ“ Good length for SEO",
+        "goodKeywordSpecificity": "âœ“ Good keyword specificity",
+        "goodKeywordDiversity": "âœ“ Good keyword diversity",
+        "addMoreDescriptive": "Add more descriptive words for clarity.",
+        "addMoreKeywords": "Add more keywords. Aim for 3-7 keywords.",
+        "addMoreLongTail": "Add more long-tail keywords (3+ words) for better targeting.",
+        "makeMoreConcise": "Consider making the topic more concise.",
+        "reduceKeywords": "Consider reducing keywords. 3-7 is optimal for focus.",
+        "clearDescriptive": "âœ“ Clear and descriptive",
+        "alignsWithSuggestions": "âœ“ Aligns with suggested topics",
+        "perfectSeoLength": "âœ“ Perfect SEO length",
+        "multipleKeywords": "âœ“ Contains multiple keywords",
+        "properCapitalization": "âœ“ Proper title capitalization",
+        "optimalKeywordCount": "âœ“ Optimal number of keywords",
+        "longTailKeywords": "âœ“ Includes long-tail keywords",
+        "commercialIntent": "âœ“ Includes commercial intent keywords",
+        "titleTooShort": "Title is too short for SEO. Aim for 50-60 characters.",
+        "titleTooLong": "Title may be truncated in search results. Keep under 60 characters.",
+        "keywordsTooShort": "Keywords are too short. Use more specific phrases.",
+        "keywordsTooLong": "Keywords might be too long. Aim for 2-4 words each.",
+        "increaseKeywordDiversity": "Increase keyword diversity to cover more search terms.",
+        "addAtLeastThree": "Add at least 3 keywords for SEO optimization.",
+        "useProperCase": "Use proper title case capitalization.",
+        "enterToSee": "Enter a {{type}} to see quality assessment"
+      }
+    },
+    "contextualHelp": {
+      "title": "Need Help?",
+      "description": "Get tips and guidance for each step",
+      "showTips": "Show Tips",
+      "hideTips": "Hide Tips"
+    }
+  },
+  "common": {
+    "draftSaved": "Draft saved",
+    "progressSaved": "Your progress has been saved.",
+    "draftSavedAuto": "Draft Saved",
+    "progressSavedAuto": "Your progress has been automatically saved.",
+    "time": {
+      "never": "Never",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} minute ago",
+      "minutesAgo_other": "{{count}} minutes ago",
+      "hoursAgo": "{{count}} hour ago",
+      "hoursAgo_other": "{{count}} hours ago"
+    }
+  },
+  "contextualHelp": {
+    "estimatedTime": "Estimated time: {{time}}",
+    "quickTips": "Quick Tips",
+    "learnMore": "Learn More",
+    "videoTutorials": "Video Tutorials",
+    "tutorial": "Tutorial",
+    "showLess": "Show less",
+    "showMore": "Show {{count}} more tips",
+    "stillStuck": "Still stuck?",
+    "contactSupport": "Contact Support",
+    "supportAlert": "Support feature would open here. For now, please email support@example.com",
+    "goodExamples": "Good Examples",
+    "avoidThese": "Avoid These",
+    "helpEngagement": "Help Engagement:",
+    "sectionsViewed": "â€¢ Sections viewed: {{count}}",
+    "videosClicked": "â€¢ Videos clicked: {{count}}",
+    "supportContacted": "â€¢ Support contacted: {{contacted}}",
+    "yes": "Yes",
+    "no": "No",
+    "review_generate_title": "Review & Generate",
+    "review_generate_description": "Review your content settings, check optimization scores, and generate your content",
+    "completion_checklist_title": "Content Completion Checklist",
+    "completion_checklist_required": "Required",
+    "completion_checklist_edit_button": "Edit",
+    "seo_score_title": "Score SEO",
+    "seo_score_grade": "Note {{grade}}",
+    "seo_score_total_points": "{{total}}/100 points sur {{factors}} facteurs",
+    "completion_title": "ComplÃ©tion",
+    "completion_required_items": "{{completed}}/{{total}} Ã©lÃ©ments requis complÃ©tÃ©s",
+    "publish_readiness_title": "PrÃªt Ã  Publier",
+    "publish_readiness_description_details": {
+      "content_completeness": "{{completed}}/{{total}} required items complete",
+      "seo_optimization": "SEO score: {{score}}%",
+      "technical_setup": "Export formats and settings configured",
+      "quality_assurance_plagiarism_enabled": "Plagiarism checking enabled",
+      "quality_assurance_basic_checks": "Basic quality checks",
+      "engagement_features": "{{images}}, {{cta}}",
+      "images_included": "Images",
+      "no_images": "No images",
+      "cta_included": "CTA included",
+      "no_cta": "No CTA"
+    },
+    "seo_score_breakdown_title": "SEO Score Breakdown",
+    "seo_score_breakdown_improve_button": "Improve",
+    "generation_settings_title": "Generation Cost & Settings",
+    "generation_cost_credits": "{{credits}} Credits Required",
+    "generation_estimated_time": "Estimated generation time: {{time}} minutes",
+    "generation_included_features": "Included Features:",
+    "export_settings_title": "Export Settings",
+    "export_formats_label": "Select Export Formats:",
+    "share_draft_title": "Share Draft",
+    "share_draft_description": "Share your content settings with team members or collaborators before generating.",
+    "generate_share_link_button": "Generate Share Link",
+    "email_button": "Email",
+    "shareable_link_label": "Shareable Link:",
+    "copy_link_copied": "Copied",
+    "copy_link_button": "Copy",
+    "twitter_button": "Twitter",
+    "facebook_button": "Facebook",
+    "publish_readiness_analysis_title": "Publish Readiness Analysis",
+    "generating_content_title": "Generating Your Content",
+    "generating_outline_description": "Creating intelligent content outline...",
+    "generating_content_description": "Generating human-like content...",
+    "finalizing_content_description": "Finalizing content...",
+    "generating_outline_explanation": "Creating a sophisticated content outline with intelligent structure",
+    "generating_content_explanation": "Transforming the outline into engaging, human-like content optimized for your audience",
+    "finalizing_content_explanation": "Applying final formatting, quality checks, and SEO optimization",
+    "outline_badge": "Outline",
+    "content_badge": "Content",
+    "finalize_badge": "Finalize",
+    "generation_time_explanation": "This process takes approximately {{time}} minutes. Please don't close this window.",
+    "generation_failed_title": "Generation Failed",
+    "retry_generation_button": "Retry Generation",
+    "ready_to_generate_title": "Ready to Generate Your Content?",
+    "ready_to_generate_description": "Your content will be generated with the current settings. This process will take approximately {{time}} minutes.",
+    "generate_button_login_text": "Please Log In",
+    "generate_button_loading_text": "Loading...",
+    "generate_button_insufficient_credits_text": "Insufficient Credits (Need 4)",
+    "generate_button_complete_required_items_text": "Complete Required Items",
+    "generate_button_generate_text": "Generate Content (4 Credits)",
+    "generate_button_login_prompt": "Please log in to generate content.",
+    "generate_button_insufficient_credits_prompt": "Insufficient credits: You have {{remaining}} credits, but need {{credits}} for long-form content.",
+    "generate_button_upgrade_plan_button": "Upgrade Plan",
+    "generate_button_complete_required_items_prompt": "Please complete all required items before generating content.",
+    "generate_button_formats_explanation": "Content will be generated in {{formats}} format{{format}}.",
+    "generate_button_credits_available": "You have {{credits}} credits available"
+  },
+  "contentManager": {
+    "actions": {
+      "preview": "AperÃ§u",
+      "copy": "Copier",
+      "copyClean": "Copier Propre",
+      "copyFormatted": "Copier FormatÃ©",
+      "download": "TÃ©lÃ©charger",
+      "export": "Exporter"
+    },
+    "export": {
+      "markdown": "Markdown (.md)",
+      "html": "HTML (.html)",
+      "txt": "Texte (.txt)",
+      "pdf": "PDF (.pdf)",
+      "gdocs": "Google Docs",
+      "word": "OneDrive Word",
+      "auto": "Auto",
+      "autoPaste": "(Collage Auto)",
+      "collaborative": "(Collaboratif)",
+      "enhanced": "(AmÃ©liorÃ©)",
+      "pageSafe": "(SÃ©curisÃ©)"
+    },
+    "errors": {
+      "exportError": "Erreur d'Export",
+      "gdocsError": "Ã‰chec de la prÃ©paration de l'export Google Docs. Veuillez rÃ©essayer.",
+      "wordError": "Ã‰chec de la prÃ©paration de l'export OneDrive Word. Veuillez rÃ©essayer.",
+      "automationFailed": "L'automatisation a Ã©chouÃ©. Retour Ã  l'option de tÃ©lÃ©chargement manuel."
+    },
+    "gdocs": {
+      "autoOpening": "ðŸ¤– Ouverture Auto de Google Docs...",
+      "preparing": "PrÃ©paration de votre contenu avec tentatives de collage automatisÃ©",
+      "magicProgress": "ðŸš€ Magie en Cours !",
+      "opened": "Google Docs ouvert avec automatisation intelligente. Le contenu devrait se coller automatiquement ou appuyez simplement sur Ctrl+V !",
+      "openNow": "Ouvrir Maintenant",
+      "focusGdocs": "Focuser Google Docs",
+      "downloadHtml": "TÃ©lÃ©charger HTML"
+    },
+    "status": {
+      "empty": "Aucun Contenu GÃ©nÃ©rÃ© Encore",
+      "createFirst": "CrÃ©ez votre premier contenu long pour le voir ici.",
+      "startCreating": "Commencer Ã  CrÃ©er du Contenu",
+      "errorLoading": "Erreur de Chargement du Contenu"
+    },
+    "metadata": {
+      "words": "mots",
+      "minRead": "min de lecture",
+      "author": "Auteur",
+      "readingTime": "Temps de lecture",
+      "published": "PubliÃ© le",
+      "aiContentCreator": "CrÃ©ateur de Contenu IA",
+      "tone": "Ton",
+      "version": "Version"
+    },
+    "copy": {
+      "success": "Contenu propre copiÃ© !",
+      "description": "Contenu formatÃ© propre avec texte noir copiÃ©. Parfait pour coller dans n'importe quel document.",
+      "fallback": "Contenu copiÃ© dans le presse-papiers (texte brut de secours).",
+      "error": "Contenu copiÃ© dans le presse-papiers."
+    },
+    "download": {
+      "started": "TÃ©lÃ©chargement commencÃ©",
+      "success": "{{fileName}} a Ã©tÃ© tÃ©lÃ©chargÃ© avec succÃ¨s.",
+      "pdfSuccess": "{{fileName}}.pdf a Ã©tÃ© tÃ©lÃ©chargÃ© avec succÃ¨s.",
+      "pdfTitle": "PDF propre tÃ©lÃ©chargÃ©",
+      "pdfError": "Ã‰chec de la gÃ©nÃ©ration PDF",
+      "pdfErrorDesc": "Il y a eu une erreur lors de la gÃ©nÃ©ration du PDF. Veuillez rÃ©essayer."
+    }
+  },
+  "aiIdeasGenerator": {
+    "title": "AI Ideas Generator",
+    "subtitle": "Generate engaging content ideas powered by advanced AI analysis",
+    "version": "v1.0.0",
+    "aiDisclaimer": {
+      "title": "AI-Powered Generation",
+      "text": "This tool uses advanced AI to analyze trends, keywords, and audience preferences to generate unique content ideas."
+    },
+    "indicators": {
+      "enhancedAi": "Enhanced AI",
+      "keywords": "keywords",
+      "trends": "trends"
+    },
+    "buttons": {
+      "generate": "Generate Ideas",
+      "generating": "Generating...",
+      "generateFirst": "Generate First Ideas",
+      "useIdea": "Use This Idea"
+    },
+    "stages": {
+      "initializing": "Initializing AI...",
+      "analyzing": "Analyzing keywords and trends...",
+      "generating": "Generating content ideas...",
+      "optimizing": "Optimizing for engagement...",
+      "finalizing": "Finalizing results..."
+    },
+    "errors": {
+      "notAuthenticated": "Please log in to generate ideas",
+      "limitReached": "Daily limit reached. Please upgrade your plan for more ideas.",
+      "generationFailed": "Failed to generate ideas. Using fallback templates.",
+      "fallbackMessage": "Using pre-generated templates based on your keywords and niche."
+    },
+    "messages": {
+      "ideasGenerated": "Generated {{count}} unique content ideas",
+      "cachedIdeasLoaded": "Loaded ideas from cache",
+      "ideaSelected": "Selected idea: {{title}}"
+    },
+    "usage": {
+      "requestsRemaining": "requests remaining",
+      "today": "today",
+      "resetDate": "Reset Date"
+    },
+    "status": {
+      "offline": "Offline"
+    },
+    "upgrade": {
+      "title": "Upgrade for More Ideas",
+      "description": "You've reached your daily limit. Upgrade to generate unlimited ideas and access advanced features.",
+      "upgradeButton": "Upgrade Now",
+      "laterButton": "Maybe Later"
+    },
+    "results": {
+      "title": "Generated Ideas"
+    },
+    "analytics": {
+      "title": "Usage Analytics",
+      "totalRequests": "Total Requests",
+      "dailyRequests": "Daily Requests",
+      "requestsRemaining": "Requests Remaining",
+      "resetDate": "Reset Date"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "contentType": {
+      "social_post": "Social Post",
+      "blog_article": "Blog Article"
+    },
+    "keywords": {
+      "label": "Target Keywords"
+    },
+    "metrics": {
+      "engagement": "Engagement",
+      "seo": "SEO Potential",
+      "readTime": "Read Time"
+    },
+    "empty": {
+      "title": "No Ideas Generated Yet",
+      "description": "Click the button below to generate your first AI-powered content ideas."
+    }
+  },
+  "contentIdeaUsageTracker": {
+    "title": "Content Idea Usage",
+    "subtitle": {
+      "free": "Track your content idea generation usage",
+      "premium": "Unlimited content ideas with cost tracking"
+    },
+    "currentUsage": "Current Usage",
+    "remaining": "remaining",
+    "used": "used",
+    "reset": {
+      "trialEnds": "Trial ends in {{days}} days",
+      "resetsIn": "Resets in {{days}} days"
+    },
+    "cost": {
+      "title": "Cost Tracking",
+      "perIdea": "Cost per idea"
+    },
+    "buttons": {
+      "history": "History",
+      "analytics": "Analytics",
+      "upgrade": "Upgrade",
+      "manage": "Manage Plan",
+      "close": "Close",
+      "cancel": "Cancel"
+    },
+    "badges": {
+      "premium": "Premium",
+      "trial": "Trial",
+      "free": "Free"
+    },
+    "warnings": {
+      "limitReached": "Request limit reached",
+      "runningLow": "Running low on requests",
+      "considerUpgrade": "Consider upgrading to continue generating content ideas"
+    },
+    "history": {
+      "title": "Usage History",
+      "description": "View your content idea generation history and performance",
+      "empty": "No usage history found"
+    },
+    "analytics": {
+      "title": "Usage Analytics",
+      "description": "Detailed analytics of your content idea generation",
+      "totalIdeas": "Total Ideas",
+      "totalCost": "Total Cost",
+      "avgEngagement": "Avg Engagement",
+      "topPlatform": "Top Platform",
+      "topPerformers": "Top Performing Ideas",
+      "engagement": "Engagement",
+      "platformBreakdown": "Platform Breakdown"
+    },
+    "upgrade": {
+      "title": "Upgrade Your Plan",
+      "description": "Choose a plan that fits your content creation needs",
+      "flexTitle": "Flex Packs",
+      "flexDescription": "Add more requests without a monthly commitment",
+      "buyFlex": "Buy Flex Pack"
+    },
+    "tooltips": {
+      "shareIdea": "Share this content idea"
+    },
+    "messages": {
+      "sharedToClipboard": "Content idea copied to clipboard",
+      "exported": "Usage data exported as {{format}}"
+    },
+    "errors": {
+      "loginRequired": "Login Required",
+      "mustBeLoggedIn": "You must be logged in to perform this action",
+      "invalidPlan": "Invalid Plan",
+      "planSelectionError": "Please select a valid plan",
+      "upgradeFailed": "Upgrade Failed",
+      "flexPurchaseFailed": "Flex Purchase Failed",
+      "portalError": "Portal Error",
+      "loadHistoryFailed": "Failed to load usage history"
+    }
+  },
+  "pdf": {
+    "title": "GÃ©nÃ©rateur PDF Professionnel",
+    "description": "Choisissez un template et personnalisez votre PDF pour un rÃ©sultat de qualitÃ© publication.",
+    "contentInfo": "Contenu SÃ©lectionnÃ©:",
+    "generating": "ðŸŽ¨ GÃ©nÃ©ration PDF Professionnel...",
+    "preparing": "CrÃ©ation d'un document de qualitÃ© publication avec le template sÃ©lectionnÃ©.",
+    "success": "âœ… PDF Professionnel CrÃ©Ã© !",
+    "downloaded": "Document de qualitÃ© publication tÃ©lÃ©chargÃ© avec succÃ¨s.",
+    "error": "âŒ Erreur de GÃ©nÃ©ration PDF",
+    "errorDesc": "Il y a eu une erreur lors de la gÃ©nÃ©ration du PDF professionnel. Veuillez rÃ©essayer.",
+    "templateSelector": {
+      "title": "Choisir un Template PDF",
+      "pdfOptions": "Options PDF",
+      "documentStructure": "Structure du Document",
+      "contentOptions": "Options de Contenu",
+      "revolutionaryEnhancements": "AmÃ©liorations RÃ©volutionnaires",
+      "includeHeader": "Inclure l'En-tÃªte du Document",
+      "includeFooter": "Inclure le Pied de Page avec Attribution",
+      "includePageNumbers": "Inclure les NumÃ©ros de Page",
+      "includeMetadata": "Inclure la Section MÃ©tadonnÃ©es",
+      "includeTableOfContents": "Inclure la Table des MatiÃ¨res",
+      "enhancedReadability": "LisibilitÃ© AmÃ©liorÃ©e",
+      "smartPageBreaks": "Sauts de Page Intelligents",
+      "optimizedTypography": "Typographie OptimisÃ©e",
+      "contentFlowOptimization": "Optimisation du Flux de Contenu",
+      "generateButton": "GÃ©nÃ©rer PDF Professionnel",
+      "previewButton": "AperÃ§u du Template",
+      "selectedTemplate": "Template SÃ©lectionnÃ© :",
+      "templateFeatures": {
+        "revolutionaryTypography": "â€¢ Typographie rÃ©volutionnaire avec la police {{font}}",
+        "perfectContentFlow": "â€¢ Flux de contenu parfait avec espacement et sauts de page optimisÃ©s",
+        "enhancedReadability": "â€¢ LisibilitÃ© amÃ©liorÃ©e avec des ratios de contraste professionnels",
+        "productionReady": "â€¢ Mise en forme prÃªte pour la production avec une sortie de qualitÃ© ultra-Ã©levÃ©e",
+        "smartOptimization": "â€¢ Optimisation intelligente du contenu pour une structure impeccable"
+      }
+    },
+    "templates": {
+      "business": {
+        "name": "Professionnel Business",
+        "description": "Document de style corporate propre, parfait pour les rapports d'entreprise et les livres blancs"
+      },
+      "academic": {
+        "name": "Recherche AcadÃ©mique",
+        "description": "Style acadÃ©mique formel avec citations appropriÃ©es et formatage de recherche"
+      },
+      "creative": {
+        "name": "Moderne CrÃ©atif",
+        "description": "Design contemporain avec typographie moderne et hiÃ©rarchie visuelle"
+      }
+    },
+    "technicalSpecs": {
+      "font": "Police",
+      "size": "Taille",
+      "lineHeight": "Hauteur de ligne",
+      "points": "pt"
+    }
+  }
+}
+
+

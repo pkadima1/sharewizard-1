@@ -997,6 +997,111 @@ const PartnerRegistration: React.FC = () => {
 
           <Separator className="my-8" />
 
+          {/* Step 4: Marketing Preferences */}
+          <div className="space-y-6">
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+              4. {t('registration.form.marketingPreferences')}
+            </h4>
+            
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 rounded-lg border border-blue-200 dark:border-blue-700">
+              <div className="flex items-center mb-4">
+                <Mail className="h-5 w-5 text-blue-600 mr-2" />
+                <h5 className="font-semibold text-blue-900 dark:text-blue-100">
+                  {t('registration.form.communicationPreferences')}
+                </h5>
+              </div>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
+                {t('registration.form.communicationPreferencesDesc')}
+              </p>
+              
+              <div className="space-y-3">
+                {/* Email Marketing */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600 hover:shadow-sm transition-all">
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 text-blue-600 mr-3" />
+                    <div>
+                      <span className="font-medium text-gray-900 dark:text-white text-sm">
+                        {t('registration.form.emailMarketing')}
+                      </span>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {t('registration.form.emailMarketingDesc')}
+                      </p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.marketingPreferences.emailMarketing}
+                      onChange={(e) => handleMarketingPreferenceChange('emailMarketing', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+
+                {/* SMS Marketing */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600 hover:shadow-sm transition-all">
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white text-xs font-bold">SMS</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-900 dark:text-white text-sm">
+                        {t('registration.form.smsMarketing')}
+                      </span>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {t('registration.form.smsMarketingDesc')}
+                      </p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.marketingPreferences.smsMarketing}
+                      onChange={(e) => handleMarketingPreferenceChange('smsMarketing', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+
+                {/* Partner Newsletter */}
+                <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-blue-200 dark:border-blue-600 hover:shadow-sm transition-all">
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white text-xs font-bold">📧</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-900 dark:text-white text-sm">
+                        {t('registration.form.partnerNewsletter')}
+                      </span>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {t('registration.form.partnerNewsletterDesc')}
+                      </p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.marketingPreferences.partnerNewsletter}
+                      onChange={(e) => handleMarketingPreferenceChange('partnerNewsletter', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+              </div>
+              
+              <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                <p className="text-xs text-blue-700 dark:text-blue-300">
+                  <strong>{t('registration.form.privacyNote')}:</strong> {t('registration.form.privacyNoteDesc')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Separator className="my-8" />
+
           {/* Submit Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button

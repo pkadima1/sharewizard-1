@@ -121,8 +121,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
       
       if (success) {
         toast({
-          title: "Support Request Sent",
-          description: "Your support request has been sent to our team. We'll get back to you soon!",
+          title: t('contextualHelp.support.success.title'),
+          description: t('contextualHelp.support.success.description'),
         });
       } else {
         throw new Error('Failed to send email');
@@ -130,8 +130,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     } catch (error) {
       console.error('Support contact error:', error);
       toast({
-        title: "Error",
-        description: "Failed to send support request. Please try emailing us directly at engageperfect@gmail.com",
+        title: t('contextualHelp.support.error.title'),
+        description: t('contextualHelp.support.error.description'),
         variant: "destructive"
       });
     }

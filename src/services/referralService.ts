@@ -27,6 +27,13 @@ export interface ReferralAttributionResult {
   commissionRate?: number;
   referralId?: string;
   message: string;
+  messageKey?: string; // For localization support
+  metadata?: {
+    customerRecordId?: string;
+    customerRecordCreated?: boolean;
+    processingTimeMs?: number;
+    [key: string]: any;
+  };
 }
 
 /**
@@ -121,11 +128,13 @@ export async function processReferralAttribution(metadata?: {
 /**
  * Process referral attribution during user signup
  * 
- * This function is specifically designed for the signup flow and handles
- * the attribution of referral codes to new users during registration.
+ * Enhanced version that includes customer profile data for proper dashboard integration.
+ * This function is specifically designed for the signup flow and handles the attribution
+ * of referral codes to new users during registration.
  * 
  * @param customerUid - The UID of the newly created user
- * @param metadata - Additional metadata for tracking
+ * @param customerData - Customer profile data for dashboard integration
+ * @param metadata - Additional metadata for tracking and localization
  * @returns Referral attribution result
  * 
  * @example
@@ -134,9 +143,18 @@ export async function processReferralAttribution(metadata?: {
  * const attributionResult = await processSignupReferralAttribution(
  *   user.uid,
  *   {
+ *     email: user.email,
+ *     displayName: user.displayName,
+ *     photoURL: user.photoURL
+ *   },
+ *   {
  *     source: 'signup',
  *     landingPage: window.location.href,
- *     userAgent: navigator.userAgent
+ *     userAgent: navigator.userAgent,
+ *     locale: {
+ *       language: navigator.language,
+ *       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+ *     }
  *   }
  * );
  * 
@@ -147,6 +165,11 @@ export async function processReferralAttribution(metadata?: {
  */
 export async function processSignupReferralAttribution(
   customerUid: string,
+  customerData?: {
+    email?: string;
+    displayName?: string;
+    photoURL?: string;
+  },
   metadata?: {
     source?: string;
     ipAddress?: string;
@@ -156,6 +179,11 @@ export async function processSignupReferralAttribution(
     landingPage?: string;
     country?: string;
     deviceType?: string;
+    locale?: {
+      language?: string;
+      country?: string;
+      timezone?: string;
+    };
   }
 ): Promise<ReferralAttributionResult> {
   try {
@@ -166,64 +194,97 @@ export async function processSignupReferralAttribution(
       console.log('ℹ️ No referral code found during signup - user will not be attributed');
       return {
         success: false,
-        message: 'No referral code found during signup'
+        message: 'No referral code found during signup',
+        messageKey: 'referral.signup.noCodeFound'
       };
     }
     
-    console.log('🎯 Processing signup referral attribution:', {
+    console.log('🎯 Processing enhanced signup referral attribution:', {
       customerUid,
       referralCode,
-      source: metadata?.source || 'signup'
+      source: metadata?.source || 'signup',
+      hasCustomerData: !!customerData,
+      customerEmail: customerData?.email
     });
     
-    // Validate referral code
+    // Validate referral code locally first
     const partnerInfo = await validateReferralCode(referralCode);
     
     if (!partnerInfo) {
       console.warn('⚠️ Invalid referral code during signup:', referralCode);
       return {
         success: false,
-        message: 'Invalid or expired referral code during signup'
+        message: 'Invalid or expired referral code during signup',
+        messageKey: 'referral.signup.invalidCode'
       };
     }
     
-    // Call Firebase function to process attribution with customer UID
+    // Prepare enhanced metadata with localization support
+    const enhancedMetadata = {
+      ...metadata,
+      source: metadata?.source || 'signup',
+      userAgent: metadata?.userAgent || navigator.userAgent,
+      referrerUrl: metadata?.referrerUrl || document.referrer,
+      landingPage: metadata?.landingPage || window.location.href,
+      locale: {
+        language: metadata?.locale?.language || navigator.language || 'en',
+        country: metadata?.locale?.country,
+        timezone: metadata?.locale?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+        ...metadata?.locale
+      },
+      ...(metadata?.utmParams && { utmParams: metadata.utmParams })
+    };
+    
+    // Call enhanced Firebase function with customer data
     const processReferralAttribution = httpsCallable(functions, 'processReferralAttribution');
     
     const result = await processReferralAttribution({
       referralCode,
-      customerUid, // Pass the customer UID for attribution
-      metadata: {
-        ...metadata,
-        source: metadata?.source || 'signup',
-        userAgent: metadata?.userAgent || navigator.userAgent,
-        referrerUrl: metadata?.referrerUrl || document.referrer,
-        landingPage: metadata?.landingPage || window.location.href,
-        ...(metadata?.utmParams && { utmParams: metadata.utmParams })
-      }
+      customerUid,
+      customerData: customerData || {}, // Include customer profile data
+      metadata: enhancedMetadata
     });
     
     const resultData = result.data as ReferralAttributionResult;
     
     if (resultData.success) {
-      console.log('✅ Signup referral attribution processed successfully:', {
+      console.log('✅ Enhanced signup referral attribution processed successfully:', {
         customerUid,
+        customerEmail: customerData?.email,
         partnerId: resultData.partnerId,
         partnerName: resultData.partnerName,
         commissionRate: resultData.commissionRate,
-        referralId: resultData.referralId
+        referralId: resultData.referralId,
+        customerRecordCreated: resultData.metadata?.customerRecordCreated,
+        processingTime: resultData.metadata?.processingTimeMs
       });
+      
+      // Log successful attribution with proper context
+      console.group('🎉 Referral Attribution Success');
+      console.log('📊 Attribution Details:');
+      console.log(`   Partner: ${resultData.partnerName} (${resultData.partnerId})`);
+      console.log(`   Code: ${resultData.partnerCode}`);
+      console.log(`   Commission Rate: ${(resultData.commissionRate || 0) * 100}%`);
+      console.log(`   Customer Record: ${resultData.metadata?.customerRecordCreated ? '✅ Created' : '❌ Failed'}`);
+      console.log(`   Processing Time: ${resultData.metadata?.processingTimeMs || 0}ms`);
+      console.groupEnd();
+      
     } else {
-      console.warn('⚠️ Signup referral attribution failed:', resultData.message);
+      console.warn('⚠️ Enhanced signup referral attribution failed:', {
+        customerUid,
+        message: resultData.message,
+        messageKey: resultData.messageKey
+      });
     }
     
     return resultData;
     
   } catch (error) {
-    console.error('❌ Error processing signup referral attribution:', error);
+    console.error('❌ Error processing enhanced signup referral attribution:', error);
     return {
       success: false,
-      message: 'Failed to process signup referral attribution'
+      message: 'Failed to process signup referral attribution',
+      messageKey: 'referral.signup.processingError'
     };
   }
 }

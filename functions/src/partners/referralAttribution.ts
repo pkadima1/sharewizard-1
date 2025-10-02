@@ -14,6 +14,7 @@
 import { getFirestore, Timestamp, FieldValue } from "firebase-admin/firestore";
 import { initializeFirebaseAdmin } from "../config/firebase-admin.js";
 import { Partner, PartnerCode } from "../types/partners.js";
+import { createReferralCustomer } from "./referralCustomerService.js";
 import * as logger from "firebase-functions/logger";
 
 // Initialize Firebase Admin
@@ -30,7 +31,22 @@ export interface ReferralAttributionResult {
   partnerName?: string;
   commissionRate?: number;
   referralId?: string;
+  customerId?: string; // Customer UID who was referred
+  commission?: number; // Commission amount earned
+  customerRecordCreated?: boolean; // Whether customer record was created in referralCustomers collection
   message: string;
+  messageKey?: string; // For localization support
+  metadata?: {
+    customerRecordId?: string;
+    customerRecordCreated?: boolean;
+    processingTimeMs?: number;
+    locale?: {
+      language?: string;
+      country?: string;
+      timezone?: string;
+    };
+    [key: string]: any;
+  };
 }
 
 /**
@@ -198,10 +214,10 @@ export async function createReferralTracking(
       ...(metadata?.utmParams && { utmParams: metadata.utmParams }),
       ...(metadata && {
         metadata: {
-          referrerUrl: metadata.referrerUrl,
-          landingPage: metadata.landingPage,
-          country: metadata.country,
-          deviceType: metadata.deviceType
+          ...(metadata.referrerUrl && { referrerUrl: metadata.referrerUrl }),
+          ...(metadata.landingPage && { landingPage: metadata.landingPage }),
+          ...(metadata.country && { country: metadata.country }),
+          ...(metadata.deviceType && { deviceType: metadata.deviceType })
         }
       })
     };
@@ -279,14 +295,23 @@ export async function updateReferralWithCustomer(
 /**
  * Process referral attribution for user signup
  * 
+ * Enhanced version that creates both referral tracking and referral customer records
+ * to ensure proper integration between attribution system and partner dashboards.
+ * 
  * @param referralCode - Referral code from URL/storage
  * @param customerUid - Customer UID
+ * @param customerData - Customer profile data for dashboard integration
  * @param metadata - Additional metadata
  * @returns Referral attribution result
  */
 export async function processReferralAttribution(
   referralCode: string,
   customerUid: string,
+  customerData?: {
+    email?: string;
+    displayName?: string;
+    photoURL?: string;
+  },
   metadata?: {
     ipAddress?: string;
     userAgent?: string;
@@ -295,20 +320,42 @@ export async function processReferralAttribution(
     landingPage?: string;
     country?: string;
     deviceType?: string;
+    locale?: {
+      language?: string;
+      country?: string;
+      timezone?: string;
+    };
   }
 ): Promise<ReferralAttributionResult> {
+  const operationId = `process-attribution-${customerUid}-${Date.now()}`;
+  const startTime = Date.now();
+  
   try {
+    logger.info(`[ReferralAttribution] Starting enhanced referral attribution:`, {
+      operationId,
+      referralCode,
+      customerUid,
+      hasCustomerData: !!customerData,
+      hasMetadata: !!metadata
+    });
+
     // Validate referral code
     const partnerInfo = await validateReferralCode(referralCode);
     
     if (!partnerInfo) {
+      logger.warn(`[ReferralAttribution] Invalid referral code:`, {
+        operationId,
+        referralCode
+      });
+      
       return {
         success: false,
-        message: 'Invalid or expired referral code'
+        message: 'Invalid or expired referral code',
+        messageKey: 'referral.attribution.error.invalidCode'
       };
     }
-    
-    // Create referral tracking
+
+    // Create referral tracking document
     const referralId = await createReferralTracking(
       partnerInfo.partnerId,
       partnerInfo.partnerCode,
@@ -318,17 +365,80 @@ export async function processReferralAttribution(
     );
     
     if (!referralId) {
+      logger.error(`[ReferralAttribution] Failed to create referral tracking:`, {
+        operationId,
+        partnerId: partnerInfo.partnerId,
+        customerUid
+      });
+      
       return {
         success: false,
-        message: 'Failed to create referral tracking'
+        message: 'Failed to create referral tracking',
+        messageKey: 'referral.attribution.error.trackingFailed'
       };
     }
+
+    // Create referral customer record for dashboard integration
+    // This is the key enhancement that connects attribution to partner dashboards
+    let customerCreationResult = null;
     
-    logger.info(`[ReferralAttribution] Referral attribution processed successfully:`, {
+    if (customerData?.email) {
+      logger.info(`[ReferralAttribution] Creating referral customer record:`, {
+        operationId,
+        partnerId: partnerInfo.partnerId,
+        customerEmail: customerData.email
+      });
+
+      customerCreationResult = await createReferralCustomer(
+        partnerInfo.partnerId,
+        customerUid,
+        {
+          email: customerData.email,
+          displayName: customerData.displayName,
+          photoURL: customerData.photoURL
+        },
+        {
+          referralCode: partnerInfo.partnerCode,
+          referralTrackingId: referralId,
+          source: 'link',
+          landingPage: metadata?.landingPage,
+          userAgent: metadata?.userAgent,
+          utmParams: metadata?.utmParams,
+          locale: metadata?.locale
+        }
+      );
+
+      if (customerCreationResult.success) {
+        logger.info(`[ReferralAttribution] Referral customer created successfully:`, {
+          operationId,
+          customerId: customerCreationResult.customerId,
+          partnerId: partnerInfo.partnerId
+        });
+      } else {
+        logger.warn(`[ReferralAttribution] Failed to create referral customer:`, {
+          operationId,
+          error: customerCreationResult.message,
+          partnerId: partnerInfo.partnerId
+        });
+        // Don't fail the entire attribution if customer creation fails
+        // The referral tracking is still valid
+      }
+    } else {
+      logger.warn(`[ReferralAttribution] No customer email provided, skipping customer record creation:`, {
+        operationId,
+        partnerId: partnerInfo.partnerId
+      });
+    }
+
+    const processingTime = Date.now() - startTime;
+
+    logger.info(`[ReferralAttribution] Enhanced referral attribution completed successfully in ${processingTime}ms:`, {
+      operationId,
       referralId,
       partnerId: partnerInfo.partnerId,
       partnerCode: partnerInfo.partnerCode,
-      customerUid
+      customerUid,
+      customerRecordCreated: customerCreationResult?.success || false
     });
     
     return {
@@ -338,14 +448,34 @@ export async function processReferralAttribution(
       partnerName: partnerInfo.partnerName,
       commissionRate: partnerInfo.commissionRate,
       referralId,
-      message: 'Referral attribution successful'
+      customerId: customerUid, // The customer who was referred
+      commission: partnerInfo.commissionRate, // Commission amount (rate for now)
+      customerRecordCreated: customerCreationResult?.success || false,
+      message: 'Referral attribution successful',
+      messageKey: 'referral.attribution.success',
+      metadata: {
+        customerRecordId: customerCreationResult?.customerId,
+        customerRecordCreated: customerCreationResult?.success || false,
+        processingTimeMs: processingTime,
+        locale: metadata?.locale
+      }
     };
     
   } catch (error) {
-    logger.error(`[ReferralAttribution] Error processing referral attribution:`, error);
+    const processingTime = Date.now() - startTime;
+    
+    logger.error(`[ReferralAttribution] Error in enhanced referral attribution after ${processingTime}ms:`, {
+      operationId,
+      referralCode,
+      customerUid,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
     return {
       success: false,
-      message: 'Failed to process referral attribution'
+      message: 'Failed to process referral attribution',
+      messageKey: 'referral.attribution.error.processingFailed'
     };
   }
 }

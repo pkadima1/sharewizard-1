@@ -298,7 +298,7 @@ service cloud.firestore {
     // 🤝 PARTNER & AFFILIATE SYSTEM (PRODUCTION-READY, DEV-FRIENDLY)
     // =============================
     
-    // Partners collection - core partner management
+        // Partners collection - core partner management
     match /partners/{partnerId} {
       // Admins can read/write all partner data (works in both dev and prod)
       allow read, write: if hasAdminAccess();
@@ -375,6 +375,11 @@ service cloud.firestore {
       
       // Cloud Functions can track referrals
       allow read, write: if isServiceAccount();
+    }
+    
+    // Referral tracking collection listing - allow collection queries
+    match /referrals {
+      allow list: if hasAdminAccess() || isServiceAccount();
     }
 
     // =============================
@@ -552,9 +557,7 @@ service cloud.firestore {
     
     // Conversion tracking collection listing - partners can query their own data
     match /conversionTracking {
-      allow list: if isAuthenticated() && 
-                  request.query.where('partnerId', '==', request.auth.uid);
-      allow list: if hasAdminAccess();
+      allow list: if isAuthenticated() && hasAdminAccess();
     }
   }
 }

@@ -295,40 +295,60 @@ const TopicSuggestionEngine: React.FC<TopicSuggestionEngineProps> = ({
     const suggestions: TopicSuggestion[] = [];
     const cleanTopic = topic.toLowerCase().trim();
     
-    // Expanded templates for more variety
+    // Use translated templates instead of hardcoded English
     const topTemplates = [
       {
-        pattern: `How ${topic} is Revolutionizing ${industry || t('smartComponents.topicEngine.fallbacks.industries')}`,
+        pattern: t('smartComponents.topicEngine.templates.transformativeImpact', { 
+          topic, 
+          industry: industry || t('smartComponents.topicEngine.fallbacks.industries') 
+        }),
         reason: t('smartComponents.topicEngine.reasons.transformativeImpact', { topic }),
         confidence: 92,
         contentType: 'thought-leadership'
       },
       {
-        pattern: `The Complete ${topic} Guide for ${audience || t('smartComponents.topicEngine.fallbacks.professionals')} in ${industry || t('smartComponents.topicEngine.fallbacks.anyIndustry')}`,
+        pattern: t('smartComponents.topicEngine.templates.comprehensiveResource', { 
+          topic, 
+          audience: audience || t('smartComponents.topicEngine.fallbacks.professionals'),
+          industry: industry || t('smartComponents.topicEngine.fallbacks.anyIndustry')
+        }),
         reason: t('smartComponents.topicEngine.reasons.comprehensiveResource'),
         confidence: 89,
         contentType: 'ultimate-guide'
       },
       {
-        pattern: `${topic} Strategy: ${new Date().getFullYear()} Implementation Roadmap`,
+        pattern: t('smartComponents.topicEngine.templates.currentYearStrategy', { 
+          topic, 
+          year: new Date().getFullYear() 
+        }),
         reason: t('smartComponents.topicEngine.reasons.currentYearStrategy'),
         confidence: 87,
         contentType: 'strategy-guide'
       },
       {
-        pattern: `10 Essential ${topic} Skills Every ${audience || t('smartComponents.topicEngine.fallbacks.professional')} Needs`,
+        pattern: t('smartComponents.topicEngine.templates.skillFocused', { 
+          topic, 
+          audience: audience || t('smartComponents.topicEngine.fallbacks.professional') 
+        }),
         reason: t('smartComponents.topicEngine.reasons.skillFocused', { topic }),
         confidence: 85,
         contentType: 'skills-guide'
       },
       {
-        pattern: `${topic} Mistakes That Are Costing ${industry || t('smartComponents.topicEngine.fallbacks.companies')} Millions`,
+        pattern: t('smartComponents.topicEngine.templates.problemFocused', { 
+          topic, 
+          industry: industry || t('smartComponents.topicEngine.fallbacks.companies') 
+        }),
         reason: t('smartComponents.topicEngine.reasons.problemFocused'),
         confidence: 88,
         contentType: 'problem-solving'
       },
       {
-        pattern: `The Future of ${topic}: What ${audience || t('smartComponents.topicEngine.fallbacks.experts')} Predict for ${new Date().getFullYear() + 1}`,
+        pattern: t('smartComponents.topicEngine.templates.forwardLooking', { 
+          topic, 
+          audience: audience || t('smartComponents.topicEngine.fallbacks.experts'),
+          year: new Date().getFullYear() + 1
+        }),
         reason: t('smartComponents.topicEngine.reasons.forwardLooking', { topic }),
         confidence: 84,
         contentType: 'future-trends'
@@ -359,30 +379,30 @@ const TopicSuggestionEngine: React.FC<TopicSuggestionEngineProps> = ({
   const generateIndustryTopicFusion = async (topic: string, industry: string, audience?: string): Promise<TopicSuggestion[]> => {
     const suggestions: TopicSuggestion[] = [];
     
-    // Expanded industry-specific angles for more variety
+    // Use translated industry-specific templates
     const topIndustryTemplates = [
       {
-        pattern: `${topic} Investment Opportunities in ${industry}`,
+        pattern: t('smartComponents.topicEngine.templates.industryInvestment', { topic, industry }),
         reason: t('smartComponents.topicEngine.reasons.financialPerspective', { topic, industry }),
         confidence: 88
       },
       {
-        pattern: `${topic} Best Practices from Leading ${industry} Companies`,
+        pattern: t('smartComponents.topicEngine.templates.industryBestPractices', { topic, industry }),
         reason: t('smartComponents.topicEngine.reasons.caseStudies', { industry }),
         confidence: 89
       },
       {
-        pattern: `How ${industry} Leaders Use ${topic} to Drive Growth`,
+        pattern: t('smartComponents.topicEngine.templates.industryLeadership', { topic, industry }),
         reason: t('smartComponents.topicEngine.reasons.leadershipInsights', { topic, industry }),
         confidence: 86
       },
       {
-        pattern: `${topic} Compliance and Regulations in ${industry}`,
+        pattern: t('smartComponents.topicEngine.templates.industryCompliance', { topic, industry }),
         reason: t('smartComponents.topicEngine.reasons.regulatoryPerspective', { topic, industry }),
         confidence: 83
       },
       {
-        pattern: `ROI of ${topic} Implementation in ${industry}`,
+        pattern: t('smartComponents.topicEngine.templates.industryROI', { topic, industry }),
         reason: t('smartComponents.topicEngine.reasons.businessValue', { topic, industry }),
         confidence: 87
       }
@@ -412,32 +432,32 @@ const TopicSuggestionEngine: React.FC<TopicSuggestionEngineProps> = ({
   const generateAudienceSpecificSuggestions = async (topic: string, audience: string, industry?: string): Promise<TopicSuggestion[]> => {
     const suggestions: TopicSuggestion[] = [];
     
-    // Audience intelligence mapping
+    // Use translated audience-specific patterns
     const audiencePatterns = {
       beginners: [
-        `${topic} 101: Essential Basics for Newcomers`,
-        `Getting Started with ${topic}: A Beginner's Journey`,
-        `${topic} Explained Simply: No Prior Knowledge Required`
+        t('smartComponents.topicEngine.templates.audienceBeginners', { topic }),
+        t('smartComponents.topicEngine.templates.audienceBeginners2', { topic }),
+        t('smartComponents.topicEngine.templates.audienceBeginners3', { topic })
       ],
       professionals: [
-        `Advanced ${topic} Strategies for Industry Professionals`,
-        `${topic} Leadership: Executive Decision-Making Guide`,
-        `${topic} Implementation: Professional Best Practices`
+        t('smartComponents.topicEngine.templates.audienceProfessionals', { topic }),
+        t('smartComponents.topicEngine.templates.audienceProfessionals2', { topic }),
+        t('smartComponents.topicEngine.templates.audienceProfessionals3', { topic })
       ],
       entrepreneurs: [
-        `${topic} Business Opportunities for Entrepreneurs`,
-        `Building a ${topic}-Focused Startup in ${new Date().getFullYear()}`,
-        `${topic} Revenue Streams: Entrepreneur's Guide`
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs', { topic }),
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs2', { topic }),
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs', { topic })
       ],
       students: [
-        `${topic} Research: Academic Perspectives and Findings`,
-        `${topic} Career Paths: Student's Guide to the Future`,
-        `${topic} Study Guide: Essential Knowledge for Students`
+        t('smartComponents.topicEngine.templates.audienceStudents', { topic }),
+        t('smartComponents.topicEngine.templates.audienceStudents2', { topic }),
+        t('smartComponents.topicEngine.templates.audienceStudents3', { topic })
       ],
       investors: [
-        `${topic} Investment Thesis: Portfolio Opportunities`,
-        `${topic} Market Valuation and Investment Potential`,
-        `${topic} Due Diligence: Investor's Checklist`
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs', { topic }),
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs', { topic }),
+        t('smartComponents.topicEngine.templates.audienceEntrepreneurs', { topic })
       ]
     };
     

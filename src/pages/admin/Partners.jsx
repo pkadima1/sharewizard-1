@@ -296,7 +296,7 @@ const CreatePartnerForm = ({ isOpen, onClose, onSuccess, t }) => {
       let errorMessage = error.message || t('admin.errors.createFailedDesc');
       
       if (error.code === 'functions/not-found') {
-        errorMessage = 'The Firebase Auth user with this UID does not exist. Please create the user first or use the "Create New User" option.';
+        errorMessage = t('admin.errors.userNotFound');
       } else if (error.code === 'functions/already-exists') {
         errorMessage = 'A partner with this email already exists.';
       } else if (error.code === 'functions/invalid-argument') {
@@ -430,7 +430,7 @@ const CreatePartnerForm = ({ isOpen, onClose, onSuccess, t }) => {
                 type="password"
                 value={formData.password}
                 onChange={(e) => handleChange('password', e.target.value)}
-                placeholder="Enter password for new user"
+                placeholder={t('admin.forms.createPartner.passwordPlaceholder')}
                 required={formData.createUser}
                 minLength={6}
               />
