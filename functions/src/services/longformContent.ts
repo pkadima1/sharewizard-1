@@ -139,7 +139,8 @@ const retryWithBackoff = async <T>(
     }
   }
   
-  throw lastError!;
+  // This should never be reached, but TypeScript needs it
+  throw new Error("Operation failed after all retries");
 };
 
 // Enhanced input validation with detailed error messages

@@ -12,13 +12,16 @@ import { getStripePriceId } from '@/lib/subscriptionUtils';
 import { cn } from '@/lib/utils';
 import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
 import { trackSubscription, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
+import ServiceTypeSelector from '@/components/pricing/ServiceTypeSelector';
+import DFYPricingPlans from '@/components/pricing/DFYPricingPlans';
 
 const Pricing: React.FC = () => {
   // Analytics: Track page view automatically
   usePageAnalytics('Pricing - EngagePerfect');
 
-  // Set yearly as the default billing cycle
+  // Set yearly as the default billing cycle for DIY, monthly only for DFY
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+  const [serviceType, setServiceType] = useState<'diy' | 'dfy'>('diy');
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,6 +34,19 @@ const Pricing: React.FC = () => {
     trackFeatureUsage('billing_cycle_toggle', {
       selected_cycle: cycle,
       previous_cycle: billingCycle
+    });
+  };
+
+  // Handle service type change
+  const handleServiceTypeChange = (type: 'diy' | 'dfy') => {
+    setServiceType(type);
+    // Reset billing cycle to yearly for DIY, keep monthly for DFY
+    if (type === 'diy') {
+      setBillingCycle('yearly');
+    }
+    trackFeatureUsage('service_type_toggle', {
+      selected_type: type,
+      previous_type: serviceType
     });
   };
 
@@ -62,12 +78,25 @@ const Pricing: React.FC = () => {
         // Use enhanced flex checkout with promotion code support
         checkoutUrl = await createEnhancedFlexCheckout(currentUser.uid, priceId);
       } else {
-        // Only Basic plans get trials, Premium plans start immediately
+        // Handle different service types
+        const isDFYPlan = plan.startsWith('dfy');
         const isPremiumPlan = plan.includes('premium');
-        checkoutUrl = await createEnhancedSubscriptionCheckout(currentUser.uid, priceId, {
-          trialDays: isPremiumPlan ? 0 : 5,
-          includeUpsells: true
-        });
+        
+        if (isDFYPlan) {
+          // DFY plans start immediately (no trial)
+          checkoutUrl = await createEnhancedSubscriptionCheckout(currentUser.uid, priceId, {
+            trialDays: 0,
+            includeUpsells: false,
+            serviceType: 'dfy'
+          });
+        } else {
+          // DIY plans: Only Basic plans get trials, Premium plans start immediately
+          checkoutUrl = await createEnhancedSubscriptionCheckout(currentUser.uid, priceId, {
+            trialDays: isPremiumPlan ? 0 : 5,
+            includeUpsells: true,
+            serviceType: 'diy'
+          });
+        }
       }
       
       // Redirect to the checkout URL
@@ -113,13 +142,27 @@ const Pricing: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-adaptive-primary text-adaptive-primary">
-      <div className="px-4 py-[100px] animate-fade-in">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-50">{t('title')}</h1>
-          <p className="text-lg text-gray-700 dark:text-gray-200 mb-8 max-w-2xl mx-auto">{t('subtitle')}</p>
+      <div className="px-4 py-16 animate-fade-in">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-50">
+            {serviceType === 'diy' ? t('title') : t('dfyPlans.title', 'Professional Content Services')}
+          </h1>
+          <p className="text-lg text-gray-700 dark:text-gray-200 mb-6 max-w-2xl mx-auto">
+            {serviceType === 'diy' 
+              ? t('subtitle') 
+              : t('dfyPlans.subtitle', 'Choose your managed content service tier')
+            }
+          </p>
           
-          {/* Billing cycle switch with yearly highlighted as default */}
-          <div className="inline-flex items-center bg-adaptive-tertiary backdrop-blur-sm rounded-full p-1 mb-6 border border-adaptive">
+          {/* Service Type Selector */}
+          <ServiceTypeSelector
+            selectedServiceType={serviceType}
+            onServiceTypeChange={handleServiceTypeChange}
+          />
+          
+          {/* Billing cycle switch - only show for DIY service */}
+          {serviceType === 'diy' && (
+            <div className="inline-flex items-center bg-adaptive-tertiary backdrop-blur-sm rounded-full p-1 mb-4 border border-adaptive">
             <button 
               className={cn(
                 "py-2 px-4 rounded-full transition-colors duration-200", 
@@ -142,34 +185,41 @@ const Pricing: React.FC = () => {
             >
               {t('billingCycle.yearly')}
             </button>
-          </div>
-          {billingCycle === 'yearly' && (
-            <div className="text-sm text-green-400 font-medium mb-4">
+            </div>
+          )}
+          
+          {serviceType === 'diy' && billingCycle === 'yearly' && (
+            <div className="text-sm text-green-400 font-medium mb-3">
               {t('yearlyDiscount')}
             </div>
           )}
         </div>
 
-        {/* Free Trial Banner */}
-        <div className="bg-gradient-to-r from-violet-700 to-indigo-600 rounded-xl p-6 shadow-lg mb-10 max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center mb-4 md:mb-0">
-              <Gift className="h-8 w-8 text-white mr-4" />
-              <div>
-                <h3 className="text-xl font-bold text-white">{t('freeTrialBanner.title')}</h3>
-                <p className="text-white/90">{t('freeTrialBanner.description')}</p>
+        {/* Free Trial Banner - only show for DIY service */}
+        {serviceType === 'diy' && (
+          <div className="bg-gradient-to-r from-violet-700 to-indigo-600 rounded-xl p-6 shadow-lg mb-8 max-w-6xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between">
+              <div className="flex items-center mb-4 md:mb-0">
+                <Gift className="h-8 w-8 text-white mr-4" />
+                <div>
+                  <h3 className="text-xl font-bold text-white">{t('freeTrialBanner.title')}</h3>
+                  <p className="text-white/90">{t('freeTrialBanner.description')}</p>
+                </div>
               </div>
+              <Button 
+                className="bg-white text-violet-700 hover:bg-white/90 px-6 py-5 text-base font-medium shadow-md"
+                onClick={freeTrial}
+              >
+                {t('freeTrialBanner.button')}
+                <ChevronRight className="h-5 w-5 ml-2" />
+              </Button>
             </div>
-            <Button 
-              className="bg-white text-violet-700 hover:bg-white/90 px-6 py-5 text-base font-medium shadow-md"
-              onClick={freeTrial}
-            >
-              {t('freeTrialBanner.button')}
-              <ChevronRight className="h-5 w-5 ml-2" />
-            </Button>
           </div>
-        </div>        {/* Pricing Cards - Mobile responsive grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 mb-16 max-w-6xl mx-auto">          {/* Free Plan */}
+        )}
+
+        {/* Pricing Cards - Show different plans based on service type */}
+        {serviceType === 'diy' ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 mb-12 max-w-6xl mx-auto">          {/* Free Plan */}
           <div className="card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10 hover:-translate-y-1 rounded-xl">
             <div className="p-6 border-b border-adaptive">
               <div className="flex justify-between items-start">
@@ -414,8 +464,15 @@ const Pricing: React.FC = () => {
               </p>
             </div>
           </div>
-        </div>        {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-16">
+          </div>
+        ) : (
+          <div className="mb-12">
+            <DFYPricingPlans onPurchase={handlePurchase} isLoading={isLoading} />
+          </div>
+        )}
+
+        {/* FAQ Section */}
+        <div className="max-w-3xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-12">
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">{t('faq.title')}</h2>
             <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-b border-gray-700/50">
@@ -474,7 +531,7 @@ const Pricing: React.FC = () => {
             </AccordionItem>
           </Accordion>
         </div>        {/* Plan features section */}
-        <div className="max-w-4xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-16">
+        <div className="max-w-4xl mx-auto px-4 card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive mb-10">
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-50">{t('allPlansInclude.title')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -512,9 +569,9 @@ const Pricing: React.FC = () => {
         </div>
         
         {/* Call to action */}
-        <div className="text-center mt-16 mb-10">
+        <div className="text-center mt-10 mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-50">{t('cta.title')}</h2>
-          <p className="text-adaptive-secondary mb-8 max-w-2xl mx-auto">
+          <p className="text-adaptive-secondary mb-6 max-w-2xl mx-auto">
             {t('cta.description')}
           </p>
           <Button className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-lg text-lg shadow-lg border border-adaptive" onClick={freeTrial}>

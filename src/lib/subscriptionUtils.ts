@@ -456,73 +456,107 @@ export const getPlanFeatures = (planType: string, cycle: 'monthly' | 'yearly' = 
 };
 
 export const getPlanBilling = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): { price: string, saving?: string, promo?: string } => {
-  // Updated with GBP pricing as per user requirements
+  // Updated with EUR pricing for Estonia organization
   switch (planType) {
     case 'basicMonth':
-      return { price: '$8.00/month' };
+      return { price: '€8/month' };
     case 'basicYear':
-      return { price: '$40.00/year', saving: 'Save 58%' };
+      return { price: '€40/year', saving: 'Save 58%' };
     case 'premiumMonth':
-      return { price: '£29/month' };
+      return { price: '€29/month' };
     case 'premiumYear':
-      return { price: '£199/year', saving: 'Save £149/year' };
+      return { price: '€199/year', saving: 'Save €149/year' };
     case 'flexy':
-      return { price: '$3.00 per pack' };
+      return { price: '€3 per pack' };
+    
+    // DFY Service Plans
+    case 'dfySilver':
+      return { price: '€297/month' };
+    case 'dfyGold':
+      return { price: '€497/month' };
+    case 'dfyPlatinum':
+      return { price: '€997/month' };
     default:
       return { price: 'Free' };
   }
 };
 
 export const getStripePriceId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Updated with actual Premium plan Stripe price IDs
+  // Updated with Estonia Stripe organization price IDs - CASE SENSITIVE ACCURACY
   switch (planType) {
+    // DIY Service Plans
     case 'basicMonth':
-      return 'price_1RTGhNGCd9fidigraVTwiPFB'; // Basic Plan Monthly
+      return 'price_1SCnAL8AHkLKjeVHKTbul7zu'; // Eng_Perfect_BasicMonth - €8/month
     case 'basicYear':
-      return 'price_1RTH3yGCd9fidigrrhPoTMga'; // Basic Plan Yearly
+      return 'price_1SCn0C8AHkLKjeVHaIm0y9Fb'; // Eng_Perfect_BasicYear - €40/year (corrected: HaIm0y9Fb)
     case 'premiumMonth':
-      return 'price_1RZcCkGCd9fidigrhkG3BMxU'; // Premium Plan Monthly
+      return 'price_1SCmor8AHkLKjeVHlCHyxR7f'; // Eng_Perfect_PremiumMonth - €29/month (corrected: HlCHyxR7f)
     case 'premiumYear':
-      return 'price_1RZcXdGCd9fidigrubfO1RCe'; // Premium Plan Yearly
+      return 'price_1SCm5A8AHkLKjeVH7Hle1wl2'; // Eng_Perfect_Premium_Year - €199/year
     case 'flexy':
-      return 'price_1RTHNhGCd9fidigrric9VnxJ'; // Flex Plan
+      return 'price_1RTHNhGCd9fidigrric9VnxJ'; // Flex Plan (keeping existing)
+    
+    // DFY Service Plans
+    case 'dfySilver':
+      return 'price_1SCoNk8AHkLKjeVHvxIEwRib'; // Silver Starter - €297/month
+    case 'dfyGold':
+      return 'price_1SCoji8AHkLKjeVHz77lzCmX'; // Golden Growth - €497/month (corrected from Excel)
+    case 'dfyPlatinum':
+      return 'price_1SCoty8AHkLKjeVHDGdUy6C0'; // Platinum Pro - €997/month
     default:
       return '';
   }
 };
 
 export const getStripeProductId = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Updated with actual Premium plan product IDs
+  // Updated with Estonia Stripe organization product IDs - CASE SENSITIVE ACCURACY
   switch (planType) {
+    // DIY Service Plans
     case 'basicMonth':
-      return 'prod_SO2mG5NoYykdKq'; // Basic Plan Monthly
+      return 'prod_T95LKpcmJ2nOgq'; // Eng_Perfect_BasicMonth
     case 'basicYear':
-      return 'prod_SO3AIuuRCfM8Jf'; // Basic Plan Yearly
+      return 'prod_T95AHbAGNlnWMe'; // Eng_Perfect_BasicYear (corrected: NlnWMe)
     case 'premiumMonth':
-      return 'prod_SUbPDj7fSL9tuZ'; // Premium Plan Monthly
+      return 'prod_T94yxSjx8xT4Ga'; // Eng_Perfect_PremiumMonth
     case 'premiumYear':
-      return 'prod_SUblJDj9dYJalR'; // Premium Plan Yearly
+      return 'prod_T94DlV1263MoHf'; // Eng_Perfect_Premium_Year (corrected: T94DlV1263MoHf)
     case 'flexy':
-      return 'prod_SO3UmcTFa3cSl7'; // Flex Plan
+      return 'prod_SO3UmcTFa3cSl7'; // Flex Plan (keeping existing)
+    
+    // DFY Service Plans
+    case 'dfySilver':
+      return 'prod_T96aHxuFqm4F4C'; // Silver Starter
+    case 'dfyGold':
+      return 'prod_T96xEaw8ftOzrC'; // Golden Growth
+    case 'dfyPlatinum':
+      return 'prod_T9787TZfpJXhOQ'; // Platinum Pro
     default:
       return '';
   }
 };
 
 export const getStripePurchaseUrl = (planType: string, cycle: 'monthly' | 'yearly' = 'monthly'): string => {
-  // Updated purchase URLs with actual Premium plan URLs
+  // Updated purchase URLs with Estonia Stripe organization URLs - CASE SENSITIVE ACCURACY
   switch (planType) {
+    // DIY Service Plans
     case 'basicMonth':
-      return 'https://buy.stripe.com/00w14n4Xrcqv8Su7hbeAg03';
+      return 'https://buy.stripe.com/6oU14h7JKcRT34ecgV1Fe02'; // Eng_Perfect_BasicMonth - €8/month (corrected: 6oU14h7JKcRT34ecgV1Fe02)
     case 'basicYear':
-      return 'https://buy.stripe.com/bJeaEX9dH76b8SubxreAg04';
+      return 'https://buy.stripe.com/4gM00d9RS8BDfR01Ch1Fe03'; // Eng_Perfect_BasicYear - €40/year (corrected: 4gM00d9RS8BDfR01Ch1Fe03)
     case 'premiumMonth':
-      return 'https://buy.stripe.com/8x29ATfC5cqvd8K1WReAg06'; // Premium Plan Monthly
+      return 'https://buy.stripe.com/cNi9AN1lm5prcEO94J1Fe01'; // Eng_Perfect_PremiumMonth - €29/month
     case 'premiumYear':
-      return 'https://buy.stripe.com/5kQ9ATcpT1LRc4GfNHeAg07'; // Premium Plan Yearly
-     // return 'https://buy.stripe.com/premium_year_placeholder'; // Premium Plan Yearly - update with actual Stripe URL
+      return 'https://buy.stripe.com/eVq8wJ7JKf0120adkZ1Fe00'; // Eng_Perfect_Premium_Year - €199/year
     case 'flexy':
-      return 'https://buy.stripe.com/28E4gz2PjeyDd8KatneAg05';
+      return 'https://buy.stripe.com/28E4gz2PjeyDd8KatneAg05'; // Flex Plan (keeping existing)
+    
+    // DFY Service Plans
+    case 'dfySilver':
+      return 'https://buy.stripe.com/14A6oB6FG3hjfR0ft71Fe04'; // Silver Starter - €297/month (corrected: 14A6oB6FG3hjfR0ft71Fe04)
+    case 'dfyGold':
+      return 'https://buy.stripe.com/7sY6oBe883hjfR0a8N1Fe05'; // Golden Growth - €497/month
+    case 'dfyPlatinum':
+      return 'https://buy.stripe.com/eVq6oB6FG5prcEOdkZ1Fe06'; // Platinum Pro - €997/month (corrected: eVq6oB6FG5prcEOdkZ1Fe06)
     default:
       return '';
   }

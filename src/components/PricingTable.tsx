@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSubscriptionCheckout, createFlexCheckout } from '@/lib/stripe';
+import { getStripePriceId } from '@/lib/subscriptionUtils';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -75,7 +76,7 @@ const PricingTable: React.FC = () => {
     }
     
     try {
-      const priceId = 'price_1RTGhNGCd9fidigraVTwiPFB'; // Updated Basic Monthly price ID
+      const priceId = getStripePriceId('basicMonth', 'monthly'); // Use InSighter OÜ price ID
       const url = await createSubscriptionCheckout(currentUser.uid, priceId);
       window.location.assign(url);
     } catch (error: unknown) {
@@ -99,7 +100,7 @@ const PricingTable: React.FC = () => {
     }
     
     try {
-      const priceId = 'price_1RTHNhGCd9fidigrric9VnxJ'; // Updated Flex price ID
+      const priceId = getStripePriceId('flexy', 'monthly'); // Use Flex price ID (still on NODEMATICS - needs migration?)
       const url = await createFlexCheckout(currentUser.uid, priceId, 1);
       window.location.assign(url);
     } catch (error: unknown) {
@@ -236,15 +237,16 @@ const PricingTable: React.FC = () => {
         </div>
       </div>
       
-      {/* Embed the Stripe Pricing Table as an alternative */}
-      <div className="mt-16">
+      {/* Embed the Stripe Pricing Table - DISABLED during migration to InSighter OÜ */}
+      {/* TODO: Get InSighter OÜ pricing table ID and update here */}
+      {/* <div className="mt-16">
         <h3 className="text-xl font-semibold text-center mb-8">Or, choose from our Stripe checkout options:</h3>
         <div className="max-w-3xl mx-auto">
           <div dangerouslySetInnerHTML={{ 
-            __html: `<stripe-pricing-table pricing-table-id="prctbl_1RTHNvGCd9fidigr26DIBbTU" publishable-key="pk_test_51Qk8jFGCd9fidigrAGg1nszClaepwj0eyd7XFaxaiweCgCvl63VUQKbN40DlLjcXyhRAm7qWEK92k5Ks9nVKv3Jk008PaVRpPv"></stripe-pricing-table>`
+            __html: `<stripe-pricing-table pricing-table-id="prctbl_XXXXX" publishable-key="pk_live_51SCh8p8AHkLKjeVHcv9nrb3Q1ybp4KCnR5XhNVFqouSTg11U80PVUlzL3Lhn3iRC4najFe3fLFzJKGdWzWTibfBj00FAmJCP9f"></stripe-pricing-table>`
           }} />
         </div>
-      </div>
+      </div> */}
       
       {/* FAQ section */}
       <div className="mt-16">

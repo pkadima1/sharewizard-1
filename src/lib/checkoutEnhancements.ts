@@ -13,6 +13,7 @@ export const createEnhancedSubscriptionCheckout = async (
     couponCode?: string;
     trialDays?: number;
     includeUpsells?: boolean;
+    serviceType?: 'diy' | 'dfy';
   } = {}
 ) => {
   try {
@@ -95,6 +96,7 @@ export const createEnhancedSubscriptionCheckout = async (
         source: referralMetadata.source || 'EngagePerfect AI Web App',
         created_at: new Date().toISOString(),
         checkout_type: 'subscription',
+        service_type: options.serviceType || 'diy',
         // Only spread defined referral metadata fields
         ...(Object.keys(referralMetadata).length > 0 ? Object.fromEntries(
           Object.entries(referralMetadata).filter(([_, value]) => value !== undefined && value !== null && value !== '')
