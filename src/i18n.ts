@@ -12,16 +12,16 @@ i18n
   .use(initReactI18next)
   // Initialize the i18n configuration
   .init({
-    // Default language - French as primary, English as fallback
-    fallbackLng: 'fr',
+    // Default language - English as primary fallback for international users
+    fallbackLng: 'en',
     // Available languages
     supportedLngs: ['en', 'fr'],
     // Debug mode for development
     debug: import.meta.env.DEV,
     // Language detector options
     detection: {
-      // Order of detection methods - prioritize localStorage, then French, then browser detection
-      order: ['localStorage', 'path', 'navigator'],
+      // Order of detection methods - prioritize URL path first for explicit language selection
+      order: ['path', 'localStorage', 'navigator'],
       // Where to look in the URL path (index 1 means /:lang/...)
       lookupFromPathIndex: 1,
       // Enable localStorage caching for language detection
@@ -30,7 +30,7 @@ i18n
       lookupLocalStorage: 'i18nextLng',
     },
     // Namespace configuration
-    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform', 'partners'],
+    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform', 'partners', 'foundry'],
     defaultNS: 'common',
     // Backend configuration for loading translations
     backend: {

@@ -75,6 +75,11 @@ export { monthlyCommissionReport } from './payouts/monthlyReport.js';
 export { generateManualCommissionReport } from './payouts/monthlyReport.js';
 export { getPayoutReport } from './payouts/monthlyReport.js';
 
+// Export visual AI functions (Foundry Lab)
+export { editImageWithGemini } from './visualAI.js';
+export { generateImagesWithImagen } from './visualAI.js';
+export { generateVideoWithVeo } from './visualAI.js';
+
 // Add any additional function exports below
 
 // Start writing functions

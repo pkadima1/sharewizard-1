@@ -36,7 +36,10 @@ export const checkUserRequestAvailability = async (userId: string): Promise<{
       planType
     };
   } catch (error) {
-    console.error("Error checking request availability:", error);
+    // Log error only in development
+    if (import.meta.env.DEV) {
+      console.error("Error checking request availability:", error);
+    }
     return { 
       canMakeRequest: false, 
       requestsUsed: 0, 
@@ -121,7 +124,9 @@ export const checkUserPlan = async (userId: string): Promise<{
       usagePercentage
     };
   } catch (error: any) {
-    console.error("Error checking user plan:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error checking user plan:", error);
+    }
     return { 
       status: 'UPGRADE', 
       message: `Error checking plan: ${error.message}`,
@@ -201,7 +206,9 @@ export const resetUsageCounter = async (userId: string): Promise<boolean> => {
     });
     return true;
   } catch (error) {
-    console.error("Error resetting usage counter:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error resetting usage counter:", error);
+    }
     return false;
   }
 };
@@ -220,7 +227,9 @@ export const addFlexRequests = async (userId: string, additionalRequests: number
     });
     return true;
   } catch (error) {
-    console.error("Error adding flex requests:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error adding flex requests:", error);
+    }
     return false;
   }
 };
@@ -267,12 +276,16 @@ export const safeShareContent = async (content: any, title: string = 'Check out 
       await navigator.share(shareData);
       return true;
     } else {
-      console.log('Web Share API not supported, copying to clipboard instead');
+      if (import.meta.env.DEV) {
+        console.log('Web Share API not supported, copying to clipboard instead');
+      }
       await navigator.clipboard.writeText(cleanContent);
       return true;
     }
   } catch (error) {
-    console.error('Error sharing content:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error sharing content:', error);
+    }
     return false;
   }
 };
@@ -290,7 +303,9 @@ export const safeDownloadContent = (content: string, filename: string): boolean 
     URL.revokeObjectURL(url);
     return true;
   } catch (error) {
-    console.error('Error downloading content:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error downloading content:', error);
+    }
     return false;
   }
 };
@@ -305,20 +320,26 @@ export const markUserForTrial = async (
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      console.error("User document not found");
+      if (import.meta.env.DEV) {
+        console.error("User document not found");
+      }
       return false;
     }
     
     const userData = userDoc.data();
     
     if (userData.plan_type !== 'free') {
-      console.error("User is not on free plan, cannot mark for trial");
+      if (import.meta.env.DEV) {
+        console.error("User is not on free plan, cannot mark for trial");
+      }
       return false;
     }
     
-    console.log("Marking user for trial:", userId);
-    console.log("Selected plan for trial:", planSelected);
-    console.log("Selected cycle for trial:", selectedCycle);
+    if (import.meta.env.DEV) {
+      console.log("Marking user for trial:", userId);
+      console.log("Selected plan for trial:", planSelected);
+      console.log("Selected cycle for trial:", selectedCycle);
+    }
     
     await updateDoc(userRef, {
       selected_plan: planSelected,
@@ -326,10 +347,14 @@ export const markUserForTrial = async (
       trial_pending: true
     });
     
-    console.log("User marked for trial, redirecting to Stripe");
+    if (import.meta.env.DEV) {
+      console.log("User marked for trial, redirecting to Stripe");
+    }
     return true;
   } catch (error: any) {
-    console.error("Error marking user for trial:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error marking user for trial:", error);
+    }
     return false;
   }
 };
@@ -340,14 +365,18 @@ export const activateTrialAfterPayment = async (userId: string): Promise<boolean
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      console.error("User document not found");
+      if (import.meta.env.DEV) {
+        console.error("User document not found");
+      }
       return false;
     }
     
     const userData = userDoc.data();
     
     if (!userData.trial_pending) {
-      console.error("No pending trial for this user");
+      if (import.meta.env.DEV) {
+        console.error("No pending trial for this user");
+      }
       return false;
     }
     
@@ -363,10 +392,14 @@ export const activateTrialAfterPayment = async (userId: string): Promise<boolean
       trial_pending: false
     });
     
-    console.log("Trial activated successfully after payment confirmation");
+    if (import.meta.env.DEV) {
+      console.log("Trial activated successfully after payment confirmation");
+    }
     return true;
   } catch (error: any) {
-    console.error("Error activating trial after payment:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error activating trial after payment:", error);
+    }
     return false;
   }
 };
@@ -384,7 +417,9 @@ export const isPlanEligibleForTrial = async (userId: string): Promise<boolean> =
     
     return userData.plan_type === 'free' && !userData.has_used_trial;
   } catch (error) {
-    console.error("Error checking trial eligibility:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error checking trial eligibility:", error);
+    }
     return false;
   }
 };
@@ -570,27 +605,35 @@ export const clearTrialPending = async (userId: string): Promise<boolean> => {
     const userDoc = await getDoc(userRef);
     
     if (!userDoc.exists()) {
-      console.error("User document not found when clearing trial pending status");
+      if (import.meta.env.DEV) {
+        console.error("User document not found when clearing trial pending status");
+      }
       return false;
     }
     
     const userData = userDoc.data();
     
     if (userData.trial_pending) {
-      console.log("Clearing trial pending status for user after cancelled checkout:", userId);
+      if (import.meta.env.DEV) {
+        console.log("Clearing trial pending status for user after cancelled checkout:", userId);
+      }
       
       await updateDoc(userRef, {
         trial_pending: false,
         selected_plan: null
       });
       
-      console.log("Trial pending status cleared successfully");
+      if (import.meta.env.DEV) {
+        console.log("Trial pending status cleared successfully");
+      }
       return true;
     }
     
     return true; // Already not pending, so success
   } catch (error: any) {
-    console.error("Error clearing trial pending status:", error);
+    if (import.meta.env.DEV) {
+      console.error("Error clearing trial pending status:", error);
+    }
     return false;
   }
 };

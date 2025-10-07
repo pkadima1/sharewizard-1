@@ -237,17 +237,6 @@ const PricingTable: React.FC = () => {
         </div>
       </div>
       
-      {/* Embed the Stripe Pricing Table - DISABLED during migration to InSighter OÜ */}
-      {/* TODO: Get InSighter OÜ pricing table ID and update here */}
-      {/* <div className="mt-16">
-        <h3 className="text-xl font-semibold text-center mb-8">Or, choose from our Stripe checkout options:</h3>
-        <div className="max-w-3xl mx-auto">
-          <div dangerouslySetInnerHTML={{ 
-            __html: `<stripe-pricing-table pricing-table-id="prctbl_XXXXX" publishable-key="pk_live_51SCh8p8AHkLKjeVHcv9nrb3Q1ybp4KCnR5XhNVFqouSTg11U80PVUlzL3Lhn3iRC4najFe3fLFzJKGdWzWTibfBj00FAmJCP9f"></stripe-pricing-table>`
-          }} />
-        </div>
-      </div> */}
-      
       {/* FAQ section */}
       <div className="mt-16">
         <h3 className="text-2xl font-semibold text-center mb-8">Frequently Asked Questions</h3>

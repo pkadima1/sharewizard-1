@@ -204,6 +204,17 @@ const Navbar: React.FC = () => {
             >
               {t('nav.dashboard')}
             </Link>
+            {/* Foundry Lab link */}
+            <Link 
+              to={getLocalizedPath('foundry-lab')} 
+              className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                isActive('/foundry-lab') 
+                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              Foundry Lab
+            </Link>
             {/* Partner Dashboard link - only visible to partners */}
             {isPartner && (
               <Link 
@@ -423,6 +434,18 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('nav.dashboard')}
+                  </Link>
+                  {/* Foundry Lab mobile link */}
+                  <Link 
+                    to={getLocalizedPath('foundry-lab')} 
+                    className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                      isActive('/foundry-lab') 
+                        ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Foundry Lab
                   </Link>
                   {/* Partner Dashboard mobile link - only visible to partners */}
                   {isPartner && (

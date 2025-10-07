@@ -28,6 +28,7 @@ import PartnerDashboard from "./pages/partner/Dashboard";
 import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import FoundryLabPage from "./pages/FoundryLab/FoundryLabPage";
 import { useLanguage } from "./contexts/LanguageContext";
 import { trackPageView } from "./utils/analytics";
 
@@ -127,6 +128,7 @@ const RouterConfig = () => {
               <Route path="/admin/partner-payouts" element={<RootRedirect />} />
               <Route path="/partner-registration" element={<RootRedirect />} />
               <Route path="/partner/dashboard" element={<RootRedirect />} />
+              <Route path="/foundry-lab" element={<RootRedirect />} />
               
               {/* Language-prefixed routes */}
               <Route path="/:lang/*" element={
@@ -158,6 +160,9 @@ const RouterConfig = () => {
                     {/* Partner routes */}
                     <Route path="/partner-registration" element={<ErrorBoundary><PartnerRegistration /></ErrorBoundary>} />
                     <Route path="/partner/dashboard" element={<ErrorBoundary><PartnerDashboard /></ErrorBoundary>} />
+                    
+                    {/* Foundry Lab route */}
+                    <Route path="/foundry-lab" element={<ErrorBoundary><FoundryLabPage /></ErrorBoundary>} />
                     
                     {/* Nested route catch-all for unknown pages */}
                     <Route path="*" element={<NotFound />} />

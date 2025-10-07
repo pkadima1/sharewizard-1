@@ -27,7 +27,7 @@ export function drawCustomTextOverlay(
   height: number
 ): void {
   if (!textOverlayData || (typeof textOverlayData === 'object' && textOverlayData !== null && !('text' in textOverlayData) && typeof textOverlayData !== 'string')) {
-    console.warn('Invalid text overlay data:', textOverlayData);
+    debugLog('Invalid text overlay data:', textOverlayData);
     return; // No valid text overlay data
   }
   
@@ -62,7 +62,7 @@ export function drawCustomTextOverlay(
     size = overlayData.size || 24;
     rotation = overlayData.rotation || 0;
   } else {
-    console.warn('Invalid text overlay data type:', typeof textOverlayData);
+    debugLog('Invalid text overlay data type:', typeof textOverlayData);
     ctx.restore();
     return;
   }
@@ -103,7 +103,7 @@ export function drawCustomTextOverlay(
       ctx.fillText(line, 0, yOffset);
     });
   } catch (error) {
-    console.error('Error drawing text overlay:', error);
+    debugLog('Error drawing text overlay:', error);
   } finally {
     // Restore the context to its original state
     ctx.restore();
@@ -149,7 +149,7 @@ export function getMediaFileFromCache(url: string): File | null {
       return file;
     }
   } catch (error) {
-    console.warn('Error accessing media file cache:', error);
+    debugLog('Error accessing media file cache:', error);
   }
   
   return null;
@@ -220,7 +220,7 @@ export function getTextOverlayDataFromElement(element: HTMLVideoElement | HTMLIm
         debugLog('Found text overlay data in data attribute:', parsedData);
         return parsedData;
       } catch (err) {
-        console.warn('Failed to parse text overlay data from attribute:', textDataAttribute);
+        debugLog('Failed to parse text overlay data from attribute:', textDataAttribute);
       }
     }
     
