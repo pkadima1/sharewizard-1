@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSubscriptionCheckout, createFlexCheckout } from '@/lib/stripe';
@@ -19,8 +19,15 @@ const Pricing: React.FC = () => {
   // Analytics: Track page view automatically
   usePageAnalytics('Pricing - EngagePerfect');
 
+  const [searchParams] = useSearchParams();
+  const basicPlanRef = useRef<HTMLDivElement>(null);
+  
+  // Get initial billing cycle from URL params or default to yearly
+  const urlBilling = searchParams.get('billing');
+  const initialBillingCycle = (urlBilling === 'monthly' || urlBilling === 'yearly') ? urlBilling : 'yearly';
+  
   // Set yearly as the default billing cycle for DIY, monthly only for DFY
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>(initialBillingCycle);
   const [serviceType, setServiceType] = useState<'diy' | 'dfy'>('diy');
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -28,7 +35,29 @@ const Pricing: React.FC = () => {
   const { t } = useTranslation('pricing');
   const [isLoading, setIsLoading] = useState<{
     [key: string]: boolean;
-  }>({});  // Analytics: Track billing cycle changes
+  }>({});
+  
+  // Handle URL params and auto-scroll to Basic plan
+  useEffect(() => {
+    const highlightPlan = searchParams.get('highlight');
+    if (highlightPlan === 'basic' && basicPlanRef.current) {
+      // Smooth scroll to Basic plan after a brief delay
+      setTimeout(() => {
+        basicPlanRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+        
+        // Add a subtle highlight animation
+        basicPlanRef.current?.classList.add('ring-2', 'ring-purple-500', 'ring-offset-2', 'ring-offset-background');
+        setTimeout(() => {
+          basicPlanRef.current?.classList.remove('ring-2', 'ring-purple-500', 'ring-offset-2', 'ring-offset-background');
+        }, 3000);
+      }, 500);
+    }
+  }, [searchParams]);
+  
+  // Analytics: Track billing cycle changes
   const handleBillingCycleChange = (cycle: 'monthly' | 'yearly') => {
     setBillingCycle(cycle);
     trackFeatureUsage('billing_cycle_toggle', {
@@ -278,7 +307,10 @@ const Pricing: React.FC = () => {
               </p>
             </div>
           </div>          {/* Basic Plan */}
-          <div className="card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20 hover:-translate-y-1 rounded-xl">
+          <div 
+            ref={basicPlanRef}
+            className="card-adaptive bg-adaptive-secondary shadow-adaptive-md border-adaptive relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20 hover:-translate-y-1 rounded-xl"
+          >
             <div className="p-6 border-b border-adaptive">
               <div className="flex justify-between items-start">
                 <div>

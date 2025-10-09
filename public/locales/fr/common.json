@@ -296,5 +296,35 @@
     }
   },
   "user": "Utilisateur",
-  "resetToEnglish": "Réinitialiser en anglais"
+  "resetToEnglish": "Réinitialiser en anglais",
+  "insufficientCreditsDialog": {
+    "title": "Débloquer {{featureName}}",
+    "description": "Vous avez besoin de <strong>{{creditsNeeded}} crédits</strong> mais vous n'en avez que <strong>{{creditsAvailable}} restants</strong>",
+    "specialOffer": "🎉 Offre Spéciale Pour Vous !",
+    "freeTrial": {
+      "title": "Essai Gratuit de 5 Jours",
+      "description": "Essayez toutes les fonctionnalités sans risque. Annulez à tout moment, sans questions."
+    },
+    "discount": {
+      "title": "50% DE RÉDUCTION Premier Mois",
+      "description": "Obtenez votre premier mois à moitié prix après la fin de l'essai"
+    },
+    "codePrompt": "UTILISEZ CE CODE LORS DU PAIEMENT",
+    "discountCode": "PERFECTSTART",
+    "planIncludes": "LE PLAN BASIC INCLUT:",
+    "features": {
+      "credits": "70 crédits/mois pour toutes les fonctionnalités IA",
+      "imageGeneration": "Génération et édition d'images",
+      "blogCaption": "Génération de blogs et légendes",
+      "seo": "Outils d'optimisation SEO"
+    },
+    "buttons": {
+      "startTrial": "Commencer Votre Essai Gratuit"
+    },
+    "toast": {
+      "codeCopied": "Code Copié !",
+      "codeCopiedDescription": "Code de réduction copié dans le presse-papiers"
+    },
+    "finePrint": "Carte de crédit requise. Annulez dans les 5 jours pour éviter les frais. Utilisez le code PERFECTSTART pour 50% de réduction sur le premier mois seulement."
+  }
 }

@@ -294,5 +294,35 @@
     }
   },
   "user": "User",
-  "resetToEnglish": "Reset to English"
+  "resetToEnglish": "Reset to English",
+  "insufficientCreditsDialog": {
+    "title": "Unlock {{featureName}}",
+    "description": "You need <strong>{{creditsNeeded}} credits</strong> but only have <strong>{{creditsAvailable}} remaining</strong>",
+    "specialOffer": "🎉 Special Offer for You!",
+    "freeTrial": {
+      "title": "5-Day Free Trial",
+      "description": "Try all features risk-free. Cancel anytime, no questions asked."
+    },
+    "discount": {
+      "title": "50% OFF First Month",
+      "description": "Get your first month at half price after the trial ends"
+    },
+    "codePrompt": "USE THIS CODE AT CHECKOUT",
+    "discountCode": "PERFECTSTART",
+    "planIncludes": "BASIC PLAN INCLUDES:",
+    "features": {
+      "credits": "70 credits/month for all AI features",
+      "imageGeneration": "Image generation & editing",
+      "blogCaption": "Blog & caption generation",
+      "seo": "SEO optimization tools"
+    },
+    "buttons": {
+      "startTrial": "Start Your Free Trial"
+    },
+    "toast": {
+      "codeCopied": "Code Copied!",
+      "codeCopiedDescription": "Discount code copied to clipboard"
+    },
+    "finePrint": "Credit card required. Cancel within 5 days to avoid charges. Use code PERFECTSTART for 50% off first month only."
+  }
 }

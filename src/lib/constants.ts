@@ -4,6 +4,8 @@ import { UserProfile } from "@/types";
 export const REQUEST_COSTS = {
   CAPTION_GENERATION: 1,  // Simple caption generation costs 1 request
   BLOG_GENERATION: 4,     // Complex blog generation costs 4 requests (2-stage AI process)
+  IMAGE_GENERATION: 5,    // AI image generation costs 5 requests (Gemini/Imagen API)
+  IMAGE_EDITING: 5,       // AI image editing costs 5 requests (Gemini API)
 } as const;
 
 // Default request limits for each plan

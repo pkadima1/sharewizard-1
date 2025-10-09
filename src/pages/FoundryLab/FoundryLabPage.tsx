@@ -9,7 +9,7 @@
  * Model names are abstracted and only shown in tooltips
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -20,6 +20,8 @@ import { ArrowLeft, Edit3, Image as ImageIcon, Film, Info } from 'lucide-react';
 import { FoundryEditTab } from './FoundryEditTab';
 import { FoundryImageTab } from './FoundryImageTab';
 import { FoundryMotionTab } from './FoundryMotionTab';
+import { InsufficientCreditsDialog } from '@/components/dialogs/InsufficientCreditsDialog';
+import { setInsufficientCreditsCallback } from '@/services/visuals';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocalizedPath } from '@/utils/routeUtils';
 import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
@@ -31,9 +33,37 @@ export const FoundryLabPage: React.FC = () => {
   const { currentUser } = useAuth();
   const { getLocalizedPath } = useLocalizedPath();
   const [activeTab, setActiveTab] = useState('edit');
+  
+  // Insufficient credits dialog state
+  const [insufficientCreditsOpen, setInsufficientCreditsOpen] = useState(false);
+  const [creditsInfo, setCreditsInfo] = useState({
+    needed: 5,
+    available: 0,
+    featureName: 'Image Processing'
+  });
 
   // Analytics
   usePageAnalytics('Foundry Lab - EngagePerfect');
+
+  // Set up the callback for insufficient credits
+  useEffect(() => {
+    setInsufficientCreditsCallback((needed, available, featureName) => {
+      setCreditsInfo({ needed, available, featureName });
+      setInsufficientCreditsOpen(true);
+      
+      // Track the event
+      trackEvent('insufficient_credits_dialog_shown', {
+        featureName,
+        creditsNeeded: needed,
+        creditsAvailable: available
+      });
+    });
+
+    // Cleanup
+    return () => {
+      setInsufficientCreditsCallback(null);
+    };
+  }, []);
 
   // Track tab changes
   const handleTabChange = (tab: string) => {
@@ -140,6 +170,15 @@ export const FoundryLabPage: React.FC = () => {
           </TooltipProvider>
         </div>
       </div>
+
+      {/* Insufficient Credits Dialog */}
+      <InsufficientCreditsDialog
+        isOpen={insufficientCreditsOpen}
+        onClose={() => setInsufficientCreditsOpen(false)}
+        creditsNeeded={creditsInfo.needed}
+        creditsAvailable={creditsInfo.available}
+        featureName={creditsInfo.featureName}
+      />
     </>
   );
 };

@@ -6,25 +6,30 @@
  * - Imagen 4 for image generation
  * - Veo 3 for video generation
  * 
+ * All functions require authentication and consume credits:
+ * - Image editing: 5 credits per request
+ * - Image generation: 5 credits per request
+ * 
  * All model names are abstracted away - they're implementation details
  * handled by the backend Firebase Functions.
  */
 
 import { toast } from '@/hooks/use-toast';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/lib/firebase';
 
-// Get the base URL for Firebase Functions
-const getFunctionsBaseUrl = (): string => {
-  const baseUrl = import.meta.env.VITE_FUNCTIONS_BASE_URL;
-  
-  if (!baseUrl) {
-    console.warn('VITE_FUNCTIONS_BASE_URL not configured, using local development');
-    // For development, use relative path or localhost
-    return import.meta.env.DEV 
-      ? 'http://localhost:5001/engperfecthlc/us-central1'
-      : 'https://us-central1-engperfecthlc.cloudfunctions.net';
-  }
-  
-  return baseUrl;
+// Callback type for showing insufficient credits dialog
+type InsufficientCreditsCallback = (creditsNeeded: number, creditsAvailable: number, featureName: string) => void;
+
+// Global callback for insufficient credits dialog
+let insufficientCreditsCallback: InsufficientCreditsCallback | null = null;
+
+/**
+ * Set the callback for showing insufficient credits dialog
+ * This should be called from the component that renders the dialog
+ */
+export const setInsufficientCreditsCallback = (callback: InsufficientCreditsCallback | null) => {
+  insufficientCreditsCallback = callback;
 };
 
 // Types
@@ -50,24 +55,11 @@ export interface GenerateVideoResult {
 }
 
 /**
- * Convert File to base64 string (without data: prefix for backend)
- */
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      // Strip the data URL prefix (e.g., "data:image/png;base64,")
-      const base64 = result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-};
-
-/**
  * Edit an image with multiple prompts using Gemini 2.5 Flash Image
+ * 
+ * REQUIRES: User must be logged in
+ * COSTS: 5 credits per request
+ * 
  * Returns an array of edited images, one per prompt
  */
 export const editImage = async (
@@ -100,45 +92,68 @@ export const editImage = async (
     const imageBase64 = await fileToBase64(baseFile);
     const mimeType = baseFile.type;
 
-    // Call backend API
-    const response = await fetch(`${getFunctionsBaseUrl()}/editImageWithGemini`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        imageBase64,
-        mimeType,
-        prompts,
-      }),
+    // Call Firebase callable function
+    const editImageFn = httpsCallable(functions, 'editImageWithGemini');
+    const result = await editImageFn({
+      imageBase64,
+      mimeType,
+      prompts,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API error: ${response.status}`);
+    const data = result.data as {
+      success: boolean;
+      results?: EditImageResult[];
+      requestsRemaining?: number;
+      error?: string;
+    };
+
+    if (!data.success || !data.results) {
+      throw new Error(data.error || 'Failed to edit image');
     }
 
-    const data = await response.json();
-    
-    // Transform response to expected format
-    if (!data.results || !Array.isArray(data.results)) {
-      throw new Error('Invalid response format from API');
+    // Show success toast with remaining credits
+    if (data.requestsRemaining !== undefined) {
+      toast({
+        title: 'Image Edited Successfully',
+        description: `${data.results.length} edits completed. ${data.requestsRemaining} credits remaining.`,
+      });
     }
 
-    return data.results.map((result: any) => ({
-      prompt: result.prompt,
-      dataUrl: result.dataUrl,
-    }));
+    return data.results;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('editImage error:', error);
     
-    // Show user-friendly error
-    toast({
-      title: 'Edit Failed',
-      description: error instanceof Error ? error.message : 'Failed to edit image',
-      variant: 'destructive',
-    });
+    // Handle specific Firebase errors
+    if (error.code === 'functions/unauthenticated') {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to edit images.',
+        variant: 'destructive',
+      });
+    } else if (error.code === 'functions/resource-exhausted') {
+      // Extract credits info from error
+      const creditsNeeded = 5;
+      const creditsAvailable = error.details?.requestsRemaining || 0;
+      
+      // Show promotional dialog if callback is set
+      if (insufficientCreditsCallback) {
+        insufficientCreditsCallback(creditsNeeded, creditsAvailable, 'Image Editing');
+      } else {
+        // Fallback to toast
+        toast({
+          title: 'Insufficient Credits',
+          description: error.message || 'You need 5 credits to edit images. Please upgrade your plan.',
+          variant: 'destructive',
+        });
+      }
+    } else {
+      toast({
+        title: 'Edit Failed',
+        description: error.message || 'Failed to edit image',
+        variant: 'destructive',
+      });
+    }
     
     // Return empty array on error
     return [];
@@ -146,7 +161,28 @@ export const editImage = async (
 };
 
 /**
+ * Convert File to base64 string (without data: prefix for backend)
+ */
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Strip the data URL prefix (e.g., "data:image/png;base64,")
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+/**
  * Generate images from a text prompt using Imagen 4
+ * 
+ * REQUIRES: User must be logged in
+ * COSTS: 5 credits per request
+ * 
  * Returns an array of data URLs for the generated images
  */
 export const generateImages = async (
@@ -164,43 +200,69 @@ export const generateImages = async (
     const aspectRatio = options.aspectRatio || '1:1';
     const personGeneration = options.personGeneration || 'dont_allow';
 
-    // Call backend API
-    const response = await fetch(`${getFunctionsBaseUrl()}/generateImagesWithImagen`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        numberOfImages,
-        aspectRatio,
-        personGeneration,
-      }),
+    // Call Firebase callable function
+    const generateImagesFn = httpsCallable(functions, 'generateImagesWithImagen');
+    const result = await generateImagesFn({
+      prompt,
+      numberOfImages,
+      aspectRatio,
+      personGeneration,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API error: ${response.status}`);
+    const data = result.data as {
+      success: boolean;
+      images?: string[];
+      requestsRemaining?: number;
+      error?: string;
+    };
+
+    if (!data.success || !data.images || !Array.isArray(data.images)) {
+      throw new Error(data.error || 'Failed to generate images');
     }
 
-    const data = await response.json();
-    
-    // Validate response
-    if (!data.images || !Array.isArray(data.images)) {
-      throw new Error('Invalid response format from API');
+    // Show success toast with remaining credits
+    if (data.requestsRemaining !== undefined) {
+      toast({
+        title: 'Images Generated Successfully',
+        description: `${data.images.length} images created. ${data.requestsRemaining} credits remaining.`,
+      });
     }
 
     return data.images;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('generateImages error:', error);
     
-    // Show user-friendly error
-    toast({
-      title: 'Generation Failed',
-      description: error instanceof Error ? error.message : 'Failed to generate images',
-      variant: 'destructive',
-    });
+    // Handle specific Firebase errors
+    if (error.code === 'functions/unauthenticated') {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to generate images.',
+        variant: 'destructive',
+      });
+    } else if (error.code === 'functions/resource-exhausted') {
+      // Extract credits info from error
+      const creditsNeeded = 5;
+      const creditsAvailable = error.details?.requestsRemaining || 0;
+      
+      // Show promotional dialog if callback is set
+      if (insufficientCreditsCallback) {
+        insufficientCreditsCallback(creditsNeeded, creditsAvailable, 'Image Generation');
+      } else {
+        // Fallback to toast
+        toast({
+          title: 'Insufficient Credits',
+          description: error.message || 'You need 5 credits to generate images. Please upgrade your plan.',
+          variant: 'destructive',
+        });
+      }
+    } else {
+      toast({
+        title: 'Generation Failed',
+        description: error.message || 'Failed to generate images',
+        variant: 'destructive',
+      });
+    }
     
     // Return empty array on error
     return [];
@@ -209,6 +271,10 @@ export const generateImages = async (
 
 /**
  * Generate a video from a text prompt using Veo 3
+ * 
+ * REQUIRES: User must be logged in
+ * STATUS: Not yet implemented - returns error
+ * 
  * Returns a video data URL
  */
 export const generateVideo = async (
@@ -229,35 +295,22 @@ export const generateVideo = async (
       throw new Error('Duration must be between 1 and 8 seconds');
     }
 
-    // Call backend API
-    const response = await fetch(`${getFunctionsBaseUrl()}/generateVideoWithVeo`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        resolution,
-        durationSeconds,
-      }),
+    // Call Firebase callable function
+    const generateVideoFn = httpsCallable(functions, 'generateVideoWithVeo');
+    const result = await generateVideoFn({
+      prompt,
+      resolution,
+      durationSeconds,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      
-      // Handle 501 Not Implemented specifically
-      if (response.status === 501) {
-        throw new Error(`Video generation not yet implemented: ${errorData.message || 'Feature coming soon'}`);
-      }
-      
-      throw new Error(errorData.error || `API error: ${response.status}`);
-    }
+    const data = result.data as {
+      mimeType?: string;
+      dataUrl?: string;
+      error?: string;
+    };
 
-    const data = await response.json();
-    
-    // Validate response
     if (!data.mimeType || !data.dataUrl) {
-      throw new Error('Invalid response format from API');
+      throw new Error(data.error || 'Failed to generate video');
     }
 
     return {
@@ -265,17 +318,29 @@ export const generateVideo = async (
       dataUrl: data.dataUrl,
     };
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('generateVideo error:', error);
     
-    // Show user-friendly error
-    toast({
-      title: 'Generation Failed',
-      description: error instanceof Error ? error.message : 'Failed to generate video',
-      variant: 'destructive',
-    });
+    // Handle specific Firebase errors
+    if (error.code === 'functions/unimplemented') {
+      toast({
+        title: 'Coming Soon',
+        description: 'Video generation with Veo 3 is not yet implemented.',
+      });
+    } else if (error.code === 'functions/unauthenticated') {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to generate videos.',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Generation Failed',
+        description: error.message || 'Failed to generate video',
+        variant: 'destructive',
+      });
+    }
     
-    // Return null on error
     return null;
   }
 };
