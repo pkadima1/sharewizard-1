@@ -169,5 +169,70 @@
   "errors": {
     "title": "Error",
     "checkout": "Failed to create checkout"
+  },
+  "serviceType": {
+    "diy": {
+      "title": "DIY Service",
+      "description": "Do It Yourself - Self-service platform"
+    },
+    "dfy": {
+      "title": "DFY Service", 
+      "description": "Done For You - Managed service"
+    }
+  },
+  "dfyPlans": {
+    "title": "Professional Content Services",
+    "subtitle": "Choose your managed content service tier",
+    "silver": {
+      "name": "Silver Starter",
+      "price": "€297",
+      "period": "/month",
+      "description": "Perfect for small businesses and startups",
+      "highlight": "Professional managed service with human oversight",
+      "features": {
+        "blogPosts": "16 blog posts (800-1,000 words)",
+        "images": "1 image per blog + captions",
+        "scheduling": "Scheduling to social channels",
+        "review": "Domain-specialist human review included"
+      },
+      "button": "Get Starter"
+    },
+    "gold": {
+      "name": "Golden Growth",
+      "price": "€497", 
+      "period": "/month",
+      "badge": "Most Popular",
+      "description": "Ideal for growing businesses and content agencies",
+      "highlight": "Comprehensive managed content service",
+      "features": {
+        "blogPosts": "30 blog posts (1,000-1,200 words)",
+        "images": "2 images per blog",
+        "reels": "6 reels/month",
+        "captions": "60 caption + media posts",
+        "podcasts": "4 audio podcast summaries",
+        "strategyCall": "20-min monthly strategy call",
+        "report": "Monthly insights report",
+        "review": "Domain-specialist human review included"
+      },
+      "button": "Upgrade to Growth"
+    },
+    "platinum": {
+      "name": "Platinum Pro",
+      "price": "€997",
+      "period": "/month", 
+      "description": "For enterprise-level content marketing",
+      "highlight": "Premium managed service with strategic oversight",
+      "features": {
+        "blogPosts": "50 blog posts (1,000-1,400 words)",
+        "images": "2 images per blog",
+        "reels": "10 reels/month",
+        "captions": "100 caption + media posts",
+        "monitoring": "Competitor monitoring",
+        "strategyCall": "30-min monthly strategy call",
+        "review": "Domain-specialist human review included"
+      },
+      "button": "Scale with Pro"
+    },
+    "terms": "Managed service subscription. Cancel anytime."
   }
 }

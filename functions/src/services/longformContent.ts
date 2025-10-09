@@ -139,7 +139,8 @@ const retryWithBackoff = async <T>(
     }
   }
   
-  throw lastError!;
+  // This should never be reached, but TypeScript needs it
+  throw new Error("Operation failed after all retries");
 };
 
 // Enhanced input validation with detailed error messages
@@ -273,14 +274,53 @@ const validateInputs = (data: any) => {
   }
 };
 
-// Enhanced usage checking with better error messages for blog generation (4 requests required)
+// Enhanced usage checking with deep diagnostics for dev/prod Firestore mismatch scenarios
 const checkUsageLimits = async (uid: string) => {
-  const userDoc = await db.collection("users").doc(uid).get();
-  
+  const userRef = db.collection("users").doc(uid);
+  const userDoc = await userRef.get();
+
   if (!userDoc.exists) {
-    throw new HttpsError("not-found", "User profile not found. Please complete your profile setup.");
+    const diagnostics: Record<string, any> = {
+      uid,
+      nodeEnv: process.env.NODE_ENV,
+      functionsEmulator: process.env.FUNCTIONS_EMULATOR,
+      firestoreEmulatorHost: process.env.FIRESTORE_EMULATOR_HOST || 'unset',
+      authEmulatorHost: process.env.FIREBASE_AUTH_EMULATOR_HOST ? 'set' : 'unset',
+      projectId: (db as any)?._settings?.projectId || 'unknown',
+      time: new Date().toISOString()
+    };
+    console.error('[LongForm][UsageCheck] User profile missing', diagnostics);
+
+    const allowAutoCreate = process.env.FUNCTIONS_EMULATOR === 'true' && process.env.AUTO_CREATE_DEV_USER === '1';
+    if (allowAutoCreate) {
+      try {
+        const placeholder = {
+          displayName: 'Dev User',
+          email: 'dev-user@example.com',
+          plan_type: 'free',
+          requests_limit: 10,
+          requests_used: 0,
+          flexy_requests: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _autoCreated: true,
+          _diagnostics: diagnostics
+        };
+        await userRef.set(placeholder, { merge: true });
+        console.warn(`[LongForm][UsageCheck] Auto-created placeholder profile for ${uid}`);
+        return {
+          hasUsage: true,
+          requestsRemaining: placeholder.requests_limit,
+          planType: placeholder.plan_type,
+          userData: placeholder
+        };
+      } catch (err) {
+        console.error('[LongForm][UsageCheck] Failed auto-create placeholder', err);
+      }
+    }
+    throw new HttpsError('not-found', 'User profile not found. Please complete your profile setup.');
   }
-  
+
   const userData = userDoc.data()!;
   const requestsUsed = userData.requests_used || 0;
   const requestsLimit = userData.requests_limit || 0;
@@ -1817,16 +1857,19 @@ const validateMediaUrls = async (mediaUrls: string[], userId: string): Promise<s
 // Main longform content generation function
 export const generateLongformContent = onCall({
   cors: [
-    "localhost:5173",
-    "localhost:5174",
-    "localhost:8080",
-    /engperfecthlc\.web\.app$/,
-    /engperfecthlc\.firebaseapp\.com$/,
-    /engageperfect\.com$/,
-    /www\.engageperfect\.com$/,
-    /preview--.*\.lovable\.app$/,
-    /.*\.lovable\.app$/,
-    /.*\.lovableproject\.com$/,
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:8080",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:8080",
+    /https?:\/\/engperfecthlc\.web\.app$/,
+    /https?:\/\/engperfecthlc\.firebaseapp\.com$/,
+    /https?:\/\/engageperfect\.com$/,
+    /https?:\/\/www\.engageperfect\.com$/,
+    /https?:\/\/preview--.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovableproject\.com$/,
     ...(process.env.NODE_ENV !== 'production' ? ["*"] : [])
   ],
   maxInstances: config.maxInstances,

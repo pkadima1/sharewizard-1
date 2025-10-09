@@ -1,0 +1,99 @@
+{
+  "title": "Foundry Lab",
+  "tagline": "Edit. Create. Motion.",
+  "description": "Professional visual AI tools powered by Google's latest models",
+  "tabs": {
+    "edit": "Foundry Edit",
+    "image": "Foundry Create",
+    "motion": "Foundry Motion"
+  },
+  "tooltips": {
+    "editPoweredBy": "Powered by Gemini 2.5 Flash Image (Nano Banana)",
+    "imagePoweredBy": "Powered by Imagen 4",
+    "motionPoweredBy": "Powered by Veo 3"
+  },
+  "edit": {
+    "title": "Multi-Prompt Image Editor",
+    "description": "Upload an image and apply multiple edits at once",
+    "uploadImage": "Upload Image",
+    "uploadPlaceholder": "Click to upload or drag & drop",
+    "uploadHint": "PNG, JPG, or WEBP (max 8MB)",
+    "prompts": "Edit Prompts",
+    "promptPlaceholder": "e.g., add a party hat",
+    "addPrompt": "Add Prompt",
+    "forgeEdits": "Forge Edits",
+    "processing": "Processing edits...",
+    "results": "Results",
+    "originalImage": "Original Image",
+    "errors": {
+      "noImage": "Please upload an image first",
+      "noPrompts": "Please add at least one edit prompt",
+      "fileTooLarge": "File size must be less than 8MB",
+      "invalidFileType": "Please upload a PNG, JPG, or WEBP file",
+      "processingFailed": "Failed to process edits. Please try again."
+    }
+  },
+  "image": {
+    "title": "AI Image Generation",
+    "description": "Generate stunning images from text descriptions",
+    "prompt": "Image Prompt",
+    "promptPlaceholder": "Describe the image you want to generate...",
+    "numberOfImages": "Number of Images",
+    "aspectRatio": "Aspect Ratio",
+    "aspectRatios": {
+      "1:1": "Square (1:1)",
+      "3:4": "Portrait (3:4)",
+      "4:3": "Landscape (4:3)",
+      "9:16": "Vertical (9:16)",
+      "16:9": "Widescreen (16:9)"
+    },
+    "personGeneration": "Person Generation",
+    "personGenerationOptions": {
+      "dont_allow": "Don't Allow",
+      "allow_adult": "Allow Adults Only"
+    },
+    "renderImage": "Render Image",
+    "processing": "Generating images...",
+    "results": "Generated Images",
+    "errors": {
+      "noPrompt": "Please enter an image prompt",
+      "processingFailed": "Failed to generate images. Please try again."
+    }
+  },
+  "motion": {
+    "title": "AI Video Generation",
+    "description": "Create motion content from text descriptions",
+    "prompt": "Video Prompt",
+    "promptPlaceholder": "Describe the motion you want to create...",
+    "resolution": "Resolution",
+    "resolutions": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)"
+    },
+    "duration": "Duration (seconds)",
+    "durationHint": "Maximum 8 seconds",
+    "renderMotion": "Render Motion",
+    "processing": "Generating video...",
+    "results": "Generated Video",
+    "comingSoon": "Coming Soon",
+    "errors": {
+      "noPrompt": "Please enter a video prompt",
+      "invalidDuration": "Duration must be between 1 and 8 seconds",
+      "processingFailed": "Failed to generate video. Please try again.",
+      "notImplemented": "Video generation is coming soon! This feature requires Veo 3 integration which is currently in development."
+    }
+  },
+  "actions": {
+    "download": "Download",
+    "copy": "Copy",
+    "share": "Share",
+    "remove": "Remove",
+    "copySuccess": "Copied to clipboard",
+    "copyError": "Failed to copy to clipboard",
+    "shareSuccess": "Shared successfully",
+    "shareError": "Sharing not supported on this device"
+  },
+  "nav": {
+    "backToDashboard": "Back to Dashboard"
+  }
+}

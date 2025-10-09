@@ -23,7 +23,6 @@ import { useWizardValidation } from '@/hooks/useWizardValidation';
 import { useAutoSave, getDraftInfo, formatLastSaved } from '@/hooks/useAutoSave';
 import TopicSuggestionEngine from '@/components/wizard/smart/TopicSuggestionEngine';
 import QualityIndicator from '@/components/wizard/smart/QualityIndicator';
-import ContextualHelp from '@/components/wizard/smart/ContextualHelp';
 import { useTranslation } from 'react-i18next';
 import { usePageAnalytics } from '@/components/analytics/PageAnalytics';
 import { trackContentGeneration, trackButtonClick, trackFeatureUsage, trackError } from '@/utils/analytics';
@@ -613,287 +612,209 @@ const LongFormWizard = () => {
         stepComponent = <div>Unknown step</div>;
     }
 
-    // Return the layout with step content and contextual help
+    // Return the simplified layout focused on the main content
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Step Content - Takes up 2/3 of the width on large screens */}
-        <div className="lg:col-span-2">
-          {stepComponent}
-        </div>
-        
-        {/* Contextual Help - Takes up 1/3 of the width on large screens */}
-        <div className="lg:col-span-1">
-          <ContextualHelp 
-            currentStep={currentStep} 
-            className="sticky top-4"
-          />
-        </div>
+      <div className="w-full max-w-4xl mx-auto">
+        {stepComponent}
       </div>
     );
   };
 
   return (
     <TooltipProvider>
-      <div className="container mx-auto p-4 mt-20">
-        {/* Draft Restoration Banner */}
-        {hasSavedDraft && (
-          <div className="max-w-7xl mx-auto mb-4 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-blue-800 dark:text-blue-400">
-                  {t('wizard.draft.available')}
-                </h3>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  {t('wizard.draft.foundSaved', { time: formatSavedTime(lastSaved) })}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRestoreDraft}
-                  className="text-blue-700 border-blue-300 hover:bg-blue-100 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900"
-                >
-                  {t('wizard.draft.restore')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearDraft}
-                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
-                >
-                  {t('wizard.draft.dismiss')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}        <Card className="max-w-7xl mx-auto p-6">
-          {/* Enhanced Progress Bar */}
-          <div className="mb-6">
-            {/* Progress Overview */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="space-y-1">
-                <h3 className="text-sm font-medium">{t('wizard.progress.title')}</h3>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span>{t('wizard.progress.step', { current: currentStep + 1, total: WIZARD_STEPS.length })}</span>
-                  <span>•</span>
-                  <span>{t('wizard.progress.complete', { percent: Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100) })}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {t('wizard.progress.remaining', { time: getEstimatedTimeRemaining() })}
-                  </span>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          {/* Draft Restoration Banner */}
+          {hasSavedDraft && (
+            <div className="max-w-4xl mx-auto mb-6 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-400">
+                    {t('wizard.draft.available')}
+                  </h3>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {t('wizard.draft.foundSaved', { time: formatSavedTime(lastSaved) })}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRestoreDraft}
+                    className="text-blue-700 border-blue-300 hover:bg-blue-100 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900"
+                  >
+                    {t('wizard.draft.restore')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearDraft}
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
+                  >
+                    {t('wizard.draft.dismiss')}
+                  </Button>
                 </div>
               </div>
-              
-              {/* Auto-save Status */}
-              <div className="text-xs text-muted-foreground flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  <div className={`w-2 h-2 rounded-full ${hasSavedDraft ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            </div>
+          )}
+
+          {/* Main Content Card */}
+          <Card className="max-w-4xl mx-auto shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+            {/* Simplified Progress Section */}
+            <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                    {WIZARD_STEPS[currentStep].name}
+                  </h1>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    {WIZARD_STEPS[currentStep].description}
+                  </p>
+                </div>
+                
+                {/* Auto-save indicator */}
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className={`w-2 h-2 rounded-full ${hasSavedDraft ? 'bg-green-500' : 'bg-slate-300'}`}></div>
                   <span>
                     {lastSaved ? formatSavedTime(lastSaved) : t('wizard.draft.notSaved')}
                   </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={saveNow}
-                  className="text-xs h-6 px-2 py-0"
-                >
-                  {t('wizard.navigation.saveNow')}
-                </Button>
               </div>
-            </div>
 
-            {/* Step Indicators */}
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex justify-between flex-1">
-                {WIZARD_STEPS.map((step, index) => {
-                  const isCompleted = completedSteps.includes(index);
-                  const isCurrent = index === currentStep;
-                  const isSkipped = skippedSteps.includes(index);
-                  const hasError = !isStepValid(index) && index < currentStep && !isSkipped;
-                  
-                  return (
-                    <Tooltip key={index}>
-                      <TooltipTrigger asChild>
-                        <div 
-                          className={`text-xs cursor-pointer transition-all ${
-                            isCurrent
-                              ? 'text-primary font-medium' 
-                              : isCompleted
-                                ? 'text-green-600 dark:text-green-400'
-                                : hasError
-                                  ? 'text-red-500' 
-                                  : isSkipped
-                                    ? 'text-amber-600 dark:text-amber-400'
-                                    : 'text-muted-foreground'
-                          }`}
-                          style={{ width: `${100 / WIZARD_STEPS.length}%`, textAlign: 'center' }}
-                          onClick={() => navigateToStep(index)}
-                        >
-                          <div className="flex flex-col items-center space-y-1">
-                            {/* Step Icon */}
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-all ${
-                              isCurrent
-                                ? 'border-primary bg-primary text-primary-foreground'
-                                : isCompleted
-                                  ? 'border-green-500 bg-green-500 text-white'
-                                  : hasError
-                                    ? 'border-red-500 bg-red-50 dark:bg-red-950 text-red-500'
-                                    : isSkipped
-                                      ? 'border-amber-500 bg-amber-50 dark:bg-amber-950 text-amber-600'
-                                      : 'border-muted-foreground/30 bg-background'
-                            }`}>
-                              {isCompleted ? (
-                                <CheckCircle2 className="h-3 w-3" />
-                              ) : hasError ? (
-                                <AlertTriangle className="h-3 w-3" />
-                              ) : isSkipped ? (
-                                <SkipForward className="h-3 w-3" />
-                              ) : (
-                                index + 1
-                              )}
-                            </div>
-                            
-                            {/* Step Name */}
-                            <span className="leading-tight">{step.name}</span>
-                            
-                            {/* Optional Badge */}
-                            {step.optional && (
-                              <Badge variant="outline" className="text-xs px-1 py-0 h-4">
-                                {t('wizard.progress.optional').replace('(', '').replace(')', '')}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <div className="text-center">
-                          <p className="font-medium">{step.name}</p>
-                          <p className="text-xs text-muted-foreground">{step.description}</p>
-                          <p className="text-xs">{t('contextualHelp.estimatedTime', { time: `${step.estimatedTime} min` })}</p>
-                          {isCompleted && <p className="text-xs text-green-600">✓ {t('wizard.status.completed')}</p>}
-                          {isSkipped && <p className="text-xs text-amber-600">⏭ {t('wizard.status.skipped')}</p>}
-                          {hasError && <p className="text-xs text-red-600">⚠ {t('wizard.status.needsAttention')}</p>}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="w-full bg-muted rounded-full h-3 mb-2">
-              <div 
-                className="bg-gradient-to-r from-primary to-primary/80 h-3 rounded-full transition-all duration-300 ease-out" 
-                style={{ width: `${((currentStep + 1) / WIZARD_STEPS.length) * 100}%` }}
-              ></div>
-            </div>
-
-            {/* Current Step Info */}
-            <div className="flex justify-between items-center text-xs text-muted-foreground">
-              <span>
-                {t('wizard.progress.current', { name: WIZARD_STEPS[currentStep].name })}
-                {WIZARD_STEPS[currentStep].optional && ` ${t('wizard.progress.optional')}`}
-              </span>
-              <span>{t('wizard.progress.completed', { completed: completedSteps.length, total: WIZARD_STEPS.length })}</span>
-            </div>
-          </div>
-
-          {/* Step Content */}
-          {renderStepContent()}          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-6">
-            <Button 
-              variant="outline" 
-              onClick={handlePrevious} 
-              disabled={currentStep === 0}
-              className="flex items-center gap-2"
-            >
-              ← {t('wizard.navigation.previous')}
-            </Button>
-            
-            <div className="flex gap-2">
-              {/* Skip Button for Optional Steps */}
-              {WIZARD_STEPS[currentStep].optional && (
-                <Button 
-                  variant="ghost" 
-                  onClick={skipCurrentStep}
-                  className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
-                >
-                  <SkipForward className="h-4 w-4" />
-                  {t('wizard.navigation.skip')}
-                </Button>
-              )}
-              
-              {currentStep < WIZARD_STEPS.length - 1 ? (
-                <Button 
-                  onClick={handleNext} 
-                  disabled={!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional}
-                  className="flex items-center gap-2"
-                >
-                  {t('wizard.navigation.next')} →
-                </Button>
-              ) : (
-                <Button 
-                  onClick={handleGenerate}
-                  disabled={!isFormValid}
-                  className="flex items-center gap-2"
-                >
-                  <Info className="h-4 w-4" />
-                  {t('wizard.navigation.generate')}
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Keyboard Shortcuts Footer */}
-          <div className="mt-6 pt-4 border-t border-muted">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <Command className="h-3 w-3" />
-                  Ctrl + Enter: {t('wizard.navigation.next')}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Command className="h-3 w-3" />
-                  Ctrl + S: {t('wizard.navigation.saveNow')}
-                </span>
-                <span>Esc: {t('wizard.keyboard.showHelp')}</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowKeyboardHelp(true)}
-                className="h-6 px-2 py-0 text-xs"
-              >
-                <Keyboard className="h-3 w-3 mr-1" />
-                {t('wizard.navigation.shortcuts')}
-              </Button>
-            </div>
-          </div>
-
-          {/* Step Validation Errors */}
-          {!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional && (
-            <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-md">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
-                <div>
-                  <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
-                    {t('wizard.errors.completeRequired')}
-                  </h4>
-                  <ul className="text-sm text-red-700 dark:text-red-300 mt-1 space-y-1">
-                    {getStepErrors(currentStep).map((error, index) => (
-                      <li key={index}>• {error.message}</li>
-                    ))}
-                  </ul>
+              {/* Simplified Progress Bar */}
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {t('wizard.progress.step', { current: currentStep + 1, total: WIZARD_STEPS.length })}
+                  </span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {Math.round(((currentStep + 1) / WIZARD_STEPS.length) * 100)}% {t('wizard.progress.complete', { percent: '' }).replace('%', '').trim()}
+                  </span>
+                </div>
+                
+                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500 ease-out" 
+                    style={{ width: `${((currentStep + 1) / WIZARD_STEPS.length) * 100}%` }}
+                  ></div>
+                </div>
+                
+                {/* Step dots */}
+                <div className="flex justify-between">
+                  {WIZARD_STEPS.map((step, index) => {
+                    const isCompleted = completedSteps.includes(index);
+                    const isCurrent = index === currentStep;
+                    const isAccessible = index <= Math.max(...completedSteps, -1) + 1;
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => isAccessible && navigateToStep(index)}
+                        disabled={!isAccessible}
+                        className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                          isCurrent
+                            ? 'bg-blue-500 scale-125'
+                            : isCompleted
+                              ? 'bg-green-500'
+                              : isAccessible
+                                ? 'bg-slate-300 hover:bg-slate-400'
+                                : 'bg-slate-200'
+                        } ${isAccessible ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                        title={step.name}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
-          )}          {/* Keyboard Shortcuts Help Overlay */}
+
+            {/* Step Content */}
+            <div className="p-6 md:p-8">
+              {renderStepContent()}
+            </div>
+
+            {/* Navigation */}
+            <div className="p-6 border-t border-slate-200 dark:border-slate-700">
+              <div className="flex flex-col sm:flex-row justify-between gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={handlePrevious} 
+                  disabled={currentStep === 0}
+                  className="flex items-center gap-2 order-2 sm:order-1"
+                >
+                  ← {t('wizard.navigation.previous')}
+                </Button>
+                
+                <div className="flex gap-2 order-1 sm:order-2">
+                  {/* Skip Button for Optional Steps */}
+                  {WIZARD_STEPS[currentStep].optional && (
+                    <Button 
+                      variant="ghost" 
+                      onClick={skipCurrentStep}
+                      className="flex items-center gap-2 text-amber-600 hover:text-amber-700"
+                    >
+                      <SkipForward className="h-4 w-4" />
+                      {t('wizard.navigation.skip')}
+                    </Button>
+                  )}
+                  
+                  {currentStep < WIZARD_STEPS.length - 1 ? (
+                    <Button 
+                      onClick={handleNext} 
+                      disabled={!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional}
+                      className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                    >
+                      {t('wizard.navigation.next')} →
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleGenerate}
+                      disabled={!isFormValid}
+                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700"
+                    >
+                      <Info className="h-4 w-4" />
+                      {t('wizard.navigation.generate')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Step Validation Errors */}
+              {!isStepValid(currentStep) && !WIZARD_STEPS[currentStep].optional && (
+                <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-medium text-red-800 dark:text-red-200">
+                        {t('wizard.errors.completeRequired')}
+                      </h4>
+                      <ul className="text-sm text-red-700 dark:text-red-300 mt-1 space-y-1">
+                        {getStepErrors(currentStep).map((error, index) => (
+                          <li key={index}>• {error.message}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Floating Help Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowKeyboardHelp(true)}
+            className="fixed bottom-6 right-6 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200 dark:border-slate-700 z-40"
+          >
+            <Keyboard className="h-4 w-4 mr-2" />
+            {t('wizard.navigation.shortcuts')}
+          </Button>
+
+          {/* Keyboard Shortcuts Help Overlay */}
           {showKeyboardHelp && <KeyboardShortcutsOverlay />}
-        </Card>
+        </div>
       </div>
     </TooltipProvider>
   );

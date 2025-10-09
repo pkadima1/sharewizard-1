@@ -285,7 +285,7 @@ const Step2TopicSelector = ({ formData, updateFormData }) => {
                 onValueChange={handleIndustryChange}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your industry or niche" />
+                  <SelectValue placeholder={t('step2.placeholders.industry')} />
                 </SelectTrigger>
                 <SelectContent>
                   {INDUSTRY_OPTIONS.map((industry) => (

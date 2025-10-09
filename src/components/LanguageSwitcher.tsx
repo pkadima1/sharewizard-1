@@ -32,15 +32,14 @@ export default function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2 px-3">
+        <Button variant="ghost" className="flex items-center gap-2 px-3 py-2">
           <img 
             src={getFlagImage(currentLanguage)} 
             alt={`${currentLangObj?.name} flag`}
-            className="w-4 h-3 object-cover rounded-sm"
+            className="w-5 h-4 object-cover rounded-sm"
           />
-          <span className="text-sm font-medium hidden sm:inline">{currentLangObj?.name || currentLanguage.toUpperCase()}</span>
-          <span className="text-sm font-medium sm:hidden">{currentLanguage.toUpperCase()}</span>
-          <GlobeIcon className="h-4 w-4" />
+          <span className="text-sm font-medium">{currentLanguage.toUpperCase()}</span>
+          <GlobeIcon className="h-4 w-4 opacity-60" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

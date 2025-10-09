@@ -128,3 +128,47 @@ export const getLanguageFlag = (code: string) => {
   // Use centralized flags directory for consistency
   return `/img/flags/${code}.png`;
 };
+
+/**
+ * Validates and normalizes language data from partner applications
+ * Handles both old string format and new object format
+ */
+export const validateLanguageData = (languages: any[]): Array<{language: string, level: string}> => {
+  if (!Array.isArray(languages)) {
+    return [];
+  }
+
+  return languages.map(lang => {
+    // If it's already in the correct format
+    if (typeof lang === 'object' && lang !== null && 'language' in lang && 'level' in lang) {
+      return {
+        language: String(lang.language || 'Unknown'),
+        level: String(lang.level || 'Unknown')
+      };
+    }
+    
+    // If it's a string (legacy format), try to parse it
+    if (typeof lang === 'string') {
+      // Try to extract language and level from string like "English (Fluent)"
+      const match = lang.match(/^(.+?)\s*\((.+?)\)$/);
+      if (match) {
+        return {
+          language: match[1].trim(),
+          level: match[2].trim()
+        };
+      }
+      
+      // If no parentheses, treat the whole string as language with default level
+      return {
+        language: lang.trim(),
+        level: 'Unknown'
+      };
+    }
+    
+    // Fallback for any other format
+    return {
+      language: 'Unknown',
+      level: 'Unknown'
+    };
+  }).filter(lang => lang.language !== 'Unknown' || lang.level !== 'Unknown');
+};

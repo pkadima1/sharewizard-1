@@ -8,7 +8,9 @@
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
-        "*.local"
+        "*.local",
+        "scripts/**",
+        "**/*.ps1"
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
@@ -55,6 +57,7 @@
       }
     ]
   },
+  "extensions": {},
   "emulators": {
     "functions": {
       "host": "127.0.0.1",
@@ -62,16 +65,20 @@
     },
     "firestore": {
       "host": "127.0.0.1",
-      "port": 8081
+      "port": 8082
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
     },
     "ui": {
       "enabled": true,
       "host": "127.0.0.1",
-      "port": 4000
+      "port": 4001
     },
     "hub": {
       "host": "127.0.0.1",
-      "port": 4400
+      "port": 4401
     }
   }
 }

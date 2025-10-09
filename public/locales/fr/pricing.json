@@ -169,5 +169,70 @@
   "errors": {
     "title": "Erreur",
     "checkout": "Échec de la création du paiement"
+  },
+  "serviceType": {
+    "diy": {
+      "title": "Service DIY",
+      "description": "Faites-le vous-même - Plateforme libre-service"
+    },
+    "dfy": {
+      "title": "Service DFY", 
+      "description": "Fait pour vous - Service géré"
+    }
+  },
+  "dfyPlans": {
+    "title": "Services de Contenu Professionnels",
+    "subtitle": "Choisissez votre niveau de service de contenu géré",
+    "silver": {
+      "name": "Silver Starter",
+      "price": "€297",
+      "period": "/mois",
+      "description": "Parfait pour les petites entreprises et startups",
+      "highlight": "Service géré professionnel avec supervision humaine",
+      "features": {
+        "blogPosts": "16 articles de blog (800-1 000 mots)",
+        "images": "1 image par blog + légendes",
+        "scheduling": "Planification vers les réseaux sociaux",
+        "review": "Révision humaine par spécialiste du domaine incluse"
+      },
+      "button": "Commencer"
+    },
+    "gold": {
+      "name": "Golden Growth",
+      "price": "€497", 
+      "period": "/mois",
+      "badge": "Le Plus Populaire",
+      "description": "Idéal pour les entreprises en croissance et agences de contenu",
+      "highlight": "Service de contenu géré complet",
+      "features": {
+        "blogPosts": "30 articles de blog (1 000-1 200 mots)",
+        "images": "2 images par blog",
+        "reels": "6 reels/mois",
+        "captions": "60 légendes + posts média",
+        "podcasts": "4 résumés de podcasts audio",
+        "strategyCall": "Appel stratégique mensuel de 20 min",
+        "report": "Rapport d'analyse mensuel",
+        "review": "Révision humaine par spécialiste du domaine incluse"
+      },
+      "button": "Passer à Growth"
+    },
+    "platinum": {
+      "name": "Platinum Pro",
+      "price": "€997",
+      "period": "/mois", 
+      "description": "Pour le marketing de contenu de niveau entreprise",
+      "highlight": "Service géré premium avec supervision stratégique",
+      "features": {
+        "blogPosts": "50 articles de blog (1 000-1 400 mots)",
+        "images": "2 images par blog",
+        "reels": "10 reels/mois",
+        "captions": "100 légendes + posts média",
+        "monitoring": "Surveillance des concurrents",
+        "strategyCall": "Appel stratégique mensuel de 30 min",
+        "review": "Révision humaine par spécialiste du domaine incluse"
+      },
+      "button": "Passer à Pro"
+    },
+    "terms": "Abonnement service géré. Annulez à tout moment."
   }
 }

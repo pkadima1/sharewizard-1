@@ -52,8 +52,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     return {
       title: t(`contextualHelp.steps.${stepKey}.title`, ''),
       tips: t(`contextualHelp.steps.${stepKey}.tips`, { returnObjects: true }) as string[] || [],
-      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as Array<{ title: string; content: string }> || [],
-      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as Array<{ title: string; url: string; duration: string }> || [],
+      learnMoreSections: t(`contextualHelp.steps.${stepKey}.learnMoreSections`, { returnObjects: true }) as Array<{ title: string; content: string; examples?: { good: string[]; bad: string[] } }> || [],
+      videos: t(`contextualHelp.steps.${stepKey}.videos`, { returnObjects: true }) as Array<{ title: string; url: string; duration: string; description?: string; watchedPercentage?: number }> || [],
       estimatedTime: t(`contextualHelp.steps.${stepKey}.estimatedTime`, '')
     };
   };
@@ -96,7 +96,7 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     setExpandedSections(newExpanded);
   };
 
-  const handleVideoClick = (video: { title: string; url: string; duration: string }) => {
+  const handleVideoClick = (video: { title: string; url: string; duration: string; description?: string; watchedPercentage?: number }) => {
     trackEngagement('video_clicked', { title: video.title, url: video.url });
     // In a real app, you'd open the video in a modal or new tab
     window.open(video.url, '_blank');
@@ -121,8 +121,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
       
       if (success) {
         toast({
-          title: "Support Request Sent",
-          description: "Your support request has been sent to our team. We'll get back to you soon!",
+          title: t('contextualHelp.support.success.title'),
+          description: t('contextualHelp.support.success.description'),
         });
       } else {
         throw new Error('Failed to send email');
@@ -130,8 +130,8 @@ const ContextualHelp: React.FC<ContextualHelpProps> = ({ currentStep, className 
     } catch (error) {
       console.error('Support contact error:', error);
       toast({
-        title: "Error",
-        description: "Failed to send support request. Please try emailing us directly at engageperfect@gmail.com",
+        title: t('contextualHelp.support.error.title'),
+        description: t('contextualHelp.support.error.description'),
         variant: "destructive"
       });
     }

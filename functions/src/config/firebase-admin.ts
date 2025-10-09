@@ -3,7 +3,7 @@
  * This ensures Functions emulator connects to production Firestore
  */
 
-import { initializeApp, getApps, getApp } from 'firebase-admin/app';
+import { initializeApp, getApps, getApp, applicationDefault } from 'firebase-admin/app';
 import { getFirestore as getFirestoreAdmin } from 'firebase-admin/firestore';
 
 let app: any;
@@ -22,16 +22,24 @@ export function initializeFirebaseAdmin() {
                       process.env.NODE_ENV === 'development';
 
     if (isEmulator) {
-      // In emulator mode, explicitly connect to production Firestore
-      console.log('🔧 Initializing Firebase Admin for emulator with production services');
-      
-      // Remove any emulator environment variables that might interfere
-      delete process.env.FIRESTORE_EMULATOR_HOST;
-      
-      app = initializeApp({
-        projectId: 'engperfecthlc',
-      });
-      
+      // In emulator mode, force Admin SDK to talk to PRODUCTION Firestore
+      console.log('🔧 Initializing Firebase Admin for emulator with PRODUCTION Firestore');
+
+      // Ensure no emulator env vars leak into Admin SDK
+      delete (process.env as any).FIRESTORE_EMULATOR_HOST;
+      delete (process.env as any).FIREBASE_AUTH_EMULATOR_HOST;
+      delete (process.env as any).STORAGE_EMULATOR_HOST;
+
+      try {
+        app = initializeApp({
+          credential: applicationDefault(),
+          projectId: 'engperfecthlc',
+        });
+      } catch (credError) {
+        console.warn('⚠️ applicationDefault() not available, falling back to default credentials');
+        app = initializeApp({ projectId: 'engperfecthlc' });
+      }
+
     } else {
       // Production mode - use default initialization
       console.log('🌐 Initializing Firebase Admin for production');

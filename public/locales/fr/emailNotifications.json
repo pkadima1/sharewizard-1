@@ -1,0 +1,60 @@
+{
+  "partnerApproved": {
+    "subject": "✅ Vous êtes approuvé — Partenaire EngagePerfect",
+    "html": {
+      "title": "🎉 Bienvenue chez EngagePerfect !",
+      "greeting": "Bonjour",
+      "approvalMessage": "Excellente nouvelle ! Votre compte Partenaire a été <strong>approuvé</strong> et vous êtes maintenant prêt à commencer à gagner des commissions.",
+      "partnerDetails": "Vos détails de partenaire :",
+      "referralCode": "Code de parrainage :",
+      "referralLink": "Lien de parrainage :",
+      "startSharing": "Commencez à partager votre lien de parrainage et gagnez des commissions pour chaque nouveau client que vous amenez chez EngagePerfect !",
+      "questions": "Si vous avez des questions, n'hésitez pas à contacter notre équipe de support.",
+      "welcome": "Bienvenue à bord ! 🚀",
+      "footer": "Cet e-mail a été envoyé par le Programme Partenaire EngagePerfect. Si vous avez des questions, veuillez contacter le support."
+    },
+    "text": {
+      "greeting": "Bonjour",
+      "approvalMessage": "Excellente nouvelle ! Votre compte Partenaire a été approuvé et vous êtes maintenant prêt à commencer à gagner des commissions.",
+      "partnerDetails": "Vos détails de partenaire :",
+      "referralCode": "Code de parrainage :",
+      "referralLink": "Lien de parrainage :",
+      "startSharing": "Commencez à partager votre lien de parrainage et gagnez des commissions pour chaque nouveau client que vous amenez chez EngagePerfect !",
+      "questions": "Si vous avez des questions, n'hésitez pas à contacter notre équipe de support.",
+      "welcome": "Bienvenue à bord !",
+      "footer": "Cet e-mail a été envoyé par le Programme Partenaire EngagePerfect. Si vous avez des questions, veuillez contacter le support."
+    }
+  },
+  "partnerRejected": {
+    "subject": "Votre candidature de partenaire EngagePerfect",
+    "html": {
+      "title": "Mise à jour de candidature",
+      "greeting": "Bonjour",
+      "thankYou": "Merci pour votre intérêt à devenir un Partenaire EngagePerfect et d'avoir pris le temps de postuler.",
+      "regretMessage": "Après un examen attentif de votre candidature, nous regrettons de vous informer que nous ne pouvons pas approuver votre candidature de partenaire à ce moment-là.",
+      "reviewFeedback": "Commentaires d'évaluation :",
+      "whatsNext": "Et maintenant ?",
+      "reapply": "Vous pouvez repostuler dans 60 jours à compter de la date de cet e-mail",
+      "considerFeedback": "Envisagez de traiter les commentaires fournis ci-dessus",
+      "contact": "N'hésitez pas à nous contacter si vous avez des questions",
+      "appreciation": "Nous apprécions votre intérêt pour EngagePerfect et vous souhaitons bonne chance dans vos futures entreprises.",
+      "regards": "Cordialement,",
+      "team": "L'équipe EngagePerfect",
+      "footer": "Cet e-mail a été envoyé par le Programme Partenaire EngagePerfect. Si vous avez des questions, veuillez contacter le support."
+    },
+    "text": {
+      "greeting": "Bonjour",
+      "thankYou": "Merci pour votre intérêt à devenir un Partenaire EngagePerfect et d'avoir pris le temps de postuler.",
+      "regretMessage": "Après un examen attentif de votre candidature, nous regrettons de vous informer que nous ne pouvons pas approuver votre candidature de partenaire à ce moment-là.",
+      "reviewFeedback": "Commentaires d'évaluation :",
+      "whatsNext": "Et maintenant ?",
+      "reapply": "Vous pouvez repostuler dans 60 jours à compter de la date de cet e-mail",
+      "considerFeedback": "Envisagez de traiter les commentaires fournis ci-dessus",
+      "contact": "N'hésitez pas à nous contacter si vous avez des questions",
+      "appreciation": "Nous apprécions votre intérêt pour EngagePerfect et vous souhaitons bonne chance dans vos futures entreprises.",
+      "regards": "Cordialement,",
+      "team": "L'équipe EngagePerfect",
+      "footer": "Cet e-mail a été envoyé par le Programme Partenaire EngagePerfect. Si vous avez des questions, veuillez contacter le support."
+    }
+  }
+}

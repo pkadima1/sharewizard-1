@@ -200,5 +200,13 @@ export const logWarn = (message: string, context?: Partial<ErrorContext>) => {
 };
 
 export const logDebug = (message: string, context?: Partial<ErrorContext>) => {
-  errorHandler.debug(message, context);
+  // PRODUCTION OPTIMIZATION: Debug logging completely disabled in production
+  // This prevents any debug overhead and resource consumption
+  const config = getConfig();
+  
+  // Only log debug messages if explicitly enabled in development
+  if (config.features.enableDebugMode && process.env.NODE_ENV === 'development') {
+    errorHandler.debug(message, context);
+  }
+  // In production: NO-OP for performance
 }; 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Menu, X, Bell, User, ChevronDown, Shield } from 'lucide-react';
+import { LogOut, Menu, X, Bell, User, ChevronDown, Shield, Sparkles, LayoutDashboard } from 'lucide-react';
 import { ThemeSwitcher } from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
@@ -16,9 +16,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from '@/components/ui/button';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const Navbar: React.FC = () => {
-  const { currentUser, userProfile, logout } = useAuth();
+  const { currentUser, userProfile, isPartner, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,8 +36,7 @@ const Navbar: React.FC = () => {
   const { getLocalizedPath } = useLocalizedPath();
   const navigateLocalized = useLocalizedNavigate();
   // Check if user is admin
-  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com' || 
-                 currentUser?.uid === 'admin-uid-here'; // Using exact email match for security with lowercase comparison
+  const isAdmin = currentUser?.email?.toLowerCase() === 'engageperfect@gmail.com';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,16 +102,7 @@ const Navbar: React.FC = () => {
             </Link>
           </div>
             {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">            <Link 
-              to={getLocalizedPath('')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/') 
-                  ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
-                  : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              {t('nav.home')}
-            </Link>
+          <nav className="hidden md:flex items-center space-x-1">
             <Link 
               to={getLocalizedPath('pricing')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
@@ -114,26 +112,35 @@ const Navbar: React.FC = () => {
               }`}
             >
               {t('nav.pricing')}
-            </Link>            <Link 
-              to={getLocalizedPath('caption-generator')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/caption-generator') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              {t('nav.caption_generator')}
             </Link>
-            <Link 
-              to={getLocalizedPath('longform')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/longform') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              {t('nav.blog_wizard')}
-            </Link>
+
+            {/* Generators Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 flex items-center gap-1 ${
+                  isActive('/caption-generator') || isActive('/longform')
+                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}>
+                  <Sparkles className="h-4 w-4" />
+                  <span>Generators</span>
+                  <ChevronDown className="h-3 w-3" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem asChild>
+                  <Link to={getLocalizedPath('caption-generator')} className="cursor-pointer">
+                    {t('nav.caption_generator')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={getLocalizedPath('longform')} className="cursor-pointer">
+                    {t('nav.blog_wizard')}
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link 
               to={getLocalizedPath('gallery')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
@@ -144,6 +151,7 @@ const Navbar: React.FC = () => {
             >
               {t('nav.gallery')}
             </Link>
+
             <Link 
               to={getLocalizedPath('contact')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
@@ -154,25 +162,28 @@ const Navbar: React.FC = () => {
             >
               {t('nav.contact')}
             </Link>
+
+             <Link 
+               to={getLocalizedPath('partner-registration')} 
+               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                 isActive('/partner-registration') 
+                   ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                   : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+               }`}
+             >
+               {t('nav.becomePartner')}
+             </Link>
+
+            {/* Foundry Lab link - visible to everyone */}
             <Link 
-              to={getLocalizedPath('features')} 
+              to={getLocalizedPath('foundry-lab')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/features') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                isActive('/foundry-lab') 
+                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
                   : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-          {/*  Features*/}
-            </Link>
-            <Link 
-              to={getLocalizedPath('blog')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/blog') 
-                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-             {/* Blog*/}
+              Foundry Lab
             </Link>
           </nav>
             <div className="flex items-center space-x-4">
@@ -184,17 +195,21 @@ const Navbar: React.FC = () => {
                 <div className="hidden md:flex items-center">
                   <LanguageSwitcher />
                 </div>
-                {/* Dashboard link hidden for now */}
-                 <Link 
-                  to="/dashboard" 
-                  className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                    isActive('/dashboard') 
-                      ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                      : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {t('nav.dashboard')}
-                </Link> 
+
+                {/* Partner Dashboard link - only visible to partners */}
+                {isPartner && (
+                  <Link 
+                    to="/partner/dashboard" 
+                    className={`hidden sm:block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      isActive('/partner/dashboard') 
+                        ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                        : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+                    }`}
+                  >
+                    {t('nav.partner.dashboard')}
+                  </Link>
+                )} 
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="group relative flex items-center">
@@ -221,19 +236,33 @@ const Navbar: React.FC = () => {
                         <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">{currentUser.email}</span>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator />                    <DropdownMenuItem asChild>
+                    <DropdownMenuSeparator />
+
+                    {/* Dashboard menu item */}
+                    <DropdownMenuItem asChild>
+                      <Link to={getLocalizedPath('dashboard')} className="cursor-pointer flex items-center">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>{t('nav.dashboard')}</span>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
                       <Link to={getLocalizedPath('profile')} className="cursor-pointer flex items-center">
                         <User className="mr-2 h-4 w-4" />
                         <span>{t('nav.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
-                    {/* Dashboard menu item hidden for now */}
-                  <DropdownMenuItem asChild>
-                      <Link to={getLocalizedPath('dashboard')} className="cursor-pointer flex items-center">
-                        <Bell className="mr-2 h-4 w-4" />
-                        <span>{t('nav.dashboard')}</span>
-                      </Link>
-                    </DropdownMenuItem> 
+
+                    {/* Partner Dashboard menu item - only visible to partners */}
+                    {isPartner && (
+                      <DropdownMenuItem asChild>
+                        <Link to={getLocalizedPath('partner/dashboard')} className="cursor-pointer flex items-center">
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>{t('nav.partner.dashboard')}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )} 
+
                     {/* Admin Dashboard link - only visible to admins */}
                     {isAdmin && (
                       <DropdownMenuItem asChild>
@@ -243,7 +272,9 @@ const Navbar: React.FC = () => {
                         </Link>
                       </DropdownMenuItem>
                     )}
+
                     <DropdownMenuSeparator />
+
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 hover:text-red-700 focus:text-red-700">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>{t('nav.logOut')}</span>
@@ -282,17 +313,6 @@ const Navbar: React.FC = () => {
           <div className="md:hidden py-2 border-t border-gray-200 dark:border-gray-800 animate-fade-in bg-white dark:bg-gray-900">
             <nav className="flex flex-col space-y-1 px-2 pb-3 pt-2">
               <Link 
-                to={getLocalizedPath('')} 
-                className={`px-3 py-2.5 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/') 
-                    ? 'text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800/50' 
-                    : 'text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('nav.home')}
-              </Link>
-              <Link 
                 to={getLocalizedPath('pricing')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                   isActive('/pricing') 
@@ -302,28 +322,40 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('nav.pricing')}
-              </Link>              <Link 
-                to={getLocalizedPath('caption-generator')} 
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/caption-generator') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('nav.caption_generator')}
               </Link>
-              <Link 
-                to={getLocalizedPath('longform')} 
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/longform') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('nav.blog_wizard')}
-              </Link>
+
+              {/* Generators Section */}
+              <div className="px-3 py-2">
+                <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  <span>GENERATORS</span>
+                </div>
+                <div className="ml-4 space-y-1">
+                  <Link 
+                    to={getLocalizedPath('caption-generator')} 
+                    className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      isActive('/caption-generator') 
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('nav.caption_generator')}
+                  </Link>
+                  <Link 
+                    to={getLocalizedPath('longform')} 
+                    className={`block px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      isActive('/longform') 
+                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('nav.blog_wizard')}
+                  </Link>
+                </div>
+              </div>
+
               <Link 
                 to={getLocalizedPath('gallery')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -335,6 +367,7 @@ const Navbar: React.FC = () => {
               >
                 {t('nav.gallery')}
               </Link>
+
               <Link 
                 to={getLocalizedPath('contact')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -346,31 +379,35 @@ const Navbar: React.FC = () => {
               >
                 {t('nav.contact')}
               </Link>
+
               <Link 
-                to={getLocalizedPath('features')} 
+                to={getLocalizedPath('partner-registration')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/features') 
+                  isActive('/partner-registration') 
                     ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {/* Features */}
+                {t('nav.becomePartner')}
               </Link>
+
+              {/* Foundry Lab mobile link - visible to everyone */}
               <Link 
-                to={getLocalizedPath('blog')} 
+                to={getLocalizedPath('foundry-lab')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/blog') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  isActive('/foundry-lab') 
+                    ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {/* Blog */}
+                Foundry Lab
               </Link>
+
               {currentUser && (
                 <>
-                  {/* Dashboard mobile link hidden for now */}
+                  {/* Dashboard mobile link */}
                   <Link 
                     to={getLocalizedPath('dashboard')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -381,7 +418,23 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('nav.dashboard')}
-                  </Link> 
+                  </Link>
+
+                  {/* Partner Dashboard mobile link - only visible to partners */}
+                  {isPartner && (
+                    <Link 
+                      to={getLocalizedPath('partner/dashboard')} 
+                      className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
+                        isActive('/partner/dashboard') 
+                          ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
+                          : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('nav.partner.dashboard')}
+                    </Link>
+                  )} 
+
                   <Link 
                     to={getLocalizedPath('profile')} 
                     className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -393,6 +446,7 @@ const Navbar: React.FC = () => {
                   >
                     {t('nav.profile')}
                   </Link>
+
                   <button
                     onClick={() => {
                       handleLogout();
@@ -405,7 +459,10 @@ const Navbar: React.FC = () => {
                       {t('nav.logOut')}
                     </div>
                   </button>
-                </>              )}              {/* Language switcher in mobile menu */}
+                </>
+              )}
+
+              {/* Language switcher in mobile menu */}
               <div className="px-3 py-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Language:</span>

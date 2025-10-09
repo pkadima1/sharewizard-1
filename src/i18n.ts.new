@@ -1,0 +1,113 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import Backend from 'i18next-http-backend';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
+i18n
+  // Load translations from the /public/locales folder
+  .use(Backend)
+  // Detect user language
+  .use(LanguageDetector)
+  // Pass the i18n instance to react-i18next
+  .use(initReactI18next)
+  // Initialize the i18n configuration
+  .init({
+    // Default language - French as primary, English as fallback
+    fallbackLng: 'fr',
+    // Available languages
+    supportedLngs: ['en', 'fr'],
+    // Debug mode for development
+    debug: import.meta.env.DEV,
+    // Language detector options
+    detection: {
+      // Order of detection methods - prioritize localStorage, then French, then browser detection
+      order: ['localStorage', 'path', 'navigator'],
+      // Where to look in the URL path (index 1 means /:lang/...)
+      lookupFromPathIndex: 1,
+      // Enable localStorage caching for language detection
+      caches: ['localStorage'],
+      // localStorage key name
+      lookupLocalStorage: 'i18nextLng',
+    },
+    // Namespace configuration
+    ns: ['common', 'auth', 'dashboard', 'home', 'preview', 'profile', 'repost', 'ui', 'wizard', 'pricing', 'caption-generator', 'longform', 'partners'],
+    defaultNS: 'common',
+    // Backend configuration for loading translations
+    backend: {
+      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Add request options for better error handling
+      requestOptions: {
+        cache: 'no-cache'
+      },
+      // Add cache busting for development
+      reloadInterval: import.meta.env.DEV ? 1000 : false,
+      // Simplified request function that tries paths sequentially, not in parallel
+      request: (options, url, payload, callback) => {
+        const originalUrl = url;
+        console.log('Loading translation from:', url);
+        
+        // Try the original URL first
+        fetch(url, { cache: 'no-cache' })
+          .then(response => {
+            if (response.ok) {
+              console.log('✅ Found translation file at original path:', url);
+              return response.json();
+            }
+            
+            // If original fails, try with /public prefix
+            console.log('Original path failed, trying with /public prefix');
+            const publicUrl = `/public${url}`;
+            return fetch(publicUrl, { cache: 'no-cache' })
+              .then(response => {
+                if (response.ok) {
+                  console.log('✅ Found translation file at public path:', publicUrl);
+                  return response.json();
+                }
+                
+                // If that fails, try with /public/locales path
+                console.log('Public path failed, trying with explicit /public/locales path');
+                const explicitUrl = url.replace('/locales/', '/public/locales/');
+                return fetch(explicitUrl, { cache: 'no-cache' })
+                  .then(response => {
+                    if (response.ok) {
+                      console.log('✅ Found translation file at explicit path:', explicitUrl);
+                      return response.json();
+                    }
+                    
+                    // If all else fails, throw an error
+                    throw new Error(`Failed to load translation from any path for: ${originalUrl}`);
+                  });
+              });
+          })
+          .then(data => {
+            callback(null, {
+              data: data,
+              status: 200
+            });
+          })
+          .catch(error => {
+            console.error('❌ Failed to load translation file:', originalUrl, error);
+            callback(error, {
+              data: {},
+              status: 404
+            });
+          });
+      }
+    },
+    // Interpolation options
+    interpolation: {
+      escapeValue: false, // React already safes from XSS
+    },
+    // React specific options
+    react: {
+      useSuspense: true,
+    },
+    // Enable returnObjects to fix object access warnings
+    returnObjects: true,
+    // Key separator for nested keys
+    keySeparator: '.',
+    // Namespace separator
+    nsSeparator: ':',
+  });
+
+export default i18n;

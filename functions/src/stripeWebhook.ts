@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import Stripe from "stripe";
 import { handleSubscriptionCheckoutCompleted } from "./stripeHelpers.js";
+import { processReferralCommission } from "./referralCommissions.js";
 import { config } from "./config/secrets.js";
 
 // Initialize Firebase Admin if not already initialized
@@ -55,6 +56,35 @@ export const handleStripeWebhook = functions.https.onRequest(async (req, res) =>
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         
+        // Extract referral metadata for commission processing
+        const metadata = session.metadata || {};
+        const referralCode = metadata.referralCode;
+        const partnerId = metadata.partnerId;
+        
+        // Log referral information if present
+        if (referralCode && partnerId) {
+          console.log("📈 Checkout completed with referral attribution:", {
+            customerId: session.customer,
+            referralCode,
+            partnerId,
+            partnerName: metadata.partnerName,
+            checkoutType: metadata.checkout_type,
+            amount: session.amount_total
+          });
+          
+          // Process referral commission
+          try {
+            const commissionId = await processReferralCommission(session);
+            if (commissionId) {
+              console.log("✅ Referral commission processed successfully:", commissionId);
+            } else {
+              console.log("⚠️ Referral commission processing skipped or failed");
+            }
+          } catch (error) {
+            console.error("❌ Error processing referral commission:", error);
+          }
+        }
+        
         // Handle subscription checkout
         if (session.mode === "subscription" && session.subscription) {
           await handleSubscriptionCheckoutCompleted(
@@ -65,9 +95,25 @@ export const handleStripeWebhook = functions.https.onRequest(async (req, res) =>
           
           console.log("Successfully processed subscription checkout", {
             customerId: session.customer,
-            subscriptionId: session.subscription
+            subscriptionId: session.subscription,
+            hasReferral: !!referralCode
           });
         }
+        
+        // Handle one-time payment checkout (Flex packs)
+        else if (session.mode === "payment") {
+          console.log("Successfully processed one-time payment checkout", {
+            customerId: session.customer,
+            paymentIntentId: session.payment_intent,
+            hasReferral: !!referralCode,
+            productType: metadata.product_type,
+            quantity: metadata.quantity
+          });
+          
+          // Note: Flex pack balance updates are handled by existing Stripe Extension
+          // Commission processing is handled above in the referral section
+        }
+        
         break;
       }
       

@@ -153,23 +153,27 @@ const isProduction = process.env.NODE_ENV === 'production';
 export const generateCaptionsV3 = onCall({
   cors: [
     // Local development
-    "localhost:3000",
-    "localhost:5173",
-    "localhost:5174",
-    "localhost:8080",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:8080",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:8080",
     
     // Firebase hosting domains
-    /engperfecthlc\.web\.app$/,
-    /engperfecthlc\.firebaseapp\.com$/,
+    /https?:\/\/engperfecthlc\.web\.app$/,
+    /https?:\/\/engperfecthlc\.firebaseapp\.com$/,
     
     // Production domain
-    /engageperfect\.com$/,
-    /www\.engageperfect\.com$/,
+    /https?:\/\/engageperfect\.com$/,
+    /https?:\/\/www\.engageperfect\.com$/,
     
     // Lovable preview domains
-    /preview--.*\.lovable\.app$/,
-    /.*\.lovable\.app$/,
-    /.*\.lovableproject\.com$/,
+    /https?:\/\/preview--.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovableproject\.com$/,
     
     // Allow all origins in development only
     ...(isProduction ? [] : ["*"])
