@@ -15,7 +15,10 @@
     "adminDashboard": "Admin Dashboard",
     "logOut": "Log out",
     "features": "Features",
-    "blog": "Blog"
+    "blog": "Blog",
+    "partner": {
+      "dashboard": "Partner Dashboard"
+    }
   },
   "wizard": {
     "step1": "Upload Media",

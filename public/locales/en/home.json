@@ -13,6 +13,7 @@
   "features": {
     "title": "See What You Can Create",
     "subtitle": "Content That Sounds Like You, Not AI",
+    "description": "Our advanced AI technology creates content with personality, tone and style that feels authentic and engaging.",
     "humanLikeContent": {
       "title": "Human-Like Content",
       "description": "Generate content that sounds natural and authentic, not robotic or generic."
@@ -23,10 +24,10 @@
     },
     "multipleFormats": {
       "title": "Multiple Content Formats",
-      "description": "From social media captions to long-form articles, create content for any platform."
+      "description": "From social media captions images/videos to long-form articles, create content for any platform."
     },
     "seoOptimization": {
-      "title": "SEO & CRO Optimization",
+      "title": "SEO & GEO Optimization",
       "description": "Content optimized for search engines and conversion rates to maximize your reach."
     },
     "instantGeneration": {
@@ -43,7 +44,22 @@
     "subtitle": "Start with our Caption, SMS Posts and Long-form Content Generator!",
     "button": "Get Started for Free",
     "description": "Join thousands of marketers and content creators using EngagePerfect AI."
-  },  "carousel": {
+  },
+  "sample": {
+    "title": "Boost Your Influence with AI Magic!",
+    "description": "Discover how human-like AI-generated content can elevate your brand presence on Instagram, TikTok, and other social platforms — engaging audiences like never before.",
+    "cta": "Ready to revolutionize your content strategy? Try EngagePerfect now for free!",
+    "hashtags": {
+      "1": "#AIGrowth",
+      "2": "#DigitalInfluence", 
+      "3": "#ContentMagic",
+      "4": "#HumanContent"
+    },
+    "footer": {
+      "created": "Created with EngagePerfect"
+    }
+  },
+  "carousel": {
     "title": "Examples Created with EngagePerfect AI",
     "subtitle": "See how our AI generates beautiful, engaging content across platforms",
     "viewGalleryButton": "View Full Gallery"
