@@ -654,5 +654,113 @@
     "food": "Food & Hospitality",
     "education": "Education",
     "other": "Other"
+  },
+  "landing": {
+    "hero": {
+      "title": "Become an EngagePerfect Partner",
+      "subtitle": "Turn AI into impact. Earn up to 70% from every client you serve.",
+      "imageAlt": "Header Image"
+    },
+    "whatIs": {
+      "title": "What Is EngagePerfect",
+      "description1": "EngagePerfect by NodeMatics is a global AI-powered content platform that helps creators, marketers, and small businesses generate high-quality posts, blogs, and campaigns — in minutes, not hours.",
+      "description2": "Our partners are the human side of that technology. They bring context, creativity, and care — the things AI can't replace.",
+      "description3": "We don't chase perfection. We strive for it — together.",
+      "imageAlt": "Handshake between"
+    },
+    "whyPartner": {
+      "title": "Why Partner With Us",
+      "benefit1": {
+        "icon": "💰",
+        "title": "Earn up to 70%",
+        "description": "Earn up to 70% of every paying client you serve monthly. Grow your income as you help others grow their presence."
+      },
+      "benefit2": {
+        "icon": "🌍",
+        "title": "Global Reach, Local Freedom",
+        "description": "Work remotely from anywhere while representing a trusted international brand."
+      },
+      "benefit3": {
+        "icon": "💡",
+        "title": "Learn and Lead",
+        "description": "Get hands-on mentorship, AI tools, and real project experience."
+      },
+      "benefit4": {
+        "icon": "🤝",
+        "title": "Community & Recognition",
+        "description": "Join a growing network of creative professionals building something meaningful."
+      }
+    },
+    "whoCanApply": {
+      "title": "Who Can Apply",
+      "list1": "Content creators, marketers, freelancers, or consultants.",
+      "list2": "Recent graduates with niche or industry knowledge — e.g. fashion, real estate, education, health, travel, or tech.",
+      "list3": "Professionals comfortable with digital tools, social media, or AI.",
+      "list4": "People who care about communication, consistency, and results.",
+      "footer": "If you understand a market, audience, or language — you already bring value.",
+      "imageAlt": "Laptop screen showing"
+    },
+    "whatYouDo": {
+      "title": "What You'll Do",
+      "task1": "Manage clients in your region using EngagePerfect tools.",
+      "task2": "Help them plan and publish better content.",
+      "task3": "Maintain clear communication and deliver measurable results.",
+      "task4": "Grow your own portfolio and reputation while earning each month."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "table": {
+        "stepHeader": "Step",
+        "descriptionHeader": "Description"
+      },
+      "step1": {
+        "label": "1. Apply Online",
+        "description": "Fill out the short registration form →",
+        "linkText": "Apply Now"
+      },
+      "step2": {
+        "label": "2. Creative Challenge",
+        "description": "Complete a 48-hour test task — show how you think, not just what you know."
+      },
+      "step3": {
+        "label": "3. Trial Collaboration",
+        "description": "Work with our team for 6 weeks to learn systems, tools, and client workflow."
+      },
+      "step4": {
+        "label": "4. Become a Certified Partner",
+        "description": "Get access to clients, mentorship, and earn up to 70% revenue share."
+      }
+    },
+    "growthPath": {
+      "title": "Your Growth Path",
+      "imageAlt": "Staircase or ladder",
+      "level1": {
+        "title": "Starter Partner:",
+        "description": "Learn and assist on real projects."
+      },
+      "level2": {
+        "title": "Certified Partner:",
+        "description": "Handle clients independently, earn 65–70%."
+      },
+      "level3": {
+        "title": "Regional Lead:",
+        "description": "Mentor others, coordinate local campaigns, gain leadership rewards."
+      }
+    },
+    "culture": {
+      "title": "Our Culture",
+      "value1": "AI supports people — it doesn't replace them.",
+      "value2": "Growth is shared; success is earned.",
+      "value3": "Curiosity, honesty, and empathy matter more than titles.",
+      "value4": "You bring the human touch. We bring the tools. Together, we make engagement perfect."
+    },
+    "cta": {
+      "title": "Ready to Join?",
+      "applicationText": "Fill out your application at",
+      "applicationLink": "www.engageperfect.com/en/partner-registration",
+      "questionText": "If you have questions, contact our support team:",
+      "email": "support@engageperfect.com",
+      "imageAlt": "Happy diverse team celebrating"
+    }
   }
 }

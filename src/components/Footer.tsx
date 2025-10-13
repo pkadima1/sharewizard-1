@@ -104,12 +104,19 @@ const Footer: React.FC = () => {
               <li><Link to="/blog-wizard" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog_wizard')}</Link></li>
               <li><Link to="/blog" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.blog')}</Link></li>
               <li><Link to="/pricing" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.pricing')}</Link></li>
-              <li><Link to="/partner-registration" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.becomePartner')}</Link></li>
              {/*} <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Features</Link></li>
               <li><Link to="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">Roadmap</Link></li>
               */} </ul>
           </div>
           
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">{t('footer.partners')}</h3>
+            <ul className="space-y-3">
+              <li><Link to="/partners" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.partnerProgram')}</Link></li>
+              <li><Link to="/partner-registration" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.becomePartner')}</Link></li>
+            </ul>
+          </div>
+
           {/*<div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Support</h3>
             <ul className="space-y-3">

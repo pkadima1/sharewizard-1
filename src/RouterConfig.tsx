@@ -29,6 +29,7 @@ import Gallery from "./pages/Gallery";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import FoundryLabPage from "./pages/FoundryLab/FoundryLabPage";
+import PartnersPage from "./pages/Partners";
 import { useLanguage } from "./contexts/LanguageContext";
 import { trackPageView } from "./utils/analytics";
 
@@ -122,6 +123,7 @@ const RouterConfig = () => {
               <Route path="/blog" element={<RootRedirect />} />
               <Route path="/blog/:postId" element={<RootRedirect />} />
               <Route path="/contact" element={<RootRedirect />} />
+              <Route path="/partners" element={<RootRedirect />} />
               <Route path="/admin" element={<RootRedirect />} />
               <Route path="/admin/partners" element={<RootRedirect />} />
               <Route path="/admin/pending-partners" element={<RootRedirect />} />
@@ -150,6 +152,7 @@ const RouterConfig = () => {
                     <Route path="/blog" element={<ErrorBoundary><Blog /></ErrorBoundary>} />
                     <Route path="/blog/:postId" element={<ErrorBoundary><BlogPost /></ErrorBoundary>} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/partners" element={<ErrorBoundary><PartnersPage /></ErrorBoundary>} />
                     
                     {/* Admin routes */}
                     <Route path="/admin" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />

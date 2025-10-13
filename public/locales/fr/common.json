@@ -16,6 +16,7 @@
     "logOut": "Se déconnecter",
     "features": "Fonctionnalités",
     "blog": "Blog",
+    "mediaGenerator": "Générateur Médias",
     "partner": {
       "dashboard": "Dashboard Partenaire"
     }
@@ -135,6 +136,8 @@
   "footer": {
     "tagline": "Créez du contenu engageant et humain pour les réseaux sociaux, blogs et articles en quelques secondes avec notre plateforme alimentée par l'IA",
     "product": "Produit",
+    "partners": "Partenaires",
+    "partnerProgram": "Programme Partenaire",
     "legal": "Légal",
     "terms": "Conditions d'utilisation",
     "privacy": "Politique de confidentialité",

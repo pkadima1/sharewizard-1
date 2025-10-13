@@ -1,5 +1,5 @@
 {
-  "admin": {
+  "admin_core": {
     "errors": {
       "userNotFound": "L'utilisateur Firebase Auth avec cet UID n'existe pas. Veuillez d'abord créer l'utilisateur ou utiliser l'option \"Créer un nouvel utilisateur\"."
     },
@@ -716,5 +716,113 @@
     },
     "joined": "Rejoint",
     "lastActivity": "Dernière Activité"
+  },
+  "landing": {
+    "hero": {
+      "title": "Devenez Partenaire EngagePerfect",
+      "subtitle": "Transformez l'IA en impact. Gagnez jusqu'à 70% de chaque client que vous servez.",
+      "imageAlt": "Image d'en-tête"
+    },
+    "whatIs": {
+      "title": "Qu'est-ce qu'EngagePerfect",
+      "description1": "EngagePerfect de NodeMatics est une plateforme de contenu mondiale alimentée par l'IA qui aide les créateurs, les spécialistes du marketing et les petites entreprises à générer des publications, des blogs et des campagnes de haute qualité — en quelques minutes, pas des heures.",
+      "description2": "Nos partenaires sont le côté humain de cette technologie. Ils apportent le contexte, la créativité et l'attention — les choses que l'IA ne peut pas remplacer.",
+      "description3": "Nous ne poursuivons pas la perfection. Nous nous efforçons de l'atteindre — ensemble.",
+      "imageAlt": "Poignée de main entre"
+    },
+    "whyPartner": {
+      "title": "Pourquoi Devenir Partenaire",
+      "benefit1": {
+        "icon": "💰",
+        "title": "Gagnez jusqu'à 70%",
+        "description": "Gagnez jusqu'à 70% de chaque client payant que vous servez mensuellement. Augmentez vos revenus en aidant les autres à développer leur présence."
+      },
+      "benefit2": {
+        "icon": "🌍",
+        "title": "Portée Mondiale, Liberté Locale",
+        "description": "Travaillez à distance de n'importe où tout en représentant une marque internationale de confiance."
+      },
+      "benefit3": {
+        "icon": "💡",
+        "title": "Apprendre et Diriger",
+        "description": "Obtenez un mentorat pratique, des outils d'IA et une expérience de projet réelle."
+      },
+      "benefit4": {
+        "icon": "🤝",
+        "title": "Communauté et Reconnaissance",
+        "description": "Rejoignez un réseau croissant de professionnels créatifs qui construisent quelque chose de significatif."
+      }
+    },
+    "whoCanApply": {
+      "title": "Qui Peut Postuler",
+      "list1": "Créateurs de contenu, spécialistes du marketing, freelances ou consultants.",
+      "list2": "Diplômés récents avec des connaissances de niche ou de l'industrie — par exemple mode, immobilier, éducation, santé, voyage ou technologie.",
+      "list3": "Professionnels à l'aise avec les outils numériques, les médias sociaux ou l'IA.",
+      "list4": "Personnes qui se soucient de la communication, de la cohérence et des résultats.",
+      "footer": "Si vous comprenez un marché, un public ou une langue — vous apportez déjà de la valeur.",
+      "imageAlt": "Écran d'ordinateur portable montrant"
+    },
+    "whatYouDo": {
+      "title": "Ce Que Vous Ferez",
+      "task1": "Gérer les clients de votre région en utilisant les outils EngagePerfect.",
+      "task2": "Aidez-les à planifier et à publier un meilleur contenu.",
+      "task3": "Maintenir une communication claire et fournir des résultats mesurables.",
+      "task4": "Développez votre propre portfolio et votre réputation tout en gagnant chaque mois."
+    },
+    "howItWorks": {
+      "title": "Comment Ça Fonctionne",
+      "table": {
+        "stepHeader": "Étape",
+        "descriptionHeader": "Description"
+      },
+      "step1": {
+        "label": "1. Postuler en Ligne",
+        "description": "Remplissez le court formulaire d'inscription →",
+        "linkText": "Postuler Maintenant"
+      },
+      "step2": {
+        "label": "2. Défi Créatif",
+        "description": "Complétez une tâche de test de 48 heures — montrez comment vous pensez, pas seulement ce que vous savez."
+      },
+      "step3": {
+        "label": "3. Collaboration d'Essai",
+        "description": "Travaillez avec notre équipe pendant 6 semaines pour apprendre les systèmes, les outils et le flux de travail client."
+      },
+      "step4": {
+        "label": "4. Devenez Partenaire Certifié",
+        "description": "Obtenez l'accès aux clients, au mentorat et gagnez jusqu'à 70% de partage des revenus."
+      }
+    },
+    "growthPath": {
+      "title": "Votre Parcours de Croissance",
+      "imageAlt": "Escalier ou échelle",
+      "level1": {
+        "title": "Partenaire Débutant:",
+        "description": "Apprenez et assistez sur de vrais projets."
+      },
+      "level2": {
+        "title": "Partenaire Certifié:",
+        "description": "Gérez les clients de manière indépendante, gagnez 65–70%."
+      },
+      "level3": {
+        "title": "Responsable Régional:",
+        "description": "Encadrez d'autres personnes, coordonnez des campagnes locales, obtenez des récompenses de leadership."
+      }
+    },
+    "culture": {
+      "title": "Notre Culture",
+      "value1": "L'IA soutient les gens — elle ne les remplace pas.",
+      "value2": "La croissance est partagée ; le succès est gagné.",
+      "value3": "La curiosité, l'honnêteté et l'empathie comptent plus que les titres.",
+      "value4": "Vous apportez la touche humaine. Nous apportons les outils. Ensemble, nous rendons l'engagement parfait."
+    },
+    "cta": {
+      "title": "Prêt à Rejoindre?",
+      "applicationText": "Remplissez votre candidature à",
+      "applicationLink": "www.engageperfect.com/fr/partner-registration",
+      "questionText": "Si vous avez des questions, contactez notre équipe d'assistance:",
+      "email": "support@engageperfect.com",
+      "imageAlt": "Équipe diversifiée heureuse célébrant"
+    }
   }
 }

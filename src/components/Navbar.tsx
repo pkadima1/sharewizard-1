@@ -141,6 +141,19 @@ const Navbar: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* Media Generator (formerly Foundry Lab) link - visible to everyone */}
+            <Link 
+              to={getLocalizedPath('foundry-lab')} 
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 flex items-center gap-1 ${
+                isActive('/foundry-lab') 
+                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+            >
+              <Sparkles className="h-4 w-4" />
+              <span>{t('nav.mediaGenerator')}</span>
+            </Link>
+
             <Link 
               to={getLocalizedPath('gallery')} 
               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
@@ -161,29 +174,6 @@ const Navbar: React.FC = () => {
               }`}
             >
               {t('nav.contact')}
-            </Link>
-
-             <Link 
-               to={getLocalizedPath('partner-registration')} 
-               className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                 isActive('/partner-registration') 
-                   ? 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20' 
-                   : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/20'
-               }`}
-             >
-               {t('nav.becomePartner')}
-             </Link>
-
-            {/* Foundry Lab link - visible to everyone */}
-            <Link 
-              to={getLocalizedPath('foundry-lab')} 
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                isActive('/foundry-lab') 
-                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              Foundry Lab
             </Link>
           </nav>
             <div className="flex items-center space-x-4">
@@ -356,6 +346,20 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
+              {/* Media Generator mobile link - visible to everyone */}
+              <Link 
+                to={getLocalizedPath('foundry-lab')} 
+                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 flex items-center gap-1 ${
+                  isActive('/foundry-lab') 
+                    ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>{t('nav.mediaGenerator')}</span>
+              </Link>
+
               <Link 
                 to={getLocalizedPath('gallery')} 
                 className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
@@ -378,31 +382,6 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t('nav.contact')}
-              </Link>
-
-              <Link 
-                to={getLocalizedPath('partner-registration')} 
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/partner-registration') 
-                    ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t('nav.becomePartner')}
-              </Link>
-
-              {/* Foundry Lab mobile link - visible to everyone */}
-              <Link 
-                to={getLocalizedPath('foundry-lab')} 
-                className={`px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
-                  isActive('/foundry-lab') 
-                    ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
-                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Foundry Lab
               </Link>
 
               {currentUser && (

@@ -4,6 +4,7 @@
     "dashboard": "Dashboard", 
     "pricing": "Pricing",
     "becomePartner": "Become Partner",
+    "mediaGenerator": "Media Generator",
     "login": "Login",
     "signup": "Sign Up",
     "caption_generator": "Caption Generator",
@@ -136,6 +137,8 @@
   "footer": {
     "tagline": "Create engaging Human-like social media, blog & article content in seconds with our AI-powered platform",
     "product": "Product",
+    "partners": "Partners",
+    "partnerProgram": "Partner Program",
     "legal": "Legal",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
