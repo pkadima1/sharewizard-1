@@ -174,6 +174,11 @@ export function usePartnerDashboard() {
   const [data, setData] = useState<PartnerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refetch = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     if (!currentUser?.uid) {
@@ -248,7 +253,7 @@ export function usePartnerDashboard() {
     );
 
     return unsubscribe;
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, refreshTrigger]);
 
-  return { data, loading, error };
+  return { data, loading, error, refetch };
 }

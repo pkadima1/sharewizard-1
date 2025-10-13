@@ -65,52 +65,52 @@ export function EnhancedPerformanceCards({ stats }: EnhancedPerformanceCardsProp
 
   const cards = [
     {
-      title: 'Commissions Mensuelles',
+      title: t('dashboard.cards.monthlyCommissions'),
       value: formatCurrency(stats.monthlyCommissions),
       icon: DollarSign,
-      description: 'Ce mois-ci',
+      description: t('dashboard.cards.thisMonthDesc'),
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-900/20',
       borderColor: 'border-green-200 dark:border-green-800',
       trend: stats.monthlyGrowth || 0,
-      trendLabel: 'vs mois dernier',
+      trendLabel: t('dashboard.cards.vsLastMonth'),
       isPositive: true
     },
     {
-      title: 'Clients Actifs',
+      title: t('dashboard.cards.activeCustomers'),
       value: stats.activeCustomers.toString(),
       icon: Users,
-      description: 'Actuellement actifs',
+      description: t('dashboard.cards.currentlyActive'),
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-900/20',
       borderColor: 'border-blue-200 dark:border-blue-800',
       trend: 0,
-      trendLabel: 'Clients parrainés',
+      trendLabel: t('dashboard.cards.referredCustomers'),
       isPositive: true
     },
     {
-      title: 'Taux de Conversion',
+      title: t('dashboard.cards.conversionRate'),
       value: formatPercentage(stats.conversionRate || 0),
       icon: Target,
-      description: 'Parrainages → Conversions',
+      description: t('dashboard.cards.referralsToConversions'),
       color: 'text-purple-600',
       bgColor: 'bg-purple-50 dark:bg-purple-900/20',
       borderColor: 'border-purple-200 dark:border-purple-800',
       trend: 0,
-      trendLabel: 'Performance',
+      trendLabel: t('dashboard.cards.performance'),
       isPositive: true,
       progress: stats.conversionRate || 0
     },
     {
-      title: 'Revenus Totaux',
+      title: t('dashboard.cards.totalRevenue'),
       value: formatCurrency(stats.totalEarnings),
       icon: BarChart3,
-      description: 'Depuis le début',
+      description: t('dashboard.cards.sinceStart'),
       color: 'text-orange-600',
       bgColor: 'bg-orange-50 dark:bg-orange-900/20',
       borderColor: 'border-orange-200 dark:border-orange-800',
       trend: 0,
-      trendLabel: 'Cumulé',
+      trendLabel: t('dashboard.cards.cumulative'),
       isPositive: true
     }
   ];

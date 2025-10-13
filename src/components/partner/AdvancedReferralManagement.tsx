@@ -229,20 +229,20 @@ export function AdvancedReferralManagement({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Gestion des Codes de Parrainage
+            {t('referralManagement.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Gérez vos codes de parrainage et suivez leurs performances
+            {t('referralManagement.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={exportCodesData}>
             <Download className="h-4 w-4 mr-2" />
-            Exporter
+            {t('dashboard.export')}
           </Button>
           <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Nouveau Code
+            {t('referralManagement.newCode')}
           </Button>
         </div>
       </div>
@@ -255,7 +255,7 @@ export function AdvancedReferralManagement({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Rechercher un code..."
+                  placeholder={t('referralManagement.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -264,23 +264,23 @@ export function AdvancedReferralManagement({
             </div>
             <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
               <SelectTrigger className="w-40">
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder={t('referralManagement.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous</SelectItem>
-                <SelectItem value="active">Actifs</SelectItem>
-                <SelectItem value="inactive">Inactifs</SelectItem>
+                <SelectItem value="all">{t('referralManagement.all')}</SelectItem>
+                <SelectItem value="active">{t('referralManagement.active')}</SelectItem>
+                <SelectItem value="inactive">{t('referralManagement.inactive')}</SelectItem>
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Trier par" />
+                <SelectValue placeholder={t('referralManagement.sortBy')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="createdAt">Date de création</SelectItem>
-                <SelectItem value="usageCount">Utilisations</SelectItem>
-                <SelectItem value="conversionCount">Conversions</SelectItem>
-                <SelectItem value="totalRevenue">Revenus</SelectItem>
+                <SelectItem value="createdAt">{t('referralManagement.createdAt')}</SelectItem>
+                <SelectItem value="usageCount">{t('referralManagement.usageCount')}</SelectItem>
+                <SelectItem value="conversionCount">{t('referralManagement.conversionCount')}</SelectItem>
+                <SelectItem value="totalRevenue">{t('referralManagement.totalRevenue')}</SelectItem>
               </SelectContent>
             </Select>
             <Button
@@ -298,21 +298,21 @@ export function AdvancedReferralManagement({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Codes de Parrainage ({filteredCodes.length})
+            {t('referralManagement.codesCount', { count: filteredCodes.length })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Utilisations</TableHead>
-                <TableHead>Conversions</TableHead>
-                <TableHead>Taux</TableHead>
-                <TableHead>Revenus</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('referralManagement.code')}</TableHead>
+                <TableHead>{t('referralManagement.description')}</TableHead>
+                <TableHead>{t('referralManagement.uses')}</TableHead>
+                <TableHead>{t('referralManagement.conversions')}</TableHead>
+                <TableHead>{t('referralManagement.rate')}</TableHead>
+                <TableHead>{t('referralManagement.revenue')}</TableHead>
+                <TableHead>{t('referralManagement.status')}</TableHead>
+                <TableHead>{t('referralManagement.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -330,7 +330,7 @@ export function AdvancedReferralManagement({
                   </TableCell>
                   <TableCell>
                     <div className="max-w-xs truncate">
-                      {code.description || 'Aucune description'}
+                      {code.description || t('referralManagement.noDescription')}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -358,7 +358,7 @@ export function AdvancedReferralManagement({
                   </TableCell>
                   <TableCell>
                     <Badge variant={code.isActive ? "default" : "secondary"}>
-                      {code.isActive ? 'Actif' : 'Inactif'}
+                      {code.isActive ? t('referralManagement.active') : t('referralManagement.inactive')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -393,26 +393,26 @@ export function AdvancedReferralManagement({
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Créer un Nouveau Code de Parrainage</DialogTitle>
+            <DialogTitle>{t('referralManagement.createTitle')}</DialogTitle>
             <DialogDescription>
-              Créez un nouveau code de parrainage avec des paramètres personnalisés
+              {t('referralManagement.createDescription')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium">Code *</label>
+                <label className="text-sm font-medium">{t('referralManagement.codeLabel')}</label>
                 <Input
-                  placeholder="Ex: PROMO2024"
+                  placeholder={t('referralManagement.codePlaceholder')}
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Description</label>
+                <label className="text-sm font-medium">{t('referralManagement.descriptionLabel')}</label>
                 <Input
-                  placeholder="Description du code"
+                  placeholder={t('referralManagement.descriptionPlaceholder')}
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
@@ -420,25 +420,25 @@ export function AdvancedReferralManagement({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Paramètres UTM (optionnels)</label>
+              <label className="text-sm font-medium">{t('referralManagement.utmParameters')}</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Input
-                    placeholder="Source (ex: email)"
+                    placeholder={t('referralManagement.utmSource')}
                     value={newUtmSource}
                     onChange={(e) => setNewUtmSource(e.target.value)}
                   />
                 </div>
                 <div>
                   <Input
-                    placeholder="Medium (ex: newsletter)"
+                    placeholder={t('referralManagement.utmMedium')}
                     value={newUtmMedium}
                     onChange={(e) => setNewUtmMedium(e.target.value)}
                   />
                 </div>
                 <div>
                   <Input
-                    placeholder="Campaign (ex: summer2024)"
+                    placeholder={t('referralManagement.utmCampaign')}
                     value={newUtmCampaign}
                     onChange={(e) => setNewUtmCampaign(e.target.value)}
                   />
@@ -449,13 +449,13 @@ export function AdvancedReferralManagement({
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-              Annuler
+              {t('referralManagement.cancel')}
             </Button>
             <Button 
               onClick={createNewCode} 
               disabled={isCreating || !newCode.trim()}
             >
-              {isCreating ? 'Création...' : 'Créer le Code'}
+              {isCreating ? t('referralManagement.creating') : t('referralManagement.create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -465,9 +465,9 @@ export function AdvancedReferralManagement({
       <Dialog open={showStatsDialog} onOpenChange={setShowStatsDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Statistiques du Code: {selectedCode?.code}</DialogTitle>
+            <DialogTitle>{t('referralManagement.statsTitle', { code: selectedCode?.code })}</DialogTitle>
             <DialogDescription>
-              Analyse détaillée des performances de ce code de parrainage
+              {t('referralManagement.statsDescription')}
             </DialogDescription>
           </DialogHeader>
           
@@ -478,13 +478,13 @@ export function AdvancedReferralManagement({
                   <div className="text-2xl font-bold text-blue-600">
                     {selectedCode.usageCount}
                   </div>
-                  <div className="text-sm text-blue-600">Utilisations</div>
+                  <div className="text-sm text-blue-600">{t('referralManagement.usesLabel')}</div>
                 </div>
                 <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <div className="text-2xl font-bold text-green-600">
                     {selectedCode.conversionCount}
                   </div>
-                  <div className="text-sm text-green-600">Conversions</div>
+                  <div className="text-sm text-green-600">{t('referralManagement.conversionsLabel')}</div>
                 </div>
               </div>
               
@@ -492,14 +492,14 @@ export function AdvancedReferralManagement({
                 <div className="text-2xl font-bold text-purple-600">
                   {getConversionRate(selectedCode)}%
                 </div>
-                <div className="text-sm text-purple-600">Taux de Conversion</div>
+                <div className="text-sm text-purple-600">{t('referralManagement.conversionRateLabel')}</div>
               </div>
               
               <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
                   {formatCurrency(selectedCode.totalRevenue)}
                 </div>
-                <div className="text-sm text-orange-600">Revenus Générés</div>
+                <div className="text-sm text-orange-600">{t('referralManagement.revenueGenerated')}</div>
               </div>
             </div>
           )}
