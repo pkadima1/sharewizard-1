@@ -18,8 +18,8 @@ const Footer: React.FC = () => {
     
     if (!email.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
+        title: t('status.error'),
+        description: t('footer.newsletterError'),
         variant: "destructive"
       });
       return;
@@ -36,16 +36,16 @@ const Footer: React.FC = () => {
       });
 
       toast({
-        title: "Success!",
-        description: "You've been successfully subscribed to our newsletter.",
+        title: t('status.success'),
+        description: t('footer.newsletterSuccess'),
       });
 
       setEmail(''); // Clear the input
     } catch (error) {
       console.error('Newsletter subscription error:', error);
       toast({
-        title: "Error",
-        description: "Failed to subscribe to newsletter. Please try again.",
+        title: t('status.error'),
+        description: t('footer.newsletterFailure'),
         variant: "destructive"
       });
     } finally {
@@ -109,6 +109,14 @@ const Footer: React.FC = () => {
               */} </ul>
           </div>
           
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">{t('footer.partners')}</h3>
+            <ul className="space-y-3">
+              <li><Link to="/partners" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('footer.partnerProgram')}</Link></li>
+              <li><Link to="/partner-registration" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors text-sm">{t('nav.becomePartner')}</Link></li>
+            </ul>
+          </div>
+
           {/*<div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Support</h3>
             <ul className="space-y-3">

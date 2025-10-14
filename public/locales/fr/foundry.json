@@ -1,0 +1,99 @@
+{
+  "title": "Foundry Lab",
+  "tagline": "Éditer. Créer. Mouvement.",
+  "description": "Outils d'IA visuelle professionnels alimentés par les derniers modèles de Google",
+  "tabs": {
+    "edit": "Foundry Edit",
+    "image": "Foundry Create",
+    "motion": "Foundry Motion"
+  },
+  "tooltips": {
+    "editPoweredBy": "Propulsé par Gemini 2.5 Flash Image (Nano Banana)",
+    "imagePoweredBy": "Propulsé par Imagen 4",
+    "motionPoweredBy": "Propulsé par Veo 3"
+  },
+  "edit": {
+    "title": "Éditeur d'images multi-prompts",
+    "description": "Téléchargez une image et appliquez plusieurs modifications à la fois",
+    "uploadImage": "Télécharger l'image",
+    "uploadPlaceholder": "Cliquez pour télécharger ou glissez-déposez",
+    "uploadHint": "PNG, JPG ou WEBP (max 8 Mo)",
+    "prompts": "Prompts d'édition",
+    "promptPlaceholder": "par ex., ajouter un chapeau de fête",
+    "addPrompt": "Ajouter un prompt",
+    "forgeEdits": "Forger les éditions",
+    "processing": "Traitement des éditions...",
+    "results": "Résultats",
+    "originalImage": "Image originale",
+    "errors": {
+      "noImage": "Veuillez d'abord télécharger une image",
+      "noPrompts": "Veuillez ajouter au moins un prompt d'édition",
+      "fileTooLarge": "La taille du fichier doit être inférieure à 8 Mo",
+      "invalidFileType": "Veuillez télécharger un fichier PNG, JPG ou WEBP",
+      "processingFailed": "Échec du traitement des éditions. Veuillez réessayer."
+    }
+  },
+  "image": {
+    "title": "Génération d'images IA",
+    "description": "Générez des images époustouflantes à partir de descriptions textuelles",
+    "prompt": "Prompt d'image",
+    "promptPlaceholder": "Décrivez l'image que vous souhaitez générer...",
+    "numberOfImages": "Nombre d'images",
+    "aspectRatio": "Ratio d'aspect",
+    "aspectRatios": {
+      "1:1": "Carré (1:1)",
+      "3:4": "Portrait (3:4)",
+      "4:3": "Paysage (4:3)",
+      "9:16": "Vertical (9:16)",
+      "16:9": "Écran large (16:9)"
+    },
+    "personGeneration": "Génération de personnes",
+    "personGenerationOptions": {
+      "dont_allow": "Ne pas autoriser",
+      "allow_adult": "Autoriser les adultes uniquement"
+    },
+    "renderImage": "Rendre l'image",
+    "processing": "Génération des images...",
+    "results": "Images générées",
+    "errors": {
+      "noPrompt": "Veuillez entrer un prompt d'image",
+      "processingFailed": "Échec de la génération des images. Veuillez réessayer."
+    }
+  },
+  "motion": {
+    "title": "Génération de vidéos IA",
+    "description": "Créez du contenu en mouvement à partir de descriptions textuelles",
+    "prompt": "Prompt de vidéo",
+    "promptPlaceholder": "Décrivez le mouvement que vous souhaitez créer...",
+    "resolution": "Résolution",
+    "resolutions": {
+      "720p": "HD (720p)",
+      "1080p": "Full HD (1080p)"
+    },
+    "duration": "Durée (secondes)",
+    "durationHint": "Maximum 8 secondes",
+    "renderMotion": "Rendre le mouvement",
+    "processing": "Génération de la vidéo...",
+    "results": "Vidéo générée",
+    "comingSoon": "Bientôt disponible",
+    "errors": {
+      "noPrompt": "Veuillez entrer un prompt de vidéo",
+      "invalidDuration": "La durée doit être comprise entre 1 et 8 secondes",
+      "processingFailed": "Échec de la génération de la vidéo. Veuillez réessayer.",
+      "notImplemented": "La génération de vidéos arrive bientôt ! Cette fonctionnalité nécessite l'intégration de Veo 3 qui est actuellement en développement."
+    }
+  },
+  "actions": {
+    "download": "Télécharger",
+    "copy": "Copier",
+    "share": "Partager",
+    "remove": "Supprimer",
+    "copySuccess": "Copié dans le presse-papiers",
+    "copyError": "Échec de la copie dans le presse-papiers",
+    "shareSuccess": "Partagé avec succès",
+    "shareError": "Le partage n'est pas pris en charge sur cet appareil"
+  },
+  "nav": {
+    "backToDashboard": "Retour au tableau de bord"
+  }
+}

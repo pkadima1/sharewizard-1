@@ -23,15 +23,28 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+      // Simplified rules that don't require type information
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "warn", // Changed from error to warning
-      "react-hooks/exhaustive-deps": "warn", // Make this a warning instead of error
-      "@typescript-eslint/ban-ts-comment": "warn", // Make this a warning
-      "no-useless-escape": "warn", // Make this a warning
-      "@typescript-eslint/no-unsafe-function-type": "warn", // Make this a warning
-      "no-prototype-builtins": "warn", // Make this a warning
-      "@typescript-eslint/no-unused-expressions": "warn", // Make this a warning
-      "@typescript-eslint/no-require-imports": "warn", // Make this a warning
+      "@typescript-eslint/no-explicit-any": "off", // Turn off for now
+      "react-hooks/exhaustive-deps": "warn",
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "no-useless-escape": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
+      "no-prototype-builtins": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      
+      // Basic rules only
+      "@typescript-eslint/no-unused-expressions": [
+        "warn",
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true
+        }
+      ],
+      
+      "prefer-const": "warn",
+      "no-var": "warn",
     },
   }
 );

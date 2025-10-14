@@ -23,7 +23,7 @@ const db = getFirestore();
 // Check if user is admin
 const isAdmin = (uid: string, email?: string): boolean => {
   // Implement your admin check logic here - ensure case-insensitive email comparison
-  return email?.toLowerCase() === 'engageperfect@gmail.com' || uid === 'admin-uid-here';
+  return email?.toLowerCase() === 'engageperfect@gmail.com';
 };
 
 // Get chat analytics

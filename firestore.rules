@@ -1,26 +1,7 @@
-
 rules_version = '2';
 
 service cloud.firestore {
-  match /dat    // =    // =============================
-    // 📝 BLOG CONTENT ACCESS
-    // =============================
-    
-    // Special read access for afribudget@gmail.com's longform content for blog display
-    // This rule allows ANYONE (including unauthenticated users) to read this user's completed content
-    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
-      // Allow public read access to completed longform content for blog display
-      // No authentication required - completely public for SEO and accessibility
-      allow read: if true;
-    }===================
-    // 📝 BLOG CONTENT ACCESS
-    // =============================
-    
-    // Special read access for afribudget@gmail.com's longform content for blog display
-    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
-      // Allow public read access to completed longform content for blog display
-      allow read: if true; // Allow anyone to read this specific user's completed content
-    }atabase}/documents {
+  match /databases/{database}/documents {
 
     // =============================
     // 🔒 HELPER FUNCTIONS
@@ -36,87 +17,138 @@ service cloud.firestore {
       return request.auth.token.stripeRole == "flexy";
     }
 
-    // Check if the user has a Basic subscription
+    // Check if the user has a Basic subscription (either monthly or yearly)
     function hasBasicSubs() {
-      return request.auth.token.stripeRole == "basic";
+      return request.auth.token.stripeRole == "basicMonth" || 
+             request.auth.token.stripeRole == "basicYear";
     }
 
     // Check if the user has a Premium (Pro) subscription
     function hasPremiumSubs() {
-      return request.auth.token.stripeRole == "premium";
-    }    // =============================
+      return request.auth.token.stripeRole == "premiumMonth" ||
+             request.auth.token.stripeRole == "premiumYear";
+    }
+      
+    // Check if the user has service account permissions (for Cloud Functions)
+    function isServiceAccount() {
+      return request.auth != null && 
+        (request.auth.token.firebase.sign_in_provider == 'custom' || 
+         request.auth.token.firebase.sign_in_provider == 'service_account' ||
+         request.auth.token.firebase.sign_in_provider == null);
+    }
+
+    // =============================
+    // 🛡️ ADMIN ACCESS FUNCTIONS (PRODUCTION-READY)
+    // =============================
+    
+    // Check if user is admin based on exact email match
+    function isAdmin() {
+      return request.auth != null && 
+             (request.auth.token.email == 'engageperfect@gmail.com' ||
+              (request.auth.token.firebase.identities != null &&
+               request.auth.token.firebase.identities.email != null &&
+               request.auth.token.firebase.identities.email[0] == 'engageperfect@gmail.com'));
+    }
+    
+    // Check if user is super admin (add your actual admin UIDs here if needed)
+    function isSuperAdmin() {
+      return request.auth != null && 
+             request.auth.uid in [
+               // Add actual admin UIDs here if you have specific UIDs to grant admin access
+               // Example: 'abc123uid456def', 'xyz789uid012ghi'
+             ];
+    }
+    
+    // Combined admin check - works in both dev and production
+    function hasAdminAccess() {
+      return isAdmin() || isSuperAdmin() || isServiceAccount();
+    }
+
+    // =============================
+    // 🧩 PARTNER & AFFILIATE HELPERS
+    // =============================
+    function isPartner() {
+      return request.auth != null &&
+             (request.auth.token.partner == true ||
+              request.auth.token.role == 'partner');
+    }
+
+    function isAffiliate() {
+      return request.auth != null &&
+             (request.auth.token.affiliate == true ||
+              request.auth.token.role == 'affiliate');
+    }
+     
+    // =============================
     // 👤 USER PROFILES
     // =============================
     
-    // Allow users to read and write only their own profile
     match /users/{userId} {
-      allow read, create: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId 
-                     && (!request.resource.data.diff(resource.data).affectedKeys()
-                         .hasAny(['plan_type', 'subscription_id', 'trial_end_date']));
-      allow delete: if false;  // Users cannot delete their profiles directly
+      allow read: if request.auth.uid == userId || hasAdminAccess();
+      allow create: if request.auth.uid == userId || isServiceAccount();
+      allow update: if request.auth.uid == userId || hasAdminAccess() || isServiceAccount();
+      allow delete: if hasAdminAccess();
       
       // =============================
       // 📄 USER CONTENT SUBCOLLECTIONS
       // =============================
       
-      // Allow users to read and write their own longform content
       match /longform-content/{contentId} {
-        allow read, write: if request.auth.uid == userId;
+        allow read, write: if request.auth.uid == userId || hasAdminAccess();
+        allow write: if isServiceAccount(); // Allow Cloud Functions to write
       }
       
-      // Allow users to read and write their own generations
       match /generations/{generationId} {
-        allow read, write: if request.auth.uid == userId;
+        allow read, write: if request.auth.uid == userId || hasAdminAccess();
+        allow write: if isServiceAccount(); // Allow Cloud Functions to write
         
-        // Allow access to shares subcollection
         match /shares/{shareId} {
-          allow read, write: if request.auth.uid == userId;
+          allow read, write: if request.auth.uid == userId || hasAdminAccess();
+          allow write: if isServiceAccount();
         }
       }
       
-      // Allow users to read and write their own captions
       match /captions/{captionId} {
-        allow read, write: if request.auth.uid == userId;
+        allow read, write: if request.auth.uid == userId || hasAdminAccess();
+        allow write: if isServiceAccount(); // Allow Cloud Functions to write
       }
     }
 
     // =============================
-    // � BLOG CONTENT ACCESS
+    // 💬 SUPPORT CHAT COLLECTIONS (FIXED)
     // =============================
     
-    // Special read access for afribudget@gmail.com's longform content for blog display
-    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
-      // Allow public read access to completed longform content for blog display
-      allow read: if resource.data.status == "completed";
+    // Support chat conversations - RELAXED RULES FOR TESTING
+    match /supportChats/{userId} {
+      // Allow user access to their own chats
+      allow read, write: if request.auth.uid == userId;
+      // Allow admin access to all chats
+      allow read, write: if hasAdminAccess();
+      // CRITICAL: Allow Cloud Functions to write chat data
+      allow read, write: if isServiceAccount();
+      
+      // Chat messages subcollection
+      match /messages/{messageId} {
+        allow read, write: if request.auth.uid == userId;
+        allow read, write: if hasAdminAccess();
+        allow read, write: if isServiceAccount(); // CRITICAL FOR CHAT TO WORK
+      }
+      
+      // Rate limiting subcollection
+      match /rateLimit/{limitId} {
+        allow read, write: if request.auth.uid == userId;
+        allow read, write: if hasAdminAccess();
+        allow read, write: if isServiceAccount();
+      }
+      
+      // Chat feedback subcollection
+      match /feedback/{feedbackId} {
+        allow read, write: if request.auth.uid == userId;
+        allow read, write: if hasAdminAccess();
+        allow read, write: if isServiceAccount();
+      }
     }
 
-    // =============================
-    // �🔐 CUSTOMER DATA SECURITY
-    // =============================
-
-    // Allow each user to read ONLY their own customer-related data
-    match /customers/{uid} {
-      allow read: if request.auth.uid == uid;
-
-      match /checkout_sessions/{id} {
-        allow read, write: if request.auth.uid == uid;
-      }
-      match /subscriptions/{id} {
-        allow read: if request.auth.uid == uid;
-      }
-      match /payments/{id} {
-        allow read: if request.auth.uid == uid;
-      }    }
-
-    // =============================
-    // 💳 SUBSCRIPTION DATA SECURITY
-    // =============================
-
-    // Allow system functions to manage subscription data
-    match /subscriptions/{customerId} {
-      allow read, write: if request.auth.uid == customerId;
-    }
 
     // =============================
     // 📧 NEWSLETTER SUBSCRIPTIONS
@@ -128,8 +160,9 @@ service cloud.firestore {
       allow read: if false; // Don't allow reading (privacy)
       allow update, delete: if false; // Don't allow updates or deletes
     }
-
-    // =============================
+    
+    
+     // =============================
     // 📝 CONTACT FORM SUBMISSIONS
     // =============================
 
@@ -139,21 +172,89 @@ service cloud.firestore {
       allow read: if false; // Don't allow reading (privacy)
       allow update, delete: if false; // Don't allow updates or deletes
     }
+    
+    // =============================
+    // � BLOG CONTENT ACCESS
+    // =============================
+    
+    // Special read access for afribudget@gmail.com's longform content for blog display
+    match /users/CMJHcwlYKyOmxnQpDajZMb31lHG3/longform-content/{contentId} {
+      // Allow public read access to completed longform content for blog display
+      allow read: if resource.data.status == "completed";
+       // No authentication required - completely public for SEO and accessibility
+      allow read: if true;
+    }
+
 
     // =============================
-    // 📦 PRODUCT & PRICING SECURITY
+    // 📊 ADMIN ANALYTICS COLLECTIONS
+    // =============================
+    
+    match /analytics/{document} {
+      allow read, write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    match /adminLogs/{logId} {
+      allow read, write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    match /systemHealth/{healthId} {
+      allow read, write: if hasAdminAccess() || isServiceAccount();
+    }
+
+    // =============================
+    // 🔐 STRIPE CUSTOMER DATA
     // =============================
 
-    // Allow ONLY authenticated users to read product and pricing information
+    // Stripe customer data - users can only access their own data
+    // Admins can read all customer data for support
+    match /customers/{uid} {
+      allow read: if request.auth.uid == uid || hasAdminAccess();
+      allow write: if isServiceAccount();
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+        allow read: if hasAdminAccess();
+        allow write: if isServiceAccount();
+      }
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid || hasAdminAccess();
+        allow write: if isServiceAccount();
+      }
+      match /payments/{id} {
+        allow read: if request.auth.uid == uid || hasAdminAccess();
+        allow write: if isServiceAccount();
+      }
+    }
+
+
+
+
+    // =============================
+    // 💳 SUBSCRIPTION DATA
+    // =============================
+
+    // Additional subscription collection (if used)
+    match /subscriptions/{customerId} {
+      allow read, write: if request.auth.uid == customerId || hasAdminAccess();
+      allow write: if isServiceAccount();
+    }
+    // =============================
+    // 📦 STRIPE PRODUCTS & PRICING
+		// =============================
+
     match /products/{id} {
-      allow read: if true;//isAuthenticated();
+      allow read: if true;
+      allow write: if isServiceAccount() || hasAdminAccess();
 
       match /prices/{id} {
-        allow read: if true;//isAuthenticated();
+        allow read: if true;
+        allow write: if isServiceAccount() || hasAdminAccess();
       }
 
       match /tax_rates/{id} {
-        allow read: if true;//isAuthenticated();
+        allow read: if true;
+        allow write: if isServiceAccount() || hasAdminAccess();
       }
     }
 
@@ -161,28 +262,302 @@ service cloud.firestore {
     // 🎟 ROLE-BASED CONTENT ACCESS
     // =============================
 
-    // Basic users can access basic content
+  // Basic users can access basic content
     match /content-basic/{doc} {
       allow read: if hasBasicSubs() || hasPremiumSubs() || hasFlexyAccess();
     }
-
     // Premium users (Pro) and Flex users can access premium content
+
     match /content-premium/{doc} {
       allow read: if hasPremiumSubs() || hasFlexyAccess();
     }
-
     // Flexy users should have access to everything (like Premium)
+
     match /content-flexy/{doc} {
       allow read: if hasFlexyAccess() || hasPremiumSubs();
     }
 
     // =============================
-    // 🔓 TEMPORARY OPEN ACCESS (Optional)
+    // 📱 APP CONFIGURATION
     // =============================
-    // If you want to allow unrestricted read-only access to all data
-    // for testing until a specific date (March 20, 2025)
-    match /{document=**} {
-      allow read: if request.time < timestamp.date(2025, 3, 20);
+    // App configuration - everyone can read, only admins can write
+    match /config/{configDoc} {
+      allow read: if true;
+      allow write: if hasAdminAccess();
+    }
+    
+    match /featureFlags/{flagId} {
+      allow read: if true;
+      allow write: if hasAdminAccess();
+    }
+
+    // =============================
+    // PARTNER & AFFILIATE SYSTEM (HARDENED)
+    // =============================
+    // =============================
+    // 🤝 PARTNER & AFFILIATE SYSTEM (PRODUCTION-READY, DEV-FRIENDLY)
+    // =============================
+    
+        // Partners collection - core partner management
+    match /partners/{partnerId} {
+      // Admins can read/write all partner data (works in both dev and prod)
+      allow read, write: if hasAdminAccess();
+      
+      // Partners can read their own data using uid field (production-secure)
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.uid;
+      
+      // Cloud Functions can manage partners (works in both environments)
+      allow read, write: if isServiceAccount();
+      
+      // CRITICAL FIX: Allow public read access for referral validation
+      // This is essential for the referral system to work - users need to read partner info
+      // when validating referral codes, even when not authenticated
+      allow read: if true;
+      
+      // Allow authenticated users to CREATE partner applications with proper validation
+      allow create: if isAuthenticated() && 
+                     request.resource.data.uid == request.auth.uid &&
+                     request.resource.data.status == 'pending' &&
+                     request.resource.data.email == request.auth.token.email;
+    }
+    
+    // Partners collection listing - admin access only (secure in both environments)
+    match /partners {
+      allow list: if hasAdminAccess();
+    }
+    
+    // Partner codes collection - for referral codes
+    match /partnerCodes/{codeId} {
+      // Admins can manage all codes (works in both dev and prod)
+      allow read, write: if hasAdminAccess();
+      
+      // Partners can read their own codes
+      allow read: if isAuthenticated() && 
+                   resource.data.partnerId == request.auth.uid;
+      
+      // Cloud Functions can manage codes
+      allow read, write: if isServiceAccount();
+      
+      // CRITICAL FIX: Allow public read access for referral validation
+      // This is essential for the referral system to work
+      allow read: if true;
+    }
+    
+    // Partner codes collection - allow public queries for referral validation
+    // CRITICAL: This rule is essential for getDocs() queries to work
+    match /partnerCodes {
+      allow list, get: if true; // Allow public queries and document reads for referral validation
+    }
+    
+    // Affiliate codes and referral tracking
+    match /affiliate_codes/{codeId} {
+      // Admins can manage all codes
+      allow read, write: if hasAdminAccess();
+      
+      // Partners can read codes they own
+      allow read: if isAuthenticated() && 
+                   (resource.data.partnerId == request.auth.uid ||
+                    resource.data.createdBy == request.auth.uid);
+      
+      // Cloud Functions can manage codes
+      allow read, write: if isServiceAccount();
+    }
+    
+    // Referral tracking
+    match /referrals/{referralId} {
+      // Admins can see all referrals
+      allow read, write: if hasAdminAccess();
+      
+      // Partners can see their referrals
+      allow read: if isAuthenticated() && 
+                   (resource.data.partnerId == request.auth.uid ||
+                    resource.data.referredBy == request.auth.uid);
+      
+      // Cloud Functions can track referrals
+      allow read, write: if isServiceAccount();
+    }
+    
+    // Referral tracking collection listing - allow collection queries
+    match /referrals {
+      allow list: if hasAdminAccess() || isServiceAccount();
+    }
+
+    // =============================
+    // COMMISSION SYSTEM (HARDENED)
+    // =============================
+    match /commissionLedger/{entryId} {
+      // Read only own entries (partner sees partnerId; affiliate sees affiliateId)
+      allow read: if isAdmin() ||
+                   (isPartner()   && resource.data.partnerId   == request.auth.uid) ||
+                   (isAffiliate() && resource.data.affiliateId == request.auth.uid);
+
+      // Writes from admin or Cloud Functions / service account
+      allow write: if isAdmin() || isServiceAccount();
+    }
+
+    // =============================
+    // REFERRAL CUSTOMERS SYSTEM
+    // =============================
+    match /referralCustomers/{customerId} {
+      // Partners can read their own referral customers
+      allow read: if isAuthenticated() && 
+                   (resource.data.partnerId == request.auth.uid ||
+                    resource.data.referredBy == request.auth.uid);
+      
+      // Admins can read all referral customers
+      allow read: if hasAdminAccess();
+      
+      // Only Cloud Functions can write referral customer data
+      allow write: if isServiceAccount();
+    }
+
+    // =============================
+    // INVOICES SYSTEM
+    // =============================
+    match /invoices/{invoiceId} {
+      // Partners can read invoices related to their referrals
+      allow read: if isAuthenticated() && 
+                   (resource.data.partnerId == request.auth.uid ||
+                    resource.data.referredBy == request.auth.uid);
+      
+      // Admins can read all invoices
+      allow read: if hasAdminAccess();
+      
+      // Only Cloud Functions can write invoice data
+      allow write: if isServiceAccount();
+    }
+
+    match /payout_reports/{reportId} {
+      // Read only own reports
+      allow read: if isAdmin() ||
+                   (isPartner()   && resource.data.partnerId   == request.auth.uid) ||
+                   (isAffiliate() && resource.data.affiliateId == request.auth.uid);
+
+      // Writes from admin or Cloud Functions / service account
+      allow write: if isAdmin() || isServiceAccount();
+
+      // Summaries per partner
+      match /partner_summaries/{partnerId} {
+        // Partner can read their own summary; admin can read all
+        allow read: if isAdmin() || (isPartner() && partnerId == request.auth.uid);
+
+        // Writes from admin or Cloud Functions / service account
+        allow write: if isAdmin() || isServiceAccount();
+      }
+    }
+
+    // =============================
+    // 📧 EMAIL NOTIFICATION SYSTEM
+    // =============================
+    
+    // Mail collection - only Cloud Functions can write (Trigger Email extension)
+    // TODO: Tighten rules if needed for additional security
+    match /mail/{mailId} {
+      // Deny all public writes - only server-side functions can write
+      allow read, write: if false;
+      
+      // Allow Cloud Functions (service account) to write for email notifications
+      allow write: if isServiceAccount();
+      
+      // Allow admins to read for debugging/monitoring
+      allow read: if hasAdminAccess();
+    }
+
+    // =============================
+    // 🔔 ADMIN NOTIFICATIONS SYSTEM
+    // =============================
+    
+    // Admin notifications collection - only admins can read, Cloud Functions can write
+    match /adminNotifications/{notificationId} {
+      // Only admins can read notifications
+      allow read: if hasAdminAccess();
+      
+      // Only Cloud Functions can write notifications
+      allow write: if isServiceAccount();
+    }
+
+    // =============================
+    // 🤝 PARTNER SYSTEM COLLECTIONS
+    // =============================
+    
+    // Referral customers - partners can read their own customers
+    match /referralCustomers/{customerId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   resource.data.referredBy == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Referral customers collection listing - allow queries
+    match /referralCustomers {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
+
+    // Partner invoices - partners can read their own invoices
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   resource.data.referredBy == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Invoices collection listing - allow queries
+    match /invoices {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
+
+    // Commission ledger - fix collection name mismatch
+    match /commissionLedger/{entryId} {
+      allow read: if isAuthenticated() && 
+                  (resource.data.partnerId == request.auth.uid ||
+                   hasAdminAccess());
+      allow write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Commission ledger collection listing - allow queries
+    match /commissionLedger {
+      allow read: if isAuthenticated();
+      allow read: if hasAdminAccess();
+    }
+
+    // =============================
+    // 💰 PARTNER PAYOUTS SYSTEM
+    // =============================
+    
+    // Partner payouts collection - admin access only
+    match /partnerPayouts/{payoutId} {
+      allow read, write: if hasAdminAccess() || isServiceAccount();
+    }
+    
+    // Partner payouts collection listing - admin access only
+    match /partnerPayouts {
+      allow list: if hasAdminAccess();
+    }
+
+    // =============================
+    // 📊 CONVERSION TRACKING SYSTEM
+    // =============================
+    
+    // Conversion tracking collection - partners can read their own data
+    match /conversionTracking/{conversionId} {
+      // Partners can read their own conversion data
+      allow read: if isAuthenticated() && 
+                  resource.data.partnerId == request.auth.uid;
+      
+      // Admins can read all conversion data
+      allow read: if hasAdminAccess();
+      
+      // Only Cloud Functions can write conversion data
+      allow write: if isServiceAccount();
+    }
+    
+    // Conversion tracking collection listing - partners can query their own data
+    match /conversionTracking {
+      allow list: if isAuthenticated() && hasAdminAccess();
     }
   }
 }

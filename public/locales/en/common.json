@@ -3,6 +3,8 @@
     "home": "Home",
     "dashboard": "Dashboard", 
     "pricing": "Pricing",
+    "becomePartner": "Become Partner",
+    "mediaGenerator": "Media Generator",
     "login": "Login",
     "signup": "Sign Up",
     "caption_generator": "Caption Generator",
@@ -14,7 +16,10 @@
     "adminDashboard": "Admin Dashboard",
     "logOut": "Log out",
     "features": "Features",
-    "blog": "Blog"
+    "blog": "Blog",
+    "partner": {
+      "dashboard": "Partner Dashboard"
+    }
   },
   "wizard": {
     "step1": "Upload Media",
@@ -132,12 +137,17 @@
   "footer": {
     "tagline": "Create engaging Human-like social media, blog & article content in seconds with our AI-powered platform",
     "product": "Product",
+    "partners": "Partners",
+    "partnerProgram": "Partner Program",
     "legal": "Legal",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "newsletter": "Subscribe to our newsletter",
     "newsletterDesc": "Get the latest news and updates",
     "emailPlaceholder": "Your email",
+    "newsletterError": "Please enter a valid email address.",
+    "newsletterSuccess": "You've been successfully subscribed to our newsletter.",
+    "newsletterFailure": "Failed to subscribe to newsletter. Please try again.",
     "allRights": "All rights reserved."
   },
   "support": {
@@ -290,5 +300,35 @@
     }
   },
   "user": "User",
-  "resetToEnglish": "Reset to English"
+  "resetToEnglish": "Reset to English",
+  "insufficientCreditsDialog": {
+    "title": "Unlock {{featureName}}",
+    "description": "You need <strong>{{creditsNeeded}} credits</strong> but only have <strong>{{creditsAvailable}} remaining</strong>",
+    "specialOffer": "🎉 Special Offer for You!",
+    "freeTrial": {
+      "title": "5-Day Free Trial",
+      "description": "Try all features risk-free. Cancel anytime, no questions asked."
+    },
+    "discount": {
+      "title": "50% OFF First Month",
+      "description": "Get your first month at half price after the trial ends"
+    },
+    "codePrompt": "USE THIS CODE AT CHECKOUT",
+    "discountCode": "PERFECTSTART",
+    "planIncludes": "BASIC PLAN INCLUDES:",
+    "features": {
+      "credits": "70 credits/month for all AI features",
+      "imageGeneration": "Image generation & editing",
+      "blogCaption": "Blog & caption generation",
+      "seo": "SEO optimization tools"
+    },
+    "buttons": {
+      "startTrial": "Start Your Free Trial"
+    },
+    "toast": {
+      "codeCopied": "Code Copied!",
+      "codeCopiedDescription": "Discount code copied to clipboard"
+    },
+    "finePrint": "Credit card required. Cancel within 5 days to avoid charges. Use code PERFECTSTART for 50% off first month only."
+  }
 }

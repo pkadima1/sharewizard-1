@@ -153,23 +153,27 @@ const isProduction = process.env.NODE_ENV === 'production';
 export const generateCaptionsV3 = onCall({
   cors: [
     // Local development
-    "localhost:3000",
-    "localhost:5173",
-    "localhost:5174",
-    "localhost:8080",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:8080",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:8080",
     
     // Firebase hosting domains
-    /engperfecthlc\.web\.app$/,
-    /engperfecthlc\.firebaseapp\.com$/,
+    /https?:\/\/engperfecthlc\.web\.app$/,
+    /https?:\/\/engperfecthlc\.firebaseapp\.com$/,
     
     // Production domain
-    /engageperfect\.com$/,
-    /www\.engageperfect\.com$/,
+    /https?:\/\/engageperfect\.com$/,
+    /https?:\/\/www\.engageperfect\.com$/,
     
     // Lovable preview domains
-    /preview--.*\.lovable\.app$/,
-    /.*\.lovable\.app$/,
-    /.*\.lovableproject\.com$/,
+    /https?:\/\/preview--.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovable\.app$/,
+    /https?:\/\/.*\.lovableproject\.com$/,
     
     // Allow all origins in development only
     ...(isProduction ? [] : ["*"])
@@ -261,53 +265,108 @@ export const generateCaptionsV3 = onCall({
       
       const openai = new OpenAI({ apiKey });
       
-      // Create the prompt for OpenAI - improved structure for better parsing
-      const systemPrompt = `You are the world's best content creator and digital, Social Media marketing and sales expert. You create highly engaging content tailored to specific platforms and audiences.`;
+      // ENHANCED: Anti-pattern system prompt with temporal awareness and variety enforcement
+      const systemPrompt = `You are the world's best content creator and digital marketing expert specializing in ${platform} content strategy.
+
+CRITICAL WRITING CONSTRAINTS (2025):
+❌ NEVER start with "In my X years of experience..."
+❌ NEVER use "As a seasoned expert..." or "As a professional..."
+❌ NEVER open with "Did you know that..." unless it's genuinely surprising
+❌ NEVER reference outdated years (2023 or earlier) - WE ARE IN LATE 2025
+❌ AVOID formulaic, repetitive opening patterns
+❌ NEVER use generic phrases like "game-changer" or "unlock your potential"
+
+✅ DO use fresh, varied, and direct opening hooks
+✅ DO reference current ${platform} trends (2024-2025)
+✅ DO demonstrate expertise through insights, not credentials
+✅ DO use dynamic, platform-specific language
+✅ DO make EVERY caption feel unique and authentic
+
+TEMPORAL AWARENESS:
+- Current year: 2025 (October)
+- Reference trends from late 2024-2025
+- Acknowledge recent ${platform} algorithm changes and features
+- Use contemporary language and cultural references
+
+VARIETY MANDATE:
+Each caption MUST have a distinctly different opening style:
+- Caption 1: Start with a bold statement, surprising stat, or contrarian take
+- Caption 2: Open with an engaging question or direct challenge
+- Caption 3: Begin with a relatable scenario, micro-story, or vivid imagery
+
+Create highly engaging content tailored to ${platform}'s 2025 algorithm and audience expectations.`;
       
-      const languageInstruction = `Write all captions in ${lang}.`;
+      const languageInstruction = lang === 'en' 
+        ? `Write all content in English.`
+        : `IMPORTANT: Write ALL content in ${lang === 'fr' ? 'French (français)' : lang}. Every word, phrase, and hashtag must be in ${lang}.`;
+      
       const userPrompt = `
         ${languageInstruction}
+        
         Create exactly 3 highly engaging ${tone} captions for ${platform} about '${postIdea || niche}' in the ${niche} industry.
+        
+        CRITICAL: Each caption MUST have a DIFFERENT opening style and voice. Show versatility, not templates.
+        
+        TEMPORAL CONTEXT (2025):
+        - We are in late 2025 (October 2025)
+        - Reference current ${platform} trends from 2024-2025
+        - Use contemporary ${niche} industry insights
+        - Acknowledge recent ${platform} features (e.g., Instagram Reels evolution, TikTok Shop, LinkedIn newsletters)
+        
+        OPENING STYLE REQUIREMENTS (MUST VARY):
+        Caption 1: Start with a surprising statistic, bold claim, or contrarian take
+        Caption 2: Open with an engaging question or challenge to the audience
+        Caption 3: Begin with a micro-story, relatable scenario, or vivid moment
+        
+        TONE VARIATIONS:
+        - Mix conversational and ${tone} tones
+        - Vary sentence lengths dramatically
+        - Use different punctuation styles (!, ?, ..., —)
+        - Incorporate emojis strategically but not in every caption
         
         The captions MUST follow this exact format with these exact headings:
         
         Caption 1:
-        [Title] A catchy title that highlights the post's theme.
-        [Caption] Write a 1-3 sentence caption in a ${tone} tone without hashtags.
-        [Call to Action] Provide a specific call-to-action to encourage engagement.
-        [#Tags] Include 3-5 relevant hashtags for the ${niche} industry.
+        [Title] A catchy, unique title (not generic - be specific to ${niche})
+        [Caption] Write a 1-3 sentence caption in a ${tone} tone without hashtags. START WITH A BOLD STATEMENT OR STAT.
+        [Call to Action] Provide a specific, creative CTA (not just "like and share" - be innovative)
+        [#Tags] Include 3-5 trending, relevant hashtags for ${niche} on ${platform} in 2025
         
         Caption 2:
-        [Title] Another engaging title for a unique post idea.
-        [Caption] Write an attention-grabbing caption.
-        [Call to Action] Include a CTA to drive user interaction.
-        [#Tags] Include creative relevant hashtags.
+        [Title] Another engaging title with different energy (shift the vibe)
+        [Caption] Write an attention-grabbing caption. START WITH A PROVOCATIVE QUESTION.
+        [Call to Action] Include a unique CTA that drives real interaction and conversation
+        [#Tags] Include creative relevant hashtags (different from Caption 1, reflect 2025 trends)
         
         Caption 3:
-        [Title] Third compelling title idea
-        [Caption] Provide a brief but engaging caption.
-        [Call to Action] Suggest a CTA to encourage likes, shares, or comments
-        [#Tags] Include a third set of appropriate hashtags.
+        [Title] Third compelling title idea (different vibe again - be bold)
+        [Caption] Provide a brief but engaging caption. START WITH A RELATABLE SCENARIO OR STORY.
+        [Call to Action] Suggest a CTA that encourages authentic engagement and community building
+        [#Tags] Include a third set of appropriate hashtags (no repeats from 1 & 2, include emerging trends)
         
-        Important requirements:
-        1. Be concise and tailored to ${platform}'s audience and character limits (e.g., Instagram: 2200 characters, Twitter: 200 characters).
-        2. Reflect current trends or platform-specific language where applicable. Consider post format and size.
-        3. If the goal is to share knowledge, start with words like 'did you know?', "Insight", "Fact", or anything intriguing.
-        4. Focus on the goal: "${goal}"
-        5. Make sure the Caption ideas are practical, innovative, and tailored specifically to the ${niche} industry while reflecting trends on ${platform}.
-        6. ALWAYS use the EXACT format with [Title], [Caption], [Call to Action], and [#Tags] sections for each caption.
-        7. Do not include any explanations, just the 3 formatted captions.
+        QUALITY STANDARDS:
+        1. Be concise and tailored to ${platform}'s 2025 best practices and character limits
+        2. Reflect CURRENT trends (late 2025) and platform-specific language
+        3. Focus on the goal: "${goal}"
+        4. Make sure ideas are innovative, fresh, and specific to ${niche}
+        5. Use contemporary ${platform} terminology and features (Stories, Reels, Carousels, etc.)
+        6. ALWAYS use the EXACT format with [Title], [Caption], [Call to Action], and [#Tags]
+        7. No explanations, just the 3 DISTINCTLY DIFFERENT formatted captions
+        8. MANDATORY: Each caption must feel like it was written by a different person with a different style
       `;
       
-      // Make the API call
+      // Make the API call with enhanced parameters for variety
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o", // You could consider using gpt-4o-mini for cost efficiency
+        model: "gpt-4o-mini", // UPDATED: Using gpt-4o-mini for better instruction following
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        temperature: 0.8, // Slightly increased for more creative variety
-        max_tokens: 800
+        temperature: 0.9, // INCREASED for more creative variety
+        max_tokens: 1000, // INCREASED for richer content
+        presence_penalty: 0.7, // INCREASED to discourage repetition
+        frequency_penalty: 0.6, // INCREASED for more diverse vocabulary
+        top_p: 0.95 // ADDED: Nucleus sampling for better diversity
       });
 
       console.log("OpenAI API response received");

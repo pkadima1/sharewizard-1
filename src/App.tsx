@@ -11,6 +11,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import { AnalyticsProvider } from "./contexts/AnalyticsContext";
 import RouterConfig from "./RouterConfig";
 import SupportChat from './components/SupportChat';
+import ReferralAttributionBanner from './components/referral/ReferralAttributionBanner';
 
 
 // Import text overlay utilities and make them globally available
@@ -46,6 +47,7 @@ const App = () => <QueryClientProvider client={queryClient}>
                   <TooltipProvider>
                     <Toaster />
                     <Sonner />
+                    <ReferralAttributionBanner />
                     <RouterConfig />
                     <SupportChat />
                   </TooltipProvider>

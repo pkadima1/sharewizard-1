@@ -1,0 +1,69 @@
+{
+  "banner": {
+    "title": "Référence Partenaire Détectée",
+    "subtitle": "Vous avez été référé par {{partnerName}}",
+    "referredBy": "Référé par",
+    "commissionRate": "Taux de Commission",
+    "commissionDescription": "Ce partenaire gagnera une commission lorsque vous vous abonnerez",
+    "successMessage": "Parfait ! {{partnerName}} recevra une commission lorsque vous vous abonnerez à nos services.",
+    "details": {
+      "referralCode": "Code de Référence",
+      "partnerId": "ID Partenaire",
+      "commissionRate": "Taux de Commission"
+    },
+    "dismiss": "Ignorer",
+    "clear": "Effacer",
+    "processing": "Traitement de la référence...",
+    "error": "Erreur lors du traitement de la référence: {{error}}",
+    "referralCode": "Code de Référence",
+    "validating": "Validation en cours..."
+  },
+  "attribution": {
+    "success": "Attribution de référence réussie",
+    "failed": "Échec de l'attribution de référence",
+    "processing": "Traitement de l'attribution de référence...",
+    "error": "Erreur lors de l'attribution de référence",
+    "customerRecordCreated": "Enregistrement client créé pour le suivi du tableau de bord",
+    "customerRecordFailed": "Échec de la création de l'enregistrement client",
+    "trackingFailed": "Échec de la création du suivi de référence",
+    "processingFailed": "Échec du traitement de l'attribution de référence",
+    "invalidCode": "Code de référence invalide ou expiré",
+    "enhancedSuccess": "Attribution de référence améliorée terminée avec succès",
+    "partnerDashboardUpdated": "Le tableau de bord du partenaire reflétera maintenant cette référence"
+  },
+  "stats": {
+    "totalReferrals": "Total des Références",
+    "totalConversions": "Total des Conversions",
+    "conversionRate": "Taux de Conversion",
+    "recentReferrals": "Références Récentes",
+    "loading": "Chargement des statistiques...",
+    "error": "Erreur lors du chargement des statistiques"
+  },
+  "commission": {
+    "totalCommissions": "Total des Commissions",
+    "totalEarned": "Total Gagné",
+    "totalPaid": "Total Payé",
+    "pendingAmount": "Montant en Attente",
+    "recentEntries": "Entrées Récentes",
+    "loading": "Chargement du résumé des commissions...",
+    "error": "Erreur lors du chargement du résumé des commissions"
+  },
+  "actions": {
+    "processAttribution": "Traiter l'Attribution",
+    "clearAttribution": "Effacer l'Attribution",
+    "refreshAttribution": "Actualiser l'Attribution",
+    "generateLink": "Générer un Lien",
+    "copyLink": "Copier le Lien",
+    "viewStats": "Voir les Statistiques"
+  },
+  "messages": {
+    "noReferralCode": "Aucun code de référence trouvé",
+    "invalidReferralCode": "Code de référence invalide ou expiré",
+    "attributionSuccessful": "Attribution de référence réussie",
+    "attributionFailed": "Échec de l'attribution de référence",
+    "referralCleared": "Données de référence effacées",
+    "linkGenerated": "Lien de référence généré",
+    "linkCopied": "Lien copié dans le presse-papiers"
+  }
+}
+

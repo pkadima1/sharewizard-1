@@ -5,14 +5,36 @@ import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
+// Validate required environment variables
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN', 
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET',
+  'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  'VITE_FIREBASE_APP_ID'
+];
+
+// Check for missing environment variables
+const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+if (missingVars.length > 0) {
+  console.error('❌ Missing required Firebase environment variables:', missingVars);
+  // In development, show helpful error
+  if (import.meta.env.DEV) {
+    throw new Error(`Missing Firebase environment variables: ${missingVars.join(', ')}. Please check your .env file.`);
+  }
+  // In production, use fallback values to prevent build failures
+  console.warn('⚠️ Using fallback Firebase configuration for missing environment variables');
+}
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "placeholder-api-key",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "placeholder.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "placeholder-project",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "placeholder.appspot.com",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:123456789:web:placeholder",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-PLACEHOLDER"
 };
 
 // Determine if we're in development or production
@@ -22,18 +44,25 @@ const isLocalhost = typeof window !== 'undefined' &&
 
 const isDevelopment = import.meta.env.DEV || isLocalhost;
 
-// Force emulator usage in development
-const useEmulators = isDevelopment;
+// Fine-grained emulator toggles to support hybrid dev (Functions on emulator, Firestore on prod)
+// Defaults: Functions emulator ON in dev, Firestore/Storage/Auth emulators OFF unless explicitly enabled
+const useFunctionsEmulator = isDevelopment && (import.meta.env.VITE_USE_FUNCTIONS_EMULATOR ?? "true") !== "false";
+const useFirestoreEmulator = isDevelopment && (import.meta.env.VITE_USE_FIRESTORE_EMULATOR ?? "false") === "true";
+const useAuthEmulator = isDevelopment && (import.meta.env.VITE_USE_AUTH_EMULATOR ?? "false") === "true";
+const useStorageEmulator = isDevelopment && (import.meta.env.VITE_USE_STORAGE_EMULATOR ?? "false") === "true";
 
-// Export for use in other modules
-export const isUsingEmulators = useEmulators;
+// Export for use in other modules (considering any emulator usage)
+export const isUsingEmulators = useFunctionsEmulator || useFirestoreEmulator || useAuthEmulator || useStorageEmulator;
 
 console.log(`🔥 Firebase initialized in ${isDevelopment ? 'development' : 'production'} mode`);
-console.log(`🔧 ${useEmulators ? 'Using emulators' : 'Using production services'}`);
+console.log(`🔧 Using emulators: ${isUsingEmulators}`);
+console.log(`   - Functions emulator: ${useFunctionsEmulator}`);
+console.log(`   - Firestore emulator: ${useFirestoreEmulator}`);
+console.log(`   - Auth emulator: ${useAuthEmulator}`);
+console.log(`   - Storage emulator: ${useStorageEmulator}`);
 console.log(`🌐 Hostname: ${typeof window !== 'undefined' ? window.location.hostname : 'server'}`);
 console.log(`🔧 DEV mode: ${import.meta.env.DEV}`);
 console.log(`🔧 isLocalhost: ${isLocalhost}`);
-console.log(`🔧 useEmulators: ${useEmulators}`);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -44,20 +73,28 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, 'us-central1');
 
-// Connect to emulators if in development mode
-if (useEmulators) {
+// Connect to emulators if enabled (hybrid supported)
+if (isUsingEmulators) {
   try {
-    // Only connect to Functions emulator for local development
-    connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-    console.log("✅ Connected to Functions emulator on 127.0.0.1:5001");
-    
-    // Use production Auth and Firestore for real user data
-    console.log("🌐 Using production Auth and Firestore with real user data");
-    
-    // Uncomment these lines if you want to use emulated services instead:
-    // connectFirestoreEmulator(db, "127.0.0.1", 8081);
-    // connectAuthEmulator(auth, "http://127.0.0.1:9099");
-    // connectStorageEmulator(storage, "127.0.0.1", 9199);
+    if (useFunctionsEmulator) {
+      connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+      console.log("✅ Connected to Functions emulator on 127.0.0.1:5001");
+    }
+
+    if (useFirestoreEmulator) {
+      connectFirestoreEmulator(db, "127.0.0.1", 8082);
+      console.log("✅ Connected to Firestore emulator on 127.0.0.1:8082");
+    }
+
+    if (useAuthEmulator) {
+      connectAuthEmulator(auth, "http://127.0.0.1:9099");
+      console.log("✅ Connected to Auth emulator on 127.0.0.1:9099");
+    }
+
+    if (useStorageEmulator) {
+      connectStorageEmulator(storage, "127.0.0.1", 9199);
+      console.log("✅ Connected to Storage emulator on 127.0.0.1:9199");
+    }
   } catch (e) {
     console.error("❌ Failed to connect to emulators:", e);
   }

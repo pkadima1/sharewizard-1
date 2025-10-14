@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_DOCS_API_KEY?: string
   readonly VITE_GOOGLE_DOCS_CLIENT_ID?: string
   readonly VITE_APP_ENV: string
+  readonly VITE_FUNCTIONS_BASE_URL?: string
 }
 
 interface ImportMeta {

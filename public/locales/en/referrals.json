@@ -1,0 +1,69 @@
+{
+  "banner": {
+    "title": "Partner Referral Detected",
+    "subtitle": "You were referred by {{partnerName}}",
+    "referredBy": "Referred by",
+    "commissionRate": "Commission Rate",
+    "commissionDescription": "This partner will earn a commission when you subscribe",
+    "successMessage": "Great! {{partnerName}} will receive a commission when you subscribe to our services.",
+    "details": {
+      "referralCode": "Referral Code",
+      "partnerId": "Partner ID",
+      "commissionRate": "Commission Rate"
+    },
+    "dismiss": "Dismiss",
+    "clear": "Clear",
+    "processing": "Processing referral...",
+    "error": "Error processing referral: {{error}}",
+    "referralCode": "Referral Code",
+    "validating": "Validating..."
+  },
+  "attribution": {
+    "success": "Referral attribution successful",
+    "failed": "Referral attribution failed",
+    "processing": "Processing referral attribution...",
+    "error": "Error processing referral attribution",
+    "customerRecordCreated": "Customer record created for dashboard tracking",
+    "customerRecordFailed": "Failed to create customer record",
+    "trackingFailed": "Failed to create referral tracking",
+    "processingFailed": "Failed to process referral attribution",
+    "invalidCode": "Invalid or expired referral code",
+    "enhancedSuccess": "Enhanced referral attribution completed successfully",
+    "partnerDashboardUpdated": "Partner dashboard will now reflect this referral"
+  },
+  "stats": {
+    "totalReferrals": "Total Referrals",
+    "totalConversions": "Total Conversions",
+    "conversionRate": "Conversion Rate",
+    "recentReferrals": "Recent Referrals",
+    "loading": "Loading statistics...",
+    "error": "Error loading statistics"
+  },
+  "commission": {
+    "totalCommissions": "Total Commissions",
+    "totalEarned": "Total Earned",
+    "totalPaid": "Total Paid",
+    "pendingAmount": "Pending Amount",
+    "recentEntries": "Recent Entries",
+    "loading": "Loading commission summary...",
+    "error": "Error loading commission summary"
+  },
+  "actions": {
+    "processAttribution": "Process Attribution",
+    "clearAttribution": "Clear Attribution",
+    "refreshAttribution": "Refresh Attribution",
+    "generateLink": "Generate Link",
+    "copyLink": "Copy Link",
+    "viewStats": "View Statistics"
+  },
+  "messages": {
+    "noReferralCode": "No referral code found",
+    "invalidReferralCode": "Invalid or expired referral code",
+    "attributionSuccessful": "Referral attribution successful",
+    "attributionFailed": "Referral attribution failed",
+    "referralCleared": "Referral data cleared",
+    "linkGenerated": "Referral link generated",
+    "linkCopied": "Link copied to clipboard"
+  }
+}
+

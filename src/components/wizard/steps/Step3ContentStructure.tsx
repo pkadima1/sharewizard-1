@@ -62,7 +62,7 @@ const Step3ContentStructure = ({ formData, updateFormData }) => {
             onValueChange={(value) => updateFormData('contentType', value)}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select content type" />
+              <SelectValue placeholder={t('step3.placeholders.contentType')} />
             </SelectTrigger>
             <SelectContent>
               {CONTENT_TYPES.map((type) => (
@@ -87,7 +87,7 @@ const Step3ContentStructure = ({ formData, updateFormData }) => {
             onValueChange={(value) => updateFormData('tone', value)}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select content tone" />
+              <SelectValue placeholder={t('step3.placeholders.contentTone')} />
             </SelectTrigger>
             <SelectContent>
               {TONE_OPTIONS.map((tone) => (

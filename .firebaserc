@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "engperfecthlc"
-  }
+    "default": "engperfecthlc",
+    "echo \"Testing terminal\"": "engperfectaiproj"
+  },
+  "targets": {},
+  "etags": {}
 }

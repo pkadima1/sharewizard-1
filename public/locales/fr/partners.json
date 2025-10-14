@@ -1,0 +1,991 @@
+{
+  "admin_core": {
+    "errors": {
+      "userNotFound": "L'utilisateur Firebase Auth avec cet UID n'existe pas. Veuillez d'abord créer l'utilisateur ou utiliser l'option \"Créer un nouvel utilisateur\"."
+    },
+    "forms": {
+      "createPartner": {
+        "passwordPlaceholder": "Entrez le mot de passe pour le nouvel utilisateur"
+      }
+    }
+  },
+  "nav": {
+    "partners": "Partenaires",
+    "partner": {
+      "dashboard": "Tableau de Bord Partenaire",
+      "referrals": "Mes Parrainages",
+      "commissions": "Mes Commissions",
+      "settings": "Paramètres Partenaire"
+    }
+  },
+  "status": {
+    "pending": "En Attente d'Approbation",
+    "active": "Actif",
+    "suspended": "Suspendu",
+    "inactive": "Inactif",
+    "terminated": "Terminé"
+  },
+  "commission": {
+    "accrued": "En Attente",
+    "reversed": "Annulée",
+    "paid": "Payée",
+    "ledger": {
+      "title": "Registre des Commissions",
+      "entry": "Entrée du Registre",
+      "accrualReason": "Paiement collecté",
+      "reversalReason": "Facture annulée",
+      "grossAmount": "Montant Brut",
+      "commissionRate": "Taux de Commission",
+      "commissionAmount": "Montant de la Commission",
+      "periodStart": "Début de Période",
+      "periodEnd": "Fin de Période",
+      "invoiceId": "ID de Facture",
+      "subscriptionId": "ID d'Abonnement",
+      "paymentProcessed": "Paiement traité avec succès",
+      "commissionEarned": "Commission gagnée grâce au paiement de facture",
+      "invoiceVoided": "Commission annulée en raison d'une facture annulée",
+      "processingError": "Erreur lors du traitement de la commission",
+      "noEntriesFound": "Aucune entrée de registre de commissions trouvée"
+    }
+  },
+  "source": {
+    "link": "Lien de Parrainage",
+    "manual": "Attribution Manuelle",
+    "promotion_code": "Code Promotionnel",
+    "widget": "Widget Intégré"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord Partenaire",
+    "subtitle": "Bienvenue, {{name}} ! Voici un aperçu de vos performances partenaires.",
+    "overview": "Aperçu",
+    "stats": "Statistiques",
+    "earnings": "Gains",
+    "referrals": "Parrainages",
+    "conversions": "Conversions",
+    "conversionRate": "Taux de Conversion",
+    "pendingCommission": "Commission en Attente",
+    "totalEarned": "Total Gagné",
+    "recentActivity": "Activité Récente",
+    "generateLinks": "Générer des Liens de Parrainage",
+    "viewReports": "Voir les Rapports Détaillés",
+    "thisMonth": "Ce Mois",
+    "lifetime": "Depuis le Début",
+    "last30Days": "30 Derniers Jours",
+    "last7Days": "7 derniers jours",
+    "noActivity": "Aucune activité récente",
+    "welcomeMessage": "Bienvenue sur votre tableau de bord partenaire ! Commencez à partager vos liens de parrainage pour gagner des commissions.",
+    "getStarted": "Commencer",
+    "commissionRate": "Taux de Commission",
+    "monthlyCommissions": "Commissions Mensuelles",
+    "activeCustomers": "Clients Actifs",
+    "churnRate": "Taux de Churn",
+    "totalEarnings": "Total des Gains",
+    "currentlyActive": "Actuellement Actifs",
+    "monthlyEarnings": "Gains Mensuels",
+    "referralActions": "Actions de Parrainage",
+    "recentInvoices": "Factures Récentes",
+    "referralCustomers": "Clients Parrainés",
+    "noData": "Aucune donnée disponible pour le moment.",
+    "loadingAnalytics": "Chargement des données analytiques...",
+    "noDataAvailable": "Aucune donnée analytique disponible pour cette période.",
+    "noCodesYet": "Aucun code de parrainage créé",
+    "createFirstCode": "Créez votre premier code pour commencer",
+    "noInvoicesYet": "Aucune facture pour le moment",
+    "invoicesWillAppear": "Les factures apparaîtront ici une fois que vous commencerez à gagner des commissions",
+    "noCustomersYet": "Aucun client parrainé pour le moment",
+    "customersWillAppear": "Les clients parrainés apparaîtront ici une fois qu'ils s'inscriront avec vos codes",
+    "showingFirst": "Affichage des {{count}} premiers sur {{total}}",
+    "customers": "Clients",
+    "month": "Mois : {{month}}",
+    "lastUpdated": "Dernière mise à jour",
+    "refresh": "Actualiser",
+    "export": "Exporter",
+    "exportCsv": "Export CSV",
+    "exportPdf": "Export PDF",
+    "settings": "Paramètres",
+    "analytics": "Analyses",
+    "financial": "Financier",
+    "reports": "Rapports",
+    "recentPerformance": "Performance Récente",
+    "newReferrals": "Nouveaux parrainages",
+    "revenue": "Revenus",
+    "commissions": "Commissions",
+    "pending": "En attente",
+    "paid": "Payé",
+    "quickActions": "Actions Rapides",
+    "createReferralCode": "Créer un code de parrainage",
+    "exportData": "Exporter les données",
+    "accountSettings": "Paramètres du compte",
+    "notifications": "Notifications",
+    "newReferralsCount": "{{count}} nouveaux parrainages",
+    "conversionsThisMonth": "{{count}} conversions ce mois",
+    "pendingAmount": "€{{amount}} en attente",
+    "commissionFor": "Commission pour {{customer}}",
+    "cards": {
+      "monthlyCommissions": "Commissions Mensuelles",
+      "activeCustomers": "Clients Actifs",
+      "conversionRate": "Taux de Conversion",
+      "totalRevenue": "Revenus Totaux",
+      "thisMonthDesc": "Ce mois-ci",
+      "currentlyActive": "Actuellement actifs",
+      "referralsToConversions": "Parrainages → Conversions",
+      "sinceStart": "Depuis le début",
+      "vsLastMonth": "vs mois dernier",
+      "referredCustomers": "Clients parrainés",
+      "performance": "Performance",
+      "cumulative": "Cumulé"
+    }
+  },
+  "form": {
+    "partnerCode": "Code Partenaire",
+    "displayName": "Nom d'Affichage",
+    "companyName": "Nom de l'Entreprise",
+    "website": "URL du Site Web",
+    "commissionRate": "Taux de Commission",
+    "paymentMethod": "Méthode de Paiement",
+    "accountId": "ID du Compte",
+    "description": "Description",
+    "save": "Enregistrer les Modifications",
+    "cancel": "Annuler",
+    "generate": "Générer",
+    "apply": "Postuler pour Devenir Partenaire",
+    "partnerCodePlaceholder": "ex. VOTRENOM123",
+    "displayNamePlaceholder": "Votre nom ou nom d'entreprise",
+    "companyNamePlaceholder": "Nom de votre entreprise (optionnel)",
+    "websitePlaceholder": "https://votresite.com",
+    "accountIdPlaceholder": "email@exemple.com ou ID de compte",
+    "descriptionPlaceholder": "Décrivez comment vous comptez promouvoir EngagePerfect",
+    "emailDetection": {
+      "userFound": "Utilisateur trouvé ! Un compte partenaire sera créé pour l'utilisateur existant.",
+      "newUser": "Un nouvel utilisateur sera créé avec cet email.",
+      "autoDetected": "UID automatiquement détecté à partir de l'adresse email.",
+      "overrideCreate": "Remplacer : Créer un Nouvel Utilisateur",
+      "overrideDescription": "Remplacer la détection automatique et créer un nouvel utilisateur au lieu d'utiliser l'existant."
+    }
+  },
+  "messages": {
+    "applicationSubmitted": "Votre candidature de partenariat a été soumise avec succès ! Nous l'examinerons et vous répondrons dans un délai de 1 à 2 jours ouvrables.",
+    "codeGenerated": "Code partenaire généré avec succès !",
+    "settingsUpdated": "Paramètres partenaire mis à jour avec succès !",
+    "payoutRequested": "Demande de paiement soumise avec succès !",
+    "invalidCode": "Format de code partenaire invalide. Utilisez uniquement 3 à 20 lettres majuscules et chiffres.",
+    "codeExists": "Ce code partenaire est déjà pris. Veuillez en choisir un autre.",
+    "error": "Une erreur s'est produite. Veuillez réessayer.",
+    "success": "Opération terminée avec succès !",
+    "linkCopied": "Lien de parrainage copié dans le presse-papiers !",
+    "minPayoutAmount": "Montant minimum de paiement : 50,00 $",
+    "insufficientBalance": "Solde de commission insuffisant pour le paiement"
+  },
+  "referral": {
+    "capturedStatus": "Capturé",
+    "clearReferral": "Effacer le Parrainage",
+    "debugTitle": "🔍 Debug Parrainage",
+    "noActiveReferral": "Aucun Parrainage Actif",
+    "testInstructions": "Ajoutez ?ref=CODE à l'URL pour tester la capture de parrainage",
+    "welcome": "Vous vous inscrivez avec le Partenaire : {{partnerName}}",
+    "welcomeWithCompany": "Vous vous inscrivez avec {{partnerName}} de {{companyName}}",
+    "captured": "Code de parrainage {{code}} capturé avec succès !",
+    "invalid": "Code de parrainage invalide : {{code}}",
+    "expired": "Le code de parrainage a expiré",
+    "inactive": "Ce code de parrainage n'est plus actif",
+    "usageLimitReached": "Ce code de parrainage a atteint sa limite d'utilisation",
+        "partnerInactive": "Le partenaire pour ce code de parrainage est actuellement inactif"
+  },
+  "referralManagement": {
+    "title": "Gestion des Codes de Parrainage",
+    "subtitle": "Gérez vos codes de parrainage et suivez leurs performances",
+    "newCode": "Nouveau Code",
+    "searchPlaceholder": "Rechercher un code...",
+    "status": "Statut",
+    "all": "Tous",
+    "active": "Actifs",
+    "inactive": "Inactifs",
+    "sortBy": "Trier par",
+    "createdAt": "Date de création",
+    "usageCount": "Utilisations",
+    "conversionCount": "Conversions",
+    "totalRevenue": "Revenus",
+    "codesCount": "Codes de Parrainage ({{count}})",
+    "code": "Code",
+    "description": "Description",
+    "uses": "Utilisations",
+    "conversions": "Conversions",
+    "rate": "Taux",
+    "revenue": "Revenus",
+    "actions": "Actions",
+    "noDescription": "Aucune description",
+    "createTitle": "Créer un Nouveau Code de Parrainage",
+    "createDescription": "Créez un nouveau code de parrainage avec des paramètres personnalisés",
+    "codeLabel": "Code *",
+    "codePlaceholder": "Ex: PROMO2024",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description du code",
+    "utmParameters": "Paramètres UTM (optionnels)",
+    "utmSource": "Source (ex: email)",
+    "utmMedium": "Medium (ex: newsletter)",
+    "utmCampaign": "Campaign (ex: summer2024)",
+    "cancel": "Annuler",
+    "create": "Créer le Code",
+    "creating": "Création...",
+    "statsTitle": "Statistiques du Code: {{code}}",
+    "statsDescription": "Analyse détaillée des performances de ce code de parrainage",
+    "usesLabel": "Utilisations",
+    "conversionsLabel": "Conversions",
+    "conversionRateLabel": "Taux de Conversion",
+    "revenueGenerated": "Revenus Générés"
+  },
+  "analytics": {
+    "title": "Analyses Avancées",
+    "subtitle": "Insights détaillés et métriques de performance",
+    "period7d": "7 jours",
+    "period30d": "30 jours",
+    "period90d": "90 jours",
+    "period1y": "1 an",
+    "totalReferrals": "Parrainages Totaux",
+    "totalConversions": "Conversions",
+    "totalRevenue": "Revenus Totaux",
+    "performance": "Performance",
+    "sinceStart": "Depuis le début",
+    "rate": "Taux",
+    "averageValue": "Valeur moyenne",
+    "conversionRate": "Taux de conversion",
+    "sources": "Sources",
+    "trends": "Tendances",
+    "segments": "Segments",
+    "topSources": "Top Sources de Parrainage",
+    "searchSource": "Rechercher une source...",
+    "revenue": "Revenus",
+    "referrals": "Parrainages",
+    "conversions": "Conversions",
+    "source": "Source",
+    "actions": "Actions",
+    "monthlyTrends": "Tendances Mensuelles",
+    "sourceDistribution": "Répartition des Sources",
+    "customerSegments": "Segments de Clients",
+    "segment": "Segment",
+    "number": "Nombre",
+    "share": "Part",
+    "performanceMetrics": "Métriques de Performance",
+    "globalConversionRate": "Taux de Conversion Global",
+    "averageValuePerConversion": "Valeur Moyenne par Conversion",
+    "revenuePerReferral": "Revenus par Parrainage",
+    "recommendations": "Recommandations",
+    "optimizePerformingSources": "Optimiser les Sources Performantes",
+    "focusOnBestSources": "Concentrez-vous sur vos sources les plus rentables",
+    "improveConversionRate": "Améliorer le Taux de Conversion",
+    "optimizeSegments": "Optimisez les segments avec le meilleur potentiel",
+    "diversifyChannels": "Diversifier les Canaux",
+        "exploreNewSources": "Explorez de nouvelles sources de parrainage"
+  },
+  "charts": {
+    "title": "Graphiques Interactifs",
+    "loadingCharts": "Chargement des graphiques...",
+    "noChartData": "Aucune donnée de graphique disponible pour cette période.",
+    "errorLoadingData": "Impossible de charger les données des graphiques",
+    "period1m": "1 mois",
+    "period3m": "3 mois",
+    "period6m": "6 mois",
+    "period1y": "1 an",
+    "earningsEvolution": "Évolution des Revenus",
+    "earningsChart": "Graphique des revenus",
+    "data": "Données",
+    "months": "mois",
+    "totalRevenue": "Total des revenus",
+    "totalCustomers": "Total des clients",
+    "conversionFunnel": "Entonnoir de Conversion",
+    "funnelChart": "Graphique en entonnoir",
+    "steps": "Étapes",
+    "referralSources": "Sources de Parrainage",
+    "sourcesChart": "Graphique des sources",
+    "sources": "Sources",
+    "earnings": "Revenus",
+    "funnel": "Entonnoir",
+    "referrals": "parrainages",
+    "conversions": "conversions"
+  },
+  "actions": {
+    "apply": "Postuler Maintenant",
+    "generateCode": "Générer un Nouveau Code",
+    "copyLink": "Copier le Lien",
+    "requestPayout": "Demander un Paiement",
+    "viewDetails": "Voir les Détails",
+    "editProfile": "Modifier le Profil",
+    "deactivate": "Désactiver",
+    "activate": "Activer",
+    "refresh": "Actualiser",
+    "download": "Télécharger le Rapport",
+    "viewAll": "Voir Tout",
+    "copied": "Copié !",
+    "linkCopied": "Lien copié dans le presse-papiers",
+    "error": "Erreur",
+    "copyFailed": "Impossible de copier le lien",
+    "success": "Succès",
+    "codeCreated": "Code créé avec succès",
+    "codeRequired": "Veuillez entrer un nom de code",
+    "maxCodesReached": "Vous avez atteint la limite de 3 codes",
+    "codeCreationFailed": "Impossible de créer le code",
+    "enterCodeName": "Entrez le nom du code",
+    "create": "Créer",
+    "codesUsed": "{{used}}/{{max}} codes utilisés",
+    "usageCount": "{{count}} utilisations",
+    "copy": "Copier"
+  },
+  "application": {
+    "title": "Devenir Partenaire",
+    "subtitle": "Rejoignez notre programme d'affiliation et gagnez des commissions en référant des clients à EngagePerfect.",
+    "benefits": {
+      "title": "Avantages Partenaire",
+      "commission": "Gagnez jusqu'à 60% de commission sur chaque vente",
+      "support": "Support partenaire dédié",
+      "materials": "Matériel marketing gratuit et ressources",
+      "tracking": "Suivi avancé et analyses",
+      "payments": "Paiements automatiques mensuels"
+    },
+    "requirements": {
+      "title": "Exigences",
+      "audience": "Avoir une audience engagée intéressée par la création de contenu",
+      "platform": "Présence active sur les réseaux sociaux, blog ou site web",
+      "quality": "Engagement à promouvoir notre service de manière authentique",
+      "compliance": "Accepter nos termes et conditions de partenariat"
+    },
+    "steps": {
+      "title": "Comment Ça Marche",
+      "apply": "Soumettez votre candidature",
+      "review": "Nous examinons votre candidature (1-2 jours)",
+      "approved": "Obtenez l'approbation et recevez votre code de parrainage unique",
+      "promote": "Commencez à promouvoir et gagnez des commissions"
+    }
+  },
+  "referrals": {
+    "title": "Mes Parrainages",
+    "subtitle": "Suivez tous vos parrainages et leur statut de conversion",
+    "columns": {
+      "date": "Date",
+      "code": "Code Utilisé",
+      "status": "Statut",
+      "customer": "Client",
+      "plan": "Plan",
+      "commission": "Commission",
+      "source": "Source"
+    },
+    "status": {
+      "pending": "En Attente",
+      "converted": "Converti",
+      "subscribed": "Abonné"
+    },
+    "empty": "Aucun parrainage pour le moment. Commencez à partager vos liens de parrainage pour les voir ici !",
+    "filters": {
+      "all": "Tous les Parrainages",
+      "converted": "Convertis Seulement",
+      "pending": "En Attente Seulement",
+      "dateRange": "Plage de Dates"
+    }
+  },
+  "commissions": {
+    "title": "Mes Commissions",
+    "subtitle": "Suivez vos gains et l'historique des paiements",
+    "columns": {
+      "date": "Date",
+      "referral": "Parrainage",
+      "amount": "Montant",
+      "rate": "Taux",
+      "status": "Statut",
+      "period": "Période de Facturation"
+    },
+    "summary": {
+      "totalEarned": "Total Gagné",
+      "pendingAmount": "En Attente",
+      "paidAmount": "Payé",
+      "nextPayout": "Prochain Paiement"
+    },
+    "payout": {
+      "title": "Demander un Paiement",
+      "minimumAmount": "Montant minimum de paiement : 50,00 $",
+      "currentBalance": "Solde actuel :",
+      "requestAmount": "Montant demandé :",
+      "paymentMethod": "Méthode de paiement :",
+      "processing": "Les paiements sont traités mensuellement le 15"
+    },
+    "empty": "Aucune commission pour le moment. Commencez à référer des clients pour gagner votre première commission !"
+  },
+  "links": {
+    "title": "Liens de Parrainage",
+    "subtitle": "Générez et gérez vos liens de parrainage",
+    "generator": {
+      "title": "Générateur de Liens",
+      "selectPage": "Sélectionnez la page de destination :",
+      "pages": {
+        "home": "Page d'Accueil",
+        "pricing": "Page de Tarification",
+        "signup": "Page d'Inscription",
+        "dashboard": "Tableau de Bord"
+      },
+      "utmParams": "Paramètres UTM (optionnel) :",
+      "utmSource": "Source UTM",
+      "utmMedium": "Support UTM",
+      "utmCampaign": "Campagne UTM"
+    },
+    "popular": {
+      "title": "Liens Populaires",
+      "pricing": "Page de Tarification - Plus de conversions",
+      "home": "Page d'Accueil - Audience générale",
+      "signup": "Inscription - Conversion directe"
+    },
+    "analytics": {
+      "title": "Performance des Liens",
+      "clicks": "Clics",
+      "conversions": "Conversions",
+      "rate": "Taux de Conversion"
+    }
+  },
+  "settings": {
+    "title": "Paramètres Partenaire",
+    "subtitle": "Gérez votre profil partenaire et vos préférences",
+    "profile": {
+      "title": "Informations de Profil",
+      "displayName": "Nom d'Affichage",
+      "companyName": "Nom de l'Entreprise",
+      "website": "Site Web",
+      "partnerCode": "Code Partenaire"
+    },
+    "payment": {
+      "title": "Informations de Paiement",
+      "method": "Méthode de Paiement",
+      "methods": {
+        "paypal": "PayPal",
+        "bank_transfer": "Virement Bancaire",
+        "stripe_express": "Stripe Express"
+      },
+      "accountId": "ID/Email du Compte",
+      "verified": "Vérifié",
+      "notVerified": "Non Vérifié",
+      "verify": "Vérifier les Détails de Paiement"
+    },
+    "marketing": {
+      "title": "Préférences Marketing",
+      "language": "Langue Préférée",
+      "updates": "Recevoir les Mises à Jour de Performance",
+      "newsletter": "Newsletter Partenaire"
+    },
+    "danger": {
+      "title": "Zone de Danger",
+      "deactivate": "Désactiver le Compte Partenaire",
+      "deactivateDesc": "Désactivez temporairement votre compte partenaire. Vous pourrez le réactiver plus tard.",
+      "terminate": "Terminer le Partenariat",
+      "terminateDesc": "Terminez définitivement votre partenariat. Cette action ne peut pas être annulée."
+    }
+  },
+  "admin": {
+    "title": "Gestion des Partenaires",
+    "totalPartners": "partenaires",
+    "loading": "Chargement des partenaires...",
+    "noPartners": "Aucun partenaire pour le moment",
+    "noPartnersDesc": "Commencez en créant votre premier compte partenaire.",
+    "noResults": "Aucun partenaire trouvé",
+    "noResultsDesc": "Essayez d'ajuster vos critères de recherche ou de filtre.",
+    
+    "columns": {
+      "name": "Nom",
+      "email": "Email", 
+      "status": "Statut",
+      "commission": "Taux de Commission",
+      "referrals": "Parrainages",
+      "earned": "Total Gagné",
+      "joined": "Rejoint",
+      "actions": "Actions",
+      "company": "Entreprise"
+    },
+
+    "partners": {
+      "title": "Tous les Partenaires",
+      "description": "Gérez les comptes partenaires, les taux de commission et les codes de parrainage."
+    },
+
+    "status": {
+      "active": "Actif",
+      "pending": "En Attente",
+      "suspended": "Suspendu", 
+      "inactive": "Inactif",
+      "terminated": "Terminé"
+    },
+
+    "search": {
+      "placeholder": "Rechercher par nom, email ou entreprise...",
+      "results": "Affichage de {{count}} résultats"
+    },
+
+    "filters": {
+      "allStatus": "Tous les Statuts"
+    },
+
+    "actions": {
+      "title": "Actions",
+      "create": "Créer",
+      "createPartner": "Créer un Partenaire",
+      "createFirst": "Créer le Premier Partenaire",
+      "editRate": "Modifier le Taux de Commission",
+      "generateCode": "Générer un Code",
+      "copyLink": "Copier le Lien",
+      "viewDetails": "Voir les Détails",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "delete": "Supprimer le Partenaire",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "refresh": "Actualiser",
+      "creating": "Création...",
+      "updating": "Mise à jour...",
+      "generating": "Génération...",
+      "updateRate": "Mettre à jour le Taux",
+      "copied": "Copié !",
+      "copiedDesc": "Le lien a été copié dans le presse-papiers."
+    },
+
+    "forms": {
+      "default": "par défaut",
+      "createPartner": {
+        "title": "Créer un Nouveau Partenaire",
+        "subtitle": "Créez un compte partenaire pour un utilisateur Firebase Auth existant.",
+        "uid": "UID Firebase Auth",
+        "uidPlaceholder": "Saisissez l'UID Firebase Auth",
+        "uidHelp": "L'utilisateur doit déjà être enregistré dans Firebase Auth.",
+        "email": "Adresse Email",
+        "emailPlaceholder": "partenaire@entreprise.com",
+        "displayName": "Nom d'Affichage",
+        "displayNamePlaceholder": "Jean Dupont ou Nom de l'Entreprise",
+        "companyName": "Nom de l'Entreprise",
+        "companyNamePlaceholder": "Acme Corp (optionnel)",
+        "website": "Site Web",
+        "websitePlaceholder": "https://exemple.com (optionnel)",
+        "commissionRate": "Taux de Commission",
+        "notes": "Description",
+        "notesPlaceholder": "Notes internes sur ce partenaire..."
+      },
+      "editPartner": {
+        "title": "Modifier la Commission du Partenaire",
+        "description": "Mettre à jour le taux de commission pour {{name}}.",
+        "commissionRate": "Taux de Commission",
+        "commissionHelp": "Ceci s'appliquera à tous les futurs parrainages et commissions."
+      },
+      "generateCode": {
+        "title": "Générer un Code Partenaire",
+        "subtitle": "Créer un nouveau code de parrainage pour {{name}}.",
+        "desiredCode": "Code Souhaité",
+        "desiredCodePlaceholder": "PARTENAIRE123",
+        "codeHelp": "3-20 caractères alphanumériques. Laisser vide pour génération automatique.",
+        "codeFormat": "Seules les lettres majuscules et les chiffres sont autorisés.",
+        "notes": "Description",
+        "notesPlaceholder": "Campagne Q4 2025",
+        "maxUses": "Utilisations Maximales",
+        "unlimited": "Illimité",
+        "expiresAt": "Date d'Expiration",
+        "customRate": "Taux de Commission Personnalisé",
+        "useDefault": "Utiliser le Défaut du Partenaire"
+      }
+    },
+
+    "details": {
+      "title": "Détails du Partenaire",
+      "subtitle": "Informations complètes pour {{name}}.",
+      "information": "Informations du Partenaire",
+      "statistics": "Statistiques de Performance",
+      "codes": "Codes de Parrainage",
+      "website": "Site Web",
+      "conversions": "Conversions",
+      "paid": "Payé",
+      "noCodes": "Aucun code de parrainage généré pour le moment.",
+      "noDescription": "Aucune description fournie",
+      "uses": "Utilisations",
+      "expires": "Expire"
+    },
+
+    "messages": {
+      "partnerCreated": "Partenaire Créé",
+      "partnerCreatedDesc": "Le compte partenaire pour {{name}} a été créé avec succès.",
+      "partnerUpdated": "Partenaire Mis à Jour",
+      "partnerUpdatedDesc": "Le taux de commission pour {{name}} a été mis à jour.",
+      "partnerDeleted": "Partenaire Supprimé",
+      "partnerDeletedDesc": "Le compte partenaire pour {{name}} a été supprimé avec succès.",
+      "confirmDelete": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action ne peut pas être annulée.",
+      "codeGenerated": "Code Généré",
+      "codeGeneratedDesc": "Le code de parrainage {{code}} a été généré avec succès.",
+      "statusUpdated": "Statut Mis à Jour",
+      "statusUpdatedDesc": "{{name}} est maintenant {{status}}."
+    },
+
+    "errors": {
+      "fetchFailed": "Échec du Chargement des Données",
+      "fetchFailedDesc": "Impossible de charger les partenaires et les codes. Veuillez réessayer.",
+      "createFailed": "Échec de la Création du Partenaire",
+      "createFailedDesc": "Impossible de créer le compte partenaire. Vérifiez les détails et réessayez.",
+      "updateFailed": "Échec de la Mise à Jour du Partenaire",
+      "updateFailedDesc": "Impossible de mettre à jour les informations du partenaire. Veuillez réessayer.",
+      "deleteFailed": "Échec de la Suppression du Partenaire",
+      "deleteFailedDesc": "Impossible de supprimer le compte partenaire. Veuillez réessayer.",
+      "codeFailed": "Échec de la Génération du Code",
+      "codeFailedDesc": "Impossible de générer le code de parrainage. Veuillez réessayer.",
+      "statusFailed": "Échec de la Mise à Jour du Statut",
+      "statusFailedDesc": "Impossible de mettre à jour le statut du partenaire. Veuillez réessayer.",
+      "copyFailed": "Échec de la Copie",
+      "copyFailedDesc": "Impossible de copier dans le presse-papiers. Veuillez copier manuellement."
+    },
+  
+    "registration": {
+      "pageTitle": "Devenir Partenaire",
+      "pageDescription": "Rejoignez notre programme de partenariat et commencez à gagner des commissions",
+      "title": "Inscription Partenaire",
+      "subtitle": "Rejoignez notre programme de partenariat et commencez à gagner des commissions pour chaque client que vous parrainez",
+      "start": "Commencer l'Inscription",
+      "back": "Retour",
+      "submitting": "Soumission...",
+      "submit": "Soumettre l'Inscription",
+      
+      "benefits": {
+        "title": "Avantages du Partenariat",
+        "commission": "Gagnez jusqu'à 70% de commission sur chaque vente",
+        "tracking": "Suivi et analyses en temps réel",
+        "support": "Support partenaire dédié"
+      },
+      
+      "process": {
+        "title": "Processus d'Inscription",
+        "description": "Votre candidature sera examinée par notre équipe. Nous vous notifierons dans les 24-48 heures."
+      },
+      
+      "form": {
+        "title": "Informations Partenaire",
+        "subtitle": "Parlez-nous de vous et de votre entreprise",
+        "userInfo": "Informations de Votre Compte",
+        "email": "Email",
+        "displayName": "Nom d'Affichage",
+        "displayNamePlaceholder": "Entrez votre nom ou nom d'entreprise",
+        "companyName": "Nom de l'Entreprise",
+        "companyNamePlaceholder": "Entrez le nom de votre entreprise (optionnel)",
+        "website": "Site Web",
+        "websitePlaceholder": "https://votresite.com",
+        "commissionRate": "Taux de Commission Préféré",
+        "default": "Par Défaut",
+        "commissionHelp": "Choisissez votre taux de commission préféré. Les taux plus élevés peuvent nécessiter une approbation.",
+        "description": "À Propos de Votre Entreprise",
+        "descriptionPlaceholder": "Parlez-nous de votre entreprise et de la façon dont vous prévoyez de promouvoir nos services",
+        "descriptionHelp": "Cela nous aide à comprendre votre entreprise et à fournir un meilleur support.",
+          "marketingPreferences": "Préférences Marketing",
+          "communicationPreferences": "Préférences de Communication",
+          "communicationPreferencesDesc": "Choisissez comment vous souhaitez recevoir nos communications et mises à jour",
+          "emailMarketing": "Marketing par Email",
+          "emailMarketingDesc": "Recevoir des conseils marketing, des mises à jour de performance et des opportunités spéciales",
+          "smsMarketing": "Marketing par SMS",
+          "smsMarketingDesc": "Recevoir des alertes importantes et des notifications urgentes par SMS",
+          "partnerNewsletter": "Newsletter Partenaire",
+          "partnerNewsletterDesc": "Recevoir notre newsletter mensuelle avec des conseils, des stratégies et des nouvelles du programme",
+          "privacyNote": "Note de Confidentialité",
+          "privacyNoteDesc": "Vos préférences peuvent être modifiées à tout moment dans vos paramètres. Nous respectons votre vie privée et ne partagerons jamais vos informations.",
+        
+        "enhanced": {
+          "title": "Candidature Partenaire",
+          "subtitle": "Parlez-nous de vous et de vos compétences",
+          "basicInfo": "Informations de Base",
+          "skillsExperience": "Vos Compétences et Expérience",
+          "availability": "Votre Disponibilité",
+          
+          "fullName": "Nom Complet",
+          "fullNamePlaceholder": "Votre nom complet",
+          "phone": "Téléphone/WhatsApp",
+          "phonePlaceholder": "+33 6 12 34 56 78",
+          "industry": "Votre Secteur/Niche",
+          "industryPlaceholder": "Sélectionnez votre secteur",
+          
+          "contentSkills": "Quels services de contenu pouvez-vous fournir ?",
+          "contentSkillsHelp": "Sélectionnez tout ce qui s'applique - les services DFY principaux sont mis en évidence",
+          "socialMedia": "Publications Réseaux Sociaux",
+          "blogWriting": "Rédaction Blog/Articles",
+          "graphicDesign": "Design Graphique",
+          "videoEditing": "Montage Vidéo/Reels",
+          "communityMgmt": "Gestion de Communauté",
+          "justLearning": "En Apprentissage",
+          "dfyCore": "Service DFY Principal",
+          
+          "languages": "Langues dans Lesquelles Vous Écrivez",
+          "addLanguage": "+ Ajouter une Langue",
+          "selectLanguage": "Sélectionner une Langue",
+          "languageLevel": "Niveau",
+          "native": "Natif",
+          "fluent": "Courant",
+          "conversational": "Conversationnel",
+          "languageOptions": {
+            "english": "Anglais",
+            "french": "Français", 
+            "spanish": "Espagnol",
+            "german": "Allemand",
+            "portuguese": "Portugais",
+            "italian": "Italien",
+            "other": "Autre"
+          },
+          
+          "experienceLevel": "Votre Niveau d'Expérience",
+          "beginner": "Débutant",
+          "beginnerDesc": "0-1 ans",
+          "intermediate": "Intermédiaire",
+          "intermediateDesc": "1-3 ans",
+          "advanced": "Avancé",
+          "advancedDesc": "3+ ans",
+          
+          "expectedClients": "Combien de clients pouvez-vous gérer de manière réaliste ?",
+          "oneClient": "1 client",
+          "clients": "clients",
+          "twentyClients": "20+ clients",
+          "capacityLow": "Parfait pour commencer ! Nous fournirons un support supplémentaire.",
+          "capacityMedium": "Grande capacité ! Vous aurez un bon potentiel de revenus.",
+          "capacityHigh": "Excellent ! Vous êtes prêt pour un partenariat à haut volume.",
+          
+          "availabilityField": "Quand êtes-vous généralement disponible pour de brefs appels hebdomadaires ?",
+          "availabilityPlaceholder": "Choisissez votre heure préférée",
+          
+          "portfolioSamples": "Portfolio ou échantillons de travail (optionnel)",
+          "portfolioPlaceholder": "https://votre-portfolio.com ou nom Instagram",
+          
+          "submitting": "Soumission en cours...",
+          "submitApplication": "Soumettre la candidature",
+          "back": "Retour",
+          "clientsSliderStart": "1 client",
+          "clientsSliderEnd": "20+ clients",
+          "clientsFeedback": {
+            "low": "Parfait pour commencer ! Nous fournirons un support supplémentaire.",
+            "medium": "Grande capacité ! Vous aurez un bon potentiel de revenus.",
+            "high": "Excellent ! Vous êtes prêt pour un partenariat à haut volume."
+          },
+          
+          "availabilityTime": "Quand êtes-vous généralement disponible pour de brefs contrôles hebdomadaires ?",
+          "weekdayMorning": "Matins en Semaine (9h-12h)",
+          "weekdayAfternoon": "Après-midis en Semaine (13h-17h)",
+          "weekdayEvening": "Soirées en Semaine (18h-21h)",
+          "weekendMorning": "Matins de Week-end",
+          "weekendAfternoon": "Après-midis de Week-end",
+          "flexible": "Flexible - n'importe quand",
+          
+          "portfolio": "Portfolio ou Échantillons de Travail (Optionnel)",
+          "portfolioHelp": "Partagez des exemples de votre travail de contenu - site web, Instagram, échantillons d'écriture, etc.",
+          
+          "commissionStructure": "Votre Structure de Commission",
+          "commissionTier": {
+            "basic": "Partenaire de Base",
+            "standard": "Partenaire Standard",
+            "certified": "Partenaire Certifié"
+          },
+          "leadSources": {
+            "yourLeads": "Vos Prospects",
+            "yourLeadsDesc": "Vous trouvez le client → Vous servez → Vous gagnez 70%",
+            "ourLeads": "Nos Prospects",
+            "ourLeadsDesc": "Nous trouvons le client → Vous servez → Commission partagée",
+            "notEligible": "Non Éligible",
+            "notEligibleTooltip": "L'éligibilité à notre pipeline de prospects est basée sur votre niveau d'expérience, vos compétences et votre portfolio. Complétez plus de champs ou améliorez votre expertise pour vous qualifier."
+          },
+          "dfyRequirements": "Exigences du Service DFY :",
+          "requirements": {
+            "weeklyCall": "Appel de suivi client hebdomadaire de 10 min",
+            "dailyCaptions": "3 légendes de réseaux sociaux quotidiennes",
+            "blogPosts": "Article de blog tous les deux jours",
+            "satisfaction": "Maintenir une satisfaction client de 4,3/5+"
+          }
+        }
+      },
+      
+      "success": {
+        "title": "Inscription Soumise !",
+        "subtitle": "Merci d'avoir postulé pour devenir partenaire",
+        "nextSteps": "Que se passe-t-il ensuite ?",
+        "review": "Nous examinerons votre candidature",
+        "approval": "Vous recevrez une approbation dans les 24-48 heures",
+        "notification": "Nous vous notifierons par email",
+        "whileWaiting": "En attendant",
+        "whileWaitingDesc": "Explorez nos services et commencez à planifier votre stratégie marketing.",
+        "goToDashboard": "Aller au Tableau de Bord",
+        "viewPricing": "Voir les Tarifs"
+      },
+      
+      "errors": {
+        "title": "Échec de l'Inscription",
+        "general": "Une erreur s'est produite lors de la soumission de votre inscription. Veuillez réessayer.",
+        "alreadyExists": "Vous avez déjà un compte partenaire ou cet email est déjà enregistré.",
+        "invalidData": "Veuillez vérifier vos informations et réessayer."
+      }
+    },
+
+    "applications": {
+      "title": "Candidatures en Attente",
+      "review": "Examiner la Candidature",
+      "approve": "Approuver",
+      "reject": "Rejeter"
+    },
+    "commissions": {
+      "title": "Registre des Commissions",
+      "payout": "Traiter le Paiement",
+      "reverse": "Annuler la Commission"
+    }
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "minLength": "Doit contenir au moins {min} caractères",
+    "maxLength": "Ne doit pas dépasser {max} caractères",
+    "invalidEmail": "Adresse email invalide",
+    "invalidUrl": "Format d'URL invalide",
+    "invalidCode": "Format de code partenaire invalide",
+    "codeExists": "Le code partenaire existe déjà",
+    "minCommission": "Le taux de commission doit être d'au moins 10%",
+    "maxCommission": "Le taux de commission ne peut pas dépasser 90%",
+    "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
+    "selectSkills": "Veuillez sélectionner au moins une compétence",
+    "selectIndustry": "Veuillez sélectionner votre secteur",
+    "selectExperience": "Veuillez sélectionner votre niveau d'expérience",
+    "selectAvailability": "Veuillez sélectionner votre disponibilité"
+  },
+  
+  "invoices": {
+    "status": {
+      "paid": "Payée",
+      "pending": "En Attente",
+      "cancelled": "Annulée"
+    },
+    "invoiceId": "ID de Facture"
+  },
+  
+  "industries": {
+    "coaching": "Coaching d'Entreprise",
+    "fitness": "Fitness et Santé", 
+    "ecommerce": "E-commerce",
+    "tech": "Technologie",
+    "realestate": "Immobilier",
+    "finance": "Finance",
+    "beauty": "Beauté et Style de Vie",
+    "food": "Alimentation et Hôtellerie",
+    "education": "Éducation",
+    "other": "Autre"
+  },
+  
+  "customers": {
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "churned": "Churné"
+    },
+    "joined": "Rejoint",
+    "lastActivity": "Dernière Activité"
+  },
+  "landing": {
+    "hero": {
+      "title": "Devenez Partenaire EngagePerfect",
+      "subtitle": "Transformez l'IA en impact. Gagnez jusqu'à 70% de chaque client que vous servez.",
+      "imageAlt": "Image d'en-tête"
+    },
+    "whatIs": {
+      "title": "Qu'est-ce qu'EngagePerfect",
+      "description1": "EngagePerfect de NodeMatics est une plateforme de contenu mondiale alimentée par l'IA qui aide les créateurs, les spécialistes du marketing et les petites entreprises à générer des publications, des blogs et des campagnes de haute qualité — en quelques minutes, pas des heures.",
+      "description2": "Nos partenaires sont le côté humain de cette technologie. Ils apportent le contexte, la créativité et l'attention — les choses que l'IA ne peut pas remplacer.",
+      "description3": "Nous ne poursuivons pas la perfection. Nous nous efforçons de l'atteindre — ensemble.",
+      "imageAlt": "Poignée de main entre"
+    },
+    "whyPartner": {
+      "title": "Pourquoi Devenir Partenaire",
+      "benefit1": {
+        "icon": "💰",
+        "title": "Gagnez jusqu'à 70%",
+        "description": "Gagnez jusqu'à 70% de chaque client payant que vous servez mensuellement. Augmentez vos revenus en aidant les autres à développer leur présence."
+      },
+      "benefit2": {
+        "icon": "🌍",
+        "title": "Portée Mondiale, Liberté Locale",
+        "description": "Travaillez à distance de n'importe où tout en représentant une marque internationale de confiance."
+      },
+      "benefit3": {
+        "icon": "💡",
+        "title": "Apprendre et Diriger",
+        "description": "Obtenez un mentorat pratique, des outils d'IA et une expérience de projet réelle."
+      },
+      "benefit4": {
+        "icon": "🤝",
+        "title": "Communauté et Reconnaissance",
+        "description": "Rejoignez un réseau croissant de professionnels créatifs qui construisent quelque chose de significatif."
+      }
+    },
+    "whoCanApply": {
+      "title": "Qui Peut Postuler",
+      "intro": "Ce n'est pas un programme pour tout le monde.",
+      "subtitle": "C'est pour les audacieux — pour ceux qui voient des possibilités là où d'autres voient du travail.",
+      "belongTitle": "Vous pourriez être à votre place ici si vous :",
+      "quality1": "Avez un esprit entrepreneurial et considérez la croissance comme une responsabilité personnelle.",
+      "quality2": "Possédez des connaissances de niche ou sectorielles — peut-être comprenez-vous l'immobilier, la mode, la technologie, la santé ou l'éducation.",
+      "quality3": "Pensez comme un stratège, pas comme un suiveur. Vous comprenez les gens, les marchés et comment la communication stimule les affaires.",
+      "quality4": "Croyez au travail plus intelligent, en tirant parti de l'IA et des systèmes pour multiplier les résultats — pas les efforts.",
+      "quality5": "Êtes discipliné, autonome et prêt à construire votre propre histoire de succès sous une marque mondiale.",
+      "footer": "Les Partenaires EngagePerfect ne sont pas des employés.",
+      "footerSubtitle": "Ce sont des innovateurs qui façonnent la prochaine génération d'engagement numérique.",
+      "imageAlt": "Écran d'ordinateur portable montrant"
+    },
+    "whatYouDo": {
+      "title": "Ce Que Vous Ferez",
+      "task1": "Gérer les clients de votre région en utilisant les outils EngagePerfect.",
+      "task2": "Aidez-les à planifier et à publier un meilleur contenu.",
+      "task3": "Maintenir une communication claire et fournir des résultats mesurables.",
+      "task4": "Développez votre propre portfolio et votre réputation tout en gagnant chaque mois."
+    },
+    "howItWorks": {
+      "title": "Comment Ça Fonctionne",
+      "subtitle": "Nous gardons les choses simples — pas de bureaucratie, pas de longs formulaires.",
+      "table": {
+        "stepHeader": "Étape",
+        "descriptionHeader": "Ce Qui Se Passe"
+      },
+      "step1": {
+        "label": "1. Postuler en Ligne",
+        "description": "Remplissez la courte candidature et parlez-nous un peu de votre parcours, de votre niche et de votre motivation. Plus vous partagez, mieux nous comprenons si vous êtes un bon candidat.",
+        "linkText": "Postuler Ici"
+      },
+      "step2": {
+        "label": "2. Entretien (si présélectionné)",
+        "description": "Si nous souhaitons en savoir plus, nous planifierons une conversation de 30 minutes pour discuter de vos objectifs, votre état d'esprit et votre expérience."
+      },
+      "step3": {
+        "label": "3. Tâche de Test de 48 Heures",
+        "description": "Vous compléterez un petit défi créatif pour montrer comment vous pensez et exécutez. Cela nous aide à voir votre véritable potentiel — pas seulement vos mots."
+      },
+      "step4": {
+        "label": "4. Approbation et Intégration",
+        "description": "Une fois approuvé, vous aurez accès à nos outils, au mentorat et aux clients. À partir de là, vous commencez à gagner jusqu'à 70% par client payant chaque mois."
+      },
+      "imageAlt": "Partenaire Approuvé",
+      "footer": "Simple. Transparent. Vraie opportunité.",
+      "footerSubtitle": "Si vous avez de la motivation, de la curiosité et un esprit entrepreneurial — nous nous occupons du reste."
+    },
+    "growthPath": {
+      "title": "Votre Parcours de Croissance",
+      "imageAlt": "Escalier ou échelle",
+      "level1": {
+        "title": "Partenaire Débutant:",
+        "description": "Apprenez et assistez sur de vrais projets."
+      },
+      "level2": {
+        "title": "Partenaire Certifié:",
+        "description": "Gérez les clients de manière indépendante, gagnez 65–70%."
+      },
+      "level3": {
+        "title": "Responsable Régional:",
+        "description": "Encadrez d'autres personnes, coordonnez des campagnes locales, obtenez des récompenses de leadership."
+      }
+    },
+    "culture": {
+      "title": "Notre Culture",
+      "value1": "L'IA soutient les gens — elle ne les remplace pas.",
+      "value2": "La croissance est partagée ; le succès est gagné.",
+      "value3": "La curiosité, l'honnêteté et l'empathie comptent plus que les titres.",
+      "value4": "Vous apportez la touche humaine. Nous apportons les outils. Ensemble, nous rendons l'engagement parfait."
+    },
+    "cta": {
+      "title": "Prêt à Rejoindre?",
+      "applicationText": "Remplissez votre candidature et commencez votre parcours de partenaire dès aujourd'hui.",
+      "applyButton": "Postuler Maintenant",
+      "questionText": "Si vous avez des questions, contactez notre équipe d'assistance:",
+      "email": "support@engageperfect.com",
+      "imageAlt": "Équipe diversifiée heureuse célébrant"
+    }
+  }
+}

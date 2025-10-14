@@ -584,7 +584,7 @@ const LongformContentManager: React.FC<LongformContentManagerProps> = ({
                  <FileText className="h-3 w-3" />
                  {item.metadata.actualWordCount.toLocaleString()} {getTranslation('contentManager.metadata.words', 'mots')}
                </Badge>
-               {item.metadata.contentQuality.seoOptimized && (
+               {item.metadata.contentQuality?.seoOptimized && (
                  <Badge variant="outline" className="flex items-center gap-1">
                    <TrendingUp className="h-3 w-3" />
                    {t('outputFormat.html.seoOptimized')}

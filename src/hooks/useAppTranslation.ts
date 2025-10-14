@@ -11,7 +11,8 @@ type Namespace =
   | 'ui' 
   | 'wizard' 
   | 'pricing'
-  | 'longform';
+  | 'longform'
+  | 'partners';
 
 /**
  * Custom hook to use translations with type safety for namespaces
