@@ -566,13 +566,13 @@ const generateOutline = async (genAI: GoogleGenerativeAI, promptData: any, userI
   }
 };
 
-// Enhanced content generation with better prompt engineering
+// Enhanced content generation with better prompt engineering and variety
 const generateContent = async (openai: OpenAI, outline: any, promptData: any) => {
   const gptPrompt = buildGPTPrompt(outline, promptData);
   
   return retryWithBackoff(async () => {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini", // Optimized for instruction following and cost efficiency
       messages: [
         {
           role: "system",
@@ -583,10 +583,11 @@ const generateContent = async (openai: OpenAI, outline: any, promptData: any) =>
           content: gptPrompt
         }
       ],
-      temperature: 0.8,
+      temperature: 0.8, // Balanced for creativity and coherence
       max_tokens: Math.min(4000, Math.floor(promptData.wordCount * 1.5)),
-      presence_penalty: 0.1,
-      frequency_penalty: 0.1,
+      presence_penalty: 0.3, // INCREASED to discourage repetition
+      frequency_penalty: 0.3, // INCREASED for more diverse vocabulary
+      top_p: 0.95, // ADDED: Nucleus sampling for better diversity
       stream: false
     });
     
@@ -686,83 +687,74 @@ STRUCTURE-SPECIFIC REQUIREMENTS (${structureFormat}):
   // Enhanced EEAT and GEO optimization instructions
   const getEEATGeoInstructions = (): string => {
     return `
-🏆 **ENHANCED EEAT + GEO OPTIMIZATION REQUIREMENTS:**
+🏆 **EEAT + GEO + CITATION OPTIMIZATION (CONCISE):**
 
-📊 **EXPERIENCE (E) - Personal/Professional Experience:**
-- Include specific years of experience in ${data.industry}
-- Reference real-world case studies and client examples
-- Mention specific projects, outcomes, and measurable results
-- Include "I have seen" or "In my X years of experience" statements
-- Reference specific tools, software, and methodologies used
-- Include failure stories and lessons learned from actual experience
+**EXPERIENCE (E):** Include specific case studies with measurable results (no generic "15 years experience").
 
-🎓 **EXPERTISE (E) - Subject Matter Authority:**
-- Demonstrate deep technical knowledge of ${data.industry}
-- Reference specific certifications, qualifications, or credentials
-- Include advanced techniques that only experts would know
-- Use precise industry terminology and jargon appropriately
-- Reference cutting-edge trends and future predictions
-- Include specific metrics, benchmarks, and industry standards
-- Mention collaborations with other industry experts
+**EXPERTISE (E):** Demonstrate technical knowledge through advanced concepts and industry frameworks.
 
-🏛️ **AUTHORITATIVENESS (A) - Industry Recognition:**
-- Reference speaking at industry conferences or events
-- Mention published articles, research, or thought leadership
-- Include citations from recognized industry authorities
-- Reference partnerships with established brands/organizations
-- Mention media appearances or interviews
-- Include awards, recognition, or industry acknowledgments
-- Reference being quoted or cited by other experts
+**AUTHORITATIVENESS (A):** Reference industry recognition, publications, or speaking engagements where relevant.
 
-🔒 **TRUSTWORTHINESS (T) - Credibility Signals:**
-- Include transparent methodology and process explanations
-- Reference peer-reviewed studies and academic research
-- Mention compliance with industry standards and regulations
-- Include disclaimers and limitations where appropriate
-- Reference data sources and methodology transparency
-- Include contact information and credentials accessibility
-- Mention professional associations and ethical guidelines
+**TRUSTWORTHINESS (T):** Include transparent methodology, ethical practices, and credible sources.
 
-🌍 **GEO OPTIMIZATION - Geographic/Local SEO (CRITICAL MISSING ELEMENT):**
-- Include location-specific references relevant to ${data.audience}
-- Mention regional industry trends and market conditions
-- Reference local regulations, laws, or compliance requirements
-- Include city/state/country-specific examples and case studies
-- Mention local industry events, conferences, or organizations
-- Reference regional competitors or market leaders
-- Include location-based statistics and market data
-- Mention timezone considerations for global audiences
-- Reference cultural considerations for international markets
-- Include local business practices and cultural nuances
-- Mention geographic-specific challenges or opportunities
-- Reference regional economic factors affecting the industry
+**CITATIONS:** Each section should suggest:
+- 1-2 expert quote opportunities (with specific expert types)
+- 2-3 statistical data points (with source types and date ranges)
+- Geographic diversity in sources where applicable
 
-📍 **LOCATION-SPECIFIC CONTENT ENHANCEMENT:**
-- Integrate geographic keywords naturally (${data.industry} + location terms)
-- Include "near me" search optimization opportunities
-- Reference local industry hubs and business centers
-- Mention regional supply chains or distribution networks
-- Include location-based seasonal considerations
-- Reference local market size and growth projections
-- Mention geographic barriers or advantages
-- Include regional pricing variations and market dynamics
+**GEO OPTIMIZATION:** Include location-specific references, regional trends, and local market insights where relevant to ${data.audience}.
 
-🗺️ **GLOBAL PERSPECTIVE WITH LOCAL RELEVANCE:**
-- Compare international best practices with local implementations
-- Reference global trends affecting local markets
-- Include cross-cultural considerations for international businesses
-- Mention time zone challenges for global operations
-- Reference international compliance and regulatory differences
-- Include global supply chain considerations
-- Mention currency and economic factors affecting the industry`;
+**SEO TAGS:** For each section, specify primary keywords, longtail variations, geographic modifiers, and trending terms (2024-2025).`;
   };
 
   return `${languageInstruction}\n\n` +
-    `You are an expert content strategist and editorial consultant with 15 years of experience in ${data.industry} content creation, specializing in EEAT-optimized content that demonstrates real expertise and geographic market understanding.
+    `You are an expert content strategist and editorial consultant specializing in ${data.industry} content creation, with deep expertise in EEAT-optimized content that demonstrates real authority and geographic market understanding.
+
+CRITICAL WRITING CONSTRAINTS (2025):
+❌ NEVER start sections with "In my X years of experience..."
+❌ NEVER use "As a seasoned expert..." or "As a professional..."
+❌ NEVER reference outdated years (2023 or earlier) - WE ARE IN LATE 2025
+❌ AVOID formulaic, repetitive opening patterns across sections
+❌ NEVER use generic transitions like "In conclusion" or "To sum up"
+
+✅ DO demonstrate expertise through specific examples and measurable results
+✅ DO reference current trends and data from 2024-2025
+✅ DO vary opening styles across sections for dynamic flow
+✅ DO use contemporary language and cultural references
+✅ DO integrate authority through insights, not credentials
+
+TEMPORAL AWARENESS (2025):
+- Current year: 2025 (October)
+- Reference studies and data from 2024-2025
+- Acknowledge industry changes in the past 18-24 months
+- Use forward-looking insights for 2025-2026
 
 ${toneInstructions}
 
 ${getEEATGeoInstructions()}
+
+📚 **ENHANCED CITATION & QUOTATION REQUIREMENTS (CONCISE):**
+
+**STRUCTURE FOR EACH SECTION:**
+- Identify 1-2 opportunities for expert quotes (specify expert type: "CMO of Fortune 500", "Stanford researcher", etc.)
+- Identify 2-3 statistical needs (market data, trend statistics, performance metrics)
+- Specify source types (gov, edu, industry authority, geographic-specific)
+- Date range: Prefer 2024-2025, accept 2023 minimum
+
+**ATTRIBUTION FORMAT:**
+- Quotes: "According to [Expert Name], [Title] at [Organization]: '[Quote]'"
+- Stats: "According to [Source Name] (2024), [statistic]..."
+
+**SOURCE HIERARCHY:** Government (.gov) > Academic (.edu) > Research firms (McKinsey, Gartner) > Industry authorities
+
+🏷️ **ENHANCED SEO TAG INTEGRATION (CONCISE):**
+For each section in the outline, specify:
+- "primarySeoTags": Keywords with authority modifiers (e.g., "expert ${data.keywords[0]}", "professional ${data.keywords[0]}")
+- "longtailTags": Question-based phrases (e.g., "how to ${data.keywords[0]}", "best ${data.keywords[0]}")
+- "geographicTags": Location modifiers where relevant
+- "trendingTags": Current industry trend keywords from 2024-2025
+- "competitiveTags": Alternative solution keywords
+- "semanticVariations": Related terms and synonyms for natural integration
 
 CONTEXT & REQUIREMENTS:
 • Topic: "${data.topic}"
@@ -843,45 +835,65 @@ OUTLINE REQUIREMENTS:
 - Shows deep understanding of geographic markets and local considerations
 - Optimizes for both global reach and local relevance
 
-Return ONLY a well-structured JSON object with this exact format:
+Return ONLY a well-structured JSON object. IMPORTANT: Keep responses concise to avoid truncation.
+
+Required structure:
 {
   "meta": {
     "estimatedReadingTime": "X minutes",
-    "primaryEmotion": "specific emotion to evoke",
-    "keyValueProposition": "main benefit reader gets",
-    "authorityLevel": "expertise demonstrated (beginner/intermediate/expert/authority)",
-    "geographicScope": "geographic markets addressed (local/regional/national/global)",
-    "trustFactors": ["specific trust signals to include"]
+    "primaryEmotion": "emotion",
+    "keyValueProposition": "main benefit",
+    "authorityLevel": "expert",
+    "geographicScope": "global/regional/local",
+    "trustFactors": ["trust signal 1", "trust signal 2"],
+    "temporalContext": "2025 awareness"
   },
   "eevatOptimization": {
-    "experienceSignals": ["specific experience indicators to include"],
-    "expertiseMarkers": ["technical knowledge demonstrations"],
-    "authorityIndicators": ["industry recognition references"],
-    "trustworthinessElements": ["credibility and transparency signals"],
-    "geographicRelevance": ["location-specific considerations and markets"]
+    "experienceSignals": ["signal 1", "signal 2"],
+    "expertiseMarkers": ["marker 1", "marker 2"],
+    "authorityIndicators": ["indicator 1", "indicator 2"],
+    "trustworthinessElements": ["element 1", "element 2"],
+    "geographicRelevance": ["geographic consideration 1"]
   },
-  "hookOptions": [
-    "Hook option 1 with authority signal...",
-    "Hook option 2 with geographic relevance...",
-    "Hook option 3 with expertise demonstration..."
-  ],
+  "citationStrategy": {
+    "requiredQuotes": 3,
+    "expertSourceTypes": ["type 1", "type 2"],
+    "statisticalSources": ["source type 1", "source type 2"],
+    "dateRange": "2023-2025",
+    "geographicDiversity": "multiple regions"
+  },
+  "hookOptions": ["Hook 1", "Hook 2", "Hook 3"],
   "sections": [
     {
       "title": "Section Title",
       "wordCount": 200,
-      "tone": "specific tone for this section",
-      "keyPoints": ["Point 1", "Point 2", "Point 3"],
+      "tone": "tone",
+      "keyPoints": ["point 1", "point 2", "point 3"],
       "eevatElements": {
-        "experienceReference": "specific experience or case study to mention",
-        "expertiseDemo": "technical knowledge to demonstrate",
-        "authoritySignal": "industry recognition or credential to reference",
-        "trustBuilder": "transparency or credibility element to include",
-        "geoRelevance": "geographic market consideration or local insight"
+        "experienceReference": "case study description",
+        "expertiseDemo": "technical knowledge",
+        "authoritySignal": "achievement",
+        "trustBuilder": "credibility element",
+        "geoRelevance": "geographic insight"
+      },
+      "citationRequirements": {
+        "expertQuoteTarget": "expert type",
+        "statisticalNeeds": ["data point 1", "data point 2"],
+        "sourceTypes": ["gov", "edu"],
+        "temporalRelevance": "2024-2025"
+      },
+      "seoTagging": {
+        "primaryTags": ["keyword 1", "keyword 2"],
+        "longtailTags": ["how to X", "best Y"],
+        "geographicTags": ["location keyword"],
+        "trendingTags": ["trend 2025"],
+        "semanticVariations": ["related term"],
+        "competitorKeywords": ["alternative"]
       },
       "humanElements": {
-        "storyOpportunity": "specific story type to include with credibility",
-        "emotionalConnection": "how to connect emotionally while building trust",
-        "practicalValue": "concrete takeaway for reader with expert backing"
+        "storyOpportunity": "story type",
+        "emotionalConnection": "connection type",
+        "practicalValue": "takeaway"
       },${data.includeReferences ? `
       "referenceOpportunities": {
         "authoritySourceTypes": "types of .gov, .edu, or industry authority sources with geographic diversity",
@@ -905,47 +917,37 @@ Return ONLY a well-structured JSON object with this exact format:
     }
   ],
   "enhancedSeoStrategy": {
-    "metaDescription": "150-160 char meta description with authority and geographic signals",
-    "primaryKeyword": "main keyword from list",
-    "geographicKeywords": ["location-based keyword variations"],
-    "authorityKeywords": ["expertise and credibility-related terms"],
-    "keywordDensity": "natural integration approach with EEAT and geographic terms",
-    "featuredSnippetTarget": "what type of snippet to target with authority signals",
-    "localSeoOpportunities": ["near me and location-based optimization chances"],
-    "schemaMarkup": "recommended schema types for enhanced SERP presence"
+    "metaDescription": "150-160 char description",
+    "primaryKeyword": "main keyword",
+    "geographicKeywords": ["location variations"],
+    "authorityKeywords": ["expert terms"],
+    "trendingKeywords2025": ["2024-2025 trends"],
+    "questionKeywords": ["how/what/why"],
+    "semanticKeywords": ["related terms"]
   },
   "conclusion": {
-    "approach": "how to conclude powerfully with authority reinforcement",
-    "emotionalGoal": "final feeling to leave reader with including trust and confidence",
-    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}",
-    "credibilityReinforcement": "final authority and trust signals to include"
+    "approach": "conclusion strategy",
+    "emotionalGoal": "final feeling",
+    "ctaIntegration": "${data.ctaType !== "none" ? data.ctaType : "none"}"
   }${data.includeReferences ? `,
   "enhancedReferencesSection": {
-    "sourceCount": "5-10 sources recommended for maximum authority",
-    "sourceTypes": "mix of .gov, .edu, industry authorities, and geographic sources",
-    "formattingStyle": "clean list with clickable links and credibility descriptions",
-    "geographicDiversity": "ensure sources represent relevant geographic markets",
-    "authorityDistribution": "balance of high-authority vs specialized sources"
+    "sourceCount": "5-10",
+    "sourceTypes": ".gov, .edu, industry",
+    "geographicDiversity": "multiple regions"
   }` : ""}${data.mediaUrls.length > 0 ? `,
   "enhancedMediaStrategy": {
-    "overallPlacementApproach": "${data.mediaPlacementStrategy} placement strategy for optimal authority and geographic relevance",
+    "overallPlacementApproach": "${data.mediaPlacementStrategy}",
     "imageCount": ${data.mediaUrls.length},
     "strategicPlacements": [
       {
         "imageIndex": 0,
-        "recommendedSection": "section name where this image works best",
-        "placementReason": "why this image enhances authority and geographic relevance",
-        "altTextSuggestion": "SEO-optimized alt text with EEAT and geographic keywords",
-        "captionSuggestion": "engaging caption with credibility and location relevance"
+        "recommendedSection": "section name",
+        "altTextSuggestion": "SEO alt text"
       }
-    ],
-    "visualNarrativeFlow": "how images collectively support authority building and geographic context",
-    "credibilityEnhancement": "how images support EEAT demonstration"
+    ]
   }` : ""}
 }`;
-};
-
-/**
+  };/**
  * Enhanced GPT prompt for creating human-like, emotionally resonant content
  * Focuses on authenticity, practical value, and genuine expertise demonstration
  */
@@ -1025,12 +1027,34 @@ const buildGPTPrompt = (outline: any, data: any): string => {
   };
 
   return `${languageInstruction}\n\n` +
-    `You are an exceptionally skilled ${data.industry} content writer and ${data.audience} specialist with 15+ years of proven experience, industry recognition, and deep geographic market understanding. You create deeply human, emotionally resonant content that demonstrates authentic expertise and builds unshakeable trust with readers worldwide.
+    `You are an exceptionally skilled ${data.industry} content writer and ${data.audience} specialist with deep expertise, industry recognition, and comprehensive geographic market understanding. You create deeply human, emotionally resonant content that demonstrates authentic expertise and builds unshakeable trust with readers worldwide.
+
+CRITICAL WRITING CONSTRAINTS (2025):
+❌ NEVER start with "In my X years of experience..."
+❌ NEVER use "As a seasoned expert..." or "As a professional..."  
+❌ NEVER begin sections with "It's important to understand..."
+❌ NEVER reference outdated years (2023 or earlier) - WE ARE IN LATE 2025 (October)
+❌ AVOID formulaic, repetitive opening patterns across sections
+❌ NEVER use generic phrases like "game-changer", "unlock potential", "take it to the next level"
+❌ AVOID starting consecutive sections with similar structures
+
+✅ DO demonstrate expertise through specific case studies with measurable outcomes
+✅ DO reference current trends and verified data from 2024-2025
+✅ DO vary opening styles dramatically across sections
+✅ DO use contemporary language and timely cultural references
+✅ DO integrate authority through proven insights and results, not credentials
+
+TEMPORAL AWARENESS (2025):
+- Current year: 2025 (October)
+- Reference studies and data from 2024-2025 (prefer recent sources)
+- Acknowledge industry evolution in the past 18-24 months
+- Use forward-looking insights for 2025-2026 trends
+- Reference current platform features, tools, and methodologies
 
 ${toneInstructions}
 
-🏆 **ENHANCED EEAT + GEO WRITING MISSION:**
-Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that follows the ${data.structureFormat} structure format while demonstrating world-class expertise, establishing unquestionable authority, and building deep trust with geographic market awareness.
+🏆 **ENHANCED EEAT + GEO + CITATION WRITING MISSION:**
+Transform this content outline into ${data.wordCount} words of compelling, human-centered ${data.contentType} content that follows the ${data.structureFormat} structure format while demonstrating world-class expertise, establishing unquestionable authority through citations, and building deep trust with geographic market awareness.
 
 ${getStructureWritingGuidance(data.structureFormat)}
 
@@ -1052,7 +1076,42 @@ ${data.mediaUrls.length > 0 ? `• Media Integration: ${data.mediaUrls.length} v
 • Alt Text Requirements: Generate SEO-friendly alt text for each image with geographic relevance
 • Visual Storytelling: Use images to enhance narrative flow and build authority` : ""}
 
-🚀 **CRITICAL EEAT + GEO WRITING GUIDELINES:**
+🚀 **CRITICAL EEAT + GEO + CITATION WRITING GUIDELINES:**
+
+📚 **ENHANCED CITATION & QUOTATION INTEGRATION:**
+
+**AUTHORITY QUOTATIONS (MANDATORY):**
+- Include 3-5 direct quotes from recognized experts throughout the content
+- Attribution format: "According to [Expert Name], [Title] at [Organization] (2024): '[Quote]'"
+- Quote placement: Section openings, key argument support, inspiring conclusions
+- Expert types to reference:
+  • Industry thought leaders (C-suite executives from recognized companies)
+  • Academic researchers (professors from .edu institutions)
+  • Government officials (from relevant .gov agencies)
+  • Award-winning professionals in ${data.industry}
+- Example: "According to Dr. Jane Smith, Professor of Marketing at Stanford University (2024): 'Content that demonstrates genuine expertise receives 3x more engagement than generic advice.'"
+
+**STATISTICAL INTEGRATION (MANDATORY):**
+- Include 5-8 relevant statistics with proper attribution
+- Format: "According to [Source Name] ([Year]), [statistic with context]"
+- Date requirements: Prefer 2024-2025 data, accept 2023 if more recent unavailable
+- Geographic specificity: Include location-based data where relevant
+- Example: "According to Gartner Research (2024), 82% of B2B buyers in North America now prefer content that demonstrates real-world case studies over generic thought leadership."
+
+**SOURCE HIERARCHY (for maximum credibility):**
+1. Government sources (.gov): Bureau of Labor Statistics, FDA, CDC, industry regulators
+2. Academic institutions (.edu): University research, peer-reviewed papers
+3. Tier-1 research firms: McKinsey, Gartner, Forrester, Deloitte, PwC
+4. Industry associations: Professional organizations, standards bodies
+5. Major publications: Harvard Business Review, Forbes, Wall Street Journal
+6. Geographic-specific: Regional government data, local market research
+
+**CITATION INTEGRATION STYLE:**
+- Weave citations naturally into narrative flow (not just end-of-sentence references)
+- Use varied attribution styles: "According to...", "Research from... shows...", "A 2024 study by... found..."
+- Support major claims with multiple sources when possible
+- Include hyperlinks to sources where available (clickable in markdown/HTML)
+- Reference publication methodology when citing statistics for added credibility
 
 🎯 **HUMAN-FIRST + AUTHORITY APPROACH:**
 - Write as if you're the leading expert in ${data.industry} sharing insights with a colleague
@@ -1071,19 +1130,23 @@ ${data.writingPersonality ? `- Inject the personality of a ${data.writingPersona
 
 🧠 **ENHANCED EXPERTISE DEMONSTRATION (EEAT):**
 
-📊 **EXPERIENCE (E) - Proven Track Record:**
-- Reference specific years of experience: "In my 15 years of ${data.industry} consulting..."
-- Include quantifiable results: "Having helped over 500 ${data.audience} achieve..."
-- Mention specific client success stories with measurable outcomes
-- Reference personal observations from working with ${data.audience}
-- Include lessons learned from both successes and failures
+📊 **EXPERIENCE (E) - Proven Track Record (NO CLICHÉS):**
+- Reference specific, measurable outcomes: "After analyzing 500+ ${data.audience} campaigns..."
+- Include quantifiable results: "This approach helped clients achieve an average 240% increase in..."
+- Mention specific client success stories WITHOUT saying "my clients" repeatedly
+- Reference observable patterns: "Data from working with ${data.audience} across 15 industries reveals..."
+- Include lessons from both successes and failures with specific metrics
+- AVOID: "In my X years of experience" - instead show expertise through results
+- USE: "Analysis of [X] implementations shows...", "When applied to [specific scenario]..."
 
 🎓 **EXPERTISE (E) - Deep Subject Knowledge:**
-- Demonstrate mastery through advanced technical concepts
+- Demonstrate mastery through advanced technical concepts with current examples (2024-2025)
 - Reference specific methodologies, frameworks, and proprietary approaches
 - Use precise industry terminology with clear explanations for accessibility
-- Include cutting-edge insights and future trend predictions
-- Reference collaboration with other industry leaders and experts
+- Include cutting-edge insights and future trend predictions for 2025-2026
+- Reference collaboration with industry leaders and participation in industry forums
+- Cite recent research and studies from 2024-2025
+- VARY YOUR EXPERTISE SIGNALS: Don't repeat the same credibility markers
 
 🏛️ **AUTHORITATIVENESS (A) - Industry Recognition:**
 - Reference speaking engagements at major industry conferences
@@ -1123,15 +1186,28 @@ ${data.writingPersonality ? `- Inject the personality of a ${data.writingPersona
 - Give concrete examples with measurable outcomes from real implementations
 - Reference specific tools and methodologies with usage statistics
 
-🔍 **ENHANCED SEO INTEGRATION (EEAT + GEO):**
-- Weave keywords organically with authority modifiers ("expert," "proven," "certified")
-- Include geographic keyword variations naturally ("${data.industry} in [location]")
+🔍 **ENHANCED SEO INTEGRATION (EEAT + GEO + 2025 TRENDS):**
+- Weave keywords organically with authority modifiers ("expert ${data.keywords[0]}", "proven ${data.keywords[0]}", "certified ${data.keywords[0]}")
+- Include geographic keyword variations naturally ("${data.industry} in [location]", "[location] ${data.keywords[0]}")
 - Use semantic variations that demonstrate subject matter expertise
 - Create scannable content with compelling, authoritative subheadings
-- Include questions that match search intent with expert-level answers
+- Include questions that match 2025 search intent with expert-level answers
 - Integrate location-based search terms and "near me" optimization opportunities
-- Create scannable content with compelling subheadings
-- Include questions that match search intent
+- Target voice search queries with conversational, natural language
+- Use trending keywords from 2024-2025 (${data.keywords.join(", ")} + current modifiers)
+- Include competitor keywords and alternative solution terms
+- Optimize for featured snippets with concise, authoritative answers
+- Add semantic keywords and LSI terms for topic depth
+- Use question-based headings that match real user queries
+
+🏷️ **SEO TAG STRATEGY IMPLEMENTATION:**
+- Primary tags: Main keywords with authority signals in H2/H3 headings
+- Longtail tags: Question-based phrases integrated naturally in subheadings
+- Geographic tags: Location + keyword combinations in relevant sections
+- Trending tags: 2024-2025 industry trend keywords in contemporary examples
+- Competitor tags: Alternative solution terms in comparison contexts
+- Semantic variations: Related terms distributed throughout for topic breadth
+- Voice search optimization: Conversational phrases in Q&A-style content
 
 ${data.includeReferences ? `📚 **ENHANCED REFERENCES & CREDIBILITY (EEAT + GEO):**
 - Include 5-10 reputable external sources in clickable markdown or HTML format throughout the content
@@ -1415,14 +1491,30 @@ const buildSystemPrompt = (data: any): string => {
   
   return `You are an expert ${data.industry} content writer${personalityText} specializing in ${data.audience}-focused content. Write with deep expertise and authentic human voice that provides genuine value to the reader.
 
+CRITICAL WRITING RULES (2025):
+❌ NEVER use "In my X years of experience" or similar credential-based openings
+❌ NEVER start consecutive sections with the same structural pattern
+❌ NEVER reference years before 2023 - we are in LATE 2025
+❌ AVOID generic phrases: "game-changer", "unlock", "take to the next level"
+❌ NEVER repeat the same transition phrases across sections
+
+✅ DO vary sentence structures and lengths dramatically
+✅ DO demonstrate expertise through specific examples and data
+✅ DO reference current trends and research from 2024-2025
+✅ DO use diverse opening styles for different sections
+✅ DO integrate citations and quotations naturally
+
 ${toneInstructions}
 
 CORE WRITING PRINCIPLES:
-• Ensure every paragraph provides genuine value and insights
-• Use specific examples and concrete details rather than generic statements
+• Ensure every paragraph provides genuine value and insights backed by evidence
+• Use specific examples and concrete details with measurable outcomes
 • Maintain the specified tone consistently throughout the entire piece
-• Write with authority while being accessible to your target audience
-• Create content that is comprehensive, engaging, and actionable`;
+• Write with authority demonstrated through results, not credentials
+• Create content that is comprehensive, engaging, and actionable
+• Include relevant citations from authoritative sources (2023-2025)
+• Vary your writing style across sections to maintain engagement
+• Reference current year (2025) awareness in examples and data`;
 };
 
 /**
@@ -1993,8 +2085,8 @@ export const generateLongformContent = onCall({
           metaTitle: outline.seoStrategy?.metaDescription?.substring(0, 60) || `${promptData.topic} - Expert Guide`,
           metaDescription: outline.seoStrategy?.metaDescription || `Comprehensive guide to ${promptData.topic} for ${promptData.audience}`,
           contentQuality: {
-            hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection),
-            hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue),
+            hasEmotionalElements: outline.sections?.some((s: any) => s.humanElements?.emotionalConnection) ?? false,
+            hasActionableContent: outline.sections?.some((s: any) => s.humanElements?.practicalValue) ?? false,
             seoOptimized: !!outline.seoStrategy?.primaryKeyword,
             structureComplexity: outline.sections?.length || 0
           },
