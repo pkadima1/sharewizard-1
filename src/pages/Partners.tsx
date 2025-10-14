@@ -89,14 +89,44 @@ const Partners: React.FC = () => {
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             {t('landing.whoCanApply.title')}
           </h2>
-          <ul className="mt-4 space-y-2 list-disc list-inside text-gray-700 dark:text-gray-300">
-            <li>{t('landing.whoCanApply.list1')}</li>
-            <li>{t('landing.whoCanApply.list2')}</li>
-            <li>{t('landing.whoCanApply.list3')}</li>
-            <li>{t('landing.whoCanApply.list4')}</li>
+          <p className="mt-4 text-base text-gray-700 dark:text-gray-300">
+            {t('landing.whoCanApply.intro')}
+          </p>
+          <p className="mt-2 text-base font-medium text-gray-900 dark:text-white">
+            {t('landing.whoCanApply.subtitle')}
+          </p>
+          
+          <p className="mt-6 text-base font-semibold text-gray-900 dark:text-white">
+            {t('landing.whoCanApply.belongTitle')}
+          </p>
+          <ul className="mt-3 space-y-3 text-gray-700 dark:text-gray-300">
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{t('landing.whoCanApply.quality1')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{t('landing.whoCanApply.quality2')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{t('landing.whoCanApply.quality3')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{t('landing.whoCanApply.quality4')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>{t('landing.whoCanApply.quality5')}</span>
+            </li>
           </ul>
-          <p className="mt-3 text-gray-700 dark:text-gray-300">
+          
+          <p className="mt-6 text-base font-semibold text-gray-900 dark:text-white">
             {t('landing.whoCanApply.footer')}
+          </p>
+          <p className="mt-1 text-base text-gray-700 dark:text-gray-300 italic">
+            {t('landing.whoCanApply.footerSubtitle')}
           </p>
         </div>
         <div>
@@ -135,7 +165,11 @@ const Partners: React.FC = () => {
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
           {t('landing.howItWorks.title')}
         </h2>
-        <div className="mt-4 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+        <p className="mt-3 text-base text-gray-700 dark:text-gray-300">
+          {t('landing.howItWorks.subtitle')}
+        </p>
+        
+        <div className="mt-6 overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
@@ -149,25 +183,43 @@ const Partners: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               <tr>
-                <td className="px-4 py-3 font-medium">{t('landing.howItWorks.step1.label')}</td>
+                <td className="px-4 py-3 font-medium whitespace-nowrap">{t('landing.howItWorks.step1.label')}</td>
                 <td className="px-4 py-3">
-                  {t('landing.howItWorks.step1.description')} <Link className="text-blue-600 hover:underline" to={getLocalizedPath('partner-registration')}>{t('landing.howItWorks.step1.linkText')}</Link>
+                  {t('landing.howItWorks.step1.description')} → <Link className="text-blue-600 hover:underline font-medium" to={getLocalizedPath('partner-registration')}>{t('landing.howItWorks.step1.linkText')}</Link>
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium">{t('landing.howItWorks.step2.label')}</td>
+                <td className="px-4 py-3 font-medium whitespace-nowrap">{t('landing.howItWorks.step2.label')}</td>
                 <td className="px-4 py-3">{t('landing.howItWorks.step2.description')}</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium">{t('landing.howItWorks.step3.label')}</td>
+                <td className="px-4 py-3 font-medium whitespace-nowrap">{t('landing.howItWorks.step3.label')}</td>
                 <td className="px-4 py-3">{t('landing.howItWorks.step3.description')}</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium">{t('landing.howItWorks.step4.label')}</td>
+                <td className="px-4 py-3 font-medium whitespace-nowrap">{t('landing.howItWorks.step4.label')}</td>
                 <td className="px-4 py-3">{t('landing.howItWorks.step4.description')}</td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <div className="mt-8">
+          <StorageImage 
+            storagePath="EngPerfectPartnerMedia/approvedPartner.png" 
+            fallbackSrc="/img/partners/approved-partner.svg" 
+            alt={t('landing.howItWorks.imageAlt')} 
+            className="w-full max-h-[400px] object-cover rounded-xl shadow-md" 
+          />
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            {t('landing.howItWorks.footer')}
+          </p>
+          <p className="mt-2 text-base text-gray-700 dark:text-gray-300">
+            {t('landing.howItWorks.footerSubtitle')}
+          </p>
         </div>
       </section>
 
@@ -226,17 +278,16 @@ const Partners: React.FC = () => {
           {t('landing.cta.title')}
         </h2>
         <p className="mt-3 text-gray-700 dark:text-gray-300">{t('landing.cta.applicationText')}</p>
-        <p className="mt-1">
-          <a 
-            href={`https://www.engageperfect.com${getLocalizedPath('partner-registration')}`} 
-            target="_blank" 
-            rel="noreferrer" 
-            className="text-blue-600 hover:underline break-words"
+        <div className="mt-6">
+          <Link 
+            to={getLocalizedPath('partner-registration')}
+            className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
-            {t('landing.cta.applicationLink')}
-          </a>
-        </p>
-        <p className="mt-6 text-gray-700 dark:text-gray-300">{t('landing.cta.questionText')}</p>
+            {t('landing.cta.applyButton')}
+            <span className="text-xl">→</span>
+          </Link>
+        </div>
+        <p className="mt-8 text-gray-700 dark:text-gray-300">{t('landing.cta.questionText')}</p>
         <p className="font-medium">
           📧 <a className="hover:underline" href={`mailto:${t('landing.cta.email')}`}>
             {t('landing.cta.email')}
