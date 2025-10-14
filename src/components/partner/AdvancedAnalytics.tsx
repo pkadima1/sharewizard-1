@@ -138,7 +138,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
     return (
       <div className="flex items-center justify-center py-8">
         <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
-        <span className="ml-2 text-gray-600">Chargement des données analytiques...</span>
+        <span className="ml-2 text-gray-600">{t('dashboard.loadingAnalytics')}</span>
       </div>
     );
   }
@@ -158,7 +158,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
     return (
       <Alert>
         <AlertDescription>
-          Aucune donnée analytique disponible pour cette période.
+          {t('dashboard.noDataAvailable')}
         </AlertDescription>
       </Alert>
     );
@@ -186,10 +186,10 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Analyses Avancées
+            {t('analytics.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Insights détaillés et métriques de performance
+            {t('analytics.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -198,10 +198,10 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7d">7 jours</SelectItem>
-              <SelectItem value="30d">30 jours</SelectItem>
-              <SelectItem value="90d">90 jours</SelectItem>
-              <SelectItem value="1y">1 an</SelectItem>
+              <SelectItem value="7d">{t('analytics.period7d')}</SelectItem>
+              <SelectItem value="30d">{t('analytics.period30d')}</SelectItem>
+              <SelectItem value="90d">{t('analytics.period90d')}</SelectItem>
+              <SelectItem value="1y">{t('analytics.period1y')}</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" onClick={() => exportData('csv')}>
@@ -220,7 +220,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
         <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-300">
-              Parrainages Totaux
+              {t('analytics.totalReferrals')}
             </CardTitle>
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
@@ -229,7 +229,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               {data.totalReferrals.toLocaleString()}
             </div>
             <p className="text-xs text-blue-600">
-              Depuis le début
+              {t('analytics.sinceStart')}
             </p>
           </CardContent>
         </Card>
@@ -237,7 +237,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
         <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-green-700 dark:text-green-300">
-              Conversions
+              {t('analytics.totalConversions')}
             </CardTitle>
             <Target className="h-4 w-4 text-green-600" />
           </CardHeader>
@@ -246,7 +246,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               {data.totalConversions.toLocaleString()}
             </div>
             <p className="text-xs text-green-600">
-              Taux: {formatPercentage(data.conversionRate)}
+              {t('analytics.rate')}: {formatPercentage(data.conversionRate)}
             </p>
           </CardContent>
         </Card>
@@ -254,7 +254,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
         <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">
-              Revenus Totaux
+              {t('analytics.totalRevenue')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-purple-600" />
           </CardHeader>
@@ -263,7 +263,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               {formatCurrency(data.totalRevenue)}
             </div>
             <p className="text-xs text-purple-600">
-              Valeur moyenne: {formatCurrency(data.averageOrderValue)}
+              {t('analytics.averageValue')}: {formatCurrency(data.averageOrderValue)}
             </p>
           </CardContent>
         </Card>
@@ -271,7 +271,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
         <Card className="bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-orange-700 dark:text-orange-300">
-              Performance
+              {t('analytics.performance')}
             </CardTitle>
             <Activity className="h-4 w-4 text-orange-600" />
           </CardHeader>
@@ -280,7 +280,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               {formatPercentage(data.conversionRate)}
             </div>
             <p className="text-xs text-orange-600">
-              Taux de conversion
+              {t('analytics.conversionRate')}
             </p>
           </CardContent>
         </Card>
@@ -289,10 +289,10 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
       {/* Analytics Tabs */}
       <Tabs defaultValue="sources" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="sources">Sources</TabsTrigger>
-          <TabsTrigger value="trends">Tendances</TabsTrigger>
-          <TabsTrigger value="segments">Segments</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="sources">{t('analytics.sources')}</TabsTrigger>
+          <TabsTrigger value="trends">{t('analytics.trends')}</TabsTrigger>
+          <TabsTrigger value="segments">{t('analytics.segments')}</TabsTrigger>
+          <TabsTrigger value="performance">{t('analytics.performance')}</TabsTrigger>
         </TabsList>
 
         {/* Sources Tab */}
@@ -302,13 +302,13 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
-                  Top Sources de Parrainage
+                  {t('analytics.topSources')}
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder="Rechercher une source..."
+                      placeholder={t('analytics.searchSource')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 w-64"
@@ -319,9 +319,9 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="revenue">Revenus</SelectItem>
-                      <SelectItem value="referrals">Parrainages</SelectItem>
-                      <SelectItem value="conversions">Conversions</SelectItem>
+                      <SelectItem value="revenue">{t('analytics.revenue')}</SelectItem>
+                      <SelectItem value="referrals">{t('analytics.referrals')}</SelectItem>
+                      <SelectItem value="conversions">{t('analytics.conversions')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -331,12 +331,12 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Parrainages</TableHead>
-                    <TableHead>Conversions</TableHead>
-                    <TableHead>Taux</TableHead>
-                    <TableHead>Revenus</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('analytics.source')}</TableHead>
+                    <TableHead>{t('analytics.referrals')}</TableHead>
+                    <TableHead>{t('analytics.conversions')}</TableHead>
+                    <TableHead>{t('analytics.rate')}</TableHead>
+                    <TableHead>{t('analytics.revenue')}</TableHead>
+                    <TableHead>{t('analytics.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -393,7 +393,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <LineChart className="h-5 w-5" />
-                  Tendances Mensuelles
+                  {t('analytics.monthlyTrends')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -407,10 +407,10 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <div className="text-sm font-medium">
-                            {trend.referrals} parrainages
+                            {trend.referrals} {t('analytics.referrals').toLowerCase()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {trend.conversions} conversions
+                            {trend.conversions} {t('analytics.conversions').toLowerCase()}
                           </div>
                         </div>
                         <div className="text-right">
@@ -429,7 +429,7 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChart className="h-5 w-5" />
-                  Répartition des Sources
+                  {t('analytics.sourceDistribution')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -465,18 +465,18 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
-                Segments de Clients
+                {t('analytics.customerSegments')}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Segment</TableHead>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Revenus</TableHead>
-                    <TableHead>Part</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('analytics.segment')}</TableHead>
+                    <TableHead>{t('analytics.number')}</TableHead>
+                    <TableHead>{t('analytics.revenue')}</TableHead>
+                    <TableHead>{t('analytics.share')}</TableHead>
+                    <TableHead>{t('analytics.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -524,27 +524,27 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
-                  Métriques de Performance
+                  {t('analytics.performanceMetrics')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Taux de Conversion Global</span>
+                    <span className="text-sm font-medium">{t('analytics.globalConversionRate')}</span>
                     <span className="text-lg font-bold text-green-600">
                       {formatPercentage(data.conversionRate)}
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Valeur Moyenne par Conversion</span>
+                    <span className="text-sm font-medium">{t('analytics.averageValuePerConversion')}</span>
                     <span className="text-lg font-bold text-blue-600">
                       {formatCurrency(data.averageOrderValue)}
                     </span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Revenus par Parrainage</span>
+                    <span className="text-sm font-medium">{t('analytics.revenuePerReferral')}</span>
                     <span className="text-lg font-bold text-purple-600">
                       {formatCurrency(data.totalRevenue / data.totalReferrals)}
                     </span>
@@ -557,35 +557,35 @@ export function AdvancedAnalytics({ partnerId, onExport }: AdvancedAnalyticsProp
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5" />
-                  Recommandations
+                  {t('analytics.recommendations')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                      Optimiser les Sources Performantes
+                      {t('analytics.optimizePerformingSources')}
                     </div>
                     <div className="text-xs text-blue-600 dark:text-blue-300 mt-1">
-                      Concentrez-vous sur vos sources les plus rentables
+                      {t('analytics.focusOnBestSources')}
                     </div>
                   </div>
                   
                   <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <div className="text-sm font-medium text-green-800 dark:text-green-200">
-                      Améliorer le Taux de Conversion
+                      {t('analytics.improveConversionRate')}
                     </div>
                     <div className="text-xs text-green-600 dark:text-green-300 mt-1">
-                      Ciblez les segments avec le plus fort potentiel
+                      {t('analytics.optimizeSegments')}
                     </div>
                   </div>
                   
                   <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                     <div className="text-sm font-medium text-purple-800 dark:text-purple-200">
-                      Diversifier les Canaux
+                      {t('analytics.diversifyChannels')}
                     </div>
                     <div className="text-xs text-purple-600 dark:text-purple-300 mt-1">
-                      Explorez de nouvelles sources de parrainage
+                      {t('analytics.exploreNewSources')}
                     </div>
                   </div>
                 </div>

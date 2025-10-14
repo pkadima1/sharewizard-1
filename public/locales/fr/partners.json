@@ -86,6 +86,8 @@
     "recentInvoices": "Factures Récentes",
     "referralCustomers": "Clients Parrainés",
     "noData": "Aucune donnée disponible pour le moment.",
+    "loadingAnalytics": "Chargement des données analytiques...",
+    "noDataAvailable": "Aucune donnée analytique disponible pour cette période.",
     "noCodesYet": "Aucun code de parrainage créé",
     "createFirstCode": "Créez votre premier code pour commencer",
     "noInvoicesYet": "Aucune facture pour le moment",
@@ -231,6 +233,75 @@
     "conversionsLabel": "Conversions",
     "conversionRateLabel": "Taux de Conversion",
     "revenueGenerated": "Revenus Générés"
+  },
+  "analytics": {
+    "title": "Analyses Avancées",
+    "subtitle": "Insights détaillés et métriques de performance",
+    "period7d": "7 jours",
+    "period30d": "30 jours",
+    "period90d": "90 jours",
+    "period1y": "1 an",
+    "totalReferrals": "Parrainages Totaux",
+    "totalConversions": "Conversions",
+    "totalRevenue": "Revenus Totaux",
+    "performance": "Performance",
+    "sinceStart": "Depuis le début",
+    "rate": "Taux",
+    "averageValue": "Valeur moyenne",
+    "conversionRate": "Taux de conversion",
+    "sources": "Sources",
+    "trends": "Tendances",
+    "segments": "Segments",
+    "topSources": "Top Sources de Parrainage",
+    "searchSource": "Rechercher une source...",
+    "revenue": "Revenus",
+    "referrals": "Parrainages",
+    "conversions": "Conversions",
+    "source": "Source",
+    "actions": "Actions",
+    "monthlyTrends": "Tendances Mensuelles",
+    "sourceDistribution": "Répartition des Sources",
+    "customerSegments": "Segments de Clients",
+    "segment": "Segment",
+    "number": "Nombre",
+    "share": "Part",
+    "performanceMetrics": "Métriques de Performance",
+    "globalConversionRate": "Taux de Conversion Global",
+    "averageValuePerConversion": "Valeur Moyenne par Conversion",
+    "revenuePerReferral": "Revenus par Parrainage",
+    "recommendations": "Recommandations",
+    "optimizePerformingSources": "Optimiser les Sources Performantes",
+    "focusOnBestSources": "Concentrez-vous sur vos sources les plus rentables",
+    "improveConversionRate": "Améliorer le Taux de Conversion",
+    "optimizeSegments": "Optimisez les segments avec le meilleur potentiel",
+    "diversifyChannels": "Diversifier les Canaux",
+        "exploreNewSources": "Explorez de nouvelles sources de parrainage"
+  },
+  "charts": {
+    "title": "Graphiques Interactifs",
+    "loadingCharts": "Chargement des graphiques...",
+    "noChartData": "Aucune donnée de graphique disponible pour cette période.",
+    "errorLoadingData": "Impossible de charger les données des graphiques",
+    "period1m": "1 mois",
+    "period3m": "3 mois",
+    "period6m": "6 mois",
+    "period1y": "1 an",
+    "earningsEvolution": "Évolution des Revenus",
+    "earningsChart": "Graphique des revenus",
+    "data": "Données",
+    "months": "mois",
+    "totalRevenue": "Total des revenus",
+    "totalCustomers": "Total des clients",
+    "conversionFunnel": "Entonnoir de Conversion",
+    "funnelChart": "Graphique en entonnoir",
+    "steps": "Étapes",
+    "referralSources": "Sources de Parrainage",
+    "sourcesChart": "Graphique des sources",
+    "sources": "Sources",
+    "earnings": "Revenus",
+    "funnel": "Entonnoir",
+    "referrals": "parrainages",
+    "conversions": "conversions"
   },
   "actions": {
     "apply": "Postuler Maintenant",
@@ -838,11 +909,16 @@
     },
     "whoCanApply": {
       "title": "Qui Peut Postuler",
-      "list1": "Créateurs de contenu, spécialistes du marketing, freelances ou consultants.",
-      "list2": "Diplômés récents avec des connaissances de niche ou de l'industrie — par exemple mode, immobilier, éducation, santé, voyage ou technologie.",
-      "list3": "Professionnels à l'aise avec les outils numériques, les médias sociaux ou l'IA.",
-      "list4": "Personnes qui se soucient de la communication, de la cohérence et des résultats.",
-      "footer": "Si vous comprenez un marché, un public ou une langue — vous apportez déjà de la valeur.",
+      "intro": "Ce n'est pas un programme pour tout le monde.",
+      "subtitle": "C'est pour les audacieux — pour ceux qui voient des possibilités là où d'autres voient du travail.",
+      "belongTitle": "Vous pourriez être à votre place ici si vous :",
+      "quality1": "Avez un esprit entrepreneurial et considérez la croissance comme une responsabilité personnelle.",
+      "quality2": "Possédez des connaissances de niche ou sectorielles — peut-être comprenez-vous l'immobilier, la mode, la technologie, la santé ou l'éducation.",
+      "quality3": "Pensez comme un stratège, pas comme un suiveur. Vous comprenez les gens, les marchés et comment la communication stimule les affaires.",
+      "quality4": "Croyez au travail plus intelligent, en tirant parti de l'IA et des systèmes pour multiplier les résultats — pas les efforts.",
+      "quality5": "Êtes discipliné, autonome et prêt à construire votre propre histoire de succès sous une marque mondiale.",
+      "footer": "Les Partenaires EngagePerfect ne sont pas des employés.",
+      "footerSubtitle": "Ce sont des innovateurs qui façonnent la prochaine génération d'engagement numérique.",
       "imageAlt": "Écran d'ordinateur portable montrant"
     },
     "whatYouDo": {
@@ -854,27 +930,31 @@
     },
     "howItWorks": {
       "title": "Comment Ça Fonctionne",
+      "subtitle": "Nous gardons les choses simples — pas de bureaucratie, pas de longs formulaires.",
       "table": {
         "stepHeader": "Étape",
-        "descriptionHeader": "Description"
+        "descriptionHeader": "Ce Qui Se Passe"
       },
       "step1": {
         "label": "1. Postuler en Ligne",
-        "description": "Remplissez le court formulaire d'inscription →",
-        "linkText": "Postuler Maintenant"
+        "description": "Remplissez la courte candidature et parlez-nous un peu de votre parcours, de votre niche et de votre motivation. Plus vous partagez, mieux nous comprenons si vous êtes un bon candidat.",
+        "linkText": "Postuler Ici"
       },
       "step2": {
-        "label": "2. Défi Créatif",
-        "description": "Complétez une tâche de test de 48 heures — montrez comment vous pensez, pas seulement ce que vous savez."
+        "label": "2. Entretien (si présélectionné)",
+        "description": "Si nous souhaitons en savoir plus, nous planifierons une conversation de 30 minutes pour discuter de vos objectifs, votre état d'esprit et votre expérience."
       },
       "step3": {
-        "label": "3. Collaboration d'Essai",
-        "description": "Travaillez avec notre équipe pendant 6 semaines pour apprendre les systèmes, les outils et le flux de travail client."
+        "label": "3. Tâche de Test de 48 Heures",
+        "description": "Vous compléterez un petit défi créatif pour montrer comment vous pensez et exécutez. Cela nous aide à voir votre véritable potentiel — pas seulement vos mots."
       },
       "step4": {
-        "label": "4. Devenez Partenaire Certifié",
-        "description": "Obtenez l'accès aux clients, au mentorat et gagnez jusqu'à 70% de partage des revenus."
-      }
+        "label": "4. Approbation et Intégration",
+        "description": "Une fois approuvé, vous aurez accès à nos outils, au mentorat et aux clients. À partir de là, vous commencez à gagner jusqu'à 70% par client payant chaque mois."
+      },
+      "imageAlt": "Partenaire Approuvé",
+      "footer": "Simple. Transparent. Vraie opportunité.",
+      "footerSubtitle": "Si vous avez de la motivation, de la curiosité et un esprit entrepreneurial — nous nous occupons du reste."
     },
     "growthPath": {
       "title": "Votre Parcours de Croissance",
@@ -901,8 +981,8 @@
     },
     "cta": {
       "title": "Prêt à Rejoindre?",
-      "applicationText": "Remplissez votre candidature à",
-      "applicationLink": "www.engageperfect.com/fr/partner-registration",
+      "applicationText": "Remplissez votre candidature et commencez votre parcours de partenaire dès aujourd'hui.",
+      "applyButton": "Postuler Maintenant",
       "questionText": "Si vous avez des questions, contactez notre équipe d'assistance:",
       "email": "support@engageperfect.com",
       "imageAlt": "Équipe diversifiée heureuse célébrant"

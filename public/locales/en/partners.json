@@ -91,6 +91,8 @@
     "pendingAmount": "€{{amount}} pending",
     "noData": "No data available at the moment.",
     "commissionFor": "Commission for {{customer}}",
+    "loadingAnalytics": "Loading analytics data...",
+    "noDataAvailable": "No analytics data available for this period.",
     "cards": {
       "monthlyCommissions": "Monthly Commissions",
       "activeCustomers": "Active Customers",
@@ -190,6 +192,75 @@
     "conversionsLabel": "Conversions",
     "conversionRateLabel": "Conversion Rate",
     "revenueGenerated": "Revenue Generated"
+  },
+  "analytics": {
+    "title": "Advanced Analytics",
+    "subtitle": "Detailed insights and performance metrics",
+    "period7d": "7 days",
+    "period30d": "30 days",
+    "period90d": "90 days",
+    "period1y": "1 year",
+    "totalReferrals": "Total Referrals",
+    "totalConversions": "Conversions",
+    "totalRevenue": "Total Revenue",
+    "performance": "Performance",
+    "sinceStart": "Since start",
+    "rate": "Rate",
+    "averageValue": "Average value",
+    "conversionRate": "Conversion rate",
+    "sources": "Sources",
+    "trends": "Trends",
+    "segments": "Segments",
+    "topSources": "Top Referral Sources",
+    "searchSource": "Search for a source...",
+    "revenue": "Revenue",
+    "referrals": "Referrals",
+    "conversions": "Conversions",
+    "source": "Source",
+    "actions": "Actions",
+    "monthlyTrends": "Monthly Trends",
+    "sourceDistribution": "Source Distribution",
+    "customerSegments": "Customer Segments",
+    "segment": "Segment",
+    "number": "Number",
+    "share": "Share",
+    "performanceMetrics": "Performance Metrics",
+    "globalConversionRate": "Global Conversion Rate",
+    "averageValuePerConversion": "Average Value per Conversion",
+    "revenuePerReferral": "Revenue per Referral",
+    "recommendations": "Recommendations",
+    "optimizePerformingSources": "Optimize Performing Sources",
+    "focusOnBestSources": "Focus on your most profitable sources",
+    "improveConversionRate": "Improve Conversion Rate",
+    "optimizeSegments": "Optimize segments with the best potential",
+    "diversifyChannels": "Diversify Channels",
+    "exploreNewSources": "Explore new referral sources"
+  },
+  "charts": {
+    "title": "Interactive Charts",
+    "loadingCharts": "Loading charts...",
+    "noChartData": "No chart data available for this period.",
+    "errorLoadingData": "Unable to load chart data",
+    "period1m": "1 month",
+    "period3m": "3 months",
+    "period6m": "6 months",
+    "period1y": "1 year",
+    "earningsEvolution": "Revenue Evolution",
+    "earningsChart": "Revenue chart",
+    "data": "Data",
+    "months": "months",
+    "totalRevenue": "Total Revenue",
+    "totalCustomers": "Total Customers",
+    "conversionFunnel": "Conversion Funnel",
+    "funnelChart": "Funnel chart",
+    "steps": "Steps",
+    "referralSources": "Referral Sources",
+    "sourcesChart": "Sources chart",
+    "sources": "Sources",
+    "earnings": "Revenue",
+    "funnel": "Funnel",
+    "referrals": "referrals",
+    "conversions": "conversions"
   },
   "messages": {
     "applicationSubmitted": "Your partner application has been submitted successfully! We'll review it and get back to you within 1-2 business days.",
@@ -777,11 +848,16 @@
     },
     "whoCanApply": {
       "title": "Who Can Apply",
-      "list1": "Content creators, marketers, freelancers, or consultants.",
-      "list2": "Recent graduates with niche or industry knowledge — e.g. fashion, real estate, education, health, travel, or tech.",
-      "list3": "Professionals comfortable with digital tools, social media, or AI.",
-      "list4": "People who care about communication, consistency, and results.",
-      "footer": "If you understand a market, audience, or language — you already bring value.",
+      "intro": "This isn't a program for everyone.",
+      "subtitle": "It's for the bold — for those who see possibility where others see work.",
+      "belongTitle": "You might belong here if you:",
+      "quality1": "Have an entrepreneurial spirit and see growth as a personal responsibility.",
+      "quality2": "Possess some niche or industry insight — maybe you understand real estate, fashion, tech, health, or education.",
+      "quality3": "Think like a strategist, not a follower. You understand people, markets, and how communication drives business.",
+      "quality4": "Believe in working smarter, leveraging AI and systems to multiply results — not effort.",
+      "quality5": "Are disciplined, self-driven, and ready to build your own success story under a global brand.",
+      "footer": "EngagePerfect Partners are not employees.",
+      "footerSubtitle": "They're innovators shaping the next generation of digital engagement.",
       "imageAlt": "Laptop screen showing"
     },
     "whatYouDo": {
@@ -793,27 +869,31 @@
     },
     "howItWorks": {
       "title": "How It Works",
+      "subtitle": "We keep it simple — no bureaucracy, no long forms.",
       "table": {
         "stepHeader": "Step",
-        "descriptionHeader": "Description"
+        "descriptionHeader": "What Happens"
       },
       "step1": {
         "label": "1. Apply Online",
-        "description": "Fill out the short registration form →",
-        "linkText": "Apply Now"
+        "description": "Fill out the short application and tell us a bit about your background, niche, and motivation. The more you share, the better we understand if you're a good fit.",
+        "linkText": "Apply Here"
       },
       "step2": {
-        "label": "2. Creative Challenge",
-        "description": "Complete a 48-hour test task — show how you think, not just what you know."
+        "label": "2. Interview (if shortlisted)",
+        "description": "If we'd like to learn more, we'll schedule a 30-minute conversation to discuss your goals, mindset, and experience."
       },
       "step3": {
-        "label": "3. Trial Collaboration",
-        "description": "Work with our team for 6 weeks to learn systems, tools, and client workflow."
+        "label": "3. 48-Hour Test Task",
+        "description": "You'll complete a small creative challenge to show how you think and execute. This helps us see your real potential — not just your words."
       },
       "step4": {
-        "label": "4. Become a Certified Partner",
-        "description": "Get access to clients, mentorship, and earn up to 70% revenue share."
-      }
+        "label": "4. Approval & Onboarding",
+        "description": "Once approved, you'll get access to our tools, mentorship, and clients. From there, you start earning up to 70% per paying customer each month."
+      },
+      "imageAlt": "Approved Partner",
+      "footer": "Simple. Transparent. Real opportunity.",
+      "footerSubtitle": "If you have drive, curiosity, and entrepreneurial spirit — we'll handle the rest."
     },
     "growthPath": {
       "title": "Your Growth Path",
@@ -840,8 +920,8 @@
     },
     "cta": {
       "title": "Ready to Join?",
-      "applicationText": "Fill out your application at",
-      "applicationLink": "www.engageperfect.com/en/partner-registration",
+      "applicationText": "Fill out your application and start your partner journey today.",
+      "applyButton": "Apply Now",
       "questionText": "If you have questions, contact our support team:",
       "email": "support@engageperfect.com",
       "imageAlt": "Happy diverse team celebrating"

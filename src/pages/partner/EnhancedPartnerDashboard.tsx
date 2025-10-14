@@ -124,7 +124,7 @@ export default function EnhancedPartnerDashboard() {
             
             <div className="flex items-center gap-3">
               <div className="text-sm text-gray-500">
-                Dernière mise à jour: {lastUpdated.toLocaleTimeString('fr-FR')}
+                {t('dashboard.lastUpdated')}: {lastUpdated.toLocaleTimeString()}
               </div>
               
               <Button
@@ -134,31 +134,31 @@ export default function EnhancedPartnerDashboard() {
                 disabled={isRefreshing}
               >
                 <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                <span className="ml-2">Actualiser</span>
+                <span className="ml-2">{t('dashboard.refresh')}</span>
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm">
                     <Download className="h-4 w-4 mr-2" />
-                    Exporter
+                    {t('dashboard.export')}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => handleExport('csv')}>
                     <Download className="h-4 w-4 mr-2" />
-                    Export CSV
+                    {t('dashboard.exportCsv')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleExport('pdf')}>
                     <Download className="h-4 w-4 mr-2" />
-                    Export PDF
+                    {t('dashboard.exportPdf')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
-                Paramètres
+                {t('dashboard.settings')}
               </Button>
             </div>
           </div>
@@ -175,27 +175,27 @@ export default function EnhancedPartnerDashboard() {
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Vue d'ensemble
+            {t('dashboard.overview')}
           </TabsTrigger>
           <TabsTrigger value="referrals" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Parrainages
+            {t('dashboard.referrals')}
           </TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Analyses
+            {t('dashboard.analytics')}
           </TabsTrigger>
           <TabsTrigger value="financial" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Financier
+            {t('dashboard.financial')}
           </TabsTrigger>
           <TabsTrigger value="conversions" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Conversions
+            {t('dashboard.conversions')}
           </TabsTrigger>
           <TabsTrigger value="reports" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Rapports
+            {t('dashboard.reports')}
           </TabsTrigger>
         </TabsList>
 
@@ -208,21 +208,21 @@ export default function EnhancedPartnerDashboard() {
                   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Performance Récente
+                        {t('dashboard.recentPerformance')}
                       </h3>
-                      <Badge variant="outline">7 derniers jours</Badge>
+                      <Badge variant="outline">{t('dashboard.last7Days')}</Badge>
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Nouveaux parrainages</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.newReferrals')}</span>
                         <span className="font-medium">{data.customers.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Conversions</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.conversions')}</span>
                         <span className="font-medium text-green-600">{data.earnings.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Taux de conversion</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.conversionRate')}</span>
                         <span className="font-medium text-blue-600">
                           {data.customers.length > 0 ? ((data.earnings.length / data.customers.length) * 100).toFixed(1) : 0}%
                         </span>
@@ -233,21 +233,21 @@ export default function EnhancedPartnerDashboard() {
                   <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        Revenus
+                        {t('dashboard.revenue')}
                       </h3>
-                      <Badge variant="outline">Ce mois</Badge>
+                      <Badge variant="outline">{t('dashboard.thisMonth')}</Badge>
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Commissions</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.commissions')}</span>
                         <span className="font-medium">€{data.stats.monthlyCommissions.toFixed(2)}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">En attente</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.pending')}</span>
                         <span className="font-medium text-orange-600">€{(data.stats.monthlyCommissions * 0.3).toFixed(2)}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Payé</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('dashboard.paid')}</span>
                         <span className="font-medium text-green-600">€{(data.stats.monthlyCommissions * 0.7).toFixed(2)}</span>
                       </div>
                     </div>
@@ -259,40 +259,40 @@ export default function EnhancedPartnerDashboard() {
               <div className="space-y-6">
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Actions Rapides
+                    {t('dashboard.quickActions')}
                   </h3>
                   <div className="space-y-3">
                     <Button className="w-full justify-start">
                       <User className="h-4 w-4 mr-2" />
-                      Créer un code de parrainage
+                      {t('dashboard.createReferralCode')}
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
                       <Download className="h-4 w-4 mr-2" />
-                      Exporter les données
+                      {t('dashboard.exportData')}
                     </Button>
                     <Button variant="outline" className="w-full justify-start">
                       <Settings className="h-4 w-4 mr-2" />
-                      Paramètres du compte
+                      {t('dashboard.accountSettings')}
                     </Button>
                   </div>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Notifications
+                    {t('dashboard.notifications')}
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
                       <Bell className="h-4 w-4 text-blue-500" />
-                      <span>{data.customers.length} nouveaux parrainages</span>
+                      <span>{t('dashboard.newReferralsCount', { count: data.customers.length })}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Bell className="h-4 w-4 text-green-500" />
-                      <span>{data.earnings.length} conversions ce mois</span>
+                      <span>{t('dashboard.conversionsThisMonth', { count: data.earnings.length })}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Bell className="h-4 w-4 text-orange-500" />
-                      <span>€{data.stats.monthlyCommissions.toFixed(2)} en attente</span>
+                      <span>{t('dashboard.pendingAmount', { amount: data.stats.monthlyCommissions.toFixed(2) })}</span>
                     </div>
                   </div>
                 </div>
@@ -303,7 +303,13 @@ export default function EnhancedPartnerDashboard() {
           {/* Referrals Tab */}
           <TabsContent value="referrals">
             <AdvancedReferralManagement 
-              codes={data.codes}
+              codes={data.codes.map(code => ({
+                ...code,
+                conversionCount: data.earnings.filter(e => e.invoiceId?.includes(code.code)).length,
+                totalRevenue: data.earnings
+                  .filter(e => e.invoiceId?.includes(code.code))
+                  .reduce((sum, e) => sum + e.amount, 0)
+              }))}
               partnerId={data.partner.id}
               onCodeCreated={handleRefresh}
               onCodeUpdated={handleRefresh}
@@ -330,12 +336,12 @@ export default function EnhancedPartnerDashboard() {
               commissions={data.earnings.map(earning => ({
                 id: earning.id,
                 date: earning.createdAt,
-                amount: earning.commissionAmount,
-                currency: earning.currency,
+                amount: earning.amount,
+                currency: 'EUR',
                 status: 'paid' as const,
-                source: 'Parrainage',
-                customerId: earning.customerId,
-                description: `Commission pour ${earning.customerId}`
+                source: t('dashboard.referrals'),
+                customerId: earning.customerEmail,
+                description: t('dashboard.commissionFor', { customer: earning.customerEmail })
               }))}
               payments={[]}
               totalEarnings={data.stats.totalEarnings}

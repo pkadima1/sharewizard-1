@@ -21,16 +21,18 @@ import {
   RefreshCw,
   AlertCircle
 } from 'lucide-react';
-import { getPartnerChartData, ChartData } from '@/services/partnerAnalyticsService';
+import { useTranslation } from 'react-i18next';
+import { getPartnerChartData, ChartData as PartnerChartData } from '@/services/partnerAnalyticsService';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 
-interface ChartData {
+interface ChartDataset {
   labels: string[];
   datasets: Array<{
     label: string;
     data: number[];
-    backgroundColor?: string;
-    borderColor?: string;
+    backgroundColor?: string | string[];
+    borderColor?: string | string[];
     borderWidth?: number;
   }>;
 }
@@ -41,12 +43,13 @@ interface InteractiveChartsProps {
 }
 
 export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProps) {
+  const { t } = useTranslation('partners');
   const [selectedChart, setSelectedChart] = useState('earnings');
   const [selectedPeriod, setSelectedPeriod] = useState('6m');
   const [isFullscreen, setIsFullscreen] = useState(false);
   
   // State for real data
-  const [data, setData] = useState<ChartData | null>(null);
+  const [data, setData] = useState<PartnerChartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -95,7 +98,7 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
       setData(chartData);
     } catch (err) {
       console.error('Error fetching chart data:', err);
-      setError('Impossible de charger les données des graphiques');
+      setError(t('charts.errorLoadingData'));
     } finally {
       setLoading(false);
     }
@@ -124,7 +127,7 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
     return (
       <div className="flex items-center justify-center py-8">
         <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
-        <span className="ml-2 text-gray-600">Chargement des graphiques...</span>
+        <span className="ml-2 text-gray-600">{t('charts.loadingCharts')}</span>
       </div>
     );
   }
@@ -144,25 +147,25 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
     return (
       <Alert>
         <AlertDescription>
-          Aucune donnée de graphique disponible pour cette période.
+          {t('charts.noChartData')}
         </AlertDescription>
       </Alert>
     );
   }
 
   // Earnings Chart Data
-  const earningsChartData: ChartData = {
+  const earningsChartData: ChartDataset = {
     labels: data.monthlyEarnings?.map(item => item.month) || [],
     datasets: [
       {
-        label: 'Revenus (€)',
+        label: `${t('analytics.revenue')} (€)`,
         data: data.monthlyEarnings?.map(item => item.amount) || [],
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 2
       },
       {
-        label: 'Clients',
+        label: t('dashboard.customers'),
         data: data.monthlyEarnings?.map(item => item.customers) || [],
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         borderColor: 'rgba(16, 185, 129, 1)',
@@ -172,11 +175,11 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
   };
 
   // Conversion Funnel Data
-  const funnelChartData: ChartData = {
+  const funnelChartData: ChartDataset = {
     labels: data.conversionFunnel?.map(item => item.step) || [],
     datasets: [
       {
-        label: 'Nombre d\'utilisateurs',
+        label: t('analytics.number'),
         data: data.conversionFunnel?.map(item => item.count) || [],
         backgroundColor: [
           'rgba(239, 68, 68, 0.8)',
@@ -196,19 +199,19 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
   };
 
   // Sources Chart Data
-  const sourcesChartData: ChartData = {
+  const sourcesChartData: ChartDataset = {
     labels: data.topSources?.map(item => item.source) || [],
     datasets: [
       {
-        label: 'Parrainages',
+        label: t('analytics.referrals'),
         data: data.topSources?.map(item => item.referrals) || [],
         backgroundColor: 'rgba(168, 85, 247, 0.1)',
         borderColor: 'rgba(168, 85, 247, 1)',
         borderWidth: 2
       },
       {
-        label: 'Conversions',
-        data: data.topSources?.map(item => item.conversions) || [],
+        label: t('analytics.revenue'),
+        data: data.topSources?.map(item => item.revenue) || [],
         backgroundColor: 'rgba(236, 72, 153, 0.1)',
         borderColor: 'rgba(236, 72, 153, 1)',
         borderWidth: 2
@@ -219,16 +222,16 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
   const renderEarningsChart = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Évolution des Revenus</h3>
+        <h3 className="text-lg font-semibold">{t('charts.earningsEvolution')}</h3>
         <div className="flex items-center gap-2">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="3m">3 mois</SelectItem>
-              <SelectItem value="6m">6 mois</SelectItem>
-              <SelectItem value="1y">1 an</SelectItem>
+              <SelectItem value="3m">{t('charts.period3m')}</SelectItem>
+              <SelectItem value="6m">{t('charts.period6m')}</SelectItem>
+              <SelectItem value="1y">{t('charts.period1y')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -237,8 +240,8 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
       <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
         <div className="text-center">
           <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">Graphique des revenus</p>
-          <p className="text-sm text-gray-400">Données: {data.monthlyEarnings?.length || 0} mois</p>
+          <p className="text-gray-500">{t('charts.earningsChart')}</p>
+          <p className="text-sm text-gray-400">{t('charts.data')}: {data.monthlyEarnings?.length || 0} {t('charts.months')}</p>
         </div>
       </div>
       
@@ -247,13 +250,13 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
           <div className="text-2xl font-bold text-blue-600">
             {formatCurrency(data.monthlyEarnings?.reduce((sum, item) => sum + item.amount, 0) || 0)}
           </div>
-          <div className="text-sm text-blue-600">Total des revenus</div>
+          <div className="text-sm text-blue-600">{t('charts.totalRevenue')}</div>
         </div>
         <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
           <div className="text-2xl font-bold text-green-600">
             {data.monthlyEarnings?.reduce((sum, item) => sum + item.customers, 0) || 0}
           </div>
-          <div className="text-sm text-green-600">Total des clients</div>
+          <div className="text-sm text-green-600">{t('charts.totalCustomers')}</div>
         </div>
       </div>
     </div>
@@ -262,7 +265,7 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
   const renderFunnelChart = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Entonnoir de Conversion</h3>
+        <h3 className="text-lg font-semibold">{t('charts.conversionFunnel')}</h3>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <RotateCcw className="h-4 w-4" />
@@ -273,8 +276,8 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
       <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
         <div className="text-center">
           <PieChart className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">Graphique en entonnoir</p>
-          <p className="text-sm text-gray-400">Étapes: {data.conversionFunnel?.length || 0}</p>
+          <p className="text-gray-500">{t('charts.funnelChart')}</p>
+          <p className="text-sm text-gray-400">{t('charts.steps')}: {data.conversionFunnel?.length || 0}</p>
         </div>
       </div>
       
@@ -298,7 +301,7 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
   const renderSourcesChart = () => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Sources de Parrainage</h3>
+        <h3 className="text-lg font-semibold">{t('charts.referralSources')}</h3>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4" />
@@ -309,8 +312,8 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
       <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg flex items-center justify-center">
         <div className="text-center">
           <LineChart className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">Graphique des sources</p>
-          <p className="text-sm text-gray-400">Sources: {data.topSources?.length || 0}</p>
+          <p className="text-gray-500">{t('charts.sourcesChart')}</p>
+          <p className="text-sm text-gray-400">{t('charts.sources')}: {data.topSources?.length || 0}</p>
         </div>
       </div>
       
@@ -323,13 +326,8 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-sm font-medium">{source.referrals} parrainages</div>
-                <div className="text-xs text-gray-500">{source.conversions} conversions</div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-green-600">
-                  {formatCurrency(source.revenue)}
-                </div>
+                <div className="text-sm font-medium">{source.referrals} {t('charts.referrals')}</div>
+                <div className="text-xs text-gray-500">{formatCurrency(source.revenue)}</div>
               </div>
             </div>
           </div>
@@ -357,7 +355,7 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Graphiques Interactifs
+            {t('charts.title')}
           </CardTitle>
           <div className="flex items-center gap-2">
             <Select value={selectedChart} onValueChange={setSelectedChart}>
@@ -365,9 +363,9 @@ export function InteractiveCharts({ partnerId, onExport }: InteractiveChartsProp
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="earnings">Revenus</SelectItem>
-                <SelectItem value="funnel">Entonnoir</SelectItem>
-                <SelectItem value="sources">Sources</SelectItem>
+                <SelectItem value="earnings">{t('charts.earnings')}</SelectItem>
+                <SelectItem value="funnel">{t('charts.funnel')}</SelectItem>
+                <SelectItem value="sources">{t('analytics.sources')}</SelectItem>
               </SelectContent>
             </Select>
             <Button
